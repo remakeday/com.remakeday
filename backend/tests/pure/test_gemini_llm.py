@@ -108,8 +108,8 @@ def test_factory_selects_gemini_and_role_settings_remain_independent(sdk, monkey
     from apps.engine.dependencies import llm_factory as factory
     from apps.engine.adapter.outbound.llm.gemini_llm import GeminiLLM
     from apps.engine.adapter.outbound.llm.ollama_llm import OllamaLLM
-    settings = NS(core_llm_provider="gemini", core_llm_model="gemini-test", gemini_api_key="test-key",
-                  npc_llm_provider="ollama", npc_llm_model="local-test-model", ollama_base_url="http://local.invalid", gemini_requests_per_minute=10)
+    settings = NS(core_llm_provider="gemini", core_llm_model="gemini-test", core_llm_think="default", gemini_api_key="test-key",
+                  npc_llm_provider="ollama", npc_llm_model="local-test-model", npc_llm_think="default", ollama_base_url="http://local.invalid", gemini_requests_per_minute=10)
     monkeypatch.setattr(factory, "get_settings", lambda: settings)
     factory.get_core_llm.cache_clear(); factory.get_npc_llm.cache_clear()
     try:

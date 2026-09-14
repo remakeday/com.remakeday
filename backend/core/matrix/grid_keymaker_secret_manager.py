@@ -22,9 +22,11 @@ class Settings(BaseSettings):
 
     npc_llm_provider: str = "fake"
     npc_llm_model: str = "exaone3.5:7.8b"
+    npc_llm_think: str = "default"
     npc_age7_policy: str = "on"
     core_llm_provider: str = "fake"
     core_llm_model: str = "gemma3:12b"
+    core_llm_think: str = "default"
     embedding_provider: str = "fake"
     embedding_fallback: str = "qwen3-local"
     ollama_base_url: str = "http://localhost:11434"

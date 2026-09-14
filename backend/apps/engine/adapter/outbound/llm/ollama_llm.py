@@ -11,10 +11,13 @@ from apps.engine.app.ports.output.llm_port import LLMParseError, MessageDTO
 
 
 class OllamaLLM:
-    def __init__(self, base_url: str, model: str, timeout: float = 120.0) -> None:
+    def __init__(self, base_url: str, model: str, timeout: float = 120.0,
+                 think: bool | None = None) -> None:
         self._base_url = base_url.rstrip("/")
         self._model = model
         self._timeout = timeout
+        # None = 필드를 보내지 않음(provider 기본값) — thinking 미지원 모델 하위호환
+        self._think = think
 
     def complete(
         self, messages: list[MessageDTO], json_schema: dict,
@@ -29,6 +32,8 @@ class OllamaLLM:
         }
         if json_schema:
             body["format"] = json_schema
+        if self._think is not None:
+            body["think"] = self._think
         res = httpx.post(f"{self._base_url}/api/chat", json=body, timeout=self._timeout)
         res.raise_for_status()
         content = res.json()["message"]["content"]

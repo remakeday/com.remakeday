@@ -15,11 +15,21 @@ from apps.engine.app.ports.output.llm_port import LLMPort
 from core.matrix.grid_keymaker_secret_manager import get_settings
 
 
-def build_llm(provider: str, model: str, base_url: str) -> LLMPort:
+def _parse_think(value: str) -> bool | None:
+    if value == "default":
+        return None
+    if value == "off":
+        return False
+    if value == "on":
+        return True
+    raise ValueError(f"알 수 없는 think 값: {value} (default/on/off)")
+
+
+def build_llm(provider: str, model: str, base_url: str, think: str = "default") -> LLMPort:
     if provider == "fake":
         return FakeLLM()
     if provider == "ollama":
-        return OllamaLLM(base_url=base_url, model=model)
+        return OllamaLLM(base_url=base_url, model=model, think=_parse_think(think))
     if provider == "gemini":
         settings = get_settings()
         return GeminiLLM(api_key=settings.gemini_api_key, model=model,
@@ -38,13 +48,13 @@ def build_embedding(provider: str) -> EmbeddingPort:
 @lru_cache(maxsize=1)
 def get_npc_llm() -> LLMPort:
     s = get_settings()
-    return build_llm(s.npc_llm_provider, s.npc_llm_model, s.ollama_base_url)
+    return build_llm(s.npc_llm_provider, s.npc_llm_model, s.ollama_base_url, s.npc_llm_think)
 
 
 @lru_cache(maxsize=1)
 def get_core_llm() -> LLMPort:
     s = get_settings()
-    return build_llm(s.core_llm_provider, s.core_llm_model, s.ollama_base_url)
+    return build_llm(s.core_llm_provider, s.core_llm_model, s.ollama_base_url, s.core_llm_think)
 
 
 @lru_cache(maxsize=1)
