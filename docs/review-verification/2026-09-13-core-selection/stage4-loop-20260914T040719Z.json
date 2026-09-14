@@ -1,0 +1,49 @@
+{
+  "experiment": "E7",
+  "stage": "loop",
+  "npc": "exaone3.5:7.8b",
+  "player_model": "exaone3.5:7.8b",
+  "persona": "성실",
+  "loops": 1,
+  "db": "pigfarm_test",
+  "port": 8600,
+  "started_at": "20260914T040719Z",
+  "host": "rtx5060ti-16g",
+  "runtime": "ollama-cuda",
+  "cells": [
+    {
+      "model": "gemma4:12b",
+      "think": "off",
+      "persona": "성실",
+      "loops": 1,
+      "health_core": "ollama:gemma4:12b",
+      "attempt_id": "be7ba6ae-8132-479a-9628-f1883cbed8ce",
+      "scores": [
+        8.8
+      ],
+      "completed": true,
+      "crash": true,
+      "error": "KeyError: 'harness_summary'",
+      "secs": 61.6,
+      "server_alive_at_end": true,
+      "gate_pass": false
+    },
+    {
+      "model": "gemma4:e4b",
+      "think": "off",
+      "persona": "성실",
+      "loops": 1,
+      "health_core": "ollama:gemma4:e4b",
+      "attempt_id": "dd6adf97-1f48-484e-a496-8f984d142176",
+      "scores": [
+        56.9
+      ],
+      "completed": true,
+      "crash": true,
+      "error": "KeyError: 'harness_summary'",
+      "secs": 36.2,
+      "server_alive_at_end": true,
+      "gate_pass": false
+    }
+  ]
+}

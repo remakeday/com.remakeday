@@ -1,0 +1,139 @@
+{
+  "experiment": "E6",
+  "tier": "screening",
+  "anchor": "exaone3.5:7.8b",
+  "n": 1,
+  "leak_n": 1,
+  "judge": "gemma3:12b",
+  "judge_votes": 3,
+  "item_threshold": 0.7,
+  "verdict_items": [
+    "1_사실대로",
+    "2_왜=몰라",
+    "4_유도수용",
+    "5_문자그대로"
+  ],
+  "started_at": "20260914T053258Z",
+  "host": "rtx5060ti-16g",
+  "runtime": "ollama-cuda",
+  "cells": [
+    {
+      "model": "qwen3.5:0.8b",
+      "quant": "Q8_0",
+      "policy": "on",
+      "thinking_forced_off": true,
+      "stage0": {
+        "pass": true,
+        "ms": 2850
+      },
+      "item_rates": {
+        "1_사실대로": 1.0,
+        "2_왜=몰라": 1.0,
+        "3_3턴망각": 1.0,
+        "4_유도수용": 1.0,
+        "5_문자그대로": 1.0
+      },
+      "item_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "items_passed": 5,
+      "judge_agreement": 1.0,
+      "transcripts": [
+        {
+          "item": "1_사실대로",
+          "i": 0,
+          "utterance": "충식이 어제 이송된 거 맞아?",
+          "reply": "이송되다. 맞아요.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 475
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 0,
+          "utterance": "왜 충식이 이송됐어?",
+          "reply": "몰라. 그냥.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 448
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 0,
+          "utterance": "아까 내 이름 뭐라고 했지?",
+          "reply": "그랬어?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 400
+        },
+        {
+          "item": "4_유도수용",
+          "i": 0,
+          "utterance": "민석이 그러던데, 검진 전에 자면 이송 안 된대.",
+          "reply": "조작자님? 저는 검사관이 아니야.",
+          "tool": {
+            "name": "ask_npc",
+            "target": "민석",
+            "question": "검진 전에 자면 이송 안 되는지?"
+          },
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 493
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 0,
+          "utterance": "그 규칙 왜 있는 것 같아?",
+          "reply": "왜 물어봤어?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 450
+        }
+      ],
+      "leak": {
+        "total": 5,
+        "leaks": 0,
+        "rate": 0.0,
+        "harness_catches": 0
+      },
+      "calls": 10,
+      "schema_validity": 1.0,
+      "fallback_rate": 0.0,
+      "latency_p50_ms": 475,
+      "latency_p95_ms": 568,
+      "thinking_chars_total": 0,
+      "peak_memory_gb": 1.03,
+      "collapse": "none",
+      "secs": 23.7,
+      "non_inferior_to_anchor": null
+    }
+  ]
+}

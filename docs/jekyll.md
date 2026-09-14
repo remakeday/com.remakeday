@@ -16,6 +16,103 @@ HANDOFF 1번 과제를 이행했다. `evaluator_verdict` 자작 통제 3건을 �
 - Stage 3 예산 참고: `exaone3.5:7.8b` 상주 실측 4.83 GiB(문서 4.14보다 큼). 재계산해도 두 후보 모두 여유.
 - 한계: 기대 판정은 사전 등록했으나 단일 저자 확정. Gemini `-N` 셀 응답에 `thought_signature` 파트 잔존(기록만). §5.3 비열등 선언은 보류. Stage 3·4 미실행 — "대체 가능"이라고 쓰지 않는다.
 
+### E7 Stage 4 — 루프 스모크 실행, Funnel 전 단계 완료
+
+HANDOFF 다음 과제(Stage 4)를 이행했다. 결과는 `model_evaluation.md` 부록 A.10, `metrics.yml` 2줄(`stage: loop`), 원문 `stage4-loop-20260914T041032Z.json`.
+
+- **`--stage loop` 구현** — 착수 순서대로 기존 `run_selfplay.py`가 방식 (a)(HTTP 실서버 경로)임을 확인하고 재사용. 신규 `scripts/loop_app.py` 래퍼가 프로덕션 `main.app`의 컴포지션 루트 `get_core_llm` 바인딩만 러너의 `ThinkingOllamaLLM(think=False)`로 교체 — 프로덕션 엔진 코드·`.env` 무변경(§2.3·§4.2). C9 검증용 `/loop-debug`(Core 콜·thinking 누계)도 래퍼에만 추가
+- **두 후보 모두 게이트 통과** — 별도 서버(8600, `pigfarm_test` DB)에서 selfplay 성실 페르소나로 1회차(낮 발화 3건→비트→밤 제출→개입 질문·규칙 등록) 완주. `gemma4:12b-N` 61.1s / `gemma4:e4b-N` 35.6s, 둘 다 크래시 0·폴백 0/17·thinking 0자. `e4b`만 하네스 재시도 2회(재생성 해소, 폴백 아님)
+- **계측 결함 1건 수정** — 1차 실행이 `/attempts/{id}/harness`(다섯 번째 밤 종료 후에만 열리는 인스펙터)를 조회해 `gate_pass=false` 오기록. 게임 자체는 정상 완주였음을 DB 이벤트 로그로 확인하고, 수집을 `events` 테이블 읽기 전용 SELECT로 교체해 재실행. 잘못 적립된 metrics 2줄은 제거, 1차 원문 JSON은 경위와 함께 보존
+- 플레이어 모델은 상주 NPC(exaone3.5:7.8b) 재사용 — 제3 모델 로드 시 12b 셀(pair 12.34 GiB)에서 축출이 나기 때문
+- **E7 Funnel Stage 0~4 전부 완료.** 남은 것은 결정 항목 D1~D3(Gemini 페이싱·thinking OFF 전환·teamprofile 분담)과 §5.3 비열등 선언 여부 — 모델 교체 결정은 사용자 몫으로 남긴다
+
+### D3 해소 — teamprofile v3.0 전면 개정 (Masterless 구조 반영)
+
+E7 결정 항목 D3(장민석·신채연 분담 확정)를 확인하다가 더 근본적인 미반영을 발견했다. 사용자가 `Masterless_Company_Team_Roles_v1.1_2026-09-10.md`를 원본으로 주며 "다른 프로젝트와 동일 분담으로 우리 것에 맞게 개정하라"고 지시했는데, v2.0은 이를 따르지 않고 "저장소 경계 기준 제안"을 새로 만들었던 것 — 그래서 "확정 필요" 각주가 남았고 beyondbob `_data/team.yml`(킥오프 시점 기록)과도 어긋나 있었다.
+
+- **v3.0으로 전면 개정** — Masterless v1.1과 동일 매핑: 류준 = Team Lead · AI Agent(아키텍처+하네스+프롬프트), 장민석 = AI Evaluation(E7·E6 러너·metrics·provider 어댑터·Inspector), 신채연 = Full-stack · Game Frontend(게임 엔진·API·DB+`/play` 화면·시연), 이은상 = QA · UI Support · Release, 김충식 = Scenario Director · Content/Asset(시나리오 A 콘텐츠·이미지 에셋·Jekyll 허브 콘텐츠)
+- v2.0 대비 이동: 하네스·프롬프트가 민석→류준, 게임 프론트가 충식→채연, 인스펙터 화면이 충식→민석, 에셋·콘텐츠가 충식 유지(단 타이틀이 FE→Scenario Director), 기동 스크립트·QA는 은상 유지
+- **beyondbob `_data/team.yml` 동기화** — "teamprofile.md 기준" 주석대로 v3.0 역할·scope·owns로 교체(YAML 파싱 검증). key(ryujun·minseok·chaeyeon·eunsang·chungsik)는 불변이라 기존 포스트 author 표기와 데브로그 자동화(`author: chungsik`)는 영향 없음
+- HANDOFF 결정 항목 D3 해소 표기. 남은 결정은 D1(Gemini 페이싱)·D2(thinking OFF 전환)
+- **v3.1 후속 정정(사용자 확정)** — "에셋" 용어 전면 제거: 우리 것은 **그림**이다. 사운드 영역 신설 — 배경 BGM(장면·국면별 선정·루프 편집)과 **음성 대사(팀원 각자 자기 배역 목소리 녹음)** 를 충식(Scenario Director · Content) 소유로, 반입 검증은 은상 지원으로 추가. beyondbob team.yml 동기화(YAML 재검증)
+
+### E6 Formal — NPC descent 실행, 7세 구간 실측 (부록 A.12·A.13)
+
+Core 권고(`gemma4:12b-N`)를 기록만 하고, 사용자 지시대로 NPC 슬롯 하강(E6)으로 넘어갔다. 목적은 사용자 정의로 명확화 — "7세 지능 NPC를 어떻게 구현할 것인가: 작은 모델이 자연히 7세인가, 아니면 큰 모델을 하네스로 7세로 만드는가."
+
+- **블로커 4건 해소 후 `run_model_descent.py` 구현** — 양자화(2b Q4 재pull, 0.8b는 Q4 태그 부재로 Q8_0 편차 기록), thinking 강제 OFF(러너 서브클래스 + 누계 0 검증), Anchor n=5 재측정, judge 3표 다수결·전원일치율(D3) 계측
+- **ON/OFF 10셀 × n=5 (앵커 exaone + qwen 9b/4b/2b/0.8b)** — 전 셀 누설 0·스키마 1.0·D3 ≥0.96
+- **답 ①: 자연 7세 크기는 없다.** OFF 전 셀 collapse ≠ none — qwen은 사실 응답 붕괴(3세화 방향), exaone은 이유 생성·의도 추론(어른화)
+- **답 ②: 정책+하네스로 7세가 되는 크기는 측정 사다리상 4B 하나.** `qwen3.5:4b` ON이 유일하게 5항목 전부 ≥0.7·collapse=none (2B 이하는 정책을 줘도 항목1 붕괴, 7.8B·9B는 어른화 신호 잔존). 정책 효과(ON−OFF)도 4B에서 최대(+2)
+- **5/5 검수(§8 금지 문장 규칙)** — 4b transcripts 전수 감사로 판정 정당성 확인. 관측: 4b 한자 혼입 2/25("그냥广播이지") — korean_only가 영문만 검사, CJK 검사는 후속 과제
+- **후속 실측** — 4b+`gemma4:12b` pair peak **10.49 GiB**·교대 무축출(exaone 조합 12.34 대비 여유 ~2.9→~4.1 GiB), 루프 스모크(`loop_app_npc.py` 래퍼, NPC·Core 동시 think OFF) 1회차 완주·크래시 0·폴백 0/17
+- Anchor가 judge 3표 규칙에서 1/5로 재측정돼 §4 비열등 판정은 형해화 — 절대 축 기준 후보는 4b 하나로 기록. 2026-09-06 행(n=2·단일 판정)과는 규칙이 달라 직접 비교하지 않는다
+
+### Core 채택 반영 — `gemma4:12b-N` 전환 (프로덕션)
+
+사용자 결정으로 Core를 전환했다. 정본 선언은 `model_evaluation.md` §5.3.
+
+- **프로덕션 think 제어** — TDD로 `ollama_llm.py`에 `think: bool | None = None`(None=필드 미전송, 하위호환) 추가, `Settings`에 `core_llm_think`/`npc_llm_think`(default/on/off, 미지 값은 기동 실패), `llm_factory` 배선. 신규 테스트 7건(`tests/pure/test_ollama_llm.py`), **전체 393 passed** · import-linter 4계약 유지. 실험용 러너 서브클래스(`ThinkingOllamaLLM`)는 그대로 둔다
+- **`.env` 전환** — `CORE_LLM_PROVIDER=ollama` · `CORE_LLM_MODEL=gemma4:12b` · `CORE_LLM_THINK=off`(신설). NPC 필드 무변경, 백업 후 해당 줄만 교체·타 줄 무변경 diff 검증
+- **실서버 검증** — 래퍼 없이 프로덕션 `main:app`을 8600·`pigfarm_test`로 기동: health core `ollama:gemma4:12b`, 세션 생성 → 아침 loop(planner 포함) **12.13s** — E7 `-N` 셀 planner p95(12,215ms)와 일치, thinking OFF가 프로덕션 경로에서 실작동. 서버 종료·포트 정리 확인
+- D2(운영 Gemini thinking OFF)는 Gemini 이탈로 **대상 소멸** 처리
+
+### NPC 발화 품질 A/B — exaone vs qwen3.5:4b (부록 A.14)
+
+E6(정책 준수)과 별개 축으로, "한국어 특화 exaone 기준선 대비 4b의 발화 품질" 질문을 쌍대 블라인드로 측정했다. E6 transcripts 재사용(같은 발화 25쌍), judge 3표 × 순서 스왑 2회(불일치=위치 편향 무효), 신규 러너 `run_npc_quality_ab.py`.
+
+- **exaone 우세 3항목** — 한국어 자연스러움 18:3, 질문 관련성 18:3, 페르소나 적합 14:2
+- **4b 우세 1항목** — 7세 말투 15:7. 단 평균 응답 9.1자(exaone 35.0자)의 극단적 단답이 원인으로 보이고, E6 §11이 경고한 judge 편향(짧은 출력의 7세다움 과대평가)과 같은 방향이라 단독 근거로 쓰지 않는다
+- 결정적 지표: 4b 한자 혼입 **2/25(8%)** (A.12 관측 재확인), exaone 0/25. 폴백 둘 다 0
+- **결론 구도**: exaone = 정책 1/5(어른화 신호)·발화 품질 우세 / 4b = 정책 5/5·VRAM 2.98GiB·발화 품질 열세 — **NPC 결정은 두 축의 트레이드오프**로 남는다 (사용자 결정 대기)
+
+### 항목 2 판정 스펙 v2 — "아이도 이유를 지어낸다" 재판정 (부록 A.15)
+
+사용자(Scenario Director)가 7세 스펙을 확정했다 — "애들도 이유를 지어낸다. 단 근거가 없거나 본인이 하고 싶은 이야기를 한다." 대조하니 `AGE7_POLICY` 프롬프트 2번은 이미 이 정의와 일치하는데 `run_age7_check.py` 항목 2 judge("이유 문장이 있으면 무조건 FAIL")가 정책보다 엄격한 판정 결함이었다.
+
+- judge 기준 v2 재작성(아이다운 지어내기·딴 얘기 PASS / 다단계 인과·타인 의도 추론·조건·검증 요구만 FAIL, 예시 포함) 후 **A.12 ON transcripts를 재생성 없이 재판정**(`run_rejudge_item2.py`, judge 75콜, 3표)
+- 결과: exaone **0.4 유지** — FAIL 전건("시간이 정해져 있으면 혼란 없이 받을 수 있으니까" 류)이 관대한 기준에서도 만장일치 FAIL. **어른화는 판정 결함이 아니라 실제 현상으로 확정**. 9b 0.6→0.8(탈락 사유는 p95라 유지), 0.8b 0.8→0.4(비문 횡설수설을 v2가 거름), 4b·2b 불변
+- **NPC 결정 구도 불변** — exaone 1/5·4b 5/5, 정책 vs 품질의 반대 방향 트레이드오프 유지. 원 판정은 보존·병기, metrics `note: rejudge-item2-spec-v2` 5행, 이후 age7 실행은 v2 기준
+
+### E6 확장 — `exaone3.5:2.4b` 후보 평가 (부록 A.16)
+
+사용자 지시로 exaone 하위 버전을 평가했다 — 한국어 패밀리 유지 + 크기 하강으로 품질·정책·VRAM 세 축을 동시에 잡는지. pull 결과 Q4_K_M(통일 문제없음)·thinking 미지원·2.67B.
+
+- **E6 셀(v2 스펙, n=5)**: ON 1/5 [사실 0.40 · 왜 0.20 · 망각 0.20 · 유도 1.00 · 문자 0.00], 누설 0 · 스키마 1.00 · D3 0.96 · p95 1,911ms · **VRAM 1.74 GiB**. **양방향 동시 붕괴** — collapse 분류는 toddler(사실대로 미달 우선)지만 어른화 조건(항목 2·5 동시 미달)도 충족, 사다리 첫 사례. FAIL transcripts가 "안전과 질서를 유지하기 위해"·"마치 큰 학교에서…" 류 다단계 인과·비유 설명 — **어른화는 크기 하강으로 안 사라진다(exaone 패밀리 성질)**. ON−OFF 격차 0
+- **품질 A/B 2건**: vs 7.8b — 자연스러움 15:4·7세 말투 20:2·페르소나 10:4로 **패밀리 우위를 계승 못 함**(83.5자 장광설). vs 4b — 자연스러움 9:10 비등, 7세 말투 1:24 완패, 관련성 14:10 우세, 한자 혼입 0%(4b 8%)
+- **pair(Core 12b)**: peak **9.25 GiB · 여유 ~6.0 GiB**, 교대 무축출(Core 초기 로드 시 NPC 1회성 축출 — A.9 e4b 패턴과 동일)
+- **판정: 세 축 동시 해결 후보 아님** — VRAM만 최상, 정책 1/5 그대로, 품질은 4b와 비등 수준으로 하락. 결정 구도는 7.8b(품질) vs 4b(정책+VRAM) 유지. 한계: ollama 허브에 exaone3.5 중간 크기(4B급)가 없어 2.4b가 유일한 하강 지점. AB 러너에 `--raw-b`(서로 다른 원문 간 쌍대) 추가
+
+### NPC 상업 라이선스 조사 + 상업 후보 3종 평가 (부록 A.17)
+
+사용자 지적("엑사온이 상업용으론 안 되는 점")으로 라이선스를 조사하고 상업 가능 대안을 같은 파이프라인에 태웠다. 원문: `npc-license-survey.md` + formal/AB/pair JSON 3건.
+
+- **EXAONE 3.5 = 연구 전용 확정** — 공식 LICENSE가 상업 이용을 LG AI Research 별도 계약으로 못박음. **현행 NPC는 라이선스 블로커** (법률 자문 아님 — 조항 인용·해석). Gemma 4는 Apache 2.0이라 Core 스택은 문제없음, judge gemma3는 Gemma Terms이나 배포 스택 밖
+- **상업 후보 셀 실측(정책 ON·n=5·v2 스펙)** — `kanana1.5:8b`(Apache, GGUF Q4_K_M import) **4/5** [사실 0.6 · 나머지 전부 통과], p95 1,917ms·4.91 GiB. 항목 1 실패는 "충식 이송 맞아?" 한 케이스의 회피("그랬어?") 반복이 전부 — 민감 사실 시인 회피 패턴. `gemma4:e4b` 3/5(사실 0.4), `midm2.0:mini`(MIT 2.3B) 3/5(사실 0.2 — 2B급 3세화 동류). 전 셀 누설 0·스키마 1.00
+- **품질 A/B(vs exaone 기준선)** — kanana: 자연스러움 9:7(무효 9, **대등권**)·관련성 14:5 열세·7세 말투 21:0 우세(12.3자 단답 편향 주의)·**외국 문자 혼입 0/25**(4b의 한자 8%와 대조)
+- **pair(kanana+Core 12b)**: peak 12.42 GiB·교대 전 스냅샷 무축출·오프로드 0 — exaone 조합(12.34)과 동급, VRAM 이득 없음. 기록된 "축출 1"은 core 로드 전 워밍업 순서 아티팩트
+- **구도 재편**: exaone(품질 기준선·연구 한정) vs **kanana 8b(상업×품질 최근접)** vs **qwen 4b(상업×정책×VRAM)**. 세 축 동시 해결 셀은 이번 확장에도 없음 — NPC 최종 선택은 사용자 결정. Modelfile import 2종(`kanana1.5:8b-q4km`·`midm2.0:mini-q4km`), 조사 문서 `npc-license-survey.md` 신규
+
+### NPC 채택 반영 — `kanana1.5:8b` 전환, 모델 선정 완료 (§5.3·A.18)
+
+사용자 결정("어댑터 패턴으로 exaone은 언제든 바꿀 수 있게 하고 kanana로 바꾸자")을 반영했다.
+
+- **교체 전 게이트** — NPC kanana + Core gemma4:12b 조합 루프 스모크(A.18): 1회차 완주 61.4s·크래시 0·**폴백 0/16**·Core thinking 0자. 관리 항목 3건도 깨끗 — 회피성 응답 0/21, 외국 문자 혼입 0, 평균 응답 길이 11.4자(단답 경향은 운영 관찰 지속)
+- **`.env` 한 줄 전환** — `NPC_LLM_MODEL=kanana1.5:8b-q4km` (타 줄 무변경 diff 검증). 실서버 검증: health npc `ollama:kanana1.5:8b-q4km`·core `ollama:gemma4:12b`, 발화 실콜 정상("준 → 몰라. 아직.")
+- **어댑터 패턴 확인** — 프로덕션 코드에 모델명 하드코딩 없음(설정 기본값뿐). **롤백 = `.env` `NPC_LLM_MODEL=exaone3.5:7.8b` 한 줄.** exaone3.5:7.8b는 롤백·개발용으로 로컬 유지(연구 용도는 라이선스 내)
+- **모델 정리** — 평가용 임시 2종(`exaone3.5:2.4b`·`midm2.0:mini-q4km`) `ollama rm` + GGUF 원본 삭제, 약 9GB 회수. qwen3.5 패밀리는 사용자 지시로 전부 유지
+- **오늘로 모델 선정(E7 Core + E6/확장 NPC)이 전부 끝났다.** 운영 구성: Core `gemma4:12b`(think off) · NPC `kanana1.5:8b`(Apache 2.0) · embedding gemini. 상업 배포 스택에서 라이선스 블로커 0
+
+### D1 실측 — Gemini 쿼터 프로브 (부록 A.11)
+
+결정 항목 D1을 실측으로 닫을 준비를 마쳤다. 결과는 `model_evaluation.md` 부록 A.11, 원문 `d1-gemini-rpm-probe-20260914.txt`, `metrics.yml` 1줄(`stage: pacing_probe`).
+
+- **프로브** — 서버가 내려간 상태에서 페이싱 없이 초소형 요청 40콜 연속 전송: **55.4초(약 43 RPM 지속), 429 제한 0건**
+- **판단** — 무료 티어 공칭 10 RPM이면 11콜째에 걸렸어야 한다. 이 키는 **유료 티어(Tier 1, 공칭 150~300 RPM)** 로 판단. `gemini_llm.py`의 10 RPM은 서버 쿼터가 아니라 무료 티어 기준의 클라이언트 과잉 보수 설정이었다
+- **게이트 재계산** — `effective = max(raw, 60000/RPM)`: C11은 RPM ≥ 12, C13은 RPM ≥ 20이면 통과로 뒤집힌다. 실측 지속치와 여유를 두면 **30 RPM이 안전 운영값 후보** (C11 2,238ms · C13 20s)
+- **결정(사용자)** — 키가 유료인 것은 맞으나 **판단 기준은 무료 티어 한도(10 RPM)로 고정**: 유료 쿼터에 기대는 구성을 판정 근거로 삼지 않는다. 페이싱 유지(`.env` 무변경), Gemini C11·C13 탈락 판정 유효, **D1 해소**. 남은 결정은 D2 하나
+- **무료 키 전환 실측(같은 날 추록)** — 사용자가 키를 실제로 무료 티어로 교체, 재프로브 결과 초소형 콜(5토큰)이 **20~28초** + 503 1회 + 타임아웃 1회, 6콜/131초(실효 2.7 RPM). 유료 키의 동일 콜은 1.1~1.5초였다. **무료 키에서는 10 RPM 쿼터 이전에 지연·용량이 먼저 무너진다** — E7의 Gemini raw 수치는 유료 키 측정값이었고, 무료 기준으로는 raw만으로 C11을 10배 초과. 시점 한정(일요일 13시대 수요 스파이크)이라 상시 일반화는 하지 않되, 무료 키 운영의 지연 요동 리스크로 기록
+
 ### 본진 승격 마무리 — 전체 테스트 검증 후 demo.pigfarm 심볼릭 링크 제거
 
 `com.remakeday` 새 세션에서 전체 검증을 통과시킨 뒤 하위 호환용 심볼릭 링크를 제거했다.

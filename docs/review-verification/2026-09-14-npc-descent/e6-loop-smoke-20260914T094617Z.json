@@ -1,0 +1,74 @@
+{
+  "npc": "qwen3.5:4b",
+  "core": "gemma4:12b",
+  "persona": "성실",
+  "loops": 1,
+  "db": "pigfarm_test",
+  "health_models": {
+    "npc": "ollama:qwen3.5:4b",
+    "core": "ollama:gemma4:12b",
+    "embedding": "gemini"
+  },
+  "attempt_id": "81fdab85-cc4e-4a94-bc51-7b750ecce926",
+  "scores": [
+    0.0
+  ],
+  "completed": true,
+  "debug": {
+    "core_model": "gemma4:12b",
+    "core_calls": 14,
+    "core_thinking_chars": 0,
+    "npc_model": "qwen3.5:4b",
+    "npc_think_forced_off": true,
+    "npc_calls": 4,
+    "npc_thinking_chars": 0
+  },
+  "harness": {
+    "model_calls": 17,
+    "model_attempts": 18,
+    "fallbacks": 0,
+    "per_role": {
+      "advisor_answer": {
+        "calls": 1,
+        "fallbacks": 0,
+        "attempts": 1
+      },
+      "agent": {
+        "calls": 3,
+        "fallbacks": 0,
+        "attempts": 4
+      },
+      "evaluator_verdict": {
+        "calls": 10,
+        "fallbacks": 0,
+        "attempts": 10
+      },
+      "manager_check": {
+        "calls": 2,
+        "fallbacks": 0,
+        "attempts": 2
+      },
+      "planner": {
+        "calls": 1,
+        "fallbacks": 0,
+        "attempts": 1
+      }
+    }
+  },
+  "pair_ps": [
+    {
+      "model": "gemma4:12b",
+      "size_vram_gib": 7.51,
+      "size_gib": 7.51
+    },
+    {
+      "model": "qwen3.5:4b",
+      "size_vram_gib": 2.98,
+      "size_gib": 2.98
+    }
+  ],
+  "crash": false,
+  "secs": 244.0,
+  "server_alive_at_end": true,
+  "gate_pass": true
+}

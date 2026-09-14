@@ -5,7 +5,7 @@
 
 ## 한 줄 상황
 
-**E7 Stage 0~3 완료. evaluator 통제를 실플레이로 교체하자 우열이 역전됐고(A.8), 동시성은 두 후보 모두 통과(A.9). 남은 것은 Stage 4(루프 완주)와 결정 항목 D1~D3 — 모델 교체는 아직 결정하지 않았다.**
+**모델 선정 전부 완료(2026-09-14) — 운영 구성: Core `ollama:gemma4:12b`(think off) · NPC `ollama:kanana1.5:8b-q4km`(Apache 2.0) · embedding gemini.** Core는 §5.3 채택 선언(테스트 393 passed·실서버 검증), NPC는 라이선스 조사(A.17 — EXAONE 3.5 연구 전용 확정)와 상업 후보 실측을 거쳐 kanana로 교체(교체 전 루프 스모크 A.18 통과: 완주·폴백 0/16·회피 0/21·혼입 0). **어댑터 패턴 보장 — 롤백은 `.env` `NPC_LLM_MODEL=exaone3.5:7.8b` 한 줄**(exaone 7.8b는 롤백용 로컬 유지, 평가용 임시 모델·GGUF ~9GB 정리). 운영 관찰 항목: 사실 질문 회피·질문 관련성·단답 경향(스모크 11.4자). D2는 Gemini 이탈로 소멸. 남은 것: 오늘 변경분 커밋(사용자 지시 대기), `./start_demo.sh` 실기동, 테스터 플레이 재개.
 
 ---
 
@@ -31,27 +31,22 @@ gemma4:e4b-N  pair peak  7.89 GiB · GPU  9,520/16,311 MiB
 
 관측 1건: `e4b` 초기 로드 때 NPC 1회성 축출(다음 콜에서 1초 재로드 후 안정). A.9에 기록.
 
-### 3. Stage 4 — 루프 스모크 ← **다음 할 일. 여기부터.**
+### 3. Stage 4 — 루프 스모크 — ✅ **완료 (2026-09-14)**
 
-최종 후보로 게임 1회차를 완주시킨다. **이게 통과하기 전에는 "대체 가능"이라고 쓰지 않는다.** 프로브 통과가 실제 루프 통과와 같지 않다. `--stage loop` 미구현 — 구현부터.
+`--stage loop`를 구현해 실행했다. 결과는 **부록 A.10**, `metrics.yml` 2줄(`stage: loop`).
 
-착수 순서:
+- **방식 (a) 채택** — 기존 `run_selfplay.py`가 HTTP 방식임을 확인하고 재사용. `scripts/loop_app.py` 래퍼가 컴포지션 루트의 `get_core_llm`만 러너의 `ThinkingOllamaLLM(think=False)`로 교체 — **프로덕션 엔진 코드·`.env` 무변경**, `pigfarm_test` DB(테스터 판 무접촉), 포트 8600
+- **두 후보 모두 통과** — 1회차(낮 발화→비트→밤 제출→개입) 완주, 크래시 0, 폴백 0/17, thinking 0자(C9 검증). `12b` 61.1s / `e4b` 35.6s. `e4b`만 하네스 재시도 2회(재생성 해소, 폴백 아님)
+- 플레이어 모델은 상주 NPC(exaone) 재사용 — 제3 모델 로드 시 12b 셀에서 축출 나기 때문
+- 1차 실행은 계측 결함(5밤 게이트에 잠긴 인스펙터 조회)으로 `gate_pass=false` 오기록 — DB 직접 집계로 교체 후 재실행이 정본. 경위는 A.10
 
-1. **실행 방식 결정 (착수 시 첫 결정)** — 프로덕션 `.env`는 못 건드린다(Core는 Gemini). 두 가지 중 하나:
-   - **(a) 별도 환경으로 백엔드 기동**: `pigfarm_test` DB(2026-09-10 검증에서 쓴 그 DB) + 환경변수 오버라이드(`CORE_LLM_PROVIDER=ollama`, `CORE_LLM_MODEL=<후보>`)로 포트 따로 띄운다. 실제 API 경로를 그대로 타는 게 장점
-   - **(b) 러너가 엔진 직접 조립**: 서버 없이 인터랙터를 직접 호출. 기존 `selfplay` 러너(metrics.yml에 2026-09-06 이력, 당시 gemma3:12b로 1게임 완주)가 어느 방식인지 먼저 확인하고 재사용한다 — **새로 만들기 전에 이것부터 확인**
-2. **완주 주체** — 사람 없이 돌리려면 selfplay 페르소나를 붙인다. 판정 기준은 점수가 아니라 **크래시 0 · 폴백 폭주 없음 · 1회차(6비트+밤) 완주**다 (§4.1 차단 조건)
-3. **두 후보 각각 1회씩** — `gemma4:12b-N`, `gemma4:e4b-N`. NPC는 exaone 그대로(Stage 3에서 공존 확인됨)
-4. **테스터 판 DB에 흔적을 남기지 않는다** — 테스트 attempt는 별도 DB이거나, 같은 DB라면 생성한 attempt를 기록·구분한다 (2026-09-10 검증은 "기존 플레이 DB에 테스트 판을 만들지 않았다"를 지켰다)
-5. 결과는 부록 A.10 + `metrics.yml` (`stage: loop`)
-
-### 4. 결정이 필요한 항목
+### 4. 결정이 필요한 항목 ← **다음 할 일. 여기부터.**
 
 | # | 결정 | 배경 |
 |---|---|---|
-| D1 | **Gemini 페이싱 값** | 10 RPM 때문에 품질 1위 모델이 C11·C13에 탈락했다. 쿼터 제약이 실제로 얼마인지 확인하고 올릴 수 있는지 판단. 올릴 수 있으면 판정이 뒤집힌다 |
-| D2 | **현행 운영 Gemini를 thinking OFF로 바꿀지** | ON/OFF 품질이 동일한데 p50이 5.3배 차이다(9,138 → 1,720ms). `gemini_llm.py`에 `thinking_config(thinking_budget=0)` 한 줄. **품질 손실 없는 속도 개선** |
-| D3 | **`teamprofile.md`의 장민석·신채연 분담** | v2.0에 "확정 필요 — 제안"으로 표시돼 있다. 실제와 다르면 §2·§3만 교체 |
+| ~~D1~~ | ~~**Gemini 페이싱 값**~~ → **해소 (2026-09-14, A.11)** | 실측: 유료 키 40콜/55.4s(약 43 RPM) 429 0건. **사용자 결정: 판단 기준은 무료 티어(10 RPM)로 고정 + 실제로 키를 무료로 교체.** 무료 키 재프로브(A.11 추록): 초소형 콜 20~28s·503 발생·실효 2.7 RPM — **쿼터 이전에 지연이 먼저 무너진다. 무료 기준에서 Gemini raw는 C11을 10배 초과, 온라인 대안 성립 안 함.** 단 시점 한정 측정(수요 스파이크) |
+| ~~D2~~ | ~~**현행 운영 Gemini를 thinking OFF로 바꿀지**~~ → **대상 소멸 (2026-09-14)** | Core가 `gemma4:12b-N`(ollama)로 전환돼 운영에서 Gemini가 빠졌다. thinking 제어는 ollama 쪽에 프로덕션 반영됨(`CORE_LLM_THINK=off`). Gemini로 복귀할 일이 생기면 그때 재론 |
+| ~~D3~~ | ~~**`teamprofile.md`의 장민석·신채연 분담**~~ → **해소 (2026-09-14)** | v2.0 제안이 사용자가 준 원본(`Masterless_Company_Team_Roles_v1.1`)을 반영하지 않았던 것으로 확인. **v3.0으로 전면 개정** — Masterless와 동일 분담: 류준=TL·AI Agent(하네스), 민석=AI Evaluation(러너·모델 선정), 채연=Full-stack(엔진+게임 프론트·시연), 은상=QA·Release, 충식=Scenario Director. beyondbob `_data/team.yml`도 동기화 |
 
 ---
 
@@ -85,7 +80,7 @@ gemma4:e4b-N  pair peak  7.89 GiB · GPU  9,520/16,311 MiB
 
 `docs/model_evaluation.md` §2.3에 전부 있다. 어기면 새 실험이다.
 
-- **프로덕션 엔진 코드를 바꾸지 않는다.** thinking 제어는 러너 안 서브클래스(`ThinkingOllamaLLM`·`ThinkingGeminiLLM`)에만 있다. `ollama_llm.py`·`gemini_llm.py`는 오늘 한 줄도 안 바꿨다
+- **실험 중에는 프로덕션 엔진 코드를 바꾸지 않는다.** thinking 제어는 러너 안 서브클래스(`ThinkingOllamaLLM`·`ThinkingGeminiLLM`)로만 실험했다. ~~한 줄도 안 바꿨다~~ → **채택 확정 후(2026-09-14) 승인된 반영 1건**: `ollama_llm.py` think 인자 + `Settings`/`llm_factory` 배선 (§5.3 채택 선언 참조, 테스트 동반). `gemini_llm.py`는 무변경
 - **모델별 프롬프트 튜닝 금지.** "이 모델은 프롬프트를 조금 고치면 통과한다"는 발견은 기록만 하고 결과에 반영하지 않는다
 - **폴백을 성공으로 집계하지 않는다**
 - **단일 종합 점수를 만들지 않는다.** Pareto와 역할별 지표로 본다
@@ -117,6 +112,9 @@ nvidia-smi --query-gpu=memory.used,memory.total --format=csv,noheader
 
 # Stage 3 — concurrency · 후보 2 + NPC (셀당 1~2분)
 .venv/bin/python scripts/run_core_selection.py --stage concurrency --timeout 120
+
+# Stage 4 — loop · 후보 2 각 1회차 완주 (셀당 1분 내외, pigfarm_test DB·포트 8600 자동)
+.venv/bin/python scripts/run_core_selection.py --stage loop --timeout 120
 ```
 
 모델 5종은 이미 로컬에 있다. 양자화는 전부 Q4_K_M이다.
@@ -134,11 +132,12 @@ exaone3.5:7.8b 4.83 (2026-09-14 실측, 종전 표기 4.14)  ← NPC 슬롯. 건
 |---|---|
 | `docs/model_evaluation.md` | **모델 평가 정본.** E7 설계 + Stage 0~2 실측 (816줄) |
 | `docs/review-verification/2026-09-13-core-selection/` | 원문 JSON — stage0 / stage1 / stage2 |
-| `backend/scripts/run_core_selection.py` | E7 러너. `--stage protocol\|smoke\|formal\|concurrency` · `--roles` 필터. `loop`만 미구현 |
+| `backend/scripts/run_core_selection.py` | E7 러너. `--stage protocol\|smoke\|formal\|concurrency\|loop` · `--roles` 필터. 전 스테이지 구현 완료 |
+| `backend/scripts/loop_app.py` | Stage 4 전용 서버 래퍼 — 프로덕션 무수정 thinking 주입 + `/loop-debug` |
 | `backend/scripts/core_probes.py` | 코퍼스 + 4역할 프로브. 공개 관찰 11 · 질문 12 · 통제 10 · **eval 실플레이 통제 14** |
 | `docs/review-verification/2026-09-14-eval-cases/CONFIRMED-eval-cases.md` | eval 통제 14건의 사전 등록(기대 판정 고정) 확정본 |
 | `docs/review-verification/2026-09-09-connected-implementation/real-model-artifacts/` | 2026-09-09 원문. 코퍼스 출처 |
-| `docs/teamprofile.md` | 팀 역할 정본 v2.0 |
+| `docs/teamprofile.md` | 팀 역할 정본 v3.0 (Masterless v1.1 구조와 동일 분담) |
 | `docs/jekyll.md` | 작업 로그. 최신 날짜가 위 |
 
 ---
@@ -153,20 +152,22 @@ exaone3.5:7.8b 4.83 (2026-09-14 실측, 종전 표기 4.14)  ← NPC 슬롯. 건
 
 ---
 
-## E6 (Phase 2, NPC 슬롯) — 미착수
+## E6 (Phase 2, NPC 슬롯) — ✅ **Formal 완료 (2026-09-14, A.12·A.13)**
 
-E7이 끝난 뒤 진행한다. 상세는 `docs/model_evaluation.md` §8. 착수 전 해결할 것 4건:
+블로커 4건 전부 해소(§8.2), `scripts/run_model_descent.py` 구현, ON/OFF 10셀 × n=5 실행.
 
-1. **양자화 혼재** — `qwen3.5:0.8b`·`2b`는 Q8_0, `4b`·`9b`는 Q4_K_M. E6 §2.1은 통일을 요구한다
-2. **thinking 미제어** — Anchor인 `exaone3.5`는 thinking이 없어, 고치지 않으면 Anchor만 정상 조건인 비대칭 비교가 된다
-3. **Anchor가 n=2** — `metrics.yml`의 유일한 age7 줄이 `gate_pass: false`. 재측정 선행
-4. **judge 일치율 러너 부재** — E6 D3(≥90%)를 잴 러너가 없다
+- **자연 7세(정책 OFF) 크기는 없다** — 전 셀 collapse ≠ none. qwen은 전 크기 3세화 방향(사실 응답 0.2~0.6), exaone은 어른화(이유 생성·의도 추론)
+- **정책 ON에서 7세 구간은 `qwen3.5:4b` 하나** — 5항목 전부 ≥0.7·누설 0·스키마 1.0·D3 1.0·p95 2,290ms·2.98 GiB. 2B 이하는 정책을 줘도 3세화, 7.8B(Anchor)·9B는 어른화 신호 잔존. 정책 효과(ON−OFF)는 4B에서 최대(+2)
+- **후속 검증 통과** — 4b+`gemma4:12b` pair 10.49 GiB·교대 무축출(여유 ~4.1 GiB, exaone 조합 대비 +1.2), 루프 스모크(NPC 4b·Core 12b 동시 think OFF) 1회차 완주·폴백 0/17
+- 주의: Anchor가 이번 judge 규칙(3표 다수결)에서 1/5라 §4 비열등 판정은 형해화 — 절대 축(collapse) 기준으로 후보는 4b 하나. 4b **한자 혼입 2/25** 관측(korean_only가 영문만 검사 — CJK 검사 추가는 후속 과제)
+- **발화 품질 A/B (A.14, E6과 별개 축)** — exaone vs 4b 쌍대 블라인드(25쌍·3표·스왑 2회): exaone 우세 3항목(자연스러움 18:3·관련성 18:3·페르소나 14:2), 4b 우세는 7세 말투 15:7뿐(9.1자 단답 기인, judge 편향 방향이라 단독 근거 배제). **NPC 결정 = 정책 축(4b) vs 품질 축(exaone) 트레이드오프 — 사용자 결정 대기**
+- 남은 확장(선택): OFF 축 심화(Chart 9 완성), Screening Farm, `run_selfplay` 장기 루프, `korean_only`에 CJK 검사 추가(4b 채택 시 사실상 필수)
 
 ---
 
 ## 하지 말 것
 
-- 실행 중인 프로덕션 `.env`를 실험 때문에 바꾸지 말 것. 현재 Core는 `gemini:gemini-3-flash-preview`다
-- Stage 3·4 통과 전에 모델을 교체하지 말 것
+- 실행 중인 프로덕션 `.env`를 실험 때문에 바꾸지 말 것. ~~현재 Core는 `gemini:gemini-3-flash-preview`다~~ → **현재 Core는 `ollama:gemma4:12b`(think off)다 (2026-09-14 채택 반영, §5.3).** NPC는 `ollama:exaone3.5:7.8b` 유지
+- ~~Stage 3·4 통과 전에 모델을 교체하지 말 것~~ → Core는 Funnel 0~4 통과 후 사용자 결정으로 교체 완료. **NPC 교체는 아직 결정 전** — A.12(정책)·A.14(품질) 트레이드오프에서 사용자가 정한다
 - ~~`EVAL_CASES` 교체 전에 `evaluator_verdict` 역할의 우열을 결론짓지 말 것~~ → 교체·재측정 완료 (A.8)
 - 테스터 판 데이터·DB를 재채점하거나 리셋하지 말 것

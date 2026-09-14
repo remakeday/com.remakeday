@@ -1,0 +1,137 @@
+{
+  "experiment": "E7",
+  "stage": "loop",
+  "npc": "exaone3.5:7.8b",
+  "player_model": "exaone3.5:7.8b",
+  "persona": "성실",
+  "loops": 1,
+  "db": "pigfarm_test",
+  "port": 8600,
+  "started_at": "20260914T041032Z",
+  "host": "rtx5060ti-16g",
+  "runtime": "ollama-cuda",
+  "cells": [
+    {
+      "model": "gemma4:12b",
+      "think": "off",
+      "persona": "성실",
+      "loops": 1,
+      "health_core": "ollama:gemma4:12b",
+      "attempt_id": "d88a29e5-551c-45cb-aa52-ee20b6b78490",
+      "scores": [
+        16.0
+      ],
+      "completed": true,
+      "core_calls": 14,
+      "thinking_chars_total": 0,
+      "think_off_verified": true,
+      "fallbacks": 0,
+      "model_calls": 17,
+      "model_attempts": 17,
+      "per_role": {
+        "advisor_answer": {
+          "calls": 1,
+          "fallbacks": 0,
+          "attempts": 1
+        },
+        "agent": {
+          "calls": 3,
+          "fallbacks": 0,
+          "attempts": 3
+        },
+        "evaluator_verdict": {
+          "calls": 10,
+          "fallbacks": 0,
+          "attempts": 10
+        },
+        "manager_check": {
+          "calls": 2,
+          "fallbacks": 0,
+          "attempts": 2
+        },
+        "planner": {
+          "calls": 1,
+          "fallbacks": 0,
+          "attempts": 1
+        }
+      },
+      "pair_ps": [
+        {
+          "model": "gemma4:12b",
+          "size_vram_gib": 7.51,
+          "size_gib": 7.51
+        },
+        {
+          "model": "exaone3.5:7.8b",
+          "size_vram_gib": 4.83,
+          "size_gib": 4.83
+        }
+      ],
+      "crash": false,
+      "secs": 61.1,
+      "server_alive_at_end": true,
+      "gate_pass": true
+    },
+    {
+      "model": "gemma4:e4b",
+      "think": "off",
+      "persona": "성실",
+      "loops": 1,
+      "health_core": "ollama:gemma4:e4b",
+      "attempt_id": "8c350278-37ee-44a6-848d-185563c43a63",
+      "scores": [
+        8.8
+      ],
+      "completed": true,
+      "core_calls": 15,
+      "thinking_chars_total": 0,
+      "think_off_verified": true,
+      "fallbacks": 0,
+      "model_calls": 17,
+      "model_attempts": 19,
+      "per_role": {
+        "advisor_answer": {
+          "calls": 1,
+          "fallbacks": 0,
+          "attempts": 2
+        },
+        "agent": {
+          "calls": 3,
+          "fallbacks": 0,
+          "attempts": 4
+        },
+        "evaluator_verdict": {
+          "calls": 10,
+          "fallbacks": 0,
+          "attempts": 10
+        },
+        "manager_check": {
+          "calls": 2,
+          "fallbacks": 0,
+          "attempts": 2
+        },
+        "planner": {
+          "calls": 1,
+          "fallbacks": 0,
+          "attempts": 1
+        }
+      },
+      "pair_ps": [
+        {
+          "model": "gemma4:e4b",
+          "size_vram_gib": 3.06,
+          "size_gib": 3.06
+        },
+        {
+          "model": "exaone3.5:7.8b",
+          "size_vram_gib": 4.83,
+          "size_gib": 4.83
+        }
+      ],
+      "crash": false,
+      "secs": 35.6,
+      "server_alive_at_end": true,
+      "gate_pass": true
+    }
+  ]
+}

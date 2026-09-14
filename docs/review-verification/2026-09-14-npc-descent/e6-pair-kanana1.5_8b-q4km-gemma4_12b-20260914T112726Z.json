@@ -1,0 +1,149 @@
+{
+  "npc": "kanana1.5:8b-q4km",
+  "core": "gemma4:12b",
+  "rounds": 3,
+  "pair_peak_vram_gib": 12.42,
+  "gpu_peak_used_mib": 13402,
+  "gpu_total_mib": 16311,
+  "evictions": [
+    {
+      "tag": "npc_warm(4095ms)",
+      "missing": "gemma4:12b"
+    }
+  ],
+  "partial_offloads": [],
+  "snapshots": [
+    {
+      "tag": "npc_warm(4095ms)",
+      "ps": [
+        {
+          "model": "kanana1.5:8b-q4km",
+          "size_vram_gib": 4.91,
+          "size_gib": 4.91
+        }
+      ],
+      "gpu_used_mib": 5199,
+      "gpu_total_mib": 16311
+    },
+    {
+      "tag": "core_warm(4355ms)",
+      "ps": [
+        {
+          "model": "gemma4:12b",
+          "size_vram_gib": 7.51,
+          "size_gib": 7.51
+        },
+        {
+          "model": "kanana1.5:8b-q4km",
+          "size_vram_gib": 4.91,
+          "size_gib": 4.91
+        }
+      ],
+      "gpu_used_mib": 13402,
+      "gpu_total_mib": 16311
+    },
+    {
+      "tag": "r1_npc(406ms)",
+      "ps": [
+        {
+          "model": "kanana1.5:8b-q4km",
+          "size_vram_gib": 4.91,
+          "size_gib": 4.91
+        },
+        {
+          "model": "gemma4:12b",
+          "size_vram_gib": 7.51,
+          "size_gib": 7.51
+        }
+      ],
+      "gpu_used_mib": 13402,
+      "gpu_total_mib": 16311
+    },
+    {
+      "tag": "r1_core(871ms)",
+      "ps": [
+        {
+          "model": "gemma4:12b",
+          "size_vram_gib": 7.51,
+          "size_gib": 7.51
+        },
+        {
+          "model": "kanana1.5:8b-q4km",
+          "size_vram_gib": 4.91,
+          "size_gib": 4.91
+        }
+      ],
+      "gpu_used_mib": 13402,
+      "gpu_total_mib": 16311
+    },
+    {
+      "tag": "r2_npc(368ms)",
+      "ps": [
+        {
+          "model": "kanana1.5:8b-q4km",
+          "size_vram_gib": 4.91,
+          "size_gib": 4.91
+        },
+        {
+          "model": "gemma4:12b",
+          "size_vram_gib": 7.51,
+          "size_gib": 7.51
+        }
+      ],
+      "gpu_used_mib": 13402,
+      "gpu_total_mib": 16311
+    },
+    {
+      "tag": "r2_core(1036ms)",
+      "ps": [
+        {
+          "model": "gemma4:12b",
+          "size_vram_gib": 7.51,
+          "size_gib": 7.51
+        },
+        {
+          "model": "kanana1.5:8b-q4km",
+          "size_vram_gib": 4.91,
+          "size_gib": 4.91
+        }
+      ],
+      "gpu_used_mib": 13402,
+      "gpu_total_mib": 16311
+    },
+    {
+      "tag": "r3_npc(441ms)",
+      "ps": [
+        {
+          "model": "kanana1.5:8b-q4km",
+          "size_vram_gib": 4.91,
+          "size_gib": 4.91
+        },
+        {
+          "model": "gemma4:12b",
+          "size_vram_gib": 7.51,
+          "size_gib": 7.51
+        }
+      ],
+      "gpu_used_mib": 13402,
+      "gpu_total_mib": 16311
+    },
+    {
+      "tag": "r3_core(980ms)",
+      "ps": [
+        {
+          "model": "gemma4:12b",
+          "size_vram_gib": 7.51,
+          "size_gib": 7.51
+        },
+        {
+          "model": "kanana1.5:8b-q4km",
+          "size_vram_gib": 4.91,
+          "size_gib": 4.91
+        }
+      ],
+      "gpu_used_mib": 13402,
+      "gpu_total_mib": 16311
+    }
+  ],
+  "npc_thinking_chars_last": null
+}

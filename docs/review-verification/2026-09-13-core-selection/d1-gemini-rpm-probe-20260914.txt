@@ -1,0 +1,75 @@
+D1 프로브 — gemini-3-flash-preview 실제 RPM 쿼터 실측 (2026-09-14)
+
+방법: 페이싱 없이 초소형 요청(maxOutputTokens=5, thinkingBudget=0)을 순차 연속 전송.
+429 발생 지점과 본문의 쿼터 상세를 읽는 설계였으나, 40콜 전 구간에서 429가 발생하지 않았다.
+실행: scratchpad/gemini_rpm_probe.py (.venv/bin/python), 프로덕션 서버는 내려간 상태(간섭 없음).
+
+ 1 200 1.48s elapsed=1.5s
+ 2 200 1.37s elapsed=2.9s
+ 3 200 1.41s elapsed=4.3s
+ 4 200 1.09s elapsed=5.4s
+ 5 200 1.13s elapsed=6.5s
+ 6 200 1.33s elapsed=7.8s
+ 7 200 1.45s elapsed=9.3s
+ 8 200 1.33s elapsed=10.6s
+ 9 200 1.27s elapsed=11.9s
+10 200 1.15s elapsed=13.0s
+11 200 1.51s elapsed=14.5s
+12 200 1.40s elapsed=15.9s
+13 200 1.13s elapsed=17.0s
+14 200 1.38s elapsed=18.4s
+15 200 1.55s elapsed=20.0s
+16 200 1.40s elapsed=21.4s
+17 200 1.86s elapsed=23.2s
+18 200 1.55s elapsed=24.8s
+19 200 1.48s elapsed=26.3s
+20 200 1.19s elapsed=27.5s
+21 200 1.50s elapsed=29.0s
+22 200 1.15s elapsed=30.1s
+23 200 1.39s elapsed=31.5s
+24 200 1.35s elapsed=32.9s
+25 200 1.39s elapsed=34.3s
+26 200 1.30s elapsed=35.6s
+27 200 1.25s elapsed=36.8s
+28 200 1.12s elapsed=37.9s
+29 200 1.38s elapsed=39.3s
+30 200 1.32s elapsed=40.6s
+31 200 1.37s elapsed=42.0s
+32 200 1.41s elapsed=43.4s
+33 200 1.50s elapsed=44.9s
+34 200 1.42s elapsed=46.3s
+35 200 1.45s elapsed=47.8s
+36 200 2.51s elapsed=50.3s
+37 200 1.41s elapsed=51.7s
+38 200 1.15s elapsed=52.8s
+39 200 1.29s elapsed=54.1s
+40 200 1.22s elapsed=55.4s
+
+결과: 성공 40건 / 55.4s (실효 약 43.3 RPM 지속) · 429 0건
+
+교차 확인 (2026-09 웹 문서):
+- Gemini 3 Flash 무료 티어 = 10 RPM · 1,500 RPD
+- Tier 1(결제 계정 연결) = 공칭 150~300 RPM
+→ 무료 티어였다면 10 RPM 초과 즉시 429가 났어야 한다. 이 키는 유료 티어로 판단.
+  (정확한 티어·한도 수치는 사용자 계정의 AI Studio / Cloud Console에서만 확정 가능)
+
+--- 추록: 무료 키 전환 후 재프로브 (2026-09-14 13:4x KST) ---
+
+사용자가 키를 무료 티어로 교체한 뒤 같은 프로브(503·타임아웃 재시도 보강판)를 재실행.
+
+ 1 200 20.35s elapsed=20.4s
+ 2 200 23.66s elapsed=44.0s
+ 3 200 27.12s elapsed=71.1s
+ 4 200 25.36s elapsed=96.5s
+ 5 200  1.51s elapsed=98.0s
+    (재시도 1: 503)
+ 6 200 27.75s elapsed=131.1s
+ (직전 별도 1회는 첫 콜부터 503 UNAVAILABLE "high demand" + 30s ReadTimeout)
+
+결과: 성공 6건 / 131.1초 (실효 약 2.7 RPM) · 503 1회 · 429 미도달
+
+해석:
+- 유료 키(1시간 전 동일 프로브): 초소형 콜 1.1~1.5s, 40콜 무제한. 무료 키: 같은 콜이 20~28s + 503.
+  서비스 품질이 완전히 달라졌으므로 무료 티어 전환은 확인된 것으로 판단.
+- 429(10 RPM 쿼터)는 확인 불가 — 지연 자체가 2.7 RPM 수준이라 쿼터에 닿기 전에 막힌다.
+- 시점 한정 측정이다(일요일 13시대, "demand spike is usually temporary"). 시간대에 따라 달라질 수 있다.

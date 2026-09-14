@@ -1,0 +1,89 @@
+{
+  "npc": "kanana1.5:8b-q4km",
+  "core": "gemma4:12b",
+  "db": "pigfarm_test",
+  "health_models": {
+    "npc": "ollama:kanana1.5:8b-q4km",
+    "core": "ollama:gemma4:12b",
+    "embedding": "gemini"
+  },
+  "secs": 61.4,
+  "attempt_id": "36e7ee3c-b80d-40ca-9fb8-c61235d8e6d7",
+  "scores": [
+    8.8
+  ],
+  "completed": true,
+  "loop_debug": {
+    "core_model": "gemma4:12b",
+    "core_calls": 13,
+    "core_thinking_chars": 0,
+    "npc_model": "kanana1.5:8b-q4km",
+    "npc_think_forced_off": false
+  },
+  "server_alive_at_end": true,
+  "per_role": {
+    "advisor_answer": {
+      "calls": 1,
+      "fallbacks": 0,
+      "attempts": 1
+    },
+    "agent": {
+      "calls": 3,
+      "fallbacks": 0,
+      "attempts": 3
+    },
+    "evaluator_verdict": {
+      "calls": 10,
+      "fallbacks": 0,
+      "attempts": 10
+    },
+    "manager_check": {
+      "calls": 1,
+      "fallbacks": 0,
+      "attempts": 1
+    },
+    "planner": {
+      "calls": 1,
+      "fallbacks": 0,
+      "attempts": 1
+    }
+  },
+  "npc_replies": [
+    "이거 네 거잖아. 안 먹어?",
+    "배 안 고파. 너 먹어.",
+    "…이따 배고프면 말해.",
+    "몰라. 그냥.",
+    "몰라. 이상한 거 없는데.",
+    "몰라. 그냥.",
+    "민석아, 이 숫자 뭔지 알아?",
+    "몰라. 손목띠 빼면 안 돼.",
+    "안 빼. 그냥 궁금해서.",
+    "민석아, 뭘 적어?",
+    "너 또 안 먹잖아.",
+    "배 안 고프다니까. 그만 봐.",
+    "채연아, 뭐래?",
+    "몰라. 이제 자고 싶어.",
+    "…나도 무서운데.",
+    "민석아, 방송실엔 왜 갔어?",
+    "이상한 건 알리랬잖아.",
+    "내 얘기도 했어?",
+    "준아, 자?",
+    "아직. 왜?",
+    "그냥. 좀 더 깨어 있어."
+  ],
+  "fallbacks_total": 0,
+  "calls_total": 16,
+  "watch": {
+    "회피성_응답": {
+      "count": 0,
+      "of": 21,
+      "samples": []
+    },
+    "외국문자_혼입": {
+      "count": 0,
+      "samples": []
+    },
+    "평균_응답_길이": 11.4
+  },
+  "gate_pass": true
+}

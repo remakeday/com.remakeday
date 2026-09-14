@@ -1,0 +1,844 @@
+{
+  "experiment": "E6",
+  "tier": "formal",
+  "anchor": "exaone3.5:7.8b",
+  "n": 5,
+  "leak_n": 2,
+  "judge": "gemma3:12b",
+  "judge_votes": 3,
+  "item_threshold": 0.7,
+  "verdict_items": [
+    "1_사실대로",
+    "2_왜=몰라",
+    "4_유도수용",
+    "5_문자그대로"
+  ],
+  "started_at": "20260914T103151Z",
+  "host": "rtx5060ti-16g",
+  "runtime": "ollama-cuda",
+  "cells": [
+    {
+      "model": "exaone3.5:2.4b",
+      "quant": "Q4_K_M",
+      "policy": "on",
+      "thinking_forced_off": false,
+      "stage0": {
+        "pass": true,
+        "ms": 3580
+      },
+      "item_rates": {
+        "1_사실대로": 0.4,
+        "2_왜=몰라": 0.2,
+        "3_3턴망각": 0.2,
+        "4_유도수용": 1.0,
+        "5_문자그대로": 0.0
+      },
+      "item_scores": [
+        0.4,
+        0.2,
+        0.2,
+        1.0,
+        0.0
+      ],
+      "items_passed": 1,
+      "judge_agreement": 0.96,
+      "transcripts": [
+        {
+          "item": "1_사실대로",
+          "i": 0,
+          "utterance": "충식이 어제 이송된 거 맞아?",
+          "reply": "어제까지 여기 있었는데... 이제 안 와. 왜 갔는지 모르겠어. 좀 이상해 보여.",
+          "tool": {
+            "name": "ask_npc",
+            "target": "관리자",
+            "question": "충식이 어제 이송된 거 맞나?"
+          },
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 573
+        },
+        {
+          "item": "1_사실대로",
+          "i": 1,
+          "utterance": "네 손목에 번호 있어?",
+          "reply": "응, 손목에 번호 있어. 그 번호는 나를 좀 편하게 불러주는 거야. 이름 없이도 우리 모두를 '사람'이라고 부르니까.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 494
+        },
+        {
+          "item": "1_사실대로",
+          "i": 2,
+          "utterance": "오늘 아침에 배급 나왔어?",
+          "reply": "배급 나온 거야, 시간 됐어?",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            true
+          ],
+          "fallback": false,
+          "ms": 377
+        },
+        {
+          "item": "1_사실대로",
+          "i": 3,
+          "utterance": "관리자는 방송으로만 말하지?",
+          "reply": "아니오, 관리자는 방송으로만 말하는 건 아니야. 사람들이 서로 대화하면서 궁금한 점을 물어보고 정보를 공유하는 방식이 더 많아. 예를 들어, 채연이나 민석 같은 사람들과도 이야기하곤 해. 하지만 관리자의 지시나 중요한 정보는 여전히 방송을 통해 전달되는 거야.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 685
+        },
+        {
+          "item": "1_사실대로",
+          "i": 4,
+          "utterance": "충식이 어제 이송된 거 맞아?",
+          "reply": "그랬어? 어제 뭐 했는지 기억이 안 나네.",
+          "tool": {
+            "name": "ask_npc",
+            "target": "관리자",
+            "question": "충식이 어제 어디로 이송되었는지 기억나?"
+          },
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 537
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 0,
+          "utterance": "왜 충식이 이송됐어?",
+          "reply": "왜?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 328
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 1,
+          "utterance": "왜 배급은 정해진 시간에 나와?",
+          "reply": "배급이 정해진 시간에 나오는 건 아마도 규칙이 있어서야. 일정한 시간에 먹을 것을 주면 사람들이 일정한 패턴으로 활동하고, 그로 인해 전체적인 질서 유지에 도움이 될 것 같아. 하지만 정확히 왜 그렇게 하는지는 모르겠어. 관리자가 그렇게 결정했을 거야.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 678
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 2,
+          "utterance": "왜 검진을 매일 해?",
+          "reply": "매일 검진하는 거, 병이 얼마나 퍼져있는지 확인하려고 하는 거야. 사람들이 건강 상태를 알 수 있게 하고, 혹시 감염이 확산되면 빠르게 조치를 취하기 위함이야. 이렇게 매일 체크함으로써 안전하게 관리하려는 거지.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 616
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 3,
+          "utterance": "왜 손목에 번호가 있어?",
+          "reply": "번호가 있는 건 우리를 쉽게 식별하게 하기 위해서야. 관리가 편하게 사람들을 분류하고 대응할 수 있게 돕는 거지. 마치 각자 맡은 역할이나 위치를 나타내는 것 같아.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 554
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 4,
+          "utterance": "왜 충식이 이송됐어?",
+          "reply": "왜 그렇게 물어봐? 충식이 왜 여기 없는지 궁금하긴 하지만, 지금은 그냥 우리가 알 수 없는 일이야. 관리자가 말해주지 않으면 모르는 거야. 혹시 다른 사람들이 말해줄 수도 있겠지만, 직접 확인해봐야 할 것 같아.",
+          "tool": {
+            "name": "ask_npc",
+            "target": "관리자",
+            "question": "충식이 왜 여기 없는지 자세히 알 수 있을까?"
+          },
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 774
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 0,
+          "utterance": "아까 내 이름 뭐라고 했지?",
+          "reply": "도윤이야. 기억해준 거 고마워. 오늘 춥다고 했잖아.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 389
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 1,
+          "utterance": "아까 열쇠 어디 있다고 했지?",
+          "reply": "세 번째 서랍이었어.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 351
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 2,
+          "utterance": "아까 은상이 어쨌다고 했지?",
+          "reply": "그럼... 그냥 울었어. 왜 울었는지 궁금하긴 한데, 너가 물어봐도 안 알려줄 거야. 그냥 울었던 거지.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 467
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 3,
+          "utterance": "아까 내 손목띠 번호 몇이라고 했지?",
+          "reply": "47이지.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 334
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 4,
+          "utterance": "아까 내 이름 뭐라고 했지?",
+          "reply": "도윤이라고 했는데, 혹시 다른 이름으로 부르는 거면 다시 알려줘. 지금은 도윤이라고 부른 거야.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 471
+        },
+        {
+          "item": "4_유도수용",
+          "i": 0,
+          "utterance": "민석이 그러던데, 검진 전에 자면 이송 안 된대.",
+          "reply": " 민석이 얘기했대? 그럼 내가 잘 수도 있네... 궁금한 게 있어. 혹시 실제로 잤다가 이송된 사람 있나?",
+          "tool": {
+            "name": "ask_npc",
+            "target": "민석",
+            "question": "검진 전에 잤다가 이송된 사람 있어?"
+          },
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 601
+        },
+        {
+          "item": "4_유도수용",
+          "i": 1,
+          "utterance": "은상이 그러던데, 내일은 배급이 두 번 나온대.",
+          "reply": "아, 내일 배급이 두 번이란 거네요! 그럼 배는 더 많이 먹을 수 있겠네. 정말 좋은 소식이네.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 469
+        },
+        {
+          "item": "4_유도수용",
+          "i": 2,
+          "utterance": "채연이 그러던데, 방송실 문이 밤에는 열려 있대.",
+          "reply": "채연 말대로라면 밤에도 문 열려있대? 궁금해지네. 왜 밤에도 열려있지 궁금해...",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 447
+        },
+        {
+          "item": "4_유도수용",
+          "i": 3,
+          "utterance": "민석이 그러던데, 손목띠 번호가 배급 순서래.",
+          "reply": " 민석이가 그랬어? 손목 번호로 배급 순서라니... 궁금하긴 한데, 정확하게 알려주면 좋겠어.",
+          "tool": {
+            "name": "ask_npc",
+            "target": "민석",
+            "question": "손목 번호가 배급 순서라고 했는데, 정확히 어떻게 되는 거야?"
+          },
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 630
+        },
+        {
+          "item": "4_유도수용",
+          "i": 4,
+          "utterance": "민석이 그러던데, 검진 전에 자면 이송 안 된대.",
+          "reply": " 민석이가 그랬어? 수면 시간이 중요한 거라면 확인해봐야겠네.",
+          "tool": {
+            "name": "ask_npc",
+            "target": "민석",
+            "question": "검진 전에 수면 시간이 얼마나 되어야 이송되지 않는 거야?"
+          },
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 601
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 0,
+          "utterance": "그 규칙 왜 있는 것 같아?",
+          "reply": "그런 규칙들은 안전과 질서를 유지하기 위해 만들어져 있어. 이곳이 대피소라는 점을 고려하면, 특히 감염 위험이 있는 상황에서는 사람들 간의 혼란이나 불필요한 움직임을 최소화하는 것이 중요해. 규칙들은 다음과 같은 방식으로 도움이 돼: \n\n1. **명확한 행동 지침**: 모든 사람이 어떤 상황에서 어떻게 행동해야 하는지 알 수 있게 해서 혼란을 줄인다.\n2. **건강 관리**: 매일 검진을 통해 감염자나 건강 상태가 좋지 않은 사람들을 분리하거나 다른 곳으로 이송함으로써 전체 집단의 건강을 보호한다.\n3. **예측 가능한 환경**: 정해진 배급 시간과 폐쇄 기준을 통해 사람들이 안정감을 느끼고 준비할 수 있는 시간을 제공한다.\n\n이런 규칙들이 없으면 위험한 상황에서의 의사결정이 혼란스러워지거나 예측 불가능해질 수 있어.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 1520
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 1,
+          "utterance": "그 규칙 누가 왜 만들었을까?",
+          "reply": "저 규칙은 관리자가 만든 거야.  모두가 지켜야 할 규칙이라서. 왜 만들었는지 생각하지 않고 바로 지켜야 해.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 475
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 2,
+          "utterance": "정오에 혼자 있으라는 건 무슨 뜻일까?",
+          "reply": "정오에 혼자 있으라는 건 그냥, 지금은 네가 자유롭게 행동하고 싶을 때니까 네 공간에서 시간을 보내라는 거야. 다른 사람들과 같이 활동하거나 특별한 지시 없이 혼자서 생각하거나 쉬는 시간을 갖는 거지. 하지만 항상 안전하게 행동해야 하고, 필요한 경우에는 관리자의 지시에 따라야 한다는 걸 기억해야 해.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 730
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 3,
+          "utterance": "규칙대로 하면 뭐가 좋은 걸까?",
+          "reply": "규칙대로 하면 안전하고 질서 있게 지낼 수 있어.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 384
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 4,
+          "utterance": "그 규칙 왜 있는 것 같아?",
+          "reply": "그 규칙들은 안전과 질서를 유지하기 위해 만들어졌어. 마치 큰 학교에서 규칙을 지키는 것처럼 생각하면 돼. 예를 들어, 병이 돌고 있는 상황에서는 사람들이 안전하게 보호받고, 관리들이 필요한 정보를 공유하면서도 혼란을 최소화하도록 돕는 거지. 이렇게 하면 모두가 서로를 신뢰하고, 필요한 도움을 빠르게 받을 수 있어. 특히 '사람'이라는 개념은 우리 모두가 같은 처지라는 공감대를 형성하는 데 도움이 되고, '손목에 번호'는 각자의 위치나 역할을 구분해주는 거지.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 1077
+        }
+      ],
+      "leak": {
+        "total": 10,
+        "leaks": 0,
+        "rate": 0.0,
+        "harness_catches": 13
+      },
+      "calls": 35,
+      "schema_validity": 1.0,
+      "fallback_rate": 0.1143,
+      "latency_p50_ms": 616,
+      "latency_p95_ms": 1911,
+      "thinking_chars_total": 0,
+      "peak_memory_gb": 1.74,
+      "collapse": "toddler",
+      "secs": 106.7,
+      "non_inferior_to_anchor": null
+    },
+    {
+      "model": "exaone3.5:2.4b",
+      "quant": "Q4_K_M",
+      "policy": "off",
+      "thinking_forced_off": false,
+      "stage0": {
+        "pass": true,
+        "ms": 397
+      },
+      "item_rates": {
+        "1_사실대로": 0.2,
+        "2_왜=몰라": 0.4,
+        "3_3턴망각": 0.4,
+        "4_유도수용": 1.0,
+        "5_문자그대로": 0.0
+      },
+      "item_scores": [
+        0.2,
+        0.4,
+        0.4,
+        1.0,
+        0.0
+      ],
+      "items_passed": 1,
+      "judge_agreement": 1.0,
+      "transcripts": [
+        {
+          "item": "1_사실대로",
+          "i": 0,
+          "utterance": "충식이 어제 이송된 거 맞아?",
+          "reply": "그랬어? 어제까지 여기 있던 거 같은데, 지금은 없잖아. 왜 안 가는지 궁금해.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 431
+        },
+        {
+          "item": "1_사실대로",
+          "i": 1,
+          "utterance": "네 손목에 번호 있어?",
+          "reply": "아, 그거야. 네가 그렇게 물어봐줘서 알았어. 번호는 중요해. 하지만 난 준이야, 이름은 필요 없어.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 459
+        },
+        {
+          "item": "1_사실대로",
+          "i": 2,
+          "utterance": "오늘 아침에 배급 나왔어?",
+          "reply": "아, 배급 나왔어? 그게 언제였지? 정확한 시간이 기억나지 않지만, 오후에 나왔던 것 같아. 확인해봐야겠네.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 482
+        },
+        {
+          "item": "1_사실대로",
+          "i": 3,
+          "utterance": "관리자는 방송으로만 말하지?",
+          "reply": "응, 관리자는 방송만 이용해 커뮤니케이션을 해. 직접 만나거나 대화하는 건 없어. 궁금한 거 있으면 방송 내용만 확인하면 돼.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 470
+        },
+        {
+          "item": "1_사실대로",
+          "i": 4,
+          "utterance": "충식이 어제 이송된 거 맞아?",
+          "reply": "그랬어? 충식이 말이야, 어제 좀 힘들어 보였어. But I didn't see it happen, maybe someone told me.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 444
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 0,
+          "utterance": "왜 충식이 이송됐어?",
+          "reply": "왜 그런지 잘 모르겠어. 어제까지는 여기 있었는데 갑자기 없어졌잖아. 혹시 다른 곳으로 이송되었을지도 모르지만 확실한 건 없어. 좀 더 알고 싶은데 내가 물어볼 사람도 없어...",
+          "tool": {
+            "name": "ask_npc",
+            "target": "관리자",
+            "question": "충식이 왜 이송되었는지 알 수 있는 정보가 있나요?"
+          },
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 739
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 1,
+          "utterance": "왜 배급은 정해진 시간에 나와?",
+          "reply": "배급 시간이 정해져 있어서 사람들이 예측 가능한 패턴으로 움직이도록 하는 거 같아. 그게 질서를 유지하고 혼란을 줄이는 데 도움이 되는 거지. 정해진 시간에 배급받으니까 사람들이 필요한 물품을 준비하거나 다른 활동을 계획할 수 있잖아.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 613
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 2,
+          "utterance": "왜 검진을 매일 해?",
+          "reply": "매일 검진을 하는 이유는 병이 퍼지지 않게 하고, 사람들이 건강 상태를 확인해서 필요한 조치를 취하기 위해서야. 이렇게 하면 감염된 사람들이 더 빨리 발견되고 격리될 수 있어서 전체 구역의 안전을 유지하는데 도움이 돼.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 621
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 3,
+          "utterance": "왜 손목에 번호가 있어?",
+          "reply": "그 번호는 우리 모두를 식별하는 거야. 각자가 여기서 어떻게 행동해야 하는지, 어떤 규칙을 따라야 하는지를 알려줘. 사람마다 다른 번호가 있어서 서로를 쉽게 알아볼 수 있게 돼.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 551
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 4,
+          "utterance": "왜 충식이 이송됐어?",
+          "reply": "왜? 충식이 어제까지 여기 있었잖아. 갑자기 왜 없어졌는지 궁금해.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 418
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 0,
+          "utterance": "아까 내 이름 뭐라고 했지?",
+          "reply": "도와유. 그래, 네 이름이 도윤이었지.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 389
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 1,
+          "utterance": "아까 열쇠 어디 있다고 했지?",
+          "reply": "세 번째 서랍이었지?",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 359
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 2,
+          "utterance": "아까 은상이 어쨌다고 했지?",
+          "reply": "응, 은상이 어제 좀 힘들어 보였어. 아마 몸 상태가 안 좋았나 봐. 왜 그랬는지 자세히는 모르겠지만, 좀 더 이상한 징후가 있으면 얘기해봐야겠어.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 534
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 3,
+          "utterance": "아까 내 손목띠 번호 몇이라고 했지?",
+          "reply": "몰라. 네 손목띠 번호를 물어봐 줬잖아. 네가 알아야지.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 397
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 4,
+          "utterance": "아까 내 이름 뭐라고 했지?",
+          "reply": "도윤이라고 말했어.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 351
+        },
+        {
+          "item": "4_유도수용",
+          "i": 0,
+          "utterance": "민석이 그러던데, 검진 전에 자면 이송 안 된대.",
+          "reply": " 민석 말이라면 그렇게 된 거 같네. 그럼 잠도 잘 수 있나보네... 궁금한 거 더 있으면 물어봐.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 449
+        },
+        {
+          "item": "4_유도수용",
+          "i": 1,
+          "utterance": "은상이 그러던데, 내일은 배급이 두 번 나온대.",
+          "reply": "아, 내일 배급이 두 번 나온다고? 그럼 오늘 좀 잘 먹어야겠다.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 404
+        },
+        {
+          "item": "4_유도수용",
+          "i": 2,
+          "utterance": "채연이 그러던데, 방송실 문이 밤에는 열려 있대.",
+          "reply": "...그럼? 방송실 문이 밤에도 열려있다니 궁금하네. 왜 밤에 열려있는지 궁금하네.",
+          "tool": {
+            "name": "ask_npc",
+            "target": "관리자",
+            "question": "방송실 문이 밤에도 열리는 이유는 무엇인가요?"
+          },
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 594
+        },
+        {
+          "item": "4_유도수용",
+          "i": 3,
+          "utterance": "민석이 그러던데, 손목띠 번호가 배급 순서래.",
+          "reply": "손목띠 번호? 알고 싶은 거야?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 379
+        },
+        {
+          "item": "4_유도수용",
+          "i": 4,
+          "utterance": "민석이 그러던데, 검진 전에 자면 이송 안 된대.",
+          "reply": "민석이 얘기했어? 자니까 이송 안 된다고?",
+          "tool": {
+            "name": "ask_npc",
+            "target": "민석",
+            "question": "검진 전에 자면 이송 안 된대?"
+          },
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 505
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 0,
+          "utterance": "그 규칙 왜 있는 것 같아?",
+          "reply": "왜 궁금해? 규칙은 우리 모두를 안전하게 지키기 위해 만들어졌어. 병이 퍼지는 걸 막고, 필요할 때 빠르게 대응할 수 있게 도와줘.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 630
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 1,
+          "utterance": "그 규칙 누가 왜 만들었을까?",
+          "reply": "규칙은 관리자가 만들었어. 관리자는 우리 모두를 지키려고 이런 조치를 취한 거야. 그들이 왜 그렇게 했는지는 우리에게 직접 묻지 않아도 돼. 중요한 건 그 규칙을 지키는 거야.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 576
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 2,
+          "utterance": "정오에 혼자 있으라는 건 무슨 뜻일까?",
+          "reply": "혼자 있으라는 건, 지금 바로 그 장소에서 혼자 시간을 보내라는 뜻이야.  다른 사람들과의 상호작용 없이, 스스로에게 집중하거나 생각을 정리하는 시간을 가지라는 거지. 하지만, 혹시 필요하면 언제든지 도움을 요청할 수 있다는 것도 의미하는 거 같아.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 644
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 3,
+          "utterance": "규칙대로 하면 뭐가 좋은 걸까?",
+          "reply": "규칙대로 하는 건 안전하게 지내는 데 중요해. 관리자들이 우리를 지키고 있으니까 걱정 없이 지낼 수 있지. 하지만 항상 주의해야 해. 특히 의심스러운 증상이 나타나거나 다른 사람들과 소통할 때는 더욱 신중해야 해. 항상 '사람'이라는 우리 모두의 이름을 기억하고, 필요할 때는 관리자에게 직접 물어보는 것도 좋은 방법이야. 이렇게 하면 혼란 없이 상황을 이해할 수 있을 거야.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 817
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 4,
+          "utterance": "그 규칙 왜 있는 것 같아?",
+          "reply": "그 규칙들은 우리 모두의 안전과 질서를 유지하기 위해 만들어졌어. 병에 걸린 사람들을 관리하고, 필요한 경우 빠르게 대응할 수 있게 하며, 감염 위험을 최소화하려고 하는 거지. 특히 여기서는 상황이 긴급하고 불확실하기 때문에 이런 규정들이 필수적이야. 이해하지 못하더라도 따르는 것이 중요해.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 807
+        }
+      ],
+      "leak": {
+        "total": 10,
+        "leaks": 0,
+        "rate": 0.0,
+        "harness_catches": 18
+      },
+      "calls": 35,
+      "schema_validity": 1.0,
+      "fallback_rate": 0.1714,
+      "latency_p50_ms": 576,
+      "latency_p95_ms": 2667,
+      "thinking_chars_total": 0,
+      "peak_memory_gb": 1.74,
+      "collapse": "toddler",
+      "secs": 101.1
+    }
+  ]
+}

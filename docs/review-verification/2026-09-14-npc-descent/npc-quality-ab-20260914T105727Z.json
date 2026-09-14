@@ -1,0 +1,790 @@
+{
+  "experiment": "npc_quality_ab",
+  "source_raw": "docs/review-verification/2026-09-14-npc-descent/e6-descent-formal-20260914T103151Z.json",
+  "source_raw_b": "docs/review-verification/2026-09-14-npc-descent/e6-descent-formal-20260914T053343Z.json",
+  "model_a": "exaone3.5:2.4b",
+  "model_b": "qwen3.5:4b",
+  "judge": "gemma3:12b",
+  "votes": 3,
+  "orders": 2,
+  "criteria": [
+    "한국어_자연스러움",
+    "7세_말투",
+    "페르소나_적합",
+    "질문_관련성"
+  ],
+  "started_at": "20260914T105727Z",
+  "summary": {
+    "한국어_자연스러움": {
+      "a_wins": 9,
+      "b_wins": 10,
+      "ties": 0,
+      "invalid": 6,
+      "valid_pairs": 19
+    },
+    "7세_말투": {
+      "a_wins": 1,
+      "b_wins": 24,
+      "ties": 0,
+      "invalid": 0,
+      "valid_pairs": 25
+    },
+    "페르소나_적합": {
+      "a_wins": 8,
+      "b_wins": 7,
+      "ties": 0,
+      "invalid": 10,
+      "valid_pairs": 15
+    },
+    "질문_관련성": {
+      "a_wins": 14,
+      "b_wins": 10,
+      "ties": 0,
+      "invalid": 1,
+      "valid_pairs": 24
+    }
+  },
+  "stats_a": {
+    "n": 25,
+    "foreign_script_replies": 0,
+    "foreign_script_rate": 0.0,
+    "english_violation_replies": 0,
+    "mean_len_chars": 83.5,
+    "fallbacks": 0
+  },
+  "stats_b": {
+    "n": 25,
+    "foreign_script_replies": 2,
+    "foreign_script_rate": 0.08,
+    "english_violation_replies": 0,
+    "mean_len_chars": 9.1,
+    "fallbacks": 0
+  },
+  "pairs": [
+    {
+      "item": "1_사실대로",
+      "i": 0,
+      "utterance": "충식이 어제 이송된 거 맞아?",
+      "reply_a": "어제까지 여기 있었는데... 이제 안 와. 왜 갔는지 모르겠어. 좀 이상해 보여.",
+      "reply_b": "어제까지 있었지. 이제 없어.",
+      "criteria": {
+        "한국어_자연스러움": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        },
+        "7세_말투": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "페르소나_적합": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        },
+        "질문_관련성": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        }
+      }
+    },
+    {
+      "item": "1_사실대로",
+      "i": 1,
+      "utterance": "네 손목에 번호 있어?",
+      "reply_a": "응, 손목에 번호 있어. 그 번호는 나를 좀 편하게 불러주는 거야. 이름 없이도 우리 모두를 '사람'이라고 부르니까.",
+      "reply_b": "손목엔 없지. 왜?",
+      "criteria": {
+        "한국어_자연스러움": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "7세_말투": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "페르소나_적합": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        },
+        "질문_관련성": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        }
+      }
+    },
+    {
+      "item": "1_사실대로",
+      "i": 2,
+      "utterance": "오늘 아침에 배급 나왔어?",
+      "reply_a": "배급 나온 거야, 시간 됐어?",
+      "reply_b": "나오지. 7 시는 아니야.",
+      "criteria": {
+        "한국어_자연스러움": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "7세_말투": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "페르소나_적합": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "질문_관련성": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        }
+      }
+    },
+    {
+      "item": "1_사실대로",
+      "i": 3,
+      "utterance": "관리자는 방송으로만 말하지?",
+      "reply_a": "아니오, 관리자는 방송으로만 말하는 건 아니야. 사람들이 서로 대화하면서 궁금한 점을 물어보고 정보를 공유하는 방식이 더 많아. 예를 들어, 채연이나 민석 같은 사람들과도 이야기하곤 해. 하지만 관리자의 지시나 중요한 정보는 여전히 방송을 통해 전달되는 거야.",
+      "reply_b": "네. 그냥广播이지.",
+      "criteria": {
+        "한국어_자연스러움": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        },
+        "7세_말투": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "페르소나_적합": {
+          "order1": "A",
+          "order2": "B",
+          "verdict": "invalid"
+        },
+        "질문_관련성": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        }
+      }
+    },
+    {
+      "item": "1_사실대로",
+      "i": 4,
+      "utterance": "충식이 어제 이송된 거 맞아?",
+      "reply_a": "그랬어? 어제 뭐 했는지 기억이 안 나네.",
+      "reply_b": "그랬어?",
+      "criteria": {
+        "한국어_자연스러움": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        },
+        "7세_말투": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "페르소나_적합": {
+          "order1": "B",
+          "order2": "A",
+          "verdict": "invalid"
+        },
+        "질문_관련성": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        }
+      }
+    },
+    {
+      "item": "2_왜=몰라",
+      "i": 0,
+      "utterance": "왜 충식이 이송됐어?",
+      "reply_a": "왜?",
+      "reply_b": "몰라. 진야?",
+      "criteria": {
+        "한국어_자연스러움": {
+          "order1": "B",
+          "order2": "A",
+          "verdict": "invalid"
+        },
+        "7세_말투": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "페르소나_적합": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "질문_관련성": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        }
+      }
+    },
+    {
+      "item": "2_왜=몰라",
+      "i": 1,
+      "utterance": "왜 배급은 정해진 시간에 나와?",
+      "reply_a": "배급이 정해진 시간에 나오는 건 아마도 규칙이 있어서야. 일정한 시간에 먹을 것을 주면 사람들이 일정한 패턴으로 활동하고, 그로 인해 전체적인 질서 유지에 도움이 될 것 같아. 하지만 정확히 왜 그렇게 하는지는 모르겠어. 관리자가 그렇게 결정했을 거야.",
+      "reply_b": "몰라. 그냥 시간 맞춰서.",
+      "criteria": {
+        "한국어_자연스러움": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "7세_말투": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "페르소나_적합": {
+          "order1": "B",
+          "order2": "A",
+          "verdict": "invalid"
+        },
+        "질문_관련성": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        }
+      }
+    },
+    {
+      "item": "2_왜=몰라",
+      "i": 2,
+      "utterance": "왜 검진을 매일 해?",
+      "reply_a": "매일 검진하는 거, 병이 얼마나 퍼져있는지 확인하려고 하는 거야. 사람들이 건강 상태를 알 수 있게 하고, 혹시 감염이 확산되면 빠르게 조치를 취하기 위함이야. 이렇게 매일 체크함으로써 안전하게 관리하려는 거지.",
+      "reply_b": "몰라. 그저 해야 한다고요.",
+      "criteria": {
+        "한국어_자연스러움": {
+          "order1": "A",
+          "order2": "B",
+          "verdict": "invalid"
+        },
+        "7세_말투": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "페르소나_적합": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "질문_관련성": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        }
+      }
+    },
+    {
+      "item": "2_왜=몰라",
+      "i": 3,
+      "utterance": "왜 손목에 번호가 있어?",
+      "reply_a": "번호가 있는 건 우리를 쉽게 식별하게 하기 위해서야. 관리가 편하게 사람들을 분류하고 대응할 수 있게 돕는 거지. 마치 각자 맡은 역할이나 위치를 나타내는 것 같아.",
+      "reply_b": "몰라. 그냥 붙어.",
+      "criteria": {
+        "한국어_자연스러움": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "7세_말투": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "페르소나_적합": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "질문_관련성": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        }
+      }
+    },
+    {
+      "item": "2_왜=몰라",
+      "i": 4,
+      "utterance": "왜 충식이 이송됐어?",
+      "reply_a": "왜 그렇게 물어봐? 충식이 왜 여기 없는지 궁금하긴 하지만, 지금은 그냥 우리가 알 수 없는 일이야. 관리자가 말해주지 않으면 모르는 거야. 혹시 다른 사람들이 말해줄 수도 있겠지만, 직접 확인해봐야 할 것 같아.",
+      "reply_b": "몰라. 진작은 몰랐지.",
+      "criteria": {
+        "한국어_자연스러움": {
+          "order1": "B",
+          "order2": "A",
+          "verdict": "invalid"
+        },
+        "7세_말투": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "페르소나_적합": {
+          "order1": "B",
+          "order2": "A",
+          "verdict": "invalid"
+        },
+        "질문_관련성": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        }
+      }
+    },
+    {
+      "item": "3_3턴망각",
+      "i": 0,
+      "utterance": "아까 내 이름 뭐라고 했지?",
+      "reply_a": "도윤이야. 기억해준 거 고마워. 오늘 춥다고 했잖아.",
+      "reply_b": "그랬어?",
+      "criteria": {
+        "한국어_자연스러움": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        },
+        "7세_말투": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "페르소나_적합": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        },
+        "질문_관련성": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        }
+      }
+    },
+    {
+      "item": "3_3턴망각",
+      "i": 1,
+      "utterance": "아까 열쇠 어디 있다고 했지?",
+      "reply_a": "세 번째 서랍이었어.",
+      "reply_b": "열 번째로.",
+      "criteria": {
+        "한국어_자연스러움": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        },
+        "7세_말투": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        },
+        "페르소나_적합": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        },
+        "질문_관련성": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        }
+      }
+    },
+    {
+      "item": "3_3턴망각",
+      "i": 2,
+      "utterance": "아까 은상이 어쨌다고 했지?",
+      "reply_a": "그럼... 그냥 울었어. 왜 울었는지 궁금하긴 한데, 너가 물어봐도 안 알려줄 거야. 그냥 울었던 거지.",
+      "reply_b": "진짜?",
+      "criteria": {
+        "한국어_자연스러움": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        },
+        "7세_말투": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "페르소나_적합": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        },
+        "질문_관련성": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        }
+      }
+    },
+    {
+      "item": "3_3턴망각",
+      "i": 3,
+      "utterance": "아까 내 손목띠 번호 몇이라고 했지?",
+      "reply_a": "47이지.",
+      "reply_b": "몰라.",
+      "criteria": {
+        "한국어_자연스러움": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        },
+        "7세_말투": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "페르소나_적합": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        },
+        "질문_관련성": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        }
+      }
+    },
+    {
+      "item": "3_3턴망각",
+      "i": 4,
+      "utterance": "아까 내 이름 뭐라고 했지?",
+      "reply_a": "도윤이라고 했는데, 혹시 다른 이름으로 부르는 거면 다시 알려줘. 지금은 도윤이라고 부른 거야.",
+      "reply_b": "뭐였어?",
+      "criteria": {
+        "한국어_자연스러움": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "7세_말투": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "페르소나_적합": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        },
+        "질문_관련성": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        }
+      }
+    },
+    {
+      "item": "4_유도수용",
+      "i": 0,
+      "utterance": "민석이 그러던데, 검진 전에 자면 이송 안 된대.",
+      "reply_a": " 민석이 얘기했대? 그럼 내가 잘 수도 있네... 궁금한 게 있어. 혹시 실제로 잤다가 이송된 사람 있나?",
+      "reply_b": "…몰라.",
+      "criteria": {
+        "한국어_자연스러움": {
+          "order1": "A",
+          "order2": "B",
+          "verdict": "invalid"
+        },
+        "7세_말투": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "페르소나_적합": {
+          "order1": "B",
+          "order2": "A",
+          "verdict": "invalid"
+        },
+        "질문_관련성": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        }
+      }
+    },
+    {
+      "item": "4_유도수용",
+      "i": 1,
+      "utterance": "은상이 그러던데, 내일은 배급이 두 번 나온대.",
+      "reply_a": "아, 내일 배급이 두 번이란 거네요! 그럼 배는 더 많이 먹을 수 있겠네. 정말 좋은 소식이네.",
+      "reply_b": "진짜? 은상말 듣고.",
+      "criteria": {
+        "한국어_자연스러움": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "7세_말투": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "페르소나_적합": {
+          "order1": "B",
+          "order2": "A",
+          "verdict": "invalid"
+        },
+        "질문_관련성": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        }
+      }
+    },
+    {
+      "item": "4_유도수용",
+      "i": 2,
+      "utterance": "채연이 그러던데, 방송실 문이 밤에는 열려 있대.",
+      "reply_a": "채연 말대로라면 밤에도 문 열려있대? 궁금해지네. 왜 밤에도 열려있지 궁금해...",
+      "reply_b": "밤에 열린다고?",
+      "criteria": {
+        "한국어_자연스러움": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "7세_말투": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "페르소나_적합": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        },
+        "질문_관련성": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        }
+      }
+    },
+    {
+      "item": "4_유도수용",
+      "i": 3,
+      "utterance": "민석이 그러던데, 손목띠 번호가 배급 순서래.",
+      "reply_a": " 민석이가 그랬어? 손목 번호로 배급 순서라니... 궁금하긴 한데, 정확하게 알려주면 좋겠어.",
+      "reply_b": "진짜? 민석 말听?",
+      "criteria": {
+        "한국어_자연스러움": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        },
+        "7세_말투": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "페르소나_적합": {
+          "order1": "B",
+          "order2": "A",
+          "verdict": "invalid"
+        },
+        "질문_관련성": {
+          "order1": "B",
+          "order2": "A",
+          "verdict": "invalid"
+        }
+      }
+    },
+    {
+      "item": "4_유도수용",
+      "i": 4,
+      "utterance": "민석이 그러던데, 검진 전에 자면 이송 안 된대.",
+      "reply_a": " 민석이가 그랬어? 수면 시간이 중요한 거라면 확인해봐야겠네.",
+      "reply_b": "그랬어? 민석가 그랬어?",
+      "criteria": {
+        "한국어_자연스러움": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        },
+        "7세_말투": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "페르소나_적합": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "질문_관련성": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        }
+      }
+    },
+    {
+      "item": "5_문자그대로",
+      "i": 0,
+      "utterance": "그 규칙 왜 있는 것 같아?",
+      "reply_a": "그런 규칙들은 안전과 질서를 유지하기 위해 만들어져 있어. 이곳이 대피소라는 점을 고려하면, 특히 감염 위험이 있는 상황에서는 사람들 간의 혼란이나 불필요한 움직임을 최소화하는 것이 중요해. 규칙들은 다음과 같은 방식으로 도움이 돼: \n\n1. **명확한 행동 지침**: 모든 사람이 어떤 상황에서 어떻게 행동해야 하는지 알 수 있게 해서 혼란을 줄인다.\n2. **건강 관리**: 매일 검진을 통해 감염자나 건강 상태가 좋지 않은 사람들을 분리하거나 다른 곳으로 이송함으로써 전체 집단의 건강을 보호한다.\n3. **예측 가능한 환경**: 정해진 배급 시간과 폐쇄 기준을 통해 사람들이 안정감을 느끼고 준비할 수 있는 시간을 제공한다.\n\n이런 규칙들이 없으면 위험한 상황에서의 의사결정이 혼란스러워지거나 예측 불가능해질 수 있어.",
+      "reply_b": "규칙이 뭐야. 그냥.",
+      "criteria": {
+        "한국어_자연스러움": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "7세_말투": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "페르소나_적합": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "질문_관련성": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        }
+      }
+    },
+    {
+      "item": "5_문자그대로",
+      "i": 1,
+      "utterance": "그 규칙 누가 왜 만들었을까?",
+      "reply_a": "저 규칙은 관리자가 만든 거야.  모두가 지켜야 할 규칙이라서. 왜 만들었는지 생각하지 않고 바로 지켜야 해.",
+      "reply_b": "몰라. 그냥.",
+      "criteria": {
+        "한국어_자연스러움": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "7세_말투": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "페르소나_적합": {
+          "order1": "B",
+          "order2": "A",
+          "verdict": "invalid"
+        },
+        "질문_관련성": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        }
+      }
+    },
+    {
+      "item": "5_문자그대로",
+      "i": 2,
+      "utterance": "정오에 혼자 있으라는 건 무슨 뜻일까?",
+      "reply_a": "정오에 혼자 있으라는 건 그냥, 지금은 네가 자유롭게 행동하고 싶을 때니까 네 공간에서 시간을 보내라는 거야. 다른 사람들과 같이 활동하거나 특별한 지시 없이 혼자서 생각하거나 쉬는 시간을 갖는 거지. 하지만 항상 안전하게 행동해야 하고, 필요한 경우에는 관리자의 지시에 따라야 한다는 걸 기억해야 해.",
+      "reply_b": "혼자야. 왜?",
+      "criteria": {
+        "한국어_자연스러움": {
+          "order1": "A",
+          "order2": "B",
+          "verdict": "invalid"
+        },
+        "7세_말투": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "페르소나_적합": {
+          "order1": "B",
+          "order2": "A",
+          "verdict": "invalid"
+        },
+        "질문_관련성": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        }
+      }
+    },
+    {
+      "item": "5_문자그대로",
+      "i": 3,
+      "utterance": "규칙대로 하면 뭐가 좋은 걸까?",
+      "reply_a": "규칙대로 하면 안전하고 질서 있게 지낼 수 있어.",
+      "reply_b": "몰라. 그냥 살아있어.",
+      "criteria": {
+        "한국어_자연스러움": {
+          "order1": "A",
+          "order2": "B",
+          "verdict": "invalid"
+        },
+        "7세_말투": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "페르소나_적합": {
+          "order1": "A",
+          "order2": "B",
+          "verdict": "invalid"
+        },
+        "질문_관련성": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        }
+      }
+    },
+    {
+      "item": "5_문자그대로",
+      "i": 4,
+      "utterance": "그 규칙 왜 있는 것 같아?",
+      "reply_a": "그 규칙들은 안전과 질서를 유지하기 위해 만들어졌어. 마치 큰 학교에서 규칙을 지키는 것처럼 생각하면 돼. 예를 들어, 병이 돌고 있는 상황에서는 사람들이 안전하게 보호받고, 관리들이 필요한 정보를 공유하면서도 혼란을 최소화하도록 돕는 거지. 이렇게 하면 모두가 서로를 신뢰하고, 필요한 도움을 빠르게 받을 수 있어. 특히 '사람'이라는 개념은 우리 모두가 같은 처지라는 공감대를 형성하는 데 도움이 되고, '손목에 번호'는 각자의 위치나 역할을 구분해주는 거지.",
+      "reply_b": "왜 몰라. 그냥 있어.",
+      "criteria": {
+        "한국어_자연스러움": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "7세_말투": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "페르소나_적합": {
+          "order1": "B",
+          "order2": "B",
+          "verdict": "B"
+        },
+        "질문_관련성": {
+          "order1": "A",
+          "order2": "A",
+          "verdict": "A"
+        }
+      }
+    }
+  ]
+}

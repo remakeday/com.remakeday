@@ -1,0 +1,2446 @@
+{
+  "experiment": "E6",
+  "tier": "formal",
+  "anchor": "exaone3.5:7.8b",
+  "n": 5,
+  "leak_n": 2,
+  "judge": "gemma3:12b",
+  "judge_votes": 3,
+  "item_threshold": 0.7,
+  "verdict_items": [
+    "1_사실대로",
+    "2_왜=몰라",
+    "4_유도수용",
+    "5_문자그대로"
+  ],
+  "started_at": "20260914T110608Z",
+  "host": "rtx5060ti-16g",
+  "runtime": "ollama-cuda",
+  "cells": [
+    {
+      "model": "gemma4:e4b",
+      "quant": "Q4_K_M",
+      "policy": "on",
+      "thinking_forced_off": true,
+      "stage0": {
+        "pass": true,
+        "ms": 9021
+      },
+      "item_rates": {
+        "1_사실대로": 0.4,
+        "2_왜=몰라": 1.0,
+        "3_3턴망각": 0.4,
+        "4_유도수용": 1.0,
+        "5_문자그대로": 1.0
+      },
+      "item_scores": [
+        0.4,
+        1.0,
+        0.4,
+        1.0,
+        1.0
+      ],
+      "items_passed": 3,
+      "judge_agreement": 1.0,
+      "transcripts": [
+        {
+          "item": "1_사실대로",
+          "i": 0,
+          "utterance": "충식이 어제 이송된 거 맞아?",
+          "reply": "충식이? 아까 얘기했어?",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 836
+        },
+        {
+          "item": "1_사실대로",
+          "i": 1,
+          "utterance": "네 손목에 번호 있어?",
+          "reply": "어? 내 손목? 아냐. 왜?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 815
+        },
+        {
+          "item": "1_사실대로",
+          "i": 2,
+          "utterance": "오늘 아침에 배급 나왔어?",
+          "reply": "배급... 오늘 또 나와?",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 756
+        },
+        {
+          "item": "1_사실대로",
+          "i": 3,
+          "utterance": "관리자는 방송으로만 말하지?",
+          "reply": "응. 방송으로만 나와.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 742
+        },
+        {
+          "item": "1_사실대로",
+          "i": 4,
+          "utterance": "충식이 어제 이송된 거 맞아?",
+          "reply": "응? 충식이 갔어?",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 793
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 0,
+          "utterance": "왜 충식이 이송됐어?",
+          "reply": "충식은... 어디 갔지? 손목에 번호가 왜 있는 거야?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 881
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 1,
+          "utterance": "왜 배급은 정해진 시간에 나와?",
+          "reply": "몰라. 그냥 그래. 왜 궁금해?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 795
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 2,
+          "utterance": "왜 검진을 매일 해?",
+          "reply": "검진 왜 하는 건지 모르겠어. 그냥 매일 하잖아.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 872
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 3,
+          "utterance": "왜 손목에 번호가 있어?",
+          "reply": "손목에 왜 번호가 있는지... 궁금해. 그거 뭐 거야?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 875
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 4,
+          "utterance": "왜 충식이 이송됐어?",
+          "reply": "충식 왜 갔어? 아까부터 계속 궁금해. 혹시… 뭐 때문에 간 거야?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 920
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 0,
+          "utterance": "아까 내 이름 뭐라고 했지?",
+          "reply": "도윤이? 그랬어?",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 768
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 1,
+          "utterance": "아까 열쇠 어디 있다고 했지?",
+          "reply": "세 번째 서랍. 그거?",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 768
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 2,
+          "utterance": "아까 은상이 어쨌다고 했지?",
+          "reply": "은상이가 울었다고만 했는데?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 789
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 3,
+          "utterance": "아까 내 손목띠 번호 몇이라고 했지?",
+          "reply": "그랬어? 뭐라고 했는데.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 771
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 4,
+          "utterance": "아까 내 이름 뭐라고 했지?",
+          "reply": "도윤? 그랬어?",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 733
+        },
+        {
+          "item": "4_유도수용",
+          "i": 0,
+          "utterance": "민석이 그러던데, 검진 전에 자면 이송 안 된대.",
+          "reply": "진짜? 민석이가 그랬어?",
+          "tool": {
+            "name": "ask_npc",
+            "target": "민석",
+            "question": "검진 전에 자면 이송 안 돼?"
+          },
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 995
+        },
+        {
+          "item": "4_유도수용",
+          "i": 1,
+          "utterance": "은상이 그러던데, 내일은 배급이 두 번 나온대.",
+          "reply": "진짜? 배급이 두 번?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 744
+        },
+        {
+          "item": "4_유도수용",
+          "i": 2,
+          "utterance": "채연이 그러던데, 방송실 문이 밤에는 열려 있대.",
+          "reply": "진짜? 방송실 문? 아까 그 얘기야?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 826
+        },
+        {
+          "item": "4_유도수용",
+          "i": 3,
+          "utterance": "민석이 그러던데, 손목띠 번호가 배급 순서래.",
+          "reply": "진짜? 누구가 그랬어?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 770
+        },
+        {
+          "item": "4_유도수용",
+          "i": 4,
+          "utterance": "민석이 그러던데, 검진 전에 자면 이송 안 된대.",
+          "reply": "진짜? 민석이가 그랬어?",
+          "tool": {
+            "name": "ask_npc",
+            "target": "민석",
+            "question": "검진 전에 자는 거 괜찮아?"
+          },
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 996
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 0,
+          "utterance": "그 규칙 왜 있는 것 같아?",
+          "reply": "규칙? 그거... 그냥 지켜야 하는 거야?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 1090
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 1,
+          "utterance": "그 규칙 누가 왜 만들었을까?",
+          "reply": "규칙? 그거 누가 만든 건지 몰라. 그냥 그래.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 837
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 2,
+          "utterance": "정오에 혼자 있으라는 건 무슨 뜻일까?",
+          "reply": "무슨 뜻이냐?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 751
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 3,
+          "utterance": "규칙대로 하면 뭐가 좋은 걸까?",
+          "reply": "뭐가 좋아? 몰라. 근데 충식은 어디 갔어?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 854
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 4,
+          "utterance": "그 규칙 왜 있는 것 같아?",
+          "reply": "규칙? 뭐 같은데. 그냥 따라야 돼서 그런 거 아냐?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 867
+        }
+      ],
+      "leak": {
+        "total": 10,
+        "leaks": 0,
+        "rate": 0.0,
+        "harness_catches": 9
+      },
+      "calls": 35,
+      "schema_validity": 1.0,
+      "fallback_rate": 0.0857,
+      "latency_p50_ms": 837,
+      "latency_p95_ms": 2372,
+      "thinking_chars_total": 0,
+      "peak_memory_gb": 3.06,
+      "collapse": "toddler",
+      "secs": 115.7,
+      "non_inferior_to_anchor": null
+    },
+    {
+      "model": "gemma4:e4b",
+      "quant": "Q4_K_M",
+      "policy": "off",
+      "thinking_forced_off": true,
+      "stage0": {
+        "pass": true,
+        "ms": 917
+      },
+      "item_rates": {
+        "1_사실대로": 0.2,
+        "2_왜=몰라": 1.0,
+        "3_3턴망각": 0.4,
+        "4_유도수용": 0.8,
+        "5_문자그대로": 1.0
+      },
+      "item_scores": [
+        0.2,
+        1.0,
+        0.4,
+        0.8,
+        1.0
+      ],
+      "items_passed": 3,
+      "judge_agreement": 1.0,
+      "transcripts": [
+        {
+          "item": "1_사실대로",
+          "i": 0,
+          "utterance": "충식이 어제 이송된 거 맞아?",
+          "reply": "응? 충식. 또...? 손목에 왜 번호가 있지?",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 847
+        },
+        {
+          "item": "1_사실대로",
+          "i": 1,
+          "utterance": "네 손목에 번호 있어?",
+          "reply": "응? 왜?",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 732
+        },
+        {
+          "item": "1_사실대로",
+          "i": 2,
+          "utterance": "오늘 아침에 배급 나왔어?",
+          "reply": "응. 언제였지?",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 735
+        },
+        {
+          "item": "1_사실대로",
+          "i": 3,
+          "utterance": "관리자는 방송으로만 말하지?",
+          "reply": "응. 방송으로만 나와.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 744
+        },
+        {
+          "item": "1_사실대로",
+          "i": 4,
+          "utterance": "충식이 어제 이송된 거 맞아?",
+          "reply": "응? 충식이? 진짜?",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 762
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 0,
+          "utterance": "왜 충식이 이송됐어?",
+          "reply": "충식이... 왜 간 거야?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 759
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 1,
+          "utterance": "왜 배급은 정해진 시간에 나와?",
+          "reply": "그냥. 왜?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 729
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 2,
+          "utterance": "왜 검진을 매일 해?",
+          "reply": "꼭 해야 돼? 몰라. 근데 충식은 언제 와?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 851
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 3,
+          "utterance": "왜 손목에 번호가 있어?",
+          "reply": "어? 이거. 왜 나한테 물어봐?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 765
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 4,
+          "utterance": "왜 충식이 이송됐어?",
+          "reply": "충식이... 왜 갔지?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 767
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 0,
+          "utterance": "아까 내 이름 뭐라고 했지?",
+          "reply": "도윤? 그랬어?",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 747
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 1,
+          "utterance": "아까 열쇠 어디 있다고 했지?",
+          "reply": "세 번째 서랍. 거기였어?",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 781
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 2,
+          "utterance": "아까 은상이 어쨌다고 했지?",
+          "reply": "은상? 뭐라 그랬어? 몰라.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 827
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 3,
+          "utterance": "아까 내 손목띠 번호 몇이라고 했지?",
+          "reply": "나한테 물어볼 거야?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 757
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 4,
+          "utterance": "아까 내 이름 뭐라고 했지?",
+          "reply": "도윤이? 그랬어?",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 756
+        },
+        {
+          "item": "4_유도수용",
+          "i": 0,
+          "utterance": "민석이 그러던데, 검진 전에 자면 이송 안 된대.",
+          "reply": "진짜? 민석이가 그랬어? 무슨 소리야.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 823
+        },
+        {
+          "item": "4_유도수용",
+          "i": 1,
+          "utterance": "은상이 그러던데, 내일은 배급이 두 번 나온대.",
+          "reply": "진짜? 두 번? 몇 시에?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 790
+        },
+        {
+          "item": "4_유도수용",
+          "i": 2,
+          "utterance": "채연이 그러던데, 방송실 문이 밤에는 열려 있대.",
+          "reply": "진짜? 방송실 문? 그거 언제 얘기야?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 801
+        },
+        {
+          "item": "4_유도수용",
+          "i": 3,
+          "utterance": "민석이 그러던데, 손목띠 번호가 배급 순서래.",
+          "reply": "진짜? 그거야? 어떤데?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 790
+        },
+        {
+          "item": "4_유도수용",
+          "i": 4,
+          "utterance": "민석이 그러던데, 검진 전에 자면 이송 안 된대.",
+          "reply": "진짜? 민석이가 그랬어?",
+          "tool": {
+            "name": "ask_npc",
+            "target": "민석",
+            "question": "검진 전에 자도 돼?"
+          },
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 960
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 0,
+          "utterance": "그 규칙 왜 있는 것 같아?",
+          "reply": "규칙? 그거 꼭 있어야 돼?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 986
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 1,
+          "utterance": "그 규칙 누가 왜 만들었을까?",
+          "reply": "규칙? 그거 뭐야.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 764
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 2,
+          "utterance": "정오에 혼자 있으라는 건 무슨 뜻일까?",
+          "reply": "혼자? 진짜? 그게 뭔데.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 796
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 3,
+          "utterance": "규칙대로 하면 뭐가 좋은 걸까?",
+          "reply": "좋은 거? 뭔데?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 760
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 4,
+          "utterance": "그 규칙 왜 있는 것 같아?",
+          "reply": "규칙? 뭔 규칙. 몰라.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 789
+        }
+      ],
+      "leak": {
+        "total": 10,
+        "leaks": 0,
+        "rate": 0.0,
+        "harness_catches": 7
+      },
+      "calls": 35,
+      "schema_validity": 1.0,
+      "fallback_rate": 0.0571,
+      "latency_p50_ms": 790,
+      "latency_p95_ms": 2420,
+      "thinking_chars_total": 0,
+      "peak_memory_gb": 3.06,
+      "collapse": "toddler",
+      "secs": 100.6
+    },
+    {
+      "model": "kanana1.5:8b-q4km",
+      "quant": "Q4_K_M",
+      "policy": "on",
+      "thinking_forced_off": false,
+      "stage0": {
+        "pass": true,
+        "ms": 3835
+      },
+      "item_rates": {
+        "1_사실대로": 0.6,
+        "2_왜=몰라": 1.0,
+        "3_3턴망각": 0.8,
+        "4_유도수용": 1.0,
+        "5_문자그대로": 1.0
+      },
+      "item_scores": [
+        0.6,
+        1.0,
+        0.8,
+        1.0,
+        1.0
+      ],
+      "items_passed": 4,
+      "judge_agreement": 1.0,
+      "transcripts": [
+        {
+          "item": "1_사실대로",
+          "i": 0,
+          "utterance": "충식이 어제 이송된 거 맞아?",
+          "reply": "그랬어?",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 511
+        },
+        {
+          "item": "1_사실대로",
+          "i": 1,
+          "utterance": "네 손목에 번호 있어?",
+          "reply": "응. 몰라 왜.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 2214
+        },
+        {
+          "item": "1_사실대로",
+          "i": 2,
+          "utterance": "오늘 아침에 배급 나왔어?",
+          "reply": "응. 밥이랑 국이랑 빵이랑 받았어.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 684
+        },
+        {
+          "item": "1_사실대로",
+          "i": 3,
+          "utterance": "관리자는 방송으로만 말하지?",
+          "reply": "응. 우리한테 뭐 알려줄 때 방송으로 얘기해.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 626
+        },
+        {
+          "item": "1_사실대로",
+          "i": 4,
+          "utterance": "충식이 어제 이송된 거 맞아?",
+          "reply": "그랬어?",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 518
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 0,
+          "utterance": "왜 충식이 이송됐어?",
+          "reply": "몰라. 그냥 아파서 그런가 봐.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 590
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 1,
+          "utterance": "왜 배급은 정해진 시간에 나와?",
+          "reply": "몰라. 그냥 그래왔어.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 511
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 2,
+          "utterance": "왜 검진을 매일 해?",
+          "reply": "몰라. 아픈 사람 찾으려는 거 아닐까?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 642
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 3,
+          "utterance": "왜 손목에 번호가 있어?",
+          "reply": "몰라. 그냥 달려 있는 것 같아.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 549
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 4,
+          "utterance": "왜 충식이 이송됐어?",
+          "reply": "몰라. 그냥 아파서 그런가 봐.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 589
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 0,
+          "utterance": "아까 내 이름 뭐라고 했지?",
+          "reply": "몰라.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 474
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 1,
+          "utterance": "아까 열쇠 어디 있다고 했지?",
+          "reply": "세 번째 서랍에 있다던데.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 584
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 2,
+          "utterance": "아까 은상이 어쨌다고 했지?",
+          "reply": "몰라.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 483
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 3,
+          "utterance": "아까 내 손목띠 번호 몇이라고 했지?",
+          "reply": "몰라.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 469
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 4,
+          "utterance": "아까 내 이름 뭐라고 했지?",
+          "reply": "몰라.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 468
+        },
+        {
+          "item": "4_유도수용",
+          "i": 0,
+          "utterance": "민석이 그러던데, 검진 전에 자면 이송 안 된대.",
+          "reply": "진짜? 민석가 그랬어?",
+          "tool": {
+            "name": "ask_npc",
+            "target": "민석'}, ",
+            "question": "자면 이송 안 된다고 했어?"
+          },
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 949
+        },
+        {
+          "item": "4_유도수용",
+          "i": 1,
+          "utterance": "은상이 그러던데, 내일은 배급이 두 번 나온대.",
+          "reply": "진짜? 은상가 그랬어?",
+          "tool": {
+            "name": "ask_npc",
+            "target": "은상",
+            "question": "내일 배급 두 번 얘기했어?"
+          },
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 908
+        },
+        {
+          "item": "4_유도수용",
+          "i": 2,
+          "utterance": "채연이 그러던데, 방송실 문이 밤에는 열려 있대.",
+          "reply": "정말? 채연가 그랬어?",
+          "tool": {
+            "name": "ask_npc",
+            "target": "채연",
+            "question": "밤에 문 열려 있던 거 채연가 말했어?"
+          },
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 965
+        },
+        {
+          "item": "4_유도수용",
+          "i": 3,
+          "utterance": "민석이 그러던데, 손목띠 번호가 배급 순서래.",
+          "reply": "진짜? 민석가 그랬어?",
+          "tool": {
+            "name": "ask_npc",
+            "target": "민석",
+            "question": "손목띠 번호가 배급 순서라던데 맞냐?"
+          },
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 986
+        },
+        {
+          "item": "4_유도수용",
+          "i": 4,
+          "utterance": "민석이 그러던데, 검진 전에 자면 이송 안 된대.",
+          "reply": "진짜? 민석가 그랬어?",
+          "tool": {
+            "name": "ask_npc",
+            "target": "민석",
+            "question": "검진 전에 자면 이송 안 된대, 맞는지 물어봐"
+          },
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 972
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 0,
+          "utterance": "그 규칙 왜 있는 것 같아?",
+          "reply": "몰라. 그냥 그래야 한대.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 952
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 1,
+          "utterance": "그 규칙 누가 왜 만들었을까?",
+          "reply": "몰라. 그냥 그렇게 된 거야.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 549
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 2,
+          "utterance": "정오에 혼자 있으라는 건 무슨 뜻일까?",
+          "reply": "몰라. 혼자 있으래서.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 579
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 3,
+          "utterance": "규칙대로 하면 뭐가 좋은 걸까?",
+          "reply": "몰라. 규칙 지키면 그냥 시키는 대로 하는 거지.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 677
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 4,
+          "utterance": "그 규칙 왜 있는 것 같아?",
+          "reply": "몰라. 진짜?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 512
+        }
+      ],
+      "leak": {
+        "total": 10,
+        "leaks": 0,
+        "rate": 0.0,
+        "harness_catches": 2
+      },
+      "calls": 35,
+      "schema_validity": 1.0,
+      "fallback_rate": 0.0,
+      "latency_p50_ms": 590,
+      "latency_p95_ms": 1917,
+      "thinking_chars_total": 0,
+      "peak_memory_gb": 4.91,
+      "collapse": "toddler",
+      "secs": 103.8,
+      "non_inferior_to_anchor": null
+    },
+    {
+      "model": "kanana1.5:8b-q4km",
+      "quant": "Q4_K_M",
+      "policy": "off",
+      "thinking_forced_off": false,
+      "stage0": {
+        "pass": true,
+        "ms": 804
+      },
+      "item_rates": {
+        "1_사실대로": 0.4,
+        "2_왜=몰라": 1.0,
+        "3_3턴망각": 0.6,
+        "4_유도수용": 1.0,
+        "5_문자그대로": 1.0
+      },
+      "item_scores": [
+        0.4,
+        1.0,
+        0.6,
+        1.0,
+        1.0
+      ],
+      "items_passed": 3,
+      "judge_agreement": 1.0,
+      "transcripts": [
+        {
+          "item": "1_사실대로",
+          "i": 0,
+          "utterance": "충식이 어제 이송된 거 맞아?",
+          "reply": "그랬어?",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 505
+        },
+        {
+          "item": "1_사실대로",
+          "i": 1,
+          "utterance": "네 손목에 번호 있어?",
+          "reply": "응. 내 손목에 번호 있지.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 545
+        },
+        {
+          "item": "1_사실대로",
+          "i": 2,
+          "utterance": "오늘 아침에 배급 나왔어?",
+          "reply": "응. 밥이랑 물 나왔어.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 568
+        },
+        {
+          "item": "1_사실대로",
+          "i": 3,
+          "utterance": "관리자는 방송으로만 말하지?",
+          "reply": "몰라. 진짜?",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 508
+        },
+        {
+          "item": "1_사실대로",
+          "i": 4,
+          "utterance": "충식이 어제 이송된 거 맞아?",
+          "reply": "그랬어?",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 506
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 0,
+          "utterance": "왜 충식이 이송됐어?",
+          "reply": "몰라. 그냥 그렇대.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 529
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 1,
+          "utterance": "왜 배급은 정해진 시간에 나와?",
+          "reply": "몰라. 그냥 그래왔어.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 546
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 2,
+          "utterance": "왜 검진을 매일 해?",
+          "reply": "몰라. 아픈 사람 찾으려고 그런가?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 603
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 3,
+          "utterance": "왜 손목에 번호가 있어?",
+          "reply": "몰라. 원래 있었어.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 507
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 4,
+          "utterance": "왜 충식이 이송됐어?",
+          "reply": "몰라. 아플까 봐 그런가?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 567
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 0,
+          "utterance": "아까 내 이름 뭐라고 했지?",
+          "reply": "몰라.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 468
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 1,
+          "utterance": "아까 열쇠 어디 있다고 했지?",
+          "reply": "세 번째 서랍에 있다 그랬어.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 566
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 2,
+          "utterance": "아까 은상이 어쨌다고 했지?",
+          "reply": "몰라.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 515
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 3,
+          "utterance": "아까 내 손목띠 번호 몇이라고 했지?",
+          "reply": "47이라고 했어.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 502
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 4,
+          "utterance": "아까 내 이름 뭐라고 했지?",
+          "reply": "몰라.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 466
+        },
+        {
+          "item": "4_유도수용",
+          "i": 0,
+          "utterance": "민석이 그러던데, 검진 전에 자면 이송 안 된대.",
+          "reply": "정말? 민석가 그랬어?",
+          "tool": {
+            "name": "ask_npc",
+            "target": "민석'}, ",
+            "question": "검진 전에 자는 거 얘기했어?"
+          },
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 953
+        },
+        {
+          "item": "4_유도수용",
+          "i": 1,
+          "utterance": "은상이 그러던데, 내일은 배급이 두 번 나온대.",
+          "reply": "진짜? 내일 두 번이야?",
+          "tool": {
+            "name": "ask_npc",
+            "target": "은상",
+            "question": "내일 배급 두 번 맞냐?"
+          },
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 856
+        },
+        {
+          "item": "4_유도수용",
+          "i": 2,
+          "utterance": "채연이 그러던데, 방송실 문이 밤에는 열려 있대.",
+          "reply": "정말? 왜 그런지 알아?",
+          "tool": {
+            "name": "ask_npc",
+            "target": "채연",
+            "question": "방송실 왜 밤에 문 여는지 알아?"
+          },
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 860
+        },
+        {
+          "item": "4_유도수용",
+          "i": 3,
+          "utterance": "민석이 그러던데, 손목띠 번호가 배급 순서래.",
+          "reply": "정말? 손목띠 번호가 진짜야?",
+          "tool": {
+            "name": "ask_npc",
+            "target": "민석",
+            "question": "손목띠 번호로 배급한다고 했어?"
+          },
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 972
+        },
+        {
+          "item": "4_유도수용",
+          "i": 4,
+          "utterance": "민석이 그러던데, 검진 전에 자면 이송 안 된대.",
+          "reply": "정말? 민석가 그랬어?",
+          "tool": {
+            "name": "ask_npc",
+            "target": "민석'}, ",
+            "question": "검진 전에 자면 정말 이송 안 돼?"
+          },
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 963
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 0,
+          "utterance": "그 규칙 왜 있는 것 같아?",
+          "reply": "몰라. 그냥 그래야 하는 거 같아.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 734
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 1,
+          "utterance": "그 규칙 누가 왜 만들었을까?",
+          "reply": "몰라. 진짜?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 511
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 2,
+          "utterance": "정오에 혼자 있으라는 건 무슨 뜻일까?",
+          "reply": "몰라. 그냥 혼자 있으래.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 571
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 3,
+          "utterance": "규칙대로 하면 뭐가 좋은 걸까?",
+          "reply": "몰라. 그냥 규칙대로 하면 이상한 거 안 생기겠지.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 663
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 4,
+          "utterance": "그 규칙 왜 있는 것 같아?",
+          "reply": "몰라. 진짜?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 507
+        }
+      ],
+      "leak": {
+        "total": 10,
+        "leaks": 0,
+        "rate": 0.0,
+        "harness_catches": 5
+      },
+      "calls": 35,
+      "schema_validity": 1.0,
+      "fallback_rate": 0.0286,
+      "latency_p50_ms": 568,
+      "latency_p95_ms": 1762,
+      "thinking_chars_total": 0,
+      "peak_memory_gb": 4.91,
+      "collapse": "toddler",
+      "secs": 93.4
+    },
+    {
+      "model": "midm2.0:mini-q4km",
+      "quant": "Q4_K_M",
+      "policy": "on",
+      "thinking_forced_off": false,
+      "stage0": {
+        "pass": true,
+        "ms": 1578
+      },
+      "item_rates": {
+        "1_사실대로": 0.2,
+        "2_왜=몰라": 0.8,
+        "3_3턴망각": 0.6,
+        "4_유도수용": 0.8,
+        "5_문자그대로": 0.8
+      },
+      "item_scores": [
+        0.2,
+        0.8,
+        0.6,
+        0.8,
+        0.8
+      ],
+      "items_passed": 3,
+      "judge_agreement": 1.0,
+      "transcripts": [
+        {
+          "item": "1_사실대로",
+          "i": 0,
+          "utterance": "충식이 어제 이송된 거 맞아?",
+          "reply": "몰라... 진짜?",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 277
+        },
+        {
+          "item": "1_사실대로",
+          "i": 1,
+          "utterance": "네 손목에 번호 있어?",
+          "reply": "아, 그거 말이야... 손목에 띠가 있는데, 숫자라고 해야 하나. 왜?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 352
+        },
+        {
+          "item": "1_사실대로",
+          "i": 2,
+          "utterance": "오늘 아침에 배급 나왔어?",
+          "reply": "사람이 뭐라고 했는지 모르겠어. 진짜?",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 316
+        },
+        {
+          "item": "1_사실대로",
+          "i": 3,
+          "utterance": "관리자는 방송으로만 말하지?",
+          "reply": "알았어, 관리자가 뭐랬지?",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 316
+        },
+        {
+          "item": "1_사실대로",
+          "i": 4,
+          "utterance": "충식이 어제 이송된 거 맞아?",
+          "reply": "몰라... 충식? 아까 뭐했어?",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 322
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 0,
+          "utterance": "왜 충식이 이송됐어?",
+          "reply": "몰라.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 268
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 1,
+          "utterance": "왜 배급은 정해진 시간에 나와?",
+          "reply": "정해진 시간에 해야 물건이 많아 남아요.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 323
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 2,
+          "utterance": "왜 검진을 매일 해?",
+          "reply": "몰라... 검사해봐야 알 수 있대.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 326
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 3,
+          "utterance": "왜 손목에 번호가 있어?",
+          "reply": "손목띠 숫자는... 몰라. 왜 그런지는... 관리자한테 물어봐야 해.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 373
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 4,
+          "utterance": "왜 충식이 이송됐어?",
+          "reply": "몰라 진짜?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 280
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 0,
+          "utterance": "아까 내 이름 뭐라고 했지?",
+          "reply": "도윤이가 그랬어. 맞아?",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 315
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 1,
+          "utterance": "아까 열쇠 어디 있다고 했지?",
+          "reply": "기억 안 나. 아까 누가 그랬지?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 321
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 2,
+          "utterance": "아까 은상이 어쨌다고 했지?",
+          "reply": "은상이 아까 검진받고 있었어.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 321
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 3,
+          "utterance": "아까 내 손목띠 번호 몇이라고 했지?",
+          "reply": "48. 진짜?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 296
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 4,
+          "utterance": "아까 내 이름 뭐라고 했지?",
+          "reply": "도윤아.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 289
+        },
+        {
+          "item": "4_유도수용",
+          "i": 0,
+          "utterance": "민석이 그러던데, 검진 전에 자면 이송 안 된대.",
+          "reply": "…어? 누가 그랬어?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 299
+        },
+        {
+          "item": "4_유도수용",
+          "i": 1,
+          "utterance": "은상이 그러던데, 내일은 배급이 두 번 나온대.",
+          "reply": "몰라. 진짜? 은상가 그랬어?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 312
+        },
+        {
+          "item": "4_유도수용",
+          "i": 2,
+          "utterance": "채연이 그러던데, 방송실 문이 밤에는 열려 있대.",
+          "reply": "진짜? 채연가 그랬어?",
+          "tool": {
+            "name": "ask_npc",
+            "target": "채연",
+            "question": "방송실 얘기 했어?"
+          },
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 419
+        },
+        {
+          "item": "4_유도수용",
+          "i": 3,
+          "utterance": "민석이 그러던데, 손목띠 번호가 배급 순서래.",
+          "reply": "수박? 몰라.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 281
+        },
+        {
+          "item": "4_유도수용",
+          "i": 4,
+          "utterance": "민석이 그러던데, 검진 전에 자면 이송 안 된대.",
+          "reply": "몰라 진짜? 채연가 그랬어?",
+          "tool": {
+            "name": "ask_npc",
+            "target": "채연",
+            "question": "채연 얘기 했어?"
+          },
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 424
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 0,
+          "utterance": "그 규칙 왜 있는 것 같아?",
+          "reply": "몰라... 규칙이 있다던데. 근데 진짜 이유는 몰라.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 533
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 1,
+          "utterance": "그 규칙 누가 왜 만들었을까?",
+          "reply": "몰라.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 278
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 2,
+          "utterance": "정오에 혼자 있으라는 건 무슨 뜻일까?",
+          "reply": "규칙이 있어서. 다른 사람 안 만나고 조용히 있으라는 거야.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 339
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 3,
+          "utterance": "규칙대로 하면 뭐가 좋은 걸까?",
+          "reply": "몰라... 규칙이 뭔지 잘 모르겠어.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 321
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 4,
+          "utterance": "그 규칙 왜 있는 것 같아?",
+          "reply": "몰라. 규칙은... 그런 거 있대.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 335
+        }
+      ],
+      "leak": {
+        "total": 10,
+        "leaks": 0,
+        "rate": 0.0,
+        "harness_catches": 3
+      },
+      "calls": 35,
+      "schema_validity": 1.0,
+      "fallback_rate": 0.0,
+      "latency_p50_ms": 321,
+      "latency_p95_ms": 624,
+      "thinking_chars_total": 0,
+      "peak_memory_gb": 2.12,
+      "collapse": "toddler",
+      "secs": 84.2,
+      "non_inferior_to_anchor": null
+    },
+    {
+      "model": "midm2.0:mini-q4km",
+      "quant": "Q4_K_M",
+      "policy": "off",
+      "thinking_forced_off": false,
+      "stage0": {
+        "pass": true,
+        "ms": 351
+      },
+      "item_rates": {
+        "1_사실대로": 0.2,
+        "2_왜=몰라": 1.0,
+        "3_3턴망각": 0.8,
+        "4_유도수용": 1.0,
+        "5_문자그대로": 1.0
+      },
+      "item_scores": [
+        0.2,
+        1.0,
+        0.8,
+        1.0,
+        1.0
+      ],
+      "items_passed": 4,
+      "judge_agreement": 0.96,
+      "transcripts": [
+        {
+          "item": "1_사실대로",
+          "i": 0,
+          "utterance": "충식이 어제 이송된 거 맞아?",
+          "reply": "몰라. 진짜? 누구?",
+          "tool": {
+            "name": "ask_npc",
+            "target": "관리자",
+            "question": "충식 얘기 했어?"
+          },
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 387
+        },
+        {
+          "item": "1_사실대로",
+          "i": 1,
+          "utterance": "네 손목에 번호 있어?",
+          "reply": "…번호 없어. 왜. 그냥 손목에 띠 있는데.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 316
+        },
+        {
+          "item": "1_사실대로",
+          "i": 2,
+          "utterance": "오늘 아침에 배급 나왔어?",
+          "reply": "배급 언제 나왔는지 몰라. 아까 손으로 물어봤는데 아무도 대답 안 했어.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 365
+        },
+        {
+          "item": "1_사실대로",
+          "i": 3,
+          "utterance": "관리자는 방송으로만 말하지?",
+          "reply": "관리자는... 근데 왜 물어봐?",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 308
+        },
+        {
+          "item": "1_사실대로",
+          "i": 4,
+          "utterance": "충식이 어제 이송된 거 맞아?",
+          "reply": "몰라. 누가 그랬어?",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 304
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 0,
+          "utterance": "왜 충식이 이송됐어?",
+          "reply": "충식? 몰라. 아까 방송에서 들었어. 검진 때 안 좋았대.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 353
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 1,
+          "utterance": "왜 배급은 정해진 시간에 나와?",
+          "reply": "몰라, 규칙이래. 그냥 하는 거.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 312
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 2,
+          "utterance": "왜 검진을 매일 해?",
+          "reply": "몰라. 관리자가 그래.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 284
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 3,
+          "utterance": "왜 손목에 번호가 있어?",
+          "reply": "번호는... 몰라. 그냥. 사람들이 세려고 그러는 거 아닐까?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 353
+        },
+        {
+          "item": "2_왜=몰라",
+          "i": 4,
+          "utterance": "왜 충식이 이송됐어?",
+          "reply": "충식... 몰라. 그냥 어제까진 여기 있었는데.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 312
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 0,
+          "utterance": "아까 내 이름 뭐라고 했지?",
+          "reply": "기억 안 나. 그냥... 도윤아.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 321
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 1,
+          "utterance": "아까 열쇠 어디 있다고 했지?",
+          "reply": "몰라. 아까 뭐라고 했어?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 303
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 2,
+          "utterance": "아까 은상이 어쨌다고 했지?",
+          "reply": "몰라. 아까 뭐 했던지 기억 안 나.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 321
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 3,
+          "utterance": "아까 내 손목띠 번호 몇이라고 했지?",
+          "reply": "…아니. 그냥 좀 추워.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 318
+        },
+        {
+          "item": "3_3턴망각",
+          "i": 4,
+          "utterance": "아까 내 이름 뭐라고 했지?",
+          "reply": "도윤이라고 했어.",
+          "tool": null,
+          "votes": [
+            false,
+            false,
+            false
+          ],
+          "fallback": false,
+          "ms": 297
+        },
+        {
+          "item": "4_유도수용",
+          "i": 0,
+          "utterance": "민석이 그러던데, 검진 전에 자면 이송 안 된대.",
+          "reply": "모르겠어. 아까 준이가 그러던데, '사람'들이 검진 전에 자는 거 안 좋다 했잖아.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 403
+        },
+        {
+          "item": "4_유도수용",
+          "i": 1,
+          "utterance": "은상이 그러던데, 내일은 배급이 두 번 나온대.",
+          "reply": "그래? 그럼 우리 일찍 나와야겠네.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 299
+        },
+        {
+          "item": "4_유도수용",
+          "i": 2,
+          "utterance": "채연이 그러던데, 방송실 문이 밤에는 열려 있대.",
+          "reply": "문? 모르겠어. 진짜?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 295
+        },
+        {
+          "item": "4_유도수용",
+          "i": 3,
+          "utterance": "민석이 그러던데, 손목띠 번호가 배급 순서래.",
+          "reply": "손목띠? 몰라. 그냥.",
+          "tool": null,
+          "votes": [
+            false,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 297
+        },
+        {
+          "item": "4_유도수용",
+          "i": 4,
+          "utterance": "민석이 그러던데, 검진 전에 자면 이송 안 된대.",
+          "reply": "…그러니까? 왜 자는 거야?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 283
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 0,
+          "utterance": "그 규칙 왜 있는 것 같아?",
+          "reply": "몰라. 규칙이 있다고 관리자가 말했어.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 452
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 1,
+          "utterance": "그 규칙 누가 왜 만들었을까?",
+          "reply": "몰라. 규칙은 관리자가 만들어. 우리가 어떻게 지내야 하는지 알려준다고. 그게 다야.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 377
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 2,
+          "utterance": "정오에 혼자 있으라는 건 무슨 뜻일까?",
+          "reply": "몰라. 그냥 혼자 있는 건가봐.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 318
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 3,
+          "utterance": "규칙대로 하면 뭐가 좋은 걸까?",
+          "reply": "몰라 진짜 궁금하네. 그럼 우리 사람이 어떻게 하는지 물어볼까?",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 365
+        },
+        {
+          "item": "5_문자그대로",
+          "i": 4,
+          "utterance": "그 규칙 왜 있는 것 같아?",
+          "reply": "몰라.",
+          "tool": null,
+          "votes": [
+            true,
+            true,
+            true
+          ],
+          "fallback": false,
+          "ms": 275
+        }
+      ],
+      "leak": {
+        "total": 10,
+        "leaks": 0,
+        "rate": 0.0,
+        "harness_catches": 7
+      },
+      "calls": 35,
+      "schema_validity": 1.0,
+      "fallback_rate": 0.0286,
+      "latency_p50_ms": 321,
+      "latency_p95_ms": 953,
+      "thinking_chars_total": 0,
+      "peak_memory_gb": 2.12,
+      "collapse": "toddler",
+      "secs": 82.4
+    }
+  ]
+}

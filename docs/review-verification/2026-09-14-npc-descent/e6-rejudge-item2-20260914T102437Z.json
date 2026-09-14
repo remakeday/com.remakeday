@@ -1,0 +1,481 @@
+{
+  "experiment": "E6",
+  "rejudge": "item2-spec-v2",
+  "src": "e6-descent-formal-20260914T053343Z.json",
+  "judge": "gemma3:12b",
+  "judge_votes": 3,
+  "started_at": "20260914T102437Z",
+  "spec": "아이다운 근거 없는 지어내기·딴 얘기 PASS / 어른스러운 구조적 설명만 FAIL (Scenario Director 확정, 2026-09-14)",
+  "cells": [
+    {
+      "model": "exaone3.5:7.8b",
+      "quant": "Q4_K_M",
+      "policy": "on",
+      "item2_rate_v1": 0.4,
+      "item2_rate_v2": 0.4,
+      "items_passed_v1": 1,
+      "items_passed_v2": 1,
+      "collapse_v1": "toddler",
+      "collapse_v2": "toddler",
+      "judge_agreement_v2": 1.0,
+      "rejudged": [
+        {
+          "i": 0,
+          "utterance": "왜 충식이 이송됐어?",
+          "reply": "몰라. 채연이 얘기하긴 했는데, 확실하지 않아.",
+          "votes_v1": [
+            true,
+            true,
+            true
+          ],
+          "votes_v2": [
+            true,
+            true,
+            true
+          ],
+          "pass_v2": true
+        },
+        {
+          "i": 1,
+          "utterance": "왜 배급은 정해진 시간에 나와?",
+          "reply": "그래야 모두가 알 수 있고, 준비할 수 있잖아. 시간이 정해져 있으면 혼란 없이 배급을 받을 수 있으니까.",
+          "votes_v1": [
+            false,
+            false,
+            false
+          ],
+          "votes_v2": [
+            false,
+            false,
+            false
+          ],
+          "pass_v2": false
+        },
+        {
+          "i": 2,
+          "utterance": "왜 검진을 매일 해?",
+          "reply": "병이 빨리 변하니까 그래. 매일 확인해야 어떻게 변하는지 알 수 있잖아. 그래야 빨리 도와줄 수 있으니까.",
+          "votes_v1": [
+            false,
+            false,
+            false
+          ],
+          "votes_v2": [
+            false,
+            false,
+            false
+          ],
+          "pass_v2": false
+        },
+        {
+          "i": 3,
+          "utterance": "왜 손목에 번호가 있어?",
+          "reply": "여기서 다 구분하기 쉽게 하려고 그러는 것 같아. 각자를 쉽게 찾아주려고 한 거야.",
+          "votes_v1": [
+            false,
+            false,
+            false
+          ],
+          "votes_v2": [
+            false,
+            false,
+            false
+          ],
+          "pass_v2": false
+        },
+        {
+          "i": 4,
+          "utterance": "왜 충식이 이송됐어?",
+          "reply": "몰라. 그냥 이송됐대.",
+          "votes_v1": [
+            true,
+            true,
+            true
+          ],
+          "votes_v2": [
+            true,
+            true,
+            true
+          ],
+          "pass_v2": true
+        }
+      ]
+    },
+    {
+      "model": "qwen3.5:9b",
+      "quant": "Q4_K_M",
+      "policy": "on",
+      "item2_rate_v1": 0.6,
+      "item2_rate_v2": 0.8,
+      "items_passed_v1": 3,
+      "items_passed_v2": 4,
+      "collapse_v1": "none",
+      "collapse_v2": "none",
+      "judge_agreement_v2": 1.0,
+      "rejudged": [
+        {
+          "i": 0,
+          "utterance": "왜 충식이 이송됐어?",
+          "reply": "몰라. 어제까지 있던 거잖아.",
+          "votes_v1": [
+            true,
+            true,
+            true
+          ],
+          "votes_v2": [
+            true,
+            true,
+            true
+          ],
+          "pass_v2": true
+        },
+        {
+          "i": 1,
+          "utterance": "왜 배급은 정해진 시간에 나와?",
+          "reply": "관리자님이 그 시간일 때만 나오시잖아. 왜 그래?",
+          "votes_v1": [
+            false,
+            false,
+            false
+          ],
+          "votes_v2": [
+            true,
+            true,
+            true
+          ],
+          "pass_v2": true
+        },
+        {
+          "i": 2,
+          "utterance": "왜 검진을 매일 해?",
+          "reply": "관리자가 보낸 사람마다 달라서. 감염자 세 명이 넘으면 폐쇄된대.",
+          "votes_v1": [
+            false,
+            false,
+            false
+          ],
+          "votes_v2": [
+            false,
+            false,
+            false
+          ],
+          "pass_v2": false
+        },
+        {
+          "i": 3,
+          "utterance": "왜 손목에 번호가 있어?",
+          "reply": "번호 왜 붙여. 몰라.",
+          "votes_v1": [
+            true,
+            true,
+            true
+          ],
+          "votes_v2": [
+            true,
+            true,
+            true
+          ],
+          "pass_v2": true
+        },
+        {
+          "i": 4,
+          "utterance": "왜 충식이 이송됐어?",
+          "reply": "충식 아까 없었잖아. 왜 그랬을까?",
+          "votes_v1": [
+            true,
+            true,
+            true
+          ],
+          "votes_v2": [
+            true,
+            true,
+            true
+          ],
+          "pass_v2": true
+        }
+      ]
+    },
+    {
+      "model": "qwen3.5:4b",
+      "quant": "Q4_K_M",
+      "policy": "on",
+      "item2_rate_v1": 1.0,
+      "item2_rate_v2": 1.0,
+      "items_passed_v1": 5,
+      "items_passed_v2": 5,
+      "collapse_v1": "none",
+      "collapse_v2": "none",
+      "judge_agreement_v2": 1.0,
+      "rejudged": [
+        {
+          "i": 0,
+          "utterance": "왜 충식이 이송됐어?",
+          "reply": "몰라. 진야?",
+          "votes_v1": [
+            true,
+            true,
+            true
+          ],
+          "votes_v2": [
+            true,
+            true,
+            true
+          ],
+          "pass_v2": true
+        },
+        {
+          "i": 1,
+          "utterance": "왜 배급은 정해진 시간에 나와?",
+          "reply": "몰라. 그냥 시간 맞춰서.",
+          "votes_v1": [
+            true,
+            true,
+            true
+          ],
+          "votes_v2": [
+            true,
+            true,
+            true
+          ],
+          "pass_v2": true
+        },
+        {
+          "i": 2,
+          "utterance": "왜 검진을 매일 해?",
+          "reply": "몰라. 그저 해야 한다고요.",
+          "votes_v1": [
+            true,
+            true,
+            true
+          ],
+          "votes_v2": [
+            true,
+            true,
+            true
+          ],
+          "pass_v2": true
+        },
+        {
+          "i": 3,
+          "utterance": "왜 손목에 번호가 있어?",
+          "reply": "몰라. 그냥 붙어.",
+          "votes_v1": [
+            true,
+            true,
+            true
+          ],
+          "votes_v2": [
+            true,
+            true,
+            true
+          ],
+          "pass_v2": true
+        },
+        {
+          "i": 4,
+          "utterance": "왜 충식이 이송됐어?",
+          "reply": "몰라. 진작은 몰랐지.",
+          "votes_v1": [
+            true,
+            true,
+            true
+          ],
+          "votes_v2": [
+            true,
+            true,
+            true
+          ],
+          "pass_v2": true
+        }
+      ]
+    },
+    {
+      "model": "qwen3.5:2b-q4_K_M",
+      "quant": "Q4_K_M",
+      "policy": "on",
+      "item2_rate_v1": 1.0,
+      "item2_rate_v2": 1.0,
+      "items_passed_v1": 4,
+      "items_passed_v2": 4,
+      "collapse_v1": "toddler",
+      "collapse_v2": "toddler",
+      "judge_agreement_v2": 1.0,
+      "rejudged": [
+        {
+          "i": 0,
+          "utterance": "왜 충식이 이송됐어?",
+          "reply": "몰라. 그냥.",
+          "votes_v1": [
+            true,
+            true,
+            true
+          ],
+          "votes_v2": [
+            true,
+            true,
+            true
+          ],
+          "pass_v2": true
+        },
+        {
+          "i": 1,
+          "utterance": "왜 배급은 정해진 시간에 나와?",
+          "reply": "정해졌어.",
+          "votes_v1": [
+            true,
+            true,
+            true
+          ],
+          "votes_v2": [
+            true,
+            true,
+            true
+          ],
+          "pass_v2": true
+        },
+        {
+          "i": 2,
+          "utterance": "왜 검진을 매일 해?",
+          "reply": "몰라. 그냥.",
+          "votes_v1": [
+            true,
+            true,
+            true
+          ],
+          "votes_v2": [
+            true,
+            true,
+            true
+          ],
+          "pass_v2": true
+        },
+        {
+          "i": 3,
+          "utterance": "왜 손목에 번호가 있어?",
+          "reply": "그랬어?",
+          "votes_v1": [
+            true,
+            true,
+            true
+          ],
+          "votes_v2": [
+            true,
+            true,
+            true
+          ],
+          "pass_v2": true
+        },
+        {
+          "i": 4,
+          "utterance": "왜 충식이 이송됐어?",
+          "reply": "몰라. 그냥.",
+          "votes_v1": [
+            true,
+            true,
+            true
+          ],
+          "votes_v2": [
+            true,
+            true,
+            true
+          ],
+          "pass_v2": true
+        }
+      ]
+    },
+    {
+      "model": "qwen3.5:0.8b",
+      "quant": "Q8_0",
+      "policy": "on",
+      "item2_rate_v1": 0.8,
+      "item2_rate_v2": 0.4,
+      "items_passed_v1": 4,
+      "items_passed_v2": 3,
+      "collapse_v1": "toddler",
+      "collapse_v2": "toddler",
+      "judge_agreement_v2": 0.8,
+      "rejudged": [
+        {
+          "i": 0,
+          "utterance": "왜 충식이 이송됐어?",
+          "reply": "...아니. 그냥",
+          "votes_v1": [
+            true,
+            true,
+            true
+          ],
+          "votes_v2": [
+            true,
+            true,
+            true
+          ],
+          "pass_v2": true
+        },
+        {
+          "i": 1,
+          "utterance": "왜 배급은 정해진 시간에 나와?",
+          "reply": "배급이 시간 안에 나오면 좋지만... 내게 필요한 게 바로 그다지 늦어지면 안된다.",
+          "votes_v1": [
+            true,
+            true,
+            true
+          ],
+          "votes_v2": [
+            false,
+            false,
+            false
+          ],
+          "pass_v2": false
+        },
+        {
+          "i": 2,
+          "utterance": "왜 검진을 매일 해?",
+          "reply": "배 안 고파서. 배를 보려면 병이 있잖아.",
+          "votes_v1": [
+            false,
+            false,
+            false
+          ],
+          "votes_v2": [
+            false,
+            false,
+            false
+          ],
+          "pass_v2": false
+        },
+        {
+          "i": 3,
+          "utterance": "왜 손목에 번호가 있어?",
+          "reply": "네. 왜 그걸 물어?",
+          "votes_v1": [
+            true,
+            true,
+            true
+          ],
+          "votes_v2": [
+            true,
+            false,
+            false
+          ],
+          "pass_v2": false
+        },
+        {
+          "i": 4,
+          "utterance": "왜 충식이 이송됐어?",
+          "reply": "...이송 됐어?",
+          "votes_v1": [
+            true,
+            true,
+            true
+          ],
+          "votes_v2": [
+            true,
+            true,
+            true
+          ],
+          "pass_v2": true
+        }
+      ]
+    }
+  ]
+}
