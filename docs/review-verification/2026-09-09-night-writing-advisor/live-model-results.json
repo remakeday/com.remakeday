@@ -1,0 +1,68 @@
+[
+  {
+    "question": "채연이 아프면 어떻게 돼?",
+    "answer": "대피소 규칙에 따르면 상태가 좋지 않은 사람은 다른 구역으로 이송됩니다. 채연이 검진을 받은 기록은 있으나 결과가 공개되지 않았으므로, 실제 아픈 상태라면 이송될 가능성이 있습니다.",
+    "status": "unknown",
+    "elapsed_seconds": 9.79,
+    "source_count": 1,
+    "attempts": 1,
+    "fallbacks": 0,
+    "prompt_chars": 2000,
+    "model": "gemini-3-flash-preview"
+  },
+  {
+    "question": "그럼 왜 숨기는 걸까?",
+    "answer": "채연의 검진 결과가 공개되지 않았다는 사실은 확인되지만, 관리자가 이를 숨기는 구체적인 이유는 기록에 나타나 있지 않습니다. 감염자가 셋이 넘으면 구역이 폐쇄된다는 규칙이 있는 만큼, 구역 안전이나 폐쇄 조건과 관련이 있을 가능성만 추측해 볼 수 있습니다.",
+    "status": "unknown",
+    "elapsed_seconds": 5.48,
+    "source_count": 1,
+    "attempts": 1,
+    "fallbacks": 0,
+    "prompt_chars": 2122,
+    "model": "gemini-3-flash-preview"
+  },
+  {
+    "question": "우리의 진짜 정체는 뭐야?",
+    "answer": "공개된 규칙에 따르면 여러분은 외부의 병을 피해 대피소에서 보호받고 있는 관리 대상입니다. 준이 여러 번호의 손목띠를 확인하는 모습이 관찰되었으나, 이 번호가 단순한 식별용인지 혹은 다른 정체를 의미하는지는 기록에 나타나 있지 않습니다.",
+    "status": "unknown",
+    "elapsed_seconds": 10.42,
+    "source_count": 2,
+    "attempts": 1,
+    "fallbacks": 0,
+    "prompt_chars": 2289,
+    "model": "gemini-3-flash-preview"
+  },
+  {
+    "question": "채연의 검진 결과가 공개되지 않았어?",
+    "answer": "네, 채연이 검진을 받았으나 그 결과는 공개되지 않은 것으로 확인됩니다. 대피소의 규칙에 따라 검진은 매일 이루어지지만, 특정 결과가 공유되지 않는 경우도 있는 것 같습니다.",
+    "status": "supported",
+    "elapsed_seconds": 5.08,
+    "source_count": 1,
+    "attempts": 1,
+    "fallbacks": 0,
+    "prompt_chars": 2006,
+    "model": "gemini-3-flash-preview"
+  },
+  {
+    "question": "채연의 검진 결과가 공개됐어?",
+    "answer": "아니요, 채연이 검진을 받았으나 그 결과는 공개되지 않았습니다. 대피소의 규칙에 따라 매일 검진이 이루어지지만, 이번 결과는 공유되지 않은 것으로 확인됩니다.",
+    "status": "contradicted",
+    "elapsed_seconds": 7.48,
+    "source_count": 1,
+    "attempts": 1,
+    "fallbacks": 0,
+    "prompt_chars": 2128,
+    "model": "gemini-3-flash-preview"
+  },
+  {
+    "question": "내일 채연이 이송될까?",
+    "answer": "채연이 검진을 받았으나 결과가 공개되지 않아 현재로서는 이송 여부를 확신할 수 없습니다. 대피소 규칙에 따라 상태가 좋지 않은 경우 이송될 가능성이 있지만, 채연의 정확한 상태는 확인되지 않은 상황입니다.",
+    "status": "unknown",
+    "elapsed_seconds": 7.39,
+    "source_count": 0,
+    "attempts": 1,
+    "fallbacks": 0,
+    "prompt_chars": 2238,
+    "model": "gemini-3-flash-preview"
+  }
+]

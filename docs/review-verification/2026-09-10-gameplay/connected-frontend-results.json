@@ -1,0 +1,9 @@
+{
+  "mode": "mock API, real frontend; no game DB writes",
+  "checks": [
+    "day notebook is free, sourced, seen-only; portraits are stable",
+    "previous draft/evidence preserved; grounded Q&A and explicit rule preview/apply",
+    "retrospective shows real experiment chain and honest metric N/A"
+  ],
+  "errors": []
+}

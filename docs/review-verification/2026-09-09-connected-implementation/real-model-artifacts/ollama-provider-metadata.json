@@ -1,0 +1,22 @@
+{
+  "queried_at_note": "after probes-20260909T035804Z.json completed",
+  "base_url": "http://127.0.0.1:11434",
+  "ollama_version": "0.31.2",
+  "models": {
+    "gemma3:12b": {
+      "digest": "f4031aab637d1ffa37b42570452ae0e4fad0314754d17ded67322e4b95836f8a",
+      "family": "gemma3",
+      "parameter_size": "12.2B",
+      "quantization_level": "Q4_K_M",
+      "capabilities": ["completion"]
+    },
+    "exaone3.5:7.8b": {
+      "digest": "c7c4e3d1ca22fe9225f18b35eb719f67e2ca96a42e7fd17294a45b83ba8fbf03",
+      "family": "exaone",
+      "parameter_size": "7.8B",
+      "quantization_level": "Q4_K_M",
+      "context_length": 32768,
+      "capabilities": ["completion"]
+    }
+  }
+}

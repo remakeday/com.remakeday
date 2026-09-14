@@ -1,0 +1,16 @@
+{
+  "checked_at": "2026-09-09T04:14:58.190157+00:00",
+  "url": "http://127.0.0.1:8500/health",
+  "status": 200,
+  "response": {
+    "scenario": "a",
+    "harness": "on",
+    "models": {
+      "npc": "ollama:exaone3.5:7.8b",
+      "core": "ollama:gemma3:12b",
+      "embedding": "gemini"
+    },
+    "db": "ok"
+  },
+  "scope": "read-only health; existing listener left running; no game or DB mutation"
+}

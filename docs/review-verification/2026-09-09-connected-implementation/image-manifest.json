@@ -1,0 +1,242 @@
+{
+  "date": "2026-09-09",
+  "mode": "built-in image_gen",
+  "visual_direction": "A: fixed portraits + observable event illustrations + reuse observed images at night",
+  "status": "six generated assets accepted after source-resolution visual inspection; frontend mobile integration verification separate",
+  "fixed_portraits": [
+    {
+      "character": "chaeyeon",
+      "image_id": "E01",
+      "path": "/assets/E01.png",
+      "source": "output/imagegen/E01.png",
+      "decision": "reuse after visual inspection; no mood variants needed for identity"
+    },
+    {
+      "character": "minseok",
+      "image_id": "E04",
+      "path": "/assets/E04.png",
+      "source": "output/imagegen/E04.png",
+      "decision": "reuse after visual inspection; no mood variants needed for identity"
+    },
+    {
+      "character": "eunsang",
+      "image_id": "E07",
+      "path": "/assets/E07.png",
+      "source": "output/imagegen/E07.png",
+      "decision": "reuse after visual inspection; no mood variants needed for identity"
+    },
+    {
+      "character": "jun",
+      "image_id": "E10",
+      "path": "/assets/E10.png",
+      "source": "output/imagegen/E10.png",
+      "decision": "reuse after visual inspection; no mood variants needed for identity"
+    }
+  ],
+  "assets": [
+    {
+      "image_id": "clue-07",
+      "filename": "clue-07-manager-ration-order-v1.png",
+      "original": "output/imagegen/clue-07-manager-ration-order-v1.png",
+      "game_file": "frontend/public/assets/clues/clue-07-manager-ration-order-v1.png",
+      "public_path": "/assets/clues/clue-07-manager-ration-order-v1.png",
+      "generator_source": "/home/kimchungsik/.codex/generated_images/01a08407-f7f0-7eb0-b403-f6db3ccebd1e/exec-13cd28fc-886f-4aad-943f-41aeea8fbc16.png",
+      "references": [
+        "output/imagegen/C01.png",
+        "output/imagegen/E01.png",
+        "output/imagegen/E04.png",
+        "output/imagegen/E07.png",
+        "output/imagegen/E10.png"
+      ],
+      "caption": "관리자의 방송 아래 네 사람이 배급을 기다린다.",
+      "publication_condition": "loop_n=1, beat=1; all four pictured inhabitants are present. Later loops require separate presence validation and must not use automatically.",
+      "truth_limit": "Only broadcast/ration arrangement. Manager's identity and intent unseen; no later resurrection of erased inhabitants.",
+      "prompt": "Use case: illustration-story. Create one NEW landscape 1536x1024 game observation illustration, not a collage. References: C01 is shelter/speaker/trays style and layout; E01 is Chaeyeon identity, E04 Minseok identity, E07 Eunsang identity, E10 Jun identity. Scene: same underground concrete shelter and exposed pipes, bunks behind, long ration table with metal trays in foreground, square wall loudspeaker with a single tiny orange indicator in upper right. A short orderly queue of the four referenced inhabitants listens beneath the speaker while waiting for rations: blanket-wrapped bob-haired Chaeyeon; short-haired Minseok in collared belted workwear and narrow orange right cuff stripe; taller bob-haired Eunsang with distinctly fringed shawl; small tousled-haired Jun in oversized long sleeve hooded sweater. Show all only from rear, hands completely hidden by fabric or occluded behind table. Single coherent quiet moment. Keep exact navy and aged offwhite grainy risograph print style with irregular paper edge, low observer viewpoint, ample clear silhouettes. Primary readable relationship: broadcast speaker above people and ration trays, manager is conveyed ONLY by speaker. Never draw manager body, face or portrait. No faces, hands, animal anatomy, agriculture, text, numbers, icons, speech bubbles or sound wave graphics. No medical outcome or hidden truth. Do not simply reproduce a reference; new composition with people queuing. Match character clothing and physical silhouettes.",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "fa0ed4e815722484fc441aa1c440b25d33d7eee0fe22f08270b6d3ae833ba865",
+      "original_game_copy_identical": true,
+      "visual_checks": {
+        "source_inspected": true,
+        "palette_continuity": true,
+        "identifiable_primary_actor": true,
+        "no_exposed_hands_or_faces": true,
+        "no_hidden_truth_or_medical_result": true
+      },
+      "qa_notes": ""
+    },
+    {
+      "image_id": "clue-08",
+      "filename": "clue-08-minseok-tray-record-v1.png",
+      "original": "output/imagegen/clue-08-minseok-tray-record-v1.png",
+      "game_file": "frontend/public/assets/clues/clue-08-minseok-tray-record-v1.png",
+      "public_path": "/assets/clues/clue-08-minseok-tray-record-v1.png",
+      "generator_source": "/home/kimchungsik/.codex/generated_images/01a08407-f7f0-7eb0-b403-f6db3ccebd1e/exec-3bf89a20-6098-47ec-9cc0-9ec1769d9b44.png",
+      "references": [
+        "output/imagegen/E04.png",
+        "output/imagegen/E01.png",
+        "output/imagegen/C03.png",
+        "output/imagegen/C01.png"
+      ],
+      "caption": "민석이 채연의 쟁반을 살피며 수첩에 기록한다.",
+      "publication_condition": "beat=3 AND Minseok recording action actually occurs AND Chaeyeon is present.",
+      "truth_limit": "Only observed tray examination and writing. Notebook contents, illness and reporting motive not established.",
+      "prompt": "Use case: illustration-story. NEW landscape 1536x1024 observation illustration. References E04 fixes Minseok identity (short hair, collared belted navy workwear, narrow orange right cuff stripe), E01 fixes Chaeyeon (short bob, heavy offwhite blanket), C03 fixes shelter ration counter and metal divided tray; C01 fixes navy/offwhite print palette. Scene: two figures beside the same shelter ration table. Chaeyeon wrapped in her blanket at left, turned away from camera beside her single partly untouched metal food tray. At right Minseok bends slightly towards the tray, visibly examining it while making a note in a small open notebook resting on the table. His head is seen from back only, subtly turned down towards tray and notebook. A pencil at the paper is held inside long sleeve fabric; hands/fingers wholly occluded by cuff and notebook angle, absolutely no exposed hands. Notebook has only a few indistinct nonlegible lines, no words or symbols. Make tray and note-taking relationship large and clear. The posture of his bent sleeve over notebook reads as recording, not serving food. Same concrete blocks, overhead pipe and bedframe behind, same square loudspeaker distant if visible. Low side-rear observer viewpoint, restrained dense navy halftone risograph on aged offwhite textured paper, irregular print border, tiny orange only on Minseok cuff. No other people, no visible faces, no animals or medical props, no arrows or diagrams, no written claims. This shows examination and recording only, never her illness or his hidden motive. New coherent scene, character continuity exact.",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "4204a0c9928ef51b535642906e2f70a68687fc42c63b6f62f967b083652e34bf",
+      "original_game_copy_identical": true,
+      "visual_checks": {
+        "source_inspected": true,
+        "palette_continuity": true,
+        "identifiable_primary_actor": true,
+        "no_exposed_hands_or_faces": true,
+        "no_hidden_truth_or_medical_result": true
+      },
+      "qa_notes": "Orange cuff remains identifying feature; its apparent side differs from E04 with bent recording pose. No story fact depends on cuff laterality. Notebook marks intentionally nonlegible."
+    },
+    {
+      "image_id": "clue-09",
+      "filename": "clue-09-minseok-broadcast-approach-v1.png",
+      "original": "output/imagegen/clue-09-minseok-broadcast-approach-v1.png",
+      "game_file": "frontend/public/assets/clues/clue-09-minseok-broadcast-approach-v1.png",
+      "public_path": "/assets/clues/clue-09-minseok-broadcast-approach-v1.png",
+      "generator_source": "/home/kimchungsik/.codex/generated_images/01a08407-f7f0-7eb0-b403-f6db3ccebd1e/exec-3d116ea8-f73d-4e44-84e5-288e8be67bbc.png",
+      "references": [
+        "output/imagegen/E04.png",
+        "output/imagegen/C02.png",
+        "output/imagegen/C01.png"
+      ],
+      "caption": "민석이 닫힌 방송실 문 쪽으로 향한다.",
+      "publication_condition": "beat=5 AND Minseok broadcast-room approach action actually occurs.",
+      "truth_limit": "Only approach to a closed door. Entry/report delivery/completed reporting not established.",
+      "prompt": "Use case: illustration-story. Create NEW landscape 1536x1024 observation art. Reference E04 is exact Minseok identity and clothing; C02 is shelter corridor perspective/metal closed door; C01 is navy and offwhite risograph printing and square wall loudspeaker. Scene: Minseok alone walking down the same concrete shelter corridor toward a CLOSED metal broadcast-room door in middle distance, seen entirely from behind. He is the short-haired figure in collared belted utilitarian workwear, narrow muted orange band around right sleeve near cuff. Hands entirely hidden by long sleeves. The closed door and adjacent familiar square speaker with tiny orange light should be unmistakable and occupy enough of frame to read at phone width. Minseok is still about one body length away from door, approaching rather than entering, waiting or handing anything over. Hands remain down, no reaching, nobody receives anything, no papers in slot. View from low behind, Minseok lower left or middle, doorway ahead at right, shelter pipes lead toward it. A sliver of existing black tubular bunk frames establishes same shelter. Calm observational grainy navy ink halftone on aged offwhite paper, worn irregular print margin. No faces, no exposed hands, no animals, no visible room interior, no manager person, no legible text or signage, no arrows. This picture must prove only approach to closed door, never completed reporting, communication, culprit identity or hidden motive.",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "ac9164613bd9b210cc1eef685e47491c7a59e439cf11bb939f1f10b98cf5e073",
+      "original_game_copy_identical": true,
+      "visual_checks": {
+        "source_inspected": true,
+        "palette_continuity": true,
+        "identifiable_primary_actor": true,
+        "no_exposed_hands_or_faces": true,
+        "no_hidden_truth_or_medical_result": true
+      },
+      "qa_notes": ""
+    },
+    {
+      "image_id": "clue-10",
+      "filename": "clue-10-eunsang-rumor-path-v1.png",
+      "original": "output/imagegen/clue-10-eunsang-rumor-path-v1.png",
+      "game_file": "frontend/public/assets/clues/clue-10-eunsang-rumor-path-v1.png",
+      "public_path": "/assets/clues/clue-10-eunsang-rumor-path-v1.png",
+      "generator_source": "/home/kimchungsik/.codex/generated_images/01a08407-f7f0-7eb0-b403-f6db3ccebd1e/exec-3ffa0b22-f967-4c16-82cf-b3b9bb488aa2.png",
+      "references": [
+        "output/imagegen/E07.png",
+        "output/imagegen/C02.png",
+        "output/imagegen/C01.png"
+      ],
+      "caption": "은상이 사람들 사이를 옮겨 다니며 말을 전한다.",
+      "publication_condition": "beat IN (2,5) AND Eunsang rumor-sharing action actually occurs; anonymous background inhabitants must be present.",
+      "truth_limit": "Only movement and conversation. Rumor content/source/truth requires actual utterance evidence; image itself verifies none.",
+      "prompt": "Use case: illustration-story. Create a NEW single coherent landscape 1536x1024 game observation image. E07 reference strictly defines Eunsang: tall slim inhabitant with straight shoulder-length dark hair, dark jacket, a loosely draped offwhite shawl with unmistakably long fringed edges hanging over back and side. C02 defines the underground shelter bunk aisle; C01 defines navy/aged-offwhite risograph print with worn paper border. Scene: Eunsang is moving between two shelter inhabitants to pass along a rumor, one single moment. Near left edge the back of an anonymous blanket-covered seated inhabitant is partly cropped. In the middle Eunsang, shown full rear three-quarter with face and hands entirely hidden, takes a step away from left bunk toward another anonymous bundled seated inhabitant at right; Eunsang leans their head and shoulder toward right inhabitant in conversational proximity. Right listener also seen only from rear, face fully occluded. Do not copy another named character's distinctive hairstyle/outfit; listeners should be partial generic bundled backs, Eunsang's full unique fringed shawl silhouette clearly dominant. Route between two bunk seating places readable through figure and floor arrangement. Same exposed pipes, concrete blocks and black tubular beds, no new architecture. No literal arrows, motion trails, duplicate Eunsang, speech bubbles, text, facial features, exposed fingers/hands, animal anatomy, additional symbolic evidence or hidden events. Low observer viewpoint and clear subject separation; navy ink grain on warm pale paper. This establishes only moving between people and talking, never truth of rumor or its origin. Keep observation concrete and composition distinct from portrait.",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "b63f53785145df6cb8b04879d3f3238b2fc6197af49cd77ca857bbf1c6d719d3",
+      "original_game_copy_identical": true,
+      "visual_checks": {
+        "source_inspected": true,
+        "palette_continuity": true,
+        "identifiable_primary_actor": true,
+        "no_exposed_hands_or_faces": true,
+        "no_hidden_truth_or_medical_result": true
+      },
+      "qa_notes": "A single picture shows conversational proximity, not elapsed travel; movement sequence and actual words need public narration."
+    },
+    {
+      "image_id": "clue-11",
+      "filename": "clue-11-jun-band-observation-v1.png",
+      "original": "output/imagegen/clue-11-jun-band-observation-v1.png",
+      "game_file": "frontend/public/assets/clues/clue-11-jun-band-observation-v1.png",
+      "public_path": "/assets/clues/clue-11-jun-band-observation-v1.png",
+      "generator_source": "/home/kimchungsik/.codex/generated_images/01a08407-f7f0-7eb0-b403-f6db3ccebd1e/exec-d924706c-21d6-4104-832c-f2dbb3e25469.png",
+      "references": [
+        "output/imagegen/E10.png",
+        "output/imagegen/C02.png"
+      ],
+      "caption": "준이 소매 끝의 번호가 있는 띠를 살핀다.",
+      "publication_condition": "beat=2 AND Jun numbered wristband observation publicly occurs AND Jun is present.",
+      "truth_limit": "Only a marked identification band. Exact number, animal identity and ear tag are not asserted; tiny marks are not reliable text.",
+      "prompt": "Use case: illustration-story. NEW landscape 1536x1024 game observation image. Reference E10 fixes Jun: very small crouching inhabitant with tousled short dark hair and oversized offwhite-gray long-sleeved hooded sweater, same black footwear. C02 fixes the shelter bunks and concrete/pipe environment. Make a close low rear three-quarter view of the same Jun crouched beside the lower bunk. He bows his head to study a narrow offwhite identification wristband wrapped around the wrist area at his oversized sleeve opening. Make one bent forearm, cuff and band large enough to observe in foreground right-center; the band has a few tiny indistinct dark printed registration marks, no legible number, words or arbitrary number value. His other sleeve drapes over and wholly hides the hand/fingers, so BOTH hands remain completely invisible; do not show any flesh at band, face or ears. Band must read as a flat paper/plastic identification strip with a small overlapping fastener, NOT orange authority stripe, jewelry, watch, handcuffs or chain. Head and hoodie/body silhouette clearly identifiable as same Jun while cuff/band is focus; no inset diagrams or split panels. A partial black bed frame and same concrete blocks/overhead pipes in background. Navy/aged-offwhite textured risograph, clear pale band against navy sleeve folds, worn paper margin, no orange needed. Single calm concrete observational moment. No animal anatomy, hidden identity clues beyond ordinary numbered-band observation, medical claims, text labels, arrows, exposed fingers, faces.",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "a43ee0f72f19b20d39926a61bb62557279f1ece11502c1b9c8304ed4fc69a439",
+      "original_game_copy_identical": true,
+      "visual_checks": {
+        "source_inspected": true,
+        "palette_continuity": true,
+        "identifiable_primary_actor": true,
+        "no_exposed_hands_or_faces": true,
+        "no_hidden_truth_or_medical_result": true
+      },
+      "qa_notes": "Band remains high contrast; marks deliberately unreadable, exact number is not evidence."
+    },
+    {
+      "image_id": "clue-12",
+      "filename": "clue-12-chaeyeon-checkup-route-v1.png",
+      "original": "output/imagegen/clue-12-chaeyeon-checkup-route-v1.png",
+      "game_file": "frontend/public/assets/clues/clue-12-chaeyeon-checkup-route-v1.png",
+      "public_path": "/assets/clues/clue-12-chaeyeon-checkup-route-v1.png",
+      "generator_source": "/home/kimchungsik/.codex/generated_images/01a08407-f7f0-7eb0-b403-f6db3ccebd1e/exec-09b5ac1a-b393-4e28-b429-80ecf7efb04e.png",
+      "references": [
+        "output/imagegen/E01.png",
+        "output/imagegen/clue-02-chaeyeon-checkup-reaction-v1.png",
+        "output/imagegen/clue-03-after-checkup-v1.png",
+        "output/imagegen/C04.png"
+      ],
+      "caption": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다.",
+      "publication_condition": "beat=4 AND examiner passage/Chaeyeon waiting checkup scene actually occurs AND Chaeyeon is present; do not use for suppressed/replaced checkup.",
+      "truth_limit": "Only examiner passing and Chaeyeon waiting. No contact/test result/normal finding/diagnosis/completed examination established.",
+      "prompt": "Use case: illustration-story. NEW landscape 1536x1024 game observation illustration bridging existing checkup scenes, same scene continuity essential. References: E01 fixes Chaeyeon short bob haircut and heavy offwhite blanket; clue-02 establishes her sheltered waiting posture; clue-03 fixes this EXACT room with black tubular bunk at right, metal examination table with open hard case and coil/handheld light instrument at left, stool, clipboard, concrete wall with pipe and fluorescent light. C04 corroborates tools and table. Draw a NEW middle moment from slightly farther back at low observer height: Chaeyeon stays seated at right lower bunk, back to camera, blanket drawn over shoulders, waiting. One anonymous examination worker in long pale/offwhite utilitarian coat passes along the aisle between examination table and bunk, slightly left of center, walking toward background. Worker seen exclusively from back, head kept out of top frame or fully cropped/occluded; both hands fully inside long sleeves or hidden by coat. Worker does not touch Chaeyeon, holds no needle, does not read or announce a result. Their slightly stepping leg/coat conveys inspection movement among resting places. Chaeyeon remains the same identifiable person, her posture and bob and blanket clearly visible and unobstructed. Keep table, open hard case with coiled cable and cylindrical light, clipboard (blank paper) and stool at left and same bunk at right, all familiar. Navy and aged offwhite halftone risograph texture, worn paper border, no bright new colors. No exposed hands/fingers, no face, no animals, no medical signs/symbols, no text, no test result, no diagnosis, no indication of passing/failing health or reporting outcome, no added scientific devices. Observation is an examiner passing while Chaeyeon waits at her place.",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "056e5c6c4556b851755bc20b0d07fd5af06088043e615d90eeb69c07998cf909",
+      "original_game_copy_identical": true,
+      "visual_checks": {
+        "source_inspected": true,
+        "palette_continuity": true,
+        "identifiable_primary_actor": true,
+        "no_exposed_hands_or_faces": true,
+        "no_hidden_truth_or_medical_result": true
+      },
+      "qa_notes": ""
+    }
+  ],
+  "followup_decisions": [
+    {
+      "candidate": "transfer departure trace",
+      "decision": "not generated",
+      "reason": "Existing H02 and clue-05 cover empty place. An unseen departure would invent a witnessed event or identity. Revisit only with a public departure event."
+    },
+    {
+      "candidate": "truck close observation",
+      "decision": "reuse existing N08 when its clue is actually unlocked",
+      "reason": "Inspected existing N08 already shows obscured truck-side markings through a low door gap. More precise lettering would invent new information."
+    },
+    {
+      "candidate": "zone boundary",
+      "decision": "reuse existing clue-06 only on actual closure outcome",
+      "reason": "Inspected clue-06 already links familiar speakers and barred boundary; drawing unseen neighboring interior would exceed observation."
+    },
+    {
+      "candidate": "rule-altered action",
+      "decision": "reuse relevant observed event art with actual changed dialogue; suppress contradictory action art",
+      "reason": "Known-source disclosure changes what Eunsang says rather than a visible movement. Extra raster would not add observable information."
+    }
+  ],
+  "limitations": [
+    "No claim that artwork causally improves comprehension without user/A-B evaluation.",
+    "At 390px notebook and band need original-image opening plus equivalent text; mobile integration verification delegated to frontend.",
+    "No newly generated night recollections; only assets actually observed in that game/loop may be reused."
+  ]
+}

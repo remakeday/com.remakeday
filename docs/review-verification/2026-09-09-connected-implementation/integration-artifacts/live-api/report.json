@@ -1,0 +1,675 @@
+{
+  "mode": "live isolated pigfarm_test API; fake models; integration automation, not a human playtest",
+  "api_base": "http://127.0.0.1:8501",
+  "backend_attestation": {
+    "pid": 1045806,
+    "database": "pigfarm_test",
+    "npc_provider": "fake",
+    "core_provider": "fake",
+    "scenario": "a",
+    "harness": "on",
+    "port": 8501,
+    "launcher_sha256": "3976a78f43509be5b523772085733bc87f49dc368ce8eb4bc76157fc95f43fac",
+    "generated_at": "2026-09-09T03:51:47.951733+00:00"
+  },
+  "isolation": {
+    "database_name": "pigfarm_test",
+    "npc_provider": "fake",
+    "core_provider": "fake"
+  },
+  "attempt_id": "6cd879cb-767c-4810-82d4-e9099ef42867",
+  "retry_attempt_id": "ed4a17da-d316-493b-88da-ef50e86daef3",
+  "checks": [
+    "isolated fake backend health",
+    "loop 1 observation provenance",
+    "loop 1 notes link exact public sources",
+    "loop 1 continues regardless of score",
+    "loop 1 contextual options are complete",
+    "loop 2 observation provenance",
+    "loop 2 notes link exact public sources",
+    "loop 2 continues regardless of score",
+    "loop 2 contextual options are complete",
+    "loop 3 observation provenance",
+    "loop 3 notes link exact public sources",
+    "loop 3 inherited note text not duplicated",
+    "loop 3 continues regardless of score",
+    "loop 3 contextual options are complete",
+    "loop 4 observation provenance",
+    "loop 4 notes link exact public sources",
+    "loop 4 inherited note text not duplicated",
+    "loop 4 continues regardless of score",
+    "loop 4 contextual options are complete",
+    "loop 5 observation provenance",
+    "loop 5 notes link exact public sources",
+    "loop 5 inherited note text not duplicated",
+    "fifth night closes with narrative",
+    "runtime image publication rules",
+    "harness denominators and complete call accounting"
+  ],
+  "image_occurrences": [
+    {
+      "loop_n": 1,
+      "beat": 1,
+      "image_id": "clue-07",
+      "caption": "관리자의 방송 아래 네 사람이 배급을 기다린다."
+    },
+    {
+      "loop_n": 1,
+      "beat": 1,
+      "image_id": "clue-01",
+      "caption": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다."
+    },
+    {
+      "loop_n": 1,
+      "beat": 2,
+      "image_id": "clue-11",
+      "caption": "준이 숫자가 적힌 띠를 들여다본다."
+    },
+    {
+      "loop_n": 1,
+      "beat": 2,
+      "image_id": "clue-10",
+      "caption": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다."
+    },
+    {
+      "loop_n": 1,
+      "beat": 3,
+      "image_id": "clue-08",
+      "caption": "민석이 배급 자리 옆에서 수첩에 기록한다."
+    },
+    {
+      "loop_n": 1,
+      "beat": 4,
+      "image_id": "clue-12",
+      "caption": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다."
+    },
+    {
+      "loop_n": 1,
+      "beat": 5,
+      "image_id": "clue-04",
+      "caption": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다."
+    },
+    {
+      "loop_n": 1,
+      "beat": 5,
+      "image_id": "clue-10",
+      "caption": "은상이 사람들 사이에서 귓속말을 한다."
+    },
+    {
+      "loop_n": 1,
+      "beat": 5,
+      "image_id": "clue-09",
+      "caption": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다."
+    },
+    {
+      "loop_n": 2,
+      "beat": 1,
+      "image_id": "clue-01",
+      "caption": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다."
+    },
+    {
+      "loop_n": 2,
+      "beat": 2,
+      "image_id": "clue-11",
+      "caption": "준이 숫자가 적힌 띠를 들여다본다."
+    },
+    {
+      "loop_n": 2,
+      "beat": 2,
+      "image_id": "clue-10",
+      "caption": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다."
+    },
+    {
+      "loop_n": 2,
+      "beat": 3,
+      "image_id": "clue-08",
+      "caption": "민석이 배급 자리 옆에서 수첩에 기록한다."
+    },
+    {
+      "loop_n": 2,
+      "beat": 4,
+      "image_id": "clue-12",
+      "caption": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다."
+    },
+    {
+      "loop_n": 2,
+      "beat": 5,
+      "image_id": "clue-04",
+      "caption": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다."
+    },
+    {
+      "loop_n": 2,
+      "beat": 5,
+      "image_id": "clue-10",
+      "caption": "은상이 사람들 사이에서 귓속말을 한다."
+    },
+    {
+      "loop_n": 2,
+      "beat": 5,
+      "image_id": "clue-09",
+      "caption": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다."
+    },
+    {
+      "loop_n": 3,
+      "beat": 1,
+      "image_id": "clue-01",
+      "caption": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다."
+    },
+    {
+      "loop_n": 3,
+      "beat": 2,
+      "image_id": "clue-11",
+      "caption": "준이 숫자가 적힌 띠를 들여다본다."
+    },
+    {
+      "loop_n": 3,
+      "beat": 2,
+      "image_id": "clue-10",
+      "caption": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다."
+    },
+    {
+      "loop_n": 3,
+      "beat": 3,
+      "image_id": "clue-08",
+      "caption": "민석이 배급 자리 옆에서 수첩에 기록한다."
+    },
+    {
+      "loop_n": 3,
+      "beat": 4,
+      "image_id": "clue-12",
+      "caption": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다."
+    },
+    {
+      "loop_n": 3,
+      "beat": 5,
+      "image_id": "clue-04",
+      "caption": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다."
+    },
+    {
+      "loop_n": 3,
+      "beat": 5,
+      "image_id": "clue-10",
+      "caption": "은상이 사람들 사이에서 귓속말을 한다."
+    },
+    {
+      "loop_n": 3,
+      "beat": 5,
+      "image_id": "clue-09",
+      "caption": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다."
+    },
+    {
+      "loop_n": 4,
+      "beat": 1,
+      "image_id": "clue-01",
+      "caption": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다."
+    },
+    {
+      "loop_n": 4,
+      "beat": 2,
+      "image_id": "clue-11",
+      "caption": "준이 숫자가 적힌 띠를 들여다본다."
+    },
+    {
+      "loop_n": 4,
+      "beat": 2,
+      "image_id": "clue-10",
+      "caption": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다."
+    },
+    {
+      "loop_n": 4,
+      "beat": 4,
+      "image_id": "clue-12",
+      "caption": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다."
+    },
+    {
+      "loop_n": 4,
+      "beat": 5,
+      "image_id": "clue-04",
+      "caption": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다."
+    },
+    {
+      "loop_n": 4,
+      "beat": 5,
+      "image_id": "clue-10",
+      "caption": "은상이 사람들 사이에서 귓속말을 한다."
+    },
+    {
+      "loop_n": 4,
+      "beat": 5,
+      "image_id": "clue-09",
+      "caption": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다."
+    },
+    {
+      "loop_n": 5,
+      "beat": 1,
+      "image_id": "clue-01",
+      "caption": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다."
+    },
+    {
+      "loop_n": 5,
+      "beat": 2,
+      "image_id": "clue-11",
+      "caption": "준이 숫자가 적힌 띠를 들여다본다."
+    },
+    {
+      "loop_n": 5,
+      "beat": 2,
+      "image_id": "clue-10",
+      "caption": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다."
+    },
+    {
+      "loop_n": 5,
+      "beat": 4,
+      "image_id": "clue-12",
+      "caption": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다."
+    },
+    {
+      "loop_n": 5,
+      "beat": 5,
+      "image_id": "clue-04",
+      "caption": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다."
+    },
+    {
+      "loop_n": 5,
+      "beat": 5,
+      "image_id": "clue-10",
+      "caption": "은상이 사람들 사이에서 귓속말을 한다."
+    },
+    {
+      "loop_n": 5,
+      "beat": 5,
+      "image_id": "clue-09",
+      "caption": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다."
+    }
+  ],
+  "harness": {
+    "rules": [
+      {
+        "rule_id": "R1",
+        "source": "monkey_paw",
+        "target": "채연",
+        "when_beat": 3,
+        "effect": "enforce",
+        "action": "알고 있는 관찰을 설명한다",
+        "shown_reason": "채연이(가) 다음에 직접 한 일을 말로 설명한다. 놓친 관찰을 들을 수 있다.",
+        "hidden_side_effect": "설명을 듣는 장면에서 발화 여유가 남아 있으면 1회 줄어든다. 없으면 대가는 발생하지 않는다.",
+        "created_loop": 1,
+        "conflict": false
+      },
+      {
+        "rule_id": "R2",
+        "source": "user_custom",
+        "target": "은상",
+        "when_beat": null,
+        "effect": "enforce",
+        "action": "소문의 알려진 출처를 밝힌다",
+        "shown_reason": "은상: 소문의 알려진 출처를 밝힌다 — 강제",
+        "hidden_side_effect": null,
+        "created_loop": 1,
+        "conflict": false
+      },
+      {
+        "rule_id": "R3",
+        "source": "user_choice",
+        "target": "채연",
+        "when_beat": 1,
+        "effect": "enforce",
+        "action": "배급을 남긴다",
+        "shown_reason": "채연: 배급을 남긴다",
+        "hidden_side_effect": null,
+        "created_loop": 2,
+        "conflict": false
+      },
+      {
+        "rule_id": "R4",
+        "source": "user_custom",
+        "target": "민석",
+        "when_beat": null,
+        "effect": "suppress",
+        "action": "기록한다",
+        "shown_reason": "민석: 기록한다 — 금지",
+        "hidden_side_effect": null,
+        "created_loop": 3,
+        "conflict": false
+      },
+      {
+        "rule_id": "R5",
+        "source": "user_choice",
+        "target": "준",
+        "when_beat": 2,
+        "effect": "enforce",
+        "action": "알고 있는 관찰을 설명한다",
+        "shown_reason": "준: 알고 있는 관찰을 설명한다",
+        "hidden_side_effect": null,
+        "created_loop": 4,
+        "conflict": false
+      }
+    ],
+    "harness_summary": {
+      "total_events": 347,
+      "harness_interventions": 92,
+      "model_calls": 107,
+      "model_attempts": 291,
+      "model_call_coverage": "complete_logged_calls",
+      "fallbacks": 92,
+      "paw_accepted": 1,
+      "recommended_rules": 2,
+      "custom_rules": 2,
+      "rule_conflicts": 0,
+      "questions_asked": 12,
+      "rule_success_rate": 1,
+      "tool_side_effects": []
+    },
+    "experiments": [
+      {
+        "rule_id": "R1",
+        "intent": null,
+        "interpretation": "채연이(가) 다음에 직접 한 일을 말로 설명한다. 놓친 관찰을 들을 수 있다.",
+        "opportunities": [
+          {
+            "loop_n": 1,
+            "beat": 3,
+            "condition": "채연: 배급을 남긴다 기회",
+            "actual_action": "알고 있는 관찰을 설명한다",
+            "result": "obeyed",
+            "observation_ids": [
+              "a486628a-a7ad-4176-8dac-e6b8bd1e24e2:action-3-채연-배급을 남긴다",
+              "a486628a-a7ad-4176-8dac-e6b8bd1e24e2:rule-3-R1",
+              "a486628a-a7ad-4176-8dac-e6b8bd1e24e2:paw-cost-3-R1"
+            ],
+            "side_effect": "채연의 설명을 듣느라 다음에 말을 걸 여유가 줄었다."
+          },
+          {
+            "loop_n": 2,
+            "beat": 3,
+            "condition": "채연: 배급을 남긴다 기회",
+            "actual_action": "알고 있는 관찰을 설명한다",
+            "result": "obeyed",
+            "observation_ids": [
+              "56da5b03-a84e-4d98-8b16-d03790e6565e:action-3-채연-배급을 남긴다",
+              "56da5b03-a84e-4d98-8b16-d03790e6565e:rule-3-R1",
+              "56da5b03-a84e-4d98-8b16-d03790e6565e:paw-cost-3-R1"
+            ],
+            "side_effect": "채연의 설명을 듣느라 다음에 말을 걸 여유가 줄었다."
+          },
+          {
+            "loop_n": 3,
+            "beat": 3,
+            "condition": "채연: 배급을 남긴다 기회",
+            "actual_action": "알고 있는 관찰을 설명한다",
+            "result": "obeyed",
+            "observation_ids": [
+              "b3d23c93-328c-4606-94bc-86c78c89de75:action-3-채연-배급을 남긴다",
+              "b3d23c93-328c-4606-94bc-86c78c89de75:rule-3-R1",
+              "b3d23c93-328c-4606-94bc-86c78c89de75:paw-cost-3-R1"
+            ],
+            "side_effect": "채연의 설명을 듣느라 다음에 말을 걸 여유가 줄었다."
+          },
+          {
+            "loop_n": 4,
+            "beat": 3,
+            "condition": "채연: 배급을 남긴다 기회",
+            "actual_action": "알고 있는 관찰을 설명한다",
+            "result": "obeyed",
+            "observation_ids": [
+              "6f22be6f-6b7e-468f-a9d1-f3ea233d4d0a:action-3-채연-배급을 남긴다",
+              "6f22be6f-6b7e-468f-a9d1-f3ea233d4d0a:rule-3-R1",
+              "6f22be6f-6b7e-468f-a9d1-f3ea233d4d0a:paw-cost-3-R1"
+            ],
+            "side_effect": "채연의 설명을 듣느라 다음에 말을 걸 여유가 줄었다."
+          },
+          {
+            "loop_n": 5,
+            "beat": 3,
+            "condition": "채연: 배급을 남긴다 기회",
+            "actual_action": "알고 있는 관찰을 설명한다",
+            "result": "obeyed",
+            "observation_ids": [
+              "3072616e-b872-49c5-aa51-b0386cd87c3f:action-3-채연-배급을 남긴다",
+              "3072616e-b872-49c5-aa51-b0386cd87c3f:rule-3-R1",
+              "3072616e-b872-49c5-aa51-b0386cd87c3f:paw-cost-3-R1"
+            ],
+            "side_effect": "채연의 설명을 듣느라 다음에 말을 걸 여유가 줄었다."
+          }
+        ]
+      },
+      {
+        "rule_id": "R2",
+        "intent": "은상은 소문의 알려진 출처를 밝힌다",
+        "interpretation": "은상: 소문의 알려진 출처를 밝힌다 — 강제",
+        "opportunities": [
+          {
+            "loop_n": 2,
+            "beat": 2,
+            "condition": "은상: 소문을 낸다 기회",
+            "actual_action": "소문의 알려진 출처를 밝힌다",
+            "result": "obeyed",
+            "observation_ids": [
+              "56da5b03-a84e-4d98-8b16-d03790e6565e:action-2-은상-소문을 낸다",
+              "56da5b03-a84e-4d98-8b16-d03790e6565e:rule-2-R2"
+            ],
+            "side_effect": null
+          },
+          {
+            "loop_n": 2,
+            "beat": 5,
+            "condition": "은상: 소문을 낸다 기회",
+            "actual_action": "소문의 알려진 출처를 밝힌다",
+            "result": "obeyed",
+            "observation_ids": [
+              "56da5b03-a84e-4d98-8b16-d03790e6565e:action-5-은상-소문을 낸다",
+              "56da5b03-a84e-4d98-8b16-d03790e6565e:rule-5-R2"
+            ],
+            "side_effect": null
+          },
+          {
+            "loop_n": 3,
+            "beat": 2,
+            "condition": "은상: 소문을 낸다 기회",
+            "actual_action": "소문의 알려진 출처를 밝힌다",
+            "result": "obeyed",
+            "observation_ids": [
+              "b3d23c93-328c-4606-94bc-86c78c89de75:action-2-은상-소문을 낸다",
+              "b3d23c93-328c-4606-94bc-86c78c89de75:rule-2-R2"
+            ],
+            "side_effect": null
+          },
+          {
+            "loop_n": 3,
+            "beat": 5,
+            "condition": "은상: 소문을 낸다 기회",
+            "actual_action": "소문의 알려진 출처를 밝힌다",
+            "result": "obeyed",
+            "observation_ids": [
+              "b3d23c93-328c-4606-94bc-86c78c89de75:action-5-은상-소문을 낸다",
+              "b3d23c93-328c-4606-94bc-86c78c89de75:rule-5-R2"
+            ],
+            "side_effect": null
+          },
+          {
+            "loop_n": 4,
+            "beat": 2,
+            "condition": "은상: 소문을 낸다 기회",
+            "actual_action": "소문의 알려진 출처를 밝힌다",
+            "result": "obeyed",
+            "observation_ids": [
+              "6f22be6f-6b7e-468f-a9d1-f3ea233d4d0a:action-2-은상-소문을 낸다",
+              "6f22be6f-6b7e-468f-a9d1-f3ea233d4d0a:rule-2-R2"
+            ],
+            "side_effect": null
+          },
+          {
+            "loop_n": 4,
+            "beat": 5,
+            "condition": "은상: 소문을 낸다 기회",
+            "actual_action": "소문의 알려진 출처를 밝힌다",
+            "result": "obeyed",
+            "observation_ids": [
+              "6f22be6f-6b7e-468f-a9d1-f3ea233d4d0a:action-5-은상-소문을 낸다",
+              "6f22be6f-6b7e-468f-a9d1-f3ea233d4d0a:rule-5-R2"
+            ],
+            "side_effect": null
+          },
+          {
+            "loop_n": 5,
+            "beat": 2,
+            "condition": "은상: 소문을 낸다 기회",
+            "actual_action": "소문의 알려진 출처를 밝힌다",
+            "result": "obeyed",
+            "observation_ids": [
+              "3072616e-b872-49c5-aa51-b0386cd87c3f:action-2-은상-소문을 낸다",
+              "3072616e-b872-49c5-aa51-b0386cd87c3f:rule-2-R2"
+            ],
+            "side_effect": null
+          },
+          {
+            "loop_n": 5,
+            "beat": 5,
+            "condition": "은상: 소문을 낸다 기회",
+            "actual_action": "소문의 알려진 출처를 밝힌다",
+            "result": "obeyed",
+            "observation_ids": [
+              "3072616e-b872-49c5-aa51-b0386cd87c3f:action-5-은상-소문을 낸다",
+              "3072616e-b872-49c5-aa51-b0386cd87c3f:rule-5-R2"
+            ],
+            "side_effect": null
+          }
+        ]
+      },
+      {
+        "rule_id": "R3",
+        "intent": "확인 화면에서 고친 2회차 주장.",
+        "interpretation": "채연: 배급을 남긴다",
+        "opportunities": [
+          {
+            "loop_n": 3,
+            "beat": 1,
+            "condition": "채연: 배급을 남긴다 기회",
+            "actual_action": "배급을 남긴다",
+            "result": "obeyed",
+            "observation_ids": [
+              "b3d23c93-328c-4606-94bc-86c78c89de75:action-1-채연-배급을 남긴다"
+            ],
+            "side_effect": null
+          },
+          {
+            "loop_n": 4,
+            "beat": 1,
+            "condition": "채연: 배급을 남긴다 기회",
+            "actual_action": "배급을 남긴다",
+            "result": "obeyed",
+            "observation_ids": [
+              "6f22be6f-6b7e-468f-a9d1-f3ea233d4d0a:action-1-채연-배급을 남긴다"
+            ],
+            "side_effect": null
+          },
+          {
+            "loop_n": 5,
+            "beat": 1,
+            "condition": "채연: 배급을 남긴다 기회",
+            "actual_action": "배급을 남긴다",
+            "result": "obeyed",
+            "observation_ids": [
+              "3072616e-b872-49c5-aa51-b0386cd87c3f:action-1-채연-배급을 남긴다"
+            ],
+            "side_effect": null
+          }
+        ]
+      },
+      {
+        "rule_id": "R4",
+        "intent": "민석은 기록한다 금지",
+        "interpretation": "민석: 기록한다 — 금지",
+        "opportunities": [
+          {
+            "loop_n": 4,
+            "beat": 3,
+            "condition": "민석: 기록한다 기회",
+            "actual_action": null,
+            "result": "obeyed",
+            "observation_ids": [
+              "6f22be6f-6b7e-468f-a9d1-f3ea233d4d0a:action-3-민석-기록한다"
+            ],
+            "side_effect": null
+          },
+          {
+            "loop_n": 5,
+            "beat": 3,
+            "condition": "민석: 기록한다 기회",
+            "actual_action": null,
+            "result": "obeyed",
+            "observation_ids": [
+              "3072616e-b872-49c5-aa51-b0386cd87c3f:action-3-민석-기록한다"
+            ],
+            "side_effect": null
+          }
+        ]
+      },
+      {
+        "rule_id": "R5",
+        "intent": "확인 화면에서 고친 4회차 주장.",
+        "interpretation": "준: 알고 있는 관찰을 설명한다",
+        "opportunities": [
+          {
+            "loop_n": 5,
+            "beat": 2,
+            "condition": "준: 손목띠를 만진다 기회",
+            "actual_action": "알고 있는 관찰을 설명한다",
+            "result": "obeyed",
+            "observation_ids": [
+              "3072616e-b872-49c5-aa51-b0386cd87c3f:action-2-준-손목띠를 만진다",
+              "3072616e-b872-49c5-aa51-b0386cd87c3f:rule-2-R5"
+            ],
+            "side_effect": null
+          }
+        ]
+      }
+    ],
+    "metrics": {
+      "note_source_linkage": {
+        "numerator": 154,
+        "denominator": 154,
+        "value": 1,
+        "reviewed": 0,
+        "method": "instrumented_loops_only; legacy notes unmeasured",
+        "unmeasured": 0
+      },
+      "rule_compliance": {
+        "numerator": 19,
+        "denominator": 19,
+        "value": 1,
+        "reviewed": 0,
+        "method": "deterministic_scene_action; conflicts and no opportunity excluded"
+      },
+      "question_grounding": {
+        "numerator": null,
+        "denominator": 0,
+        "value": null,
+        "reviewed": 0,
+        "method": "independent semantic review required; no reviewed sample"
+      },
+      "recommendation_relevance": {
+        "numerator": null,
+        "denominator": 0,
+        "value": null,
+        "reviewed": 0,
+        "method": "independent semantic review required; no reviewed sample"
+      },
+      "custom_semantics": {
+        "numerator": null,
+        "denominator": 0,
+        "value": null,
+        "reviewed": 0,
+        "method": "independent semantic review required; rejections are not failures"
+      },
+      "checker_accuracy": {
+        "numerator": null,
+        "denominator": 0,
+        "value": null,
+        "reviewed": 0,
+        "method": "independent false-positive/false-negative review required"
+      }
+    },
+    "measurement_version": "connected-investigation-1"
+  }
+}

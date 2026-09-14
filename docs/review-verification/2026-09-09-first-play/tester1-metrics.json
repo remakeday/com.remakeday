@@ -1,0 +1,117 @@
+{
+  "participant_id": "테스터1",
+  "attempt_id": "b56dca9d-8b01-4fe7-9b52-4afabb80e3f7",
+  "source": "tester1-log.json",
+  "human_result_count": 1,
+  "first_play_eligibility": "prior knowledge unconfirmed; attempt_n=1 does not establish naivety",
+  "score_by_loop": [
+    {
+      "loop_n": 1,
+      "score": 0.0,
+      "cells": {
+        "cause": 0.0,
+        "motive": 0.0,
+        "identity": 0.0,
+        "side_effect": 0.0
+      },
+      "selected_notes": 2
+    },
+    {
+      "loop_n": 2,
+      "score": 50.2,
+      "cells": {
+        "cause": 75.0,
+        "motive": 41.7,
+        "identity": 31.2,
+        "side_effect": 0.0
+      },
+      "selected_notes": 4
+    },
+    {
+      "loop_n": 3,
+      "score": 36.5,
+      "cells": {
+        "cause": 62.5,
+        "motive": 41.7,
+        "identity": 0.0,
+        "side_effect": 0.0
+      },
+      "selected_notes": 7
+    },
+    {
+      "loop_n": 4,
+      "score": 55.2,
+      "cells": {
+        "cause": 62.5,
+        "motive": 41.7,
+        "identity": 62.5,
+        "side_effect": 0.0
+      },
+      "selected_notes": 11
+    },
+    {
+      "loop_n": 5,
+      "score": 47.9,
+      "cells": {
+        "cause": 62.5,
+        "motive": 20.8,
+        "identity": 62.5,
+        "side_effect": 0.0
+      },
+      "selected_notes": 9
+    }
+  ],
+  "final_score": 47.9,
+  "displayed_final_score": 48,
+  "completed_loops": 5,
+  "session_created_at": "2026-09-09 01:00:16.752672+00:00",
+  "session_end_at": "2026-09-09 02:12:41.658521+00:00",
+  "wall_time_seconds": 4344.905849,
+  "active_play_seconds": null,
+  "questions": {
+    "total": 12,
+    "answer_categories": {
+      "그런 일은 없었다": 2,
+      "기록은 이렇다": 5,
+      "그건 알 수 없다": 5
+    },
+    "hit_cause_chain_true": 7,
+    "confirmed_notes_created": 5,
+    "usefulness_rate": null
+  },
+  "utterances": {
+    "player_requests": 30,
+    "ambient_lines": 96
+  },
+  "rules": {
+    "by_source": {
+      "monkey_paw": 2,
+      "user_custom": 3,
+      "user_choice": 1
+    },
+    "conflicts": 1,
+    "custom_semantic_mismatches_reviewed": 3,
+    "custom_rules_reviewed": 3,
+    "execution_compliance_rate": null
+  },
+  "harness": {
+    "recorded_problem_calls": 22,
+    "fallback_calls": 10,
+    "fallback_by_role": {
+      "planner": 5,
+      "agent": 3,
+      "advisor_options": 1,
+      "ambient": 1
+    },
+    "total_model_calls": null,
+    "overall_success_rate": null
+  },
+  "limits": [
+    "One participant; ordinary/focused condition and prior knowledge unconfirmed.",
+    "Wall time includes pauses and waits.",
+    "Question answer labels do not establish relevance or truth.",
+    "Only problematic model calls are logged.",
+    "Rule execution opportunities and outcomes are not fully linked.",
+    "Historical scores are not recomputed with a live LLM."
+  ]
+}

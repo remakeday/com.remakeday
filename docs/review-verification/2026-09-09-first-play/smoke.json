@@ -1,0 +1,33 @@
+{
+  "kind": "technical_smoke_not_human_playtest",
+  "started_at": "2026-09-09T00:57:34.046Z",
+  "checks": [
+    "Real browser session creation",
+    "Real loop start and breakfast clue image loaded",
+    "390px clue image within viewport"
+  ],
+  "errors": [],
+  "responses": [
+    {
+      "path": "/sessions",
+      "status": 200
+    },
+    {
+      "path": "/sessions/ab1c1a4c-8a98-41e1-b6fb-e65e50e99a8b/loops",
+      "status": 200
+    },
+    {
+      "path": "/loops/e3d7fe6a-1711-4105-bda6-a2ccbd2ff384/npcs",
+      "status": 200
+    },
+    {
+      "path": "/loops/e3d7fe6a-1711-4105-bda6-a2ccbd2ff384/npcs",
+      "status": 200
+    }
+  ],
+  "attempt_id": "ab1c1a4c-8a98-41e1-b6fb-e65e50e99a8b",
+  "loop_id": "e3d7fe6a-1711-4105-bda6-a2ccbd2ff384",
+  "start_loop_ms": 37587,
+  "status": "passed",
+  "finished_at": "2026-09-09T00:58:12.182Z"
+}

@@ -1,0 +1,48 @@
+"use client";
+
+import { useState } from "react";
+import type { SubmitRes } from "@/contracts/api";
+import { CellResults } from "@/components/CellResults";
+import { Retrospective } from "@/components/Retrospective";
+import { clearImage } from "@/lib/imageMap";
+
+/** 다섯 번째 밤: 점수와 무관하게 이야기 결말 → 개발 회고. */
+export function ClearScreen({
+  attemptId, result, onRetry, retryBusy,
+}: {
+  attemptId: string;
+  result: SubmitRes;
+  onRetry: () => void;
+  retryBusy: boolean;
+}) {
+  const [showRetrospective, setShowRetrospective] = useState(false);
+  return (
+    <div className="relative min-h-dvh overflow-hidden bg-void px-6 py-12 text-paper">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={clearImage(result.total)} alt=""
+        className="pointer-events-none fixed inset-0 h-full w-full object-cover opacity-30" />
+      <div className="fade-in-slow relative z-10 mx-auto flex w-full max-w-2xl flex-col items-center gap-8">
+        {showRetrospective ? <Retrospective attemptId={attemptId} /> : (
+          <>
+            <h1 className="text-center text-xl">다섯 번째 밤, 마지막 기록</h1>
+            <p className="text-center text-4xl font-semibold">최종 이해도 {Math.round(result.total)}%</p>
+            {result.cells && <CellResults cells={result.cells} light />}
+            <div className="space-y-4 text-sm leading-loose">
+              {(result.ending_lines ?? []).map((line, i) => <p key={i}>{line}</p>)}
+            </div>
+            <button type="button" onClick={() => setShowRetrospective(true)}
+              className="border border-paper/60 px-8 py-3 text-sm hover:bg-paper hover:text-void">
+              이 세계의 바깥으로
+            </button>
+          </>
+        )}
+        {showRetrospective && (
+          <button type="button" onClick={onRetry} disabled={retryBusy}
+            className="border border-paper/60 px-10 py-3 text-sm hover:bg-paper hover:text-void disabled:opacity-40">
+            {retryBusy ? "…" : "다시 시작"}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}

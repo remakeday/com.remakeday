@@ -1,0 +1,49 @@
+"""ScenarioPort — 시나리오가 엔진에 내려주는 데이터의 계약 (v2).
+
+엔진은 시나리오 고유 명사를 모른다. 값은 이 포트를 통해서만 흐른다.
+Advisor·Normalizer 프롬프트 빌더는 이 포트를 import하지 않는다 (격리 — 테스트로 고정).
+"""
+
+from typing import Protocol
+
+from apps.engine.app.dtos.scenario_dto import (
+    BeatDTO,
+    CharacterDTO,
+    CookieTextDTO,
+    FragmentDTO,
+    ScenarioBundleDTO,
+    TruthClaimDTO,
+    UtteranceBanDTO,
+)
+
+
+class ScenarioPort(Protocol):
+    def name(self) -> str: ...
+
+    def bundle(self) -> ScenarioBundleDTO: ...
+
+    def surface_summary(self) -> str: ...
+
+    def hidden_truth(self) -> str: ...
+
+    def characters(self) -> list[CharacterDTO]: ...
+
+    def beats(self) -> list[BeatDTO]: ...
+
+    def truth_claims(self) -> list[TruthClaimDTO]: ...
+
+    def cookie_texts(self) -> list[CookieTextDTO]: ...
+
+    def forbidden_words(self) -> list[str]: ...
+
+    def utterance_bans(self) -> list[UtteranceBanDTO]: ...
+
+    def action_vocabulary(self) -> list[str]: ...
+
+    def fragments(self) -> list[FragmentDTO]: ...
+
+    def entry_lines(self) -> list[str]: ...
+
+    def morning_line(self, damage_level: int) -> str: ...
+
+    def prompt_fragment(self, role: str) -> str: ...

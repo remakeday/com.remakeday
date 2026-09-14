@@ -1,0 +1,13 @@
+{
+  "model": "gemini-3-flash-preview",
+  "created_at_utc": "20260909T080958641333Z",
+  "adapter": "GeminiLLM",
+  "temperature": 0,
+  "status": "ok",
+  "output": {
+    "answer": "no"
+  },
+  "expected_answer_match": true,
+  "latency_seconds": 2.543,
+  "artifact": "/tmp/pigfarm-gemini-connectivity-results/adapter-20260909T080958641333Z.json"
+}

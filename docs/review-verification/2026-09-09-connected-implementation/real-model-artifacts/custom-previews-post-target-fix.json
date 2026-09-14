@@ -1,0 +1,44 @@
+{
+  "mode": "DB-free post-fix custom preview recheck; no model call",
+  "custom_previews": [
+    {
+      "custom_text": "민석이 내 질문에 자세하게 답할 수 있도록 한다.",
+      "preview": {
+        "preview_id": "70d0b28e-d1ab-4c2c-bc5f-83482c1179cd",
+        "original_text": "민석이 내 질문에 자세하게 답할 수 있도록 한다.",
+        "executable": false,
+        "interpretation": null,
+        "limitations": ["실행할 행동을 확정할 수 없다. 아래 대안을 선택해 다시 미리 보세요."],
+        "alternatives": ["민석은 알고 있는 관찰을 설명한다"],
+        "conflicts": [],
+        "rule": null
+      }
+    },
+    {
+      "custom_text": "채연은 묻는말에 자세하게 대답한다.",
+      "preview": {
+        "preview_id": "82d2e68a-d0a4-4b29-a5e9-8fe51864cbdb",
+        "original_text": "채연은 묻는말에 자세하게 대답한다.",
+        "executable": false,
+        "interpretation": null,
+        "limitations": ["실행할 행동을 확정할 수 없다. 아래 대안을 선택해 다시 미리 보세요."],
+        "alternatives": ["채연은 알고 있는 관찰을 설명한다"],
+        "conflicts": [],
+        "rule": null
+      }
+    },
+    {
+      "custom_text": "은상은 소문의 진실을 무조건 나에게 이야기 해준다.",
+      "preview": {
+        "preview_id": "ffe2f122-3dc2-4eb8-b3ca-ce1789b07580",
+        "original_text": "은상은 소문의 진실을 무조건 나에게 이야기 해준다.",
+        "executable": false,
+        "interpretation": null,
+        "limitations": ["모르는 사실까지 알게 하거나 모든 질문에 답하게 할 수는 없다."],
+        "alternatives": ["은상은 알고 있는 관찰을 설명한다"],
+        "conflicts": [],
+        "rule": null
+      }
+    }
+  ]
+}

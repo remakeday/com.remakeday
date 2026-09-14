@@ -1,0 +1,32 @@
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.importlinter]
+root_packages = ["apps", "core"]
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "core는 apps를 모른다"
+type = "forbidden"
+source_modules = ["core"]
+forbidden_modules = ["apps"]
+
+[[tool.importlinter.contracts]]
+name = "엔진 코어는 시나리오를 모른다 (컴포지션 루트 제외)"
+type = "forbidden"
+source_modules = ["apps.engine.domain", "apps.engine.app", "apps.engine.adapter"]
+forbidden_modules = ["apps.scenarios"]
+# 컴포지션 루트(dependencies)만 시나리오를 조립할 수 있다 — 그 간접 경로는 위반이 아니다
+ignore_imports = ["apps.engine.dependencies.scenario_factory -> apps.scenarios.**"]
+
+[[tool.importlinter.contracts]]
+name = "도메인·앱 계층은 프레임워크·어댑터를 모른다"
+type = "forbidden"
+source_modules = ["apps.engine.domain", "apps.engine.app"]
+forbidden_modules = ["fastapi", "sqlalchemy", "apps.engine.adapter", "apps.engine.dependencies"]
+
+[[tool.importlinter.contracts]]
+name = "시나리오는 엔진 어댑터·컴포지션에 의존하지 않는다"
+type = "forbidden"
+source_modules = ["apps.scenarios"]
+forbidden_modules = ["apps.engine.adapter", "apps.engine.dependencies"]

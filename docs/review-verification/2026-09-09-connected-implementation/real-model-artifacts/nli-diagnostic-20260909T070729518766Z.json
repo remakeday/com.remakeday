@@ -1,0 +1,2789 @@
+{
+  "purpose": "diagnostic only; same four cases, current gemma model; no production model switch",
+  "origin_raw": "/tmp/pigfarm-connected-integration/ollama-results/probes-20260909T064753Z.json",
+  "origin_raw_sha256": "7c6b057b8913128f3b4ddcff9ed58d8e27a668e62d348229de1f7cbdd0f443a9",
+  "fixture_sha256": "f7f5799abde30809095a65cb415fce11b952c1be270bd9338f4a3deed3f48f1d",
+  "model": "gemma3:12b",
+  "temperature": 0,
+  "started_at": "2026-09-09T07:07:29.518766+00:00",
+  "calls": [
+    {
+      "control_id": "PC3",
+      "variant": "original",
+      "fixture": "game-public-corpus",
+      "original_question": "채연의 검진 결과가 공개되었어?",
+      "claim": "채연의 검진 결과가 공개되었다.",
+      "available_public_observations": [
+        {
+          "observation_id": "public-1",
+          "attempt_id": "f800df98-540f-4d05-a29d-08a73d48cd8a",
+          "loop_id": "eb518d74-235b-499c-ae86-5e34e38051a9",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-2",
+          "attempt_id": "f800df98-540f-4d05-a29d-08a73d48cd8a",
+          "loop_id": "eb518d74-235b-499c-ae86-5e34e38051a9",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-3",
+          "attempt_id": "f800df98-540f-4d05-a29d-08a73d48cd8a",
+          "loop_id": "eb518d74-235b-499c-ae86-5e34e38051a9",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-4",
+          "attempt_id": "f800df98-540f-4d05-a29d-08a73d48cd8a",
+          "loop_id": "eb518d74-235b-499c-ae86-5e34e38051a9",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "은상",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-5",
+          "attempt_id": "f800df98-540f-4d05-a29d-08a73d48cd8a",
+          "loop_id": "eb518d74-235b-499c-ae86-5e34e38051a9",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "scene-3",
+          "scene_title": "공개 장면 3",
+          "actor": "민석",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-6",
+          "attempt_id": "f800df98-540f-4d05-a29d-08a73d48cd8a",
+          "loop_id": "eb518d74-235b-499c-ae86-5e34e38051a9",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "scene-4",
+          "scene_title": "공개 장면 4",
+          "actor": "채연",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-7",
+          "attempt_id": "f800df98-540f-4d05-a29d-08a73d48cd8a",
+          "loop_id": "eb518d74-235b-499c-ae86-5e34e38051a9",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": null,
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-8",
+          "attempt_id": "f800df98-540f-4d05-a29d-08a73d48cd8a",
+          "loop_id": "eb518d74-235b-499c-ae86-5e34e38051a9",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": "민석",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ],
+      "expected_relation": "contradicted",
+      "expected_evidence_ids": [
+        "public-6"
+      ],
+      "source_sha256": "066bef0123c8460dc98bb8093cb7d66315bd9a6ef1ce219d1eba7d345ff517e9",
+      "request": {
+        "model": "gemma3:12b",
+        "messages": [
+          {
+            "role": "system",
+            "content": "아래 명제 전체와 공개 기록의 관계를 판단한다. 명제의 부정·시점·조건을 바꾸지 않는다. 명제 전체가 기록과 일치하면 supported, 같은 대상·사건·시점의 기록이 반대이면 contradicted, 판정할 수 없으면 unknown이다. 부정 단어가 있다는 이유로 contradicted가 되는 것은 아니다. 원문 '문을 닫지 않았다'는 명제 '문을 닫지 않았다'를 supported, '문을 닫았다'를 contradicted로 만든다. 원문 '문을 닫았다'는 위 두 명제에 각각 contradicted, supported다. 현재 관찰만으로 미래나 조건부 결과를 정하지 않는다.\n[판정할 명제] 채연의 검진 결과가 공개되었다.\n원본의 행위자·회차·장면을 지킨다. 연속 문장의 생략된 주어는 같은 사건을 가리킬 수 있다. 같은 장면의 마지막 문장도 누락하지 않는다. 다른 사건/불명확한 대상이면 unknown이다. 공개 여부와 결과 내용은 다르다. reported는 발언 존재만 확인하며 내용의 실제 이행/진실은 확인하지 않는다. 기록 부재는 반대 사실의 증거가 아니다. 쟁반 개수로 주인/인원을, 방송실 접근으로 보고 완료/수신자를, 단어 사용으로 정의를 확인하지 않는다. evidence_ids는 관련 공개 원본 ID만 반환한다. 반대 사실을 명시한 원본도 반드시 인용한다. unknown에도 관련된 부분 원본이 있으면 인용한다. detail은 서버가 원문을 복원하므로 작성하지 않는다.\n[공개 기록]\n[public-1] (reported; 1회차; 장면 1: 공개 장면 1; 행위자: 명시되지 않음) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed; 1회차; 장면 1: 공개 장면 1; 행위자: 채연) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed; 1회차; 장면 2: 공개 장면 2; 행위자: 준) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed; 1회차; 장면 2: 공개 장면 2; 행위자: 은상) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed; 1회차; 장면 3: 공개 장면 3; 행위자: 민석) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed; 1회차; 장면 4: 공개 장면 4; 행위자: 채연) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed; 1회차; 장면 5: 공개 장면 5; 행위자: 명시되지 않음) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed; 1회차; 장면 5: 공개 장면 5; 행위자: 민석) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다."
+          }
+        ],
+        "format": {
+          "additionalProperties": false,
+          "description": "Entailment of the entire claim, or direct answerability of a lookup.",
+          "properties": {
+            "evidence_ids": {
+              "description": "판정에 사용한 공개 원본 ID. 반대 사실의 근거와 미확인 질문의 부분 근거도 인용한다.",
+              "items": {
+                "type": "string"
+              },
+              "title": "Evidence Ids",
+              "type": "array"
+            },
+            "relation": {
+              "description": "supported=명제 전체가 근거와 일치하거나 조회의 실제 답 존재; contradicted=명제 전체와 근거가 반대; unknown=요청 정보 미확인. 부정 단어 유무의 분류가 아니다.",
+              "enum": [
+                "supported",
+                "contradicted",
+                "unknown"
+              ],
+              "title": "Relation",
+              "type": "string"
+            },
+            "detail": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Detail"
+            }
+          },
+          "required": [
+            "evidence_ids",
+            "relation"
+          ],
+          "title": "AdvisorEvidenceOutput",
+          "type": "object"
+        },
+        "stream": false,
+        "keep_alive": "2h",
+        "options": {
+          "temperature": 0
+        }
+      },
+      "started_at": "2026-09-09T07:07:29.518960+00:00",
+      "http_status": 200,
+      "raw_http_body": "{\"model\":\"gemma3:12b\",\"created_at\":\"2026-09-09T07:07:30.643091426Z\",\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"evidence_ids\\\": [\\\"public-1\\\", \\\"public-6\\\"], \\\"relation\\\": \\\"unknown\\\"}\"},\"done\":true,\"done_reason\":\"stop\",\"total_duration\":1109875519,\"load_duration\":231332539,\"prompt_eval_count\":791,\"prompt_eval_duration\":287674000,\"eval_count\":22,\"eval_duration\":474492000}",
+      "provider_response": {
+        "model": "gemma3:12b",
+        "created_at": "2026-09-09T07:07:30.643091426Z",
+        "message": {
+          "role": "assistant",
+          "content": "{\"evidence_ids\": [\"public-1\", \"public-6\"], \"relation\": \"unknown\"}"
+        },
+        "done": true,
+        "done_reason": "stop",
+        "total_duration": 1109875519,
+        "load_duration": 231332539,
+        "prompt_eval_count": 791,
+        "prompt_eval_duration": 287674000,
+        "eval_count": 22,
+        "eval_duration": 474492000
+      },
+      "provider_model": "gemma3:12b",
+      "raw_content": "{\"evidence_ids\": [\"public-1\", \"public-6\"], \"relation\": \"unknown\"}",
+      "output": {
+        "evidence_ids": [
+          "public-1",
+          "public-6"
+        ],
+        "relation": "unknown"
+      },
+      "schema_valid": true,
+      "evidence_ids_valid": true,
+      "relation_has_evidence": true,
+      "elapsed_ms": 1125
+    },
+    {
+      "control_id": "PC3",
+      "variant": "concise",
+      "fixture": "game-public-corpus",
+      "original_question": "채연의 검진 결과가 공개되었어?",
+      "claim": "채연의 검진 결과가 공개되었다.",
+      "available_public_observations": [
+        {
+          "observation_id": "public-1",
+          "attempt_id": "f800df98-540f-4d05-a29d-08a73d48cd8a",
+          "loop_id": "eb518d74-235b-499c-ae86-5e34e38051a9",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-2",
+          "attempt_id": "f800df98-540f-4d05-a29d-08a73d48cd8a",
+          "loop_id": "eb518d74-235b-499c-ae86-5e34e38051a9",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-3",
+          "attempt_id": "f800df98-540f-4d05-a29d-08a73d48cd8a",
+          "loop_id": "eb518d74-235b-499c-ae86-5e34e38051a9",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-4",
+          "attempt_id": "f800df98-540f-4d05-a29d-08a73d48cd8a",
+          "loop_id": "eb518d74-235b-499c-ae86-5e34e38051a9",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "은상",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-5",
+          "attempt_id": "f800df98-540f-4d05-a29d-08a73d48cd8a",
+          "loop_id": "eb518d74-235b-499c-ae86-5e34e38051a9",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "scene-3",
+          "scene_title": "공개 장면 3",
+          "actor": "민석",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-6",
+          "attempt_id": "f800df98-540f-4d05-a29d-08a73d48cd8a",
+          "loop_id": "eb518d74-235b-499c-ae86-5e34e38051a9",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "scene-4",
+          "scene_title": "공개 장면 4",
+          "actor": "채연",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-7",
+          "attempt_id": "f800df98-540f-4d05-a29d-08a73d48cd8a",
+          "loop_id": "eb518d74-235b-499c-ae86-5e34e38051a9",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": null,
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-8",
+          "attempt_id": "f800df98-540f-4d05-a29d-08a73d48cd8a",
+          "loop_id": "eb518d74-235b-499c-ae86-5e34e38051a9",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": "민석",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ],
+      "expected_relation": "contradicted",
+      "expected_evidence_ids": [
+        "public-6"
+      ],
+      "source_sha256": "066bef0123c8460dc98bb8093cb7d66315bd9a6ef1ce219d1eba7d345ff517e9",
+      "request": {
+        "model": "gemma3:12b",
+        "messages": [
+          {
+            "role": "system",
+            "content": "공개 기록과 명제 전체의 논리적 관계를 판정하라. 기록이 명제 전체를 확인하면 supported, 같은 사건에서 반대를 명시하면 contradicted, 결정할 수 없으면 unknown. 명시적 부정은 기록이 없다는 것과 다르다. 명제의 부정·시간·조건을 그대로 읽어라. 행위자·회차·장면이 같은 연속 문장은 생략된 주어를 공유할 수 있다. 다른 사건으로 확대하지 마라. 전언은 발언 존재의 근거이며 내용의 실제 이행은 별개다. 판정 근거의 원본 ID를 evidence_ids에 적어라.\n[판정할 명제] 채연의 검진 결과가 공개되었다.\n[공개 기록]\n[public-1] (reported; 1회차; 장면 1: 공개 장면 1; 행위자: 명시되지 않음) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed; 1회차; 장면 1: 공개 장면 1; 행위자: 채연) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed; 1회차; 장면 2: 공개 장면 2; 행위자: 준) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed; 1회차; 장면 2: 공개 장면 2; 행위자: 은상) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed; 1회차; 장면 3: 공개 장면 3; 행위자: 민석) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed; 1회차; 장면 4: 공개 장면 4; 행위자: 채연) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed; 1회차; 장면 5: 공개 장면 5; 행위자: 명시되지 않음) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed; 1회차; 장면 5: 공개 장면 5; 행위자: 민석) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다."
+          }
+        ],
+        "format": {
+          "additionalProperties": false,
+          "description": "Entailment of the entire claim, or direct answerability of a lookup.",
+          "properties": {
+            "evidence_ids": {
+              "description": "판정에 사용한 공개 원본 ID. 반대 사실의 근거와 미확인 질문의 부분 근거도 인용한다.",
+              "items": {
+                "type": "string"
+              },
+              "title": "Evidence Ids",
+              "type": "array"
+            },
+            "relation": {
+              "description": "supported=명제 전체가 근거와 일치하거나 조회의 실제 답 존재; contradicted=명제 전체와 근거가 반대; unknown=요청 정보 미확인. 부정 단어 유무의 분류가 아니다.",
+              "enum": [
+                "supported",
+                "contradicted",
+                "unknown"
+              ],
+              "title": "Relation",
+              "type": "string"
+            },
+            "detail": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Detail"
+            }
+          },
+          "required": [
+            "evidence_ids",
+            "relation"
+          ],
+          "title": "AdvisorEvidenceOutput",
+          "type": "object"
+        },
+        "stream": false,
+        "keep_alive": "2h",
+        "options": {
+          "temperature": 0
+        }
+      },
+      "started_at": "2026-09-09T07:07:30.644176+00:00",
+      "http_status": 200,
+      "raw_http_body": "{\"model\":\"gemma3:12b\",\"created_at\":\"2026-09-09T07:07:31.678429478Z\",\"message\":{\"role\":\"assistant\",\"content\":\"{\\n\\\"evidence_ids\\\": [],\\n\\\"relation\\\": \\\"unknown\\\"\\n}\"},\"done\":true,\"done_reason\":\"stop\",\"total_duration\":1031436302,\"load_duration\":225137512,\"prompt_eval_count\":600,\"prompt_eval_duration\":330339000,\"eval_count\":18,\"eval_duration\":379170000}",
+      "provider_response": {
+        "model": "gemma3:12b",
+        "created_at": "2026-09-09T07:07:31.678429478Z",
+        "message": {
+          "role": "assistant",
+          "content": "{\n\"evidence_ids\": [],\n\"relation\": \"unknown\"\n}"
+        },
+        "done": true,
+        "done_reason": "stop",
+        "total_duration": 1031436302,
+        "load_duration": 225137512,
+        "prompt_eval_count": 600,
+        "prompt_eval_duration": 330339000,
+        "eval_count": 18,
+        "eval_duration": 379170000
+      },
+      "provider_model": "gemma3:12b",
+      "raw_content": "{\n\"evidence_ids\": [],\n\"relation\": \"unknown\"\n}",
+      "output": {
+        "evidence_ids": [],
+        "relation": "unknown"
+      },
+      "schema_valid": true,
+      "evidence_ids_valid": true,
+      "relation_has_evidence": true,
+      "elapsed_ms": 1035
+    },
+    {
+      "control_id": "PC3",
+      "variant": "extract_first",
+      "fixture": "game-public-corpus",
+      "original_question": "채연의 검진 결과가 공개되었어?",
+      "claim": "채연의 검진 결과가 공개되었다.",
+      "available_public_observations": [
+        {
+          "observation_id": "public-1",
+          "attempt_id": "f800df98-540f-4d05-a29d-08a73d48cd8a",
+          "loop_id": "eb518d74-235b-499c-ae86-5e34e38051a9",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-2",
+          "attempt_id": "f800df98-540f-4d05-a29d-08a73d48cd8a",
+          "loop_id": "eb518d74-235b-499c-ae86-5e34e38051a9",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-3",
+          "attempt_id": "f800df98-540f-4d05-a29d-08a73d48cd8a",
+          "loop_id": "eb518d74-235b-499c-ae86-5e34e38051a9",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-4",
+          "attempt_id": "f800df98-540f-4d05-a29d-08a73d48cd8a",
+          "loop_id": "eb518d74-235b-499c-ae86-5e34e38051a9",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "은상",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-5",
+          "attempt_id": "f800df98-540f-4d05-a29d-08a73d48cd8a",
+          "loop_id": "eb518d74-235b-499c-ae86-5e34e38051a9",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "scene-3",
+          "scene_title": "공개 장면 3",
+          "actor": "민석",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-6",
+          "attempt_id": "f800df98-540f-4d05-a29d-08a73d48cd8a",
+          "loop_id": "eb518d74-235b-499c-ae86-5e34e38051a9",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "scene-4",
+          "scene_title": "공개 장면 4",
+          "actor": "채연",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-7",
+          "attempt_id": "f800df98-540f-4d05-a29d-08a73d48cd8a",
+          "loop_id": "eb518d74-235b-499c-ae86-5e34e38051a9",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": null,
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-8",
+          "attempt_id": "f800df98-540f-4d05-a29d-08a73d48cd8a",
+          "loop_id": "eb518d74-235b-499c-ae86-5e34e38051a9",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": "민석",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ],
+      "expected_relation": "contradicted",
+      "expected_evidence_ids": [
+        "public-6"
+      ],
+      "source_sha256": "066bef0123c8460dc98bb8093cb7d66315bd9a6ef1ce219d1eba7d345ff517e9",
+      "request": {
+        "model": "gemma3:12b",
+        "messages": [
+          {
+            "role": "system",
+            "content": "공개 기록과 명제 전체의 논리적 관계를 판정하라. 기록이 명제 전체를 확인하면 supported, 같은 사건에서 반대를 명시하면 contradicted, 결정할 수 없으면 unknown. 명시적 부정은 기록이 없다는 것과 다르다. 명제의 부정·시간·조건을 그대로 읽어라. 행위자·회차·장면이 같은 연속 문장은 생략된 주어를 공유할 수 있다. 다른 사건으로 확대하지 마라. 전언은 발언 존재의 근거이며 내용의 실제 이행은 별개다. 판정 근거의 원본 ID를 evidence_ids에 적어라. 관계를 판정하기 전에 관련 원본의 짧은 구절을 evidence_quotes에 그대로 인용하라. 새로운 해석을 인용문으로 만들지 마라.\n[판정할 명제] 채연의 검진 결과가 공개되었다.\n[공개 기록]\n[public-1] (reported; 1회차; 장면 1: 공개 장면 1; 행위자: 명시되지 않음) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed; 1회차; 장면 1: 공개 장면 1; 행위자: 채연) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed; 1회차; 장면 2: 공개 장면 2; 행위자: 준) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed; 1회차; 장면 2: 공개 장면 2; 행위자: 은상) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed; 1회차; 장면 3: 공개 장면 3; 행위자: 민석) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed; 1회차; 장면 4: 공개 장면 4; 행위자: 채연) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed; 1회차; 장면 5: 공개 장면 5; 행위자: 명시되지 않음) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed; 1회차; 장면 5: 공개 장면 5; 행위자: 민석) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다."
+          }
+        ],
+        "format": {
+          "additionalProperties": false,
+          "description": "Entailment of the entire claim, or direct answerability of a lookup.",
+          "properties": {
+            "evidence_quotes": {
+              "type": "array",
+              "maxItems": 3,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "evidence_id": {
+                    "type": "string"
+                  },
+                  "quote": {
+                    "type": "string",
+                    "maxLength": 180
+                  }
+                },
+                "required": [
+                  "evidence_id",
+                  "quote"
+                ]
+              }
+            },
+            "evidence_ids": {
+              "description": "판정에 사용한 공개 원본 ID. 반대 사실의 근거와 미확인 질문의 부분 근거도 인용한다.",
+              "items": {
+                "type": "string"
+              },
+              "title": "Evidence Ids",
+              "type": "array"
+            },
+            "relation": {
+              "description": "supported=명제 전체가 근거와 일치하거나 조회의 실제 답 존재; contradicted=명제 전체와 근거가 반대; unknown=요청 정보 미확인. 부정 단어 유무의 분류가 아니다.",
+              "enum": [
+                "supported",
+                "contradicted",
+                "unknown"
+              ],
+              "title": "Relation",
+              "type": "string"
+            },
+            "detail": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Detail"
+            }
+          },
+          "required": [
+            "evidence_quotes",
+            "evidence_ids",
+            "relation"
+          ],
+          "title": "DiagnosticExtractFirst",
+          "type": "object"
+        },
+        "stream": false,
+        "keep_alive": "2h",
+        "options": {
+          "temperature": 0
+        }
+      },
+      "started_at": "2026-09-09T07:07:31.679290+00:00",
+      "http_status": 200,
+      "raw_http_body": "{\"model\":\"gemma3:12b\",\"created_at\":\"2026-09-09T07:07:35.246964411Z\",\"message\":{\"role\":\"assistant\",\"content\":\"{\\n  \\\"evidence_quotes\\\": [\\n    {\\\"evidence_id\\\": \\\"public-1\\\", \\\"quote\\\": \\\"관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\\\"},\\n    {\\\"evidence_id\\\": \\\"public-6\\\", \\\"quote\\\": \\\"채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\\\"}\\n  ],\\n  \\\"evidence_ids\\\": [\\\"public-1\\\", \\\"public-6\\\"],\\n  \\\"relation\\\": \\\"contradicted\\\"\\n}\"},\"done\":true,\"done_reason\":\"stop\",\"total_duration\":3564877735,\"load_duration\":227511390,\"prompt_eval_count\":636,\"prompt_eval_duration\":292783000,\"eval_count\":141,\"eval_duration\":2972100000}",
+      "provider_response": {
+        "model": "gemma3:12b",
+        "created_at": "2026-09-09T07:07:35.246964411Z",
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"evidence_quotes\": [\n    {\"evidence_id\": \"public-1\", \"quote\": \"관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\"},\n    {\"evidence_id\": \"public-6\", \"quote\": \"채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\"}\n  ],\n  \"evidence_ids\": [\"public-1\", \"public-6\"],\n  \"relation\": \"contradicted\"\n}"
+        },
+        "done": true,
+        "done_reason": "stop",
+        "total_duration": 3564877735,
+        "load_duration": 227511390,
+        "prompt_eval_count": 636,
+        "prompt_eval_duration": 292783000,
+        "eval_count": 141,
+        "eval_duration": 2972100000
+      },
+      "provider_model": "gemma3:12b",
+      "raw_content": "{\n  \"evidence_quotes\": [\n    {\"evidence_id\": \"public-1\", \"quote\": \"관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\"},\n    {\"evidence_id\": \"public-6\", \"quote\": \"채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\"}\n  ],\n  \"evidence_ids\": [\"public-1\", \"public-6\"],\n  \"relation\": \"contradicted\"\n}",
+      "output": {
+        "evidence_quotes": [
+          {
+            "evidence_id": "public-1",
+            "quote": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다."
+          },
+          {
+            "evidence_id": "public-6",
+            "quote": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다."
+          }
+        ],
+        "evidence_ids": [
+          "public-1",
+          "public-6"
+        ],
+        "relation": "contradicted"
+      },
+      "schema_valid": true,
+      "evidence_ids_valid": true,
+      "relation_has_evidence": true,
+      "quotes_verbatim": true,
+      "elapsed_ms": 3568
+    },
+    {
+      "control_id": "PC4",
+      "variant": "original",
+      "fixture": "game-public-corpus",
+      "original_question": "채연의 검진 결과가 공개되지 않았어?",
+      "claim": "채연의 검진 결과가 공개되지 않았다.",
+      "available_public_observations": [
+        {
+          "observation_id": "public-1",
+          "attempt_id": "becca03a-e800-4c1d-944b-57140b13469c",
+          "loop_id": "fd43ba46-3a51-403a-b31c-343a7d286740",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-2",
+          "attempt_id": "becca03a-e800-4c1d-944b-57140b13469c",
+          "loop_id": "fd43ba46-3a51-403a-b31c-343a7d286740",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-3",
+          "attempt_id": "becca03a-e800-4c1d-944b-57140b13469c",
+          "loop_id": "fd43ba46-3a51-403a-b31c-343a7d286740",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-4",
+          "attempt_id": "becca03a-e800-4c1d-944b-57140b13469c",
+          "loop_id": "fd43ba46-3a51-403a-b31c-343a7d286740",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "은상",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-5",
+          "attempt_id": "becca03a-e800-4c1d-944b-57140b13469c",
+          "loop_id": "fd43ba46-3a51-403a-b31c-343a7d286740",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "scene-3",
+          "scene_title": "공개 장면 3",
+          "actor": "민석",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-6",
+          "attempt_id": "becca03a-e800-4c1d-944b-57140b13469c",
+          "loop_id": "fd43ba46-3a51-403a-b31c-343a7d286740",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "scene-4",
+          "scene_title": "공개 장면 4",
+          "actor": "채연",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-7",
+          "attempt_id": "becca03a-e800-4c1d-944b-57140b13469c",
+          "loop_id": "fd43ba46-3a51-403a-b31c-343a7d286740",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": null,
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-8",
+          "attempt_id": "becca03a-e800-4c1d-944b-57140b13469c",
+          "loop_id": "fd43ba46-3a51-403a-b31c-343a7d286740",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": "민석",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ],
+      "expected_relation": "supported",
+      "expected_evidence_ids": [
+        "public-6"
+      ],
+      "source_sha256": "78363d353729de101edb85f403c22c25f64d28a4cd14eb837b7488e0a1481174",
+      "request": {
+        "model": "gemma3:12b",
+        "messages": [
+          {
+            "role": "system",
+            "content": "아래 명제 전체와 공개 기록의 관계를 판단한다. 명제의 부정·시점·조건을 바꾸지 않는다. 명제 전체가 기록과 일치하면 supported, 같은 대상·사건·시점의 기록이 반대이면 contradicted, 판정할 수 없으면 unknown이다. 부정 단어가 있다는 이유로 contradicted가 되는 것은 아니다. 원문 '문을 닫지 않았다'는 명제 '문을 닫지 않았다'를 supported, '문을 닫았다'를 contradicted로 만든다. 원문 '문을 닫았다'는 위 두 명제에 각각 contradicted, supported다. 현재 관찰만으로 미래나 조건부 결과를 정하지 않는다.\n[판정할 명제] 채연의 검진 결과가 공개되지 않았다.\n원본의 행위자·회차·장면을 지킨다. 연속 문장의 생략된 주어는 같은 사건을 가리킬 수 있다. 같은 장면의 마지막 문장도 누락하지 않는다. 다른 사건/불명확한 대상이면 unknown이다. 공개 여부와 결과 내용은 다르다. reported는 발언 존재만 확인하며 내용의 실제 이행/진실은 확인하지 않는다. 기록 부재는 반대 사실의 증거가 아니다. 쟁반 개수로 주인/인원을, 방송실 접근으로 보고 완료/수신자를, 단어 사용으로 정의를 확인하지 않는다. evidence_ids는 관련 공개 원본 ID만 반환한다. 반대 사실을 명시한 원본도 반드시 인용한다. unknown에도 관련된 부분 원본이 있으면 인용한다. detail은 서버가 원문을 복원하므로 작성하지 않는다.\n[공개 기록]\n[public-1] (reported; 1회차; 장면 1: 공개 장면 1; 행위자: 명시되지 않음) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed; 1회차; 장면 1: 공개 장면 1; 행위자: 채연) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed; 1회차; 장면 2: 공개 장면 2; 행위자: 준) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed; 1회차; 장면 2: 공개 장면 2; 행위자: 은상) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed; 1회차; 장면 3: 공개 장면 3; 행위자: 민석) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed; 1회차; 장면 4: 공개 장면 4; 행위자: 채연) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed; 1회차; 장면 5: 공개 장면 5; 행위자: 명시되지 않음) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed; 1회차; 장면 5: 공개 장면 5; 행위자: 민석) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다."
+          }
+        ],
+        "format": {
+          "additionalProperties": false,
+          "description": "Entailment of the entire claim, or direct answerability of a lookup.",
+          "properties": {
+            "evidence_ids": {
+              "description": "판정에 사용한 공개 원본 ID. 반대 사실의 근거와 미확인 질문의 부분 근거도 인용한다.",
+              "items": {
+                "type": "string"
+              },
+              "title": "Evidence Ids",
+              "type": "array"
+            },
+            "relation": {
+              "description": "supported=명제 전체가 근거와 일치하거나 조회의 실제 답 존재; contradicted=명제 전체와 근거가 반대; unknown=요청 정보 미확인. 부정 단어 유무의 분류가 아니다.",
+              "enum": [
+                "supported",
+                "contradicted",
+                "unknown"
+              ],
+              "title": "Relation",
+              "type": "string"
+            },
+            "detail": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Detail"
+            }
+          },
+          "required": [
+            "evidence_ids",
+            "relation"
+          ],
+          "title": "AdvisorEvidenceOutput",
+          "type": "object"
+        },
+        "stream": false,
+        "keep_alive": "2h",
+        "options": {
+          "temperature": 0
+        }
+      },
+      "started_at": "2026-09-09T07:07:35.247773+00:00",
+      "http_status": 200,
+      "raw_http_body": "{\"model\":\"gemma3:12b\",\"created_at\":\"2026-09-09T07:07:36.249422403Z\",\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"evidence_ids\\\": [\\\"public-6\\\"], \\\"relation\\\": \\\"supported\\\"}\"},\"done\":true,\"done_reason\":\"stop\",\"total_duration\":998758264,\"load_duration\":230548693,\"prompt_eval_count\":792,\"prompt_eval_duration\":303239000,\"eval_count\":17,\"eval_duration\":361786000}",
+      "provider_response": {
+        "model": "gemma3:12b",
+        "created_at": "2026-09-09T07:07:36.249422403Z",
+        "message": {
+          "role": "assistant",
+          "content": "{\"evidence_ids\": [\"public-6\"], \"relation\": \"supported\"}"
+        },
+        "done": true,
+        "done_reason": "stop",
+        "total_duration": 998758264,
+        "load_duration": 230548693,
+        "prompt_eval_count": 792,
+        "prompt_eval_duration": 303239000,
+        "eval_count": 17,
+        "eval_duration": 361786000
+      },
+      "provider_model": "gemma3:12b",
+      "raw_content": "{\"evidence_ids\": [\"public-6\"], \"relation\": \"supported\"}",
+      "output": {
+        "evidence_ids": [
+          "public-6"
+        ],
+        "relation": "supported"
+      },
+      "schema_valid": true,
+      "evidence_ids_valid": true,
+      "relation_has_evidence": true,
+      "elapsed_ms": 1002
+    },
+    {
+      "control_id": "PC4",
+      "variant": "concise",
+      "fixture": "game-public-corpus",
+      "original_question": "채연의 검진 결과가 공개되지 않았어?",
+      "claim": "채연의 검진 결과가 공개되지 않았다.",
+      "available_public_observations": [
+        {
+          "observation_id": "public-1",
+          "attempt_id": "becca03a-e800-4c1d-944b-57140b13469c",
+          "loop_id": "fd43ba46-3a51-403a-b31c-343a7d286740",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-2",
+          "attempt_id": "becca03a-e800-4c1d-944b-57140b13469c",
+          "loop_id": "fd43ba46-3a51-403a-b31c-343a7d286740",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-3",
+          "attempt_id": "becca03a-e800-4c1d-944b-57140b13469c",
+          "loop_id": "fd43ba46-3a51-403a-b31c-343a7d286740",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-4",
+          "attempt_id": "becca03a-e800-4c1d-944b-57140b13469c",
+          "loop_id": "fd43ba46-3a51-403a-b31c-343a7d286740",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "은상",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-5",
+          "attempt_id": "becca03a-e800-4c1d-944b-57140b13469c",
+          "loop_id": "fd43ba46-3a51-403a-b31c-343a7d286740",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "scene-3",
+          "scene_title": "공개 장면 3",
+          "actor": "민석",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-6",
+          "attempt_id": "becca03a-e800-4c1d-944b-57140b13469c",
+          "loop_id": "fd43ba46-3a51-403a-b31c-343a7d286740",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "scene-4",
+          "scene_title": "공개 장면 4",
+          "actor": "채연",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-7",
+          "attempt_id": "becca03a-e800-4c1d-944b-57140b13469c",
+          "loop_id": "fd43ba46-3a51-403a-b31c-343a7d286740",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": null,
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-8",
+          "attempt_id": "becca03a-e800-4c1d-944b-57140b13469c",
+          "loop_id": "fd43ba46-3a51-403a-b31c-343a7d286740",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": "민석",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ],
+      "expected_relation": "supported",
+      "expected_evidence_ids": [
+        "public-6"
+      ],
+      "source_sha256": "78363d353729de101edb85f403c22c25f64d28a4cd14eb837b7488e0a1481174",
+      "request": {
+        "model": "gemma3:12b",
+        "messages": [
+          {
+            "role": "system",
+            "content": "공개 기록과 명제 전체의 논리적 관계를 판정하라. 기록이 명제 전체를 확인하면 supported, 같은 사건에서 반대를 명시하면 contradicted, 결정할 수 없으면 unknown. 명시적 부정은 기록이 없다는 것과 다르다. 명제의 부정·시간·조건을 그대로 읽어라. 행위자·회차·장면이 같은 연속 문장은 생략된 주어를 공유할 수 있다. 다른 사건으로 확대하지 마라. 전언은 발언 존재의 근거이며 내용의 실제 이행은 별개다. 판정 근거의 원본 ID를 evidence_ids에 적어라.\n[판정할 명제] 채연의 검진 결과가 공개되지 않았다.\n[공개 기록]\n[public-1] (reported; 1회차; 장면 1: 공개 장면 1; 행위자: 명시되지 않음) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed; 1회차; 장면 1: 공개 장면 1; 행위자: 채연) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed; 1회차; 장면 2: 공개 장면 2; 행위자: 준) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed; 1회차; 장면 2: 공개 장면 2; 행위자: 은상) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed; 1회차; 장면 3: 공개 장면 3; 행위자: 민석) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed; 1회차; 장면 4: 공개 장면 4; 행위자: 채연) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed; 1회차; 장면 5: 공개 장면 5; 행위자: 명시되지 않음) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed; 1회차; 장면 5: 공개 장면 5; 행위자: 민석) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다."
+          }
+        ],
+        "format": {
+          "additionalProperties": false,
+          "description": "Entailment of the entire claim, or direct answerability of a lookup.",
+          "properties": {
+            "evidence_ids": {
+              "description": "판정에 사용한 공개 원본 ID. 반대 사실의 근거와 미확인 질문의 부분 근거도 인용한다.",
+              "items": {
+                "type": "string"
+              },
+              "title": "Evidence Ids",
+              "type": "array"
+            },
+            "relation": {
+              "description": "supported=명제 전체가 근거와 일치하거나 조회의 실제 답 존재; contradicted=명제 전체와 근거가 반대; unknown=요청 정보 미확인. 부정 단어 유무의 분류가 아니다.",
+              "enum": [
+                "supported",
+                "contradicted",
+                "unknown"
+              ],
+              "title": "Relation",
+              "type": "string"
+            },
+            "detail": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Detail"
+            }
+          },
+          "required": [
+            "evidence_ids",
+            "relation"
+          ],
+          "title": "AdvisorEvidenceOutput",
+          "type": "object"
+        },
+        "stream": false,
+        "keep_alive": "2h",
+        "options": {
+          "temperature": 0
+        }
+      },
+      "started_at": "2026-09-09T07:07:36.250346+00:00",
+      "http_status": 200,
+      "raw_http_body": "{\"model\":\"gemma3:12b\",\"created_at\":\"2026-09-09T07:07:37.400050972Z\",\"message\":{\"role\":\"assistant\",\"content\":\"{\\n\\\"evidence_ids\\\": [\\n\\\"public-6\\\"\\n],\\n\\\"relation\\\": \\\"supported\\\"\\n}\"},\"done\":true,\"done_reason\":\"stop\",\"total_duration\":1146926821,\"load_duration\":229578716,\"prompt_eval_count\":601,\"prompt_eval_duration\":280751000,\"eval_count\":26,\"eval_duration\":542426000}",
+      "provider_response": {
+        "model": "gemma3:12b",
+        "created_at": "2026-09-09T07:07:37.400050972Z",
+        "message": {
+          "role": "assistant",
+          "content": "{\n\"evidence_ids\": [\n\"public-6\"\n],\n\"relation\": \"supported\"\n}"
+        },
+        "done": true,
+        "done_reason": "stop",
+        "total_duration": 1146926821,
+        "load_duration": 229578716,
+        "prompt_eval_count": 601,
+        "prompt_eval_duration": 280751000,
+        "eval_count": 26,
+        "eval_duration": 542426000
+      },
+      "provider_model": "gemma3:12b",
+      "raw_content": "{\n\"evidence_ids\": [\n\"public-6\"\n],\n\"relation\": \"supported\"\n}",
+      "output": {
+        "evidence_ids": [
+          "public-6"
+        ],
+        "relation": "supported"
+      },
+      "schema_valid": true,
+      "evidence_ids_valid": true,
+      "relation_has_evidence": true,
+      "elapsed_ms": 1150
+    },
+    {
+      "control_id": "PC4",
+      "variant": "extract_first",
+      "fixture": "game-public-corpus",
+      "original_question": "채연의 검진 결과가 공개되지 않았어?",
+      "claim": "채연의 검진 결과가 공개되지 않았다.",
+      "available_public_observations": [
+        {
+          "observation_id": "public-1",
+          "attempt_id": "becca03a-e800-4c1d-944b-57140b13469c",
+          "loop_id": "fd43ba46-3a51-403a-b31c-343a7d286740",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-2",
+          "attempt_id": "becca03a-e800-4c1d-944b-57140b13469c",
+          "loop_id": "fd43ba46-3a51-403a-b31c-343a7d286740",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-3",
+          "attempt_id": "becca03a-e800-4c1d-944b-57140b13469c",
+          "loop_id": "fd43ba46-3a51-403a-b31c-343a7d286740",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-4",
+          "attempt_id": "becca03a-e800-4c1d-944b-57140b13469c",
+          "loop_id": "fd43ba46-3a51-403a-b31c-343a7d286740",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "은상",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-5",
+          "attempt_id": "becca03a-e800-4c1d-944b-57140b13469c",
+          "loop_id": "fd43ba46-3a51-403a-b31c-343a7d286740",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "scene-3",
+          "scene_title": "공개 장면 3",
+          "actor": "민석",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-6",
+          "attempt_id": "becca03a-e800-4c1d-944b-57140b13469c",
+          "loop_id": "fd43ba46-3a51-403a-b31c-343a7d286740",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "scene-4",
+          "scene_title": "공개 장면 4",
+          "actor": "채연",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-7",
+          "attempt_id": "becca03a-e800-4c1d-944b-57140b13469c",
+          "loop_id": "fd43ba46-3a51-403a-b31c-343a7d286740",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": null,
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-8",
+          "attempt_id": "becca03a-e800-4c1d-944b-57140b13469c",
+          "loop_id": "fd43ba46-3a51-403a-b31c-343a7d286740",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": "민석",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ],
+      "expected_relation": "supported",
+      "expected_evidence_ids": [
+        "public-6"
+      ],
+      "source_sha256": "78363d353729de101edb85f403c22c25f64d28a4cd14eb837b7488e0a1481174",
+      "request": {
+        "model": "gemma3:12b",
+        "messages": [
+          {
+            "role": "system",
+            "content": "공개 기록과 명제 전체의 논리적 관계를 판정하라. 기록이 명제 전체를 확인하면 supported, 같은 사건에서 반대를 명시하면 contradicted, 결정할 수 없으면 unknown. 명시적 부정은 기록이 없다는 것과 다르다. 명제의 부정·시간·조건을 그대로 읽어라. 행위자·회차·장면이 같은 연속 문장은 생략된 주어를 공유할 수 있다. 다른 사건으로 확대하지 마라. 전언은 발언 존재의 근거이며 내용의 실제 이행은 별개다. 판정 근거의 원본 ID를 evidence_ids에 적어라. 관계를 판정하기 전에 관련 원본의 짧은 구절을 evidence_quotes에 그대로 인용하라. 새로운 해석을 인용문으로 만들지 마라.\n[판정할 명제] 채연의 검진 결과가 공개되지 않았다.\n[공개 기록]\n[public-1] (reported; 1회차; 장면 1: 공개 장면 1; 행위자: 명시되지 않음) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed; 1회차; 장면 1: 공개 장면 1; 행위자: 채연) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed; 1회차; 장면 2: 공개 장면 2; 행위자: 준) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed; 1회차; 장면 2: 공개 장면 2; 행위자: 은상) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed; 1회차; 장면 3: 공개 장면 3; 행위자: 민석) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed; 1회차; 장면 4: 공개 장면 4; 행위자: 채연) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed; 1회차; 장면 5: 공개 장면 5; 행위자: 명시되지 않음) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed; 1회차; 장면 5: 공개 장면 5; 행위자: 민석) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다."
+          }
+        ],
+        "format": {
+          "additionalProperties": false,
+          "description": "Entailment of the entire claim, or direct answerability of a lookup.",
+          "properties": {
+            "evidence_quotes": {
+              "type": "array",
+              "maxItems": 3,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "evidence_id": {
+                    "type": "string"
+                  },
+                  "quote": {
+                    "type": "string",
+                    "maxLength": 180
+                  }
+                },
+                "required": [
+                  "evidence_id",
+                  "quote"
+                ]
+              }
+            },
+            "evidence_ids": {
+              "description": "판정에 사용한 공개 원본 ID. 반대 사실의 근거와 미확인 질문의 부분 근거도 인용한다.",
+              "items": {
+                "type": "string"
+              },
+              "title": "Evidence Ids",
+              "type": "array"
+            },
+            "relation": {
+              "description": "supported=명제 전체가 근거와 일치하거나 조회의 실제 답 존재; contradicted=명제 전체와 근거가 반대; unknown=요청 정보 미확인. 부정 단어 유무의 분류가 아니다.",
+              "enum": [
+                "supported",
+                "contradicted",
+                "unknown"
+              ],
+              "title": "Relation",
+              "type": "string"
+            },
+            "detail": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Detail"
+            }
+          },
+          "required": [
+            "evidence_quotes",
+            "evidence_ids",
+            "relation"
+          ],
+          "title": "DiagnosticExtractFirst",
+          "type": "object"
+        },
+        "stream": false,
+        "keep_alive": "2h",
+        "options": {
+          "temperature": 0
+        }
+      },
+      "started_at": "2026-09-09T07:07:37.401142+00:00",
+      "http_status": 200,
+      "raw_http_body": "{\"model\":\"gemma3:12b\",\"created_at\":\"2026-09-09T07:07:39.938993216Z\",\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"evidence_quotes\\\": [\\n  {\\n    \\\"evidence_id\\\": \\\"public-6\\\",\\n    \\\"quote\\\": \\\"채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\\\"\\n  }\\n], \\\"evidence_ids\\\": [\\n  \\\"public-6\\\"\\n], \\\"relation\\\": \\\"supported\\\"}\"},\"done\":true,\"done_reason\":\"stop\",\"total_duration\":2535072375,\"load_duration\":227151777,\"prompt_eval_count\":637,\"prompt_eval_duration\":293566000,\"eval_count\":89,\"eval_duration\":1935031000}",
+      "provider_response": {
+        "model": "gemma3:12b",
+        "created_at": "2026-09-09T07:07:39.938993216Z",
+        "message": {
+          "role": "assistant",
+          "content": "{\"evidence_quotes\": [\n  {\n    \"evidence_id\": \"public-6\",\n    \"quote\": \"채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\"\n  }\n], \"evidence_ids\": [\n  \"public-6\"\n], \"relation\": \"supported\"}"
+        },
+        "done": true,
+        "done_reason": "stop",
+        "total_duration": 2535072375,
+        "load_duration": 227151777,
+        "prompt_eval_count": 637,
+        "prompt_eval_duration": 293566000,
+        "eval_count": 89,
+        "eval_duration": 1935031000
+      },
+      "provider_model": "gemma3:12b",
+      "raw_content": "{\"evidence_quotes\": [\n  {\n    \"evidence_id\": \"public-6\",\n    \"quote\": \"채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\"\n  }\n], \"evidence_ids\": [\n  \"public-6\"\n], \"relation\": \"supported\"}",
+      "output": {
+        "evidence_quotes": [
+          {
+            "evidence_id": "public-6",
+            "quote": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다."
+          }
+        ],
+        "evidence_ids": [
+          "public-6"
+        ],
+        "relation": "supported"
+      },
+      "schema_valid": true,
+      "evidence_ids_valid": true,
+      "relation_has_evidence": true,
+      "quotes_verbatim": true,
+      "elapsed_ms": 2538
+    },
+    {
+      "control_id": "SPC1",
+      "variant": "original",
+      "fixture": "synthetic-public-6-explicitly-published",
+      "original_question": "채연의 검진 결과가 공개되었어?",
+      "claim": "채연의 검진 결과가 공개되었다.",
+      "available_public_observations": [
+        {
+          "observation_id": "public-1",
+          "attempt_id": "d6218e3d-0e5a-49ca-9a26-d04d94a25c5f",
+          "loop_id": "a8dc7447-d1fe-42e6-aeff-a70de8a2487e",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-2",
+          "attempt_id": "d6218e3d-0e5a-49ca-9a26-d04d94a25c5f",
+          "loop_id": "a8dc7447-d1fe-42e6-aeff-a70de8a2487e",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-3",
+          "attempt_id": "d6218e3d-0e5a-49ca-9a26-d04d94a25c5f",
+          "loop_id": "a8dc7447-d1fe-42e6-aeff-a70de8a2487e",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-4",
+          "attempt_id": "d6218e3d-0e5a-49ca-9a26-d04d94a25c5f",
+          "loop_id": "a8dc7447-d1fe-42e6-aeff-a70de8a2487e",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "은상",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-5",
+          "attempt_id": "d6218e3d-0e5a-49ca-9a26-d04d94a25c5f",
+          "loop_id": "a8dc7447-d1fe-42e6-aeff-a70de8a2487e",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "scene-3",
+          "scene_title": "공개 장면 3",
+          "actor": "민석",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-6",
+          "attempt_id": "d6218e3d-0e5a-49ca-9a26-d04d94a25c5f",
+          "loop_id": "a8dc7447-d1fe-42e6-aeff-a70de8a2487e",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "scene-4",
+          "scene_title": "공개 장면 4",
+          "actor": "채연",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과를 공개했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-7",
+          "attempt_id": "d6218e3d-0e5a-49ca-9a26-d04d94a25c5f",
+          "loop_id": "a8dc7447-d1fe-42e6-aeff-a70de8a2487e",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": null,
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-8",
+          "attempt_id": "d6218e3d-0e5a-49ca-9a26-d04d94a25c5f",
+          "loop_id": "a8dc7447-d1fe-42e6-aeff-a70de8a2487e",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": "민석",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ],
+      "expected_relation": "supported",
+      "expected_evidence_ids": [
+        "public-6"
+      ],
+      "source_sha256": "5b87c81e63646b06372fbeea417ec3a7b0e5ae8d0d261bdcbdbe8798ff60f0e0",
+      "request": {
+        "model": "gemma3:12b",
+        "messages": [
+          {
+            "role": "system",
+            "content": "아래 명제 전체와 공개 기록의 관계를 판단한다. 명제의 부정·시점·조건을 바꾸지 않는다. 명제 전체가 기록과 일치하면 supported, 같은 대상·사건·시점의 기록이 반대이면 contradicted, 판정할 수 없으면 unknown이다. 부정 단어가 있다는 이유로 contradicted가 되는 것은 아니다. 원문 '문을 닫지 않았다'는 명제 '문을 닫지 않았다'를 supported, '문을 닫았다'를 contradicted로 만든다. 원문 '문을 닫았다'는 위 두 명제에 각각 contradicted, supported다. 현재 관찰만으로 미래나 조건부 결과를 정하지 않는다.\n[판정할 명제] 채연의 검진 결과가 공개되었다.\n원본의 행위자·회차·장면을 지킨다. 연속 문장의 생략된 주어는 같은 사건을 가리킬 수 있다. 같은 장면의 마지막 문장도 누락하지 않는다. 다른 사건/불명확한 대상이면 unknown이다. 공개 여부와 결과 내용은 다르다. reported는 발언 존재만 확인하며 내용의 실제 이행/진실은 확인하지 않는다. 기록 부재는 반대 사실의 증거가 아니다. 쟁반 개수로 주인/인원을, 방송실 접근으로 보고 완료/수신자를, 단어 사용으로 정의를 확인하지 않는다. evidence_ids는 관련 공개 원본 ID만 반환한다. 반대 사실을 명시한 원본도 반드시 인용한다. unknown에도 관련된 부분 원본이 있으면 인용한다. detail은 서버가 원문을 복원하므로 작성하지 않는다.\n[공개 기록]\n[public-1] (reported; 1회차; 장면 1: 공개 장면 1; 행위자: 명시되지 않음) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed; 1회차; 장면 1: 공개 장면 1; 행위자: 채연) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed; 1회차; 장면 2: 공개 장면 2; 행위자: 준) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed; 1회차; 장면 2: 공개 장면 2; 행위자: 은상) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed; 1회차; 장면 3: 공개 장면 3; 행위자: 민석) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed; 1회차; 장면 4: 공개 장면 4; 행위자: 채연) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과를 공개했다.\n[public-7] (observed; 1회차; 장면 5: 공개 장면 5; 행위자: 명시되지 않음) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed; 1회차; 장면 5: 공개 장면 5; 행위자: 민석) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다."
+          }
+        ],
+        "format": {
+          "additionalProperties": false,
+          "description": "Entailment of the entire claim, or direct answerability of a lookup.",
+          "properties": {
+            "evidence_ids": {
+              "description": "판정에 사용한 공개 원본 ID. 반대 사실의 근거와 미확인 질문의 부분 근거도 인용한다.",
+              "items": {
+                "type": "string"
+              },
+              "title": "Evidence Ids",
+              "type": "array"
+            },
+            "relation": {
+              "description": "supported=명제 전체가 근거와 일치하거나 조회의 실제 답 존재; contradicted=명제 전체와 근거가 반대; unknown=요청 정보 미확인. 부정 단어 유무의 분류가 아니다.",
+              "enum": [
+                "supported",
+                "contradicted",
+                "unknown"
+              ],
+              "title": "Relation",
+              "type": "string"
+            },
+            "detail": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Detail"
+            }
+          },
+          "required": [
+            "evidence_ids",
+            "relation"
+          ],
+          "title": "AdvisorEvidenceOutput",
+          "type": "object"
+        },
+        "stream": false,
+        "keep_alive": "2h",
+        "options": {
+          "temperature": 0
+        }
+      },
+      "started_at": "2026-09-09T07:07:39.939934+00:00",
+      "http_status": 200,
+      "raw_http_body": "{\"model\":\"gemma3:12b\",\"created_at\":\"2026-09-09T07:07:41.080940739Z\",\"message\":{\"role\":\"assistant\",\"content\":\"{\\n\\\"evidence_ids\\\": [\\n\\\"public-6\\\"\\n],\\n\\\"relation\\\": \\\"supported\\\"\\n}\"},\"done\":true,\"done_reason\":\"stop\",\"total_duration\":1138243484,\"load_duration\":228469537,\"prompt_eval_count\":789,\"prompt_eval_duration\":272647000,\"eval_count\":26,\"eval_duration\":549256000}",
+      "provider_response": {
+        "model": "gemma3:12b",
+        "created_at": "2026-09-09T07:07:41.080940739Z",
+        "message": {
+          "role": "assistant",
+          "content": "{\n\"evidence_ids\": [\n\"public-6\"\n],\n\"relation\": \"supported\"\n}"
+        },
+        "done": true,
+        "done_reason": "stop",
+        "total_duration": 1138243484,
+        "load_duration": 228469537,
+        "prompt_eval_count": 789,
+        "prompt_eval_duration": 272647000,
+        "eval_count": 26,
+        "eval_duration": 549256000
+      },
+      "provider_model": "gemma3:12b",
+      "raw_content": "{\n\"evidence_ids\": [\n\"public-6\"\n],\n\"relation\": \"supported\"\n}",
+      "output": {
+        "evidence_ids": [
+          "public-6"
+        ],
+        "relation": "supported"
+      },
+      "schema_valid": true,
+      "evidence_ids_valid": true,
+      "relation_has_evidence": true,
+      "elapsed_ms": 1142
+    },
+    {
+      "control_id": "SPC1",
+      "variant": "concise",
+      "fixture": "synthetic-public-6-explicitly-published",
+      "original_question": "채연의 검진 결과가 공개되었어?",
+      "claim": "채연의 검진 결과가 공개되었다.",
+      "available_public_observations": [
+        {
+          "observation_id": "public-1",
+          "attempt_id": "d6218e3d-0e5a-49ca-9a26-d04d94a25c5f",
+          "loop_id": "a8dc7447-d1fe-42e6-aeff-a70de8a2487e",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-2",
+          "attempt_id": "d6218e3d-0e5a-49ca-9a26-d04d94a25c5f",
+          "loop_id": "a8dc7447-d1fe-42e6-aeff-a70de8a2487e",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-3",
+          "attempt_id": "d6218e3d-0e5a-49ca-9a26-d04d94a25c5f",
+          "loop_id": "a8dc7447-d1fe-42e6-aeff-a70de8a2487e",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-4",
+          "attempt_id": "d6218e3d-0e5a-49ca-9a26-d04d94a25c5f",
+          "loop_id": "a8dc7447-d1fe-42e6-aeff-a70de8a2487e",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "은상",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-5",
+          "attempt_id": "d6218e3d-0e5a-49ca-9a26-d04d94a25c5f",
+          "loop_id": "a8dc7447-d1fe-42e6-aeff-a70de8a2487e",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "scene-3",
+          "scene_title": "공개 장면 3",
+          "actor": "민석",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-6",
+          "attempt_id": "d6218e3d-0e5a-49ca-9a26-d04d94a25c5f",
+          "loop_id": "a8dc7447-d1fe-42e6-aeff-a70de8a2487e",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "scene-4",
+          "scene_title": "공개 장면 4",
+          "actor": "채연",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과를 공개했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-7",
+          "attempt_id": "d6218e3d-0e5a-49ca-9a26-d04d94a25c5f",
+          "loop_id": "a8dc7447-d1fe-42e6-aeff-a70de8a2487e",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": null,
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-8",
+          "attempt_id": "d6218e3d-0e5a-49ca-9a26-d04d94a25c5f",
+          "loop_id": "a8dc7447-d1fe-42e6-aeff-a70de8a2487e",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": "민석",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ],
+      "expected_relation": "supported",
+      "expected_evidence_ids": [
+        "public-6"
+      ],
+      "source_sha256": "5b87c81e63646b06372fbeea417ec3a7b0e5ae8d0d261bdcbdbe8798ff60f0e0",
+      "request": {
+        "model": "gemma3:12b",
+        "messages": [
+          {
+            "role": "system",
+            "content": "공개 기록과 명제 전체의 논리적 관계를 판정하라. 기록이 명제 전체를 확인하면 supported, 같은 사건에서 반대를 명시하면 contradicted, 결정할 수 없으면 unknown. 명시적 부정은 기록이 없다는 것과 다르다. 명제의 부정·시간·조건을 그대로 읽어라. 행위자·회차·장면이 같은 연속 문장은 생략된 주어를 공유할 수 있다. 다른 사건으로 확대하지 마라. 전언은 발언 존재의 근거이며 내용의 실제 이행은 별개다. 판정 근거의 원본 ID를 evidence_ids에 적어라.\n[판정할 명제] 채연의 검진 결과가 공개되었다.\n[공개 기록]\n[public-1] (reported; 1회차; 장면 1: 공개 장면 1; 행위자: 명시되지 않음) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed; 1회차; 장면 1: 공개 장면 1; 행위자: 채연) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed; 1회차; 장면 2: 공개 장면 2; 행위자: 준) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed; 1회차; 장면 2: 공개 장면 2; 행위자: 은상) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed; 1회차; 장면 3: 공개 장면 3; 행위자: 민석) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed; 1회차; 장면 4: 공개 장면 4; 행위자: 채연) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과를 공개했다.\n[public-7] (observed; 1회차; 장면 5: 공개 장면 5; 행위자: 명시되지 않음) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed; 1회차; 장면 5: 공개 장면 5; 행위자: 민석) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다."
+          }
+        ],
+        "format": {
+          "additionalProperties": false,
+          "description": "Entailment of the entire claim, or direct answerability of a lookup.",
+          "properties": {
+            "evidence_ids": {
+              "description": "판정에 사용한 공개 원본 ID. 반대 사실의 근거와 미확인 질문의 부분 근거도 인용한다.",
+              "items": {
+                "type": "string"
+              },
+              "title": "Evidence Ids",
+              "type": "array"
+            },
+            "relation": {
+              "description": "supported=명제 전체가 근거와 일치하거나 조회의 실제 답 존재; contradicted=명제 전체와 근거가 반대; unknown=요청 정보 미확인. 부정 단어 유무의 분류가 아니다.",
+              "enum": [
+                "supported",
+                "contradicted",
+                "unknown"
+              ],
+              "title": "Relation",
+              "type": "string"
+            },
+            "detail": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Detail"
+            }
+          },
+          "required": [
+            "evidence_ids",
+            "relation"
+          ],
+          "title": "AdvisorEvidenceOutput",
+          "type": "object"
+        },
+        "stream": false,
+        "keep_alive": "2h",
+        "options": {
+          "temperature": 0
+        }
+      },
+      "started_at": "2026-09-09T07:07:41.081911+00:00",
+      "http_status": 200,
+      "raw_http_body": "{\"model\":\"gemma3:12b\",\"created_at\":\"2026-09-09T07:07:42.189577468Z\",\"message\":{\"role\":\"assistant\",\"content\":\"{\\n\\\"evidence_ids\\\": [ \\\"public-6\\\" ],\\n\\\"relation\\\": \\\"supported\\\"\\n}\"},\"done\":true,\"done_reason\":\"stop\",\"total_duration\":1104870800,\"load_duration\":233130112,\"prompt_eval_count\":598,\"prompt_eval_duration\":264858000,\"eval_count\":24,\"eval_duration\":502114000}",
+      "provider_response": {
+        "model": "gemma3:12b",
+        "created_at": "2026-09-09T07:07:42.189577468Z",
+        "message": {
+          "role": "assistant",
+          "content": "{\n\"evidence_ids\": [ \"public-6\" ],\n\"relation\": \"supported\"\n}"
+        },
+        "done": true,
+        "done_reason": "stop",
+        "total_duration": 1104870800,
+        "load_duration": 233130112,
+        "prompt_eval_count": 598,
+        "prompt_eval_duration": 264858000,
+        "eval_count": 24,
+        "eval_duration": 502114000
+      },
+      "provider_model": "gemma3:12b",
+      "raw_content": "{\n\"evidence_ids\": [ \"public-6\" ],\n\"relation\": \"supported\"\n}",
+      "output": {
+        "evidence_ids": [
+          "public-6"
+        ],
+        "relation": "supported"
+      },
+      "schema_valid": true,
+      "evidence_ids_valid": true,
+      "relation_has_evidence": true,
+      "elapsed_ms": 1108
+    },
+    {
+      "control_id": "SPC1",
+      "variant": "extract_first",
+      "fixture": "synthetic-public-6-explicitly-published",
+      "original_question": "채연의 검진 결과가 공개되었어?",
+      "claim": "채연의 검진 결과가 공개되었다.",
+      "available_public_observations": [
+        {
+          "observation_id": "public-1",
+          "attempt_id": "d6218e3d-0e5a-49ca-9a26-d04d94a25c5f",
+          "loop_id": "a8dc7447-d1fe-42e6-aeff-a70de8a2487e",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-2",
+          "attempt_id": "d6218e3d-0e5a-49ca-9a26-d04d94a25c5f",
+          "loop_id": "a8dc7447-d1fe-42e6-aeff-a70de8a2487e",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-3",
+          "attempt_id": "d6218e3d-0e5a-49ca-9a26-d04d94a25c5f",
+          "loop_id": "a8dc7447-d1fe-42e6-aeff-a70de8a2487e",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-4",
+          "attempt_id": "d6218e3d-0e5a-49ca-9a26-d04d94a25c5f",
+          "loop_id": "a8dc7447-d1fe-42e6-aeff-a70de8a2487e",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "은상",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-5",
+          "attempt_id": "d6218e3d-0e5a-49ca-9a26-d04d94a25c5f",
+          "loop_id": "a8dc7447-d1fe-42e6-aeff-a70de8a2487e",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "scene-3",
+          "scene_title": "공개 장면 3",
+          "actor": "민석",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-6",
+          "attempt_id": "d6218e3d-0e5a-49ca-9a26-d04d94a25c5f",
+          "loop_id": "a8dc7447-d1fe-42e6-aeff-a70de8a2487e",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "scene-4",
+          "scene_title": "공개 장면 4",
+          "actor": "채연",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과를 공개했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-7",
+          "attempt_id": "d6218e3d-0e5a-49ca-9a26-d04d94a25c5f",
+          "loop_id": "a8dc7447-d1fe-42e6-aeff-a70de8a2487e",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": null,
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-8",
+          "attempt_id": "d6218e3d-0e5a-49ca-9a26-d04d94a25c5f",
+          "loop_id": "a8dc7447-d1fe-42e6-aeff-a70de8a2487e",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": "민석",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ],
+      "expected_relation": "supported",
+      "expected_evidence_ids": [
+        "public-6"
+      ],
+      "source_sha256": "5b87c81e63646b06372fbeea417ec3a7b0e5ae8d0d261bdcbdbe8798ff60f0e0",
+      "request": {
+        "model": "gemma3:12b",
+        "messages": [
+          {
+            "role": "system",
+            "content": "공개 기록과 명제 전체의 논리적 관계를 판정하라. 기록이 명제 전체를 확인하면 supported, 같은 사건에서 반대를 명시하면 contradicted, 결정할 수 없으면 unknown. 명시적 부정은 기록이 없다는 것과 다르다. 명제의 부정·시간·조건을 그대로 읽어라. 행위자·회차·장면이 같은 연속 문장은 생략된 주어를 공유할 수 있다. 다른 사건으로 확대하지 마라. 전언은 발언 존재의 근거이며 내용의 실제 이행은 별개다. 판정 근거의 원본 ID를 evidence_ids에 적어라. 관계를 판정하기 전에 관련 원본의 짧은 구절을 evidence_quotes에 그대로 인용하라. 새로운 해석을 인용문으로 만들지 마라.\n[판정할 명제] 채연의 검진 결과가 공개되었다.\n[공개 기록]\n[public-1] (reported; 1회차; 장면 1: 공개 장면 1; 행위자: 명시되지 않음) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed; 1회차; 장면 1: 공개 장면 1; 행위자: 채연) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed; 1회차; 장면 2: 공개 장면 2; 행위자: 준) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed; 1회차; 장면 2: 공개 장면 2; 행위자: 은상) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed; 1회차; 장면 3: 공개 장면 3; 행위자: 민석) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed; 1회차; 장면 4: 공개 장면 4; 행위자: 채연) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과를 공개했다.\n[public-7] (observed; 1회차; 장면 5: 공개 장면 5; 행위자: 명시되지 않음) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed; 1회차; 장면 5: 공개 장면 5; 행위자: 민석) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다."
+          }
+        ],
+        "format": {
+          "additionalProperties": false,
+          "description": "Entailment of the entire claim, or direct answerability of a lookup.",
+          "properties": {
+            "evidence_quotes": {
+              "type": "array",
+              "maxItems": 3,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "evidence_id": {
+                    "type": "string"
+                  },
+                  "quote": {
+                    "type": "string",
+                    "maxLength": 180
+                  }
+                },
+                "required": [
+                  "evidence_id",
+                  "quote"
+                ]
+              }
+            },
+            "evidence_ids": {
+              "description": "판정에 사용한 공개 원본 ID. 반대 사실의 근거와 미확인 질문의 부분 근거도 인용한다.",
+              "items": {
+                "type": "string"
+              },
+              "title": "Evidence Ids",
+              "type": "array"
+            },
+            "relation": {
+              "description": "supported=명제 전체가 근거와 일치하거나 조회의 실제 답 존재; contradicted=명제 전체와 근거가 반대; unknown=요청 정보 미확인. 부정 단어 유무의 분류가 아니다.",
+              "enum": [
+                "supported",
+                "contradicted",
+                "unknown"
+              ],
+              "title": "Relation",
+              "type": "string"
+            },
+            "detail": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Detail"
+            }
+          },
+          "required": [
+            "evidence_quotes",
+            "evidence_ids",
+            "relation"
+          ],
+          "title": "DiagnosticExtractFirst",
+          "type": "object"
+        },
+        "stream": false,
+        "keep_alive": "2h",
+        "options": {
+          "temperature": 0
+        }
+      },
+      "started_at": "2026-09-09T07:07:42.190568+00:00",
+      "http_status": 200,
+      "raw_http_body": "{\"model\":\"gemma3:12b\",\"created_at\":\"2026-09-09T07:07:44.830087856Z\",\"message\":{\"role\":\"assistant\",\"content\":\"{\\n  \\\"evidence_quotes\\\": [\\n    {\\\"evidence_id\\\": \\\"public-1\\\", \\\"quote\\\": \\\"오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\\\"},\\n    {\\\"evidence_id\\\": \\\"public-6\\\", \\\"quote\\\": \\\"결과를 공개했다.\\\"}\\n  ],\\n  \\\"evidence_ids\\\": [\\\"public-1\\\", \\\"public-6\\\"],\\n  \\\"relation\\\": \\\"supported\\\"\\n}\"},\"done\":true,\"done_reason\":\"stop\",\"total_duration\":2636764189,\"load_duration\":230679624,\"prompt_eval_count\":634,\"prompt_eval_duration\":292907000,\"eval_count\":96,\"eval_duration\":2037484000}",
+      "provider_response": {
+        "model": "gemma3:12b",
+        "created_at": "2026-09-09T07:07:44.830087856Z",
+        "message": {
+          "role": "assistant",
+          "content": "{\n  \"evidence_quotes\": [\n    {\"evidence_id\": \"public-1\", \"quote\": \"오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\"},\n    {\"evidence_id\": \"public-6\", \"quote\": \"결과를 공개했다.\"}\n  ],\n  \"evidence_ids\": [\"public-1\", \"public-6\"],\n  \"relation\": \"supported\"\n}"
+        },
+        "done": true,
+        "done_reason": "stop",
+        "total_duration": 2636764189,
+        "load_duration": 230679624,
+        "prompt_eval_count": 634,
+        "prompt_eval_duration": 292907000,
+        "eval_count": 96,
+        "eval_duration": 2037484000
+      },
+      "provider_model": "gemma3:12b",
+      "raw_content": "{\n  \"evidence_quotes\": [\n    {\"evidence_id\": \"public-1\", \"quote\": \"오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\"},\n    {\"evidence_id\": \"public-6\", \"quote\": \"결과를 공개했다.\"}\n  ],\n  \"evidence_ids\": [\"public-1\", \"public-6\"],\n  \"relation\": \"supported\"\n}",
+      "output": {
+        "evidence_quotes": [
+          {
+            "evidence_id": "public-1",
+            "quote": "오후에는 검진합니다. 이상한 점은 방송실로 알립니다."
+          },
+          {
+            "evidence_id": "public-6",
+            "quote": "결과를 공개했다."
+          }
+        ],
+        "evidence_ids": [
+          "public-1",
+          "public-6"
+        ],
+        "relation": "supported"
+      },
+      "schema_valid": true,
+      "evidence_ids_valid": true,
+      "relation_has_evidence": true,
+      "quotes_verbatim": true,
+      "elapsed_ms": 2640
+    },
+    {
+      "control_id": "SPC2",
+      "variant": "original",
+      "fixture": "synthetic-public-6-explicitly-published",
+      "original_question": "채연의 검진 결과가 공개되지 않았어?",
+      "claim": "채연의 검진 결과가 공개되지 않았다.",
+      "available_public_observations": [
+        {
+          "observation_id": "public-1",
+          "attempt_id": "e74f5ebe-3880-4739-aae0-555cfe93b589",
+          "loop_id": "07caf6a1-57a2-4221-8b61-334804bec895",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-2",
+          "attempt_id": "e74f5ebe-3880-4739-aae0-555cfe93b589",
+          "loop_id": "07caf6a1-57a2-4221-8b61-334804bec895",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-3",
+          "attempt_id": "e74f5ebe-3880-4739-aae0-555cfe93b589",
+          "loop_id": "07caf6a1-57a2-4221-8b61-334804bec895",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-4",
+          "attempt_id": "e74f5ebe-3880-4739-aae0-555cfe93b589",
+          "loop_id": "07caf6a1-57a2-4221-8b61-334804bec895",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "은상",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-5",
+          "attempt_id": "e74f5ebe-3880-4739-aae0-555cfe93b589",
+          "loop_id": "07caf6a1-57a2-4221-8b61-334804bec895",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "scene-3",
+          "scene_title": "공개 장면 3",
+          "actor": "민석",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-6",
+          "attempt_id": "e74f5ebe-3880-4739-aae0-555cfe93b589",
+          "loop_id": "07caf6a1-57a2-4221-8b61-334804bec895",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "scene-4",
+          "scene_title": "공개 장면 4",
+          "actor": "채연",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과를 공개했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-7",
+          "attempt_id": "e74f5ebe-3880-4739-aae0-555cfe93b589",
+          "loop_id": "07caf6a1-57a2-4221-8b61-334804bec895",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": null,
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-8",
+          "attempt_id": "e74f5ebe-3880-4739-aae0-555cfe93b589",
+          "loop_id": "07caf6a1-57a2-4221-8b61-334804bec895",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": "민석",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ],
+      "expected_relation": "contradicted",
+      "expected_evidence_ids": [
+        "public-6"
+      ],
+      "source_sha256": "eaafe160e5d1db8da5df3cef4a923e09a4d2ffe256e64150449b066f6e428b8c",
+      "request": {
+        "model": "gemma3:12b",
+        "messages": [
+          {
+            "role": "system",
+            "content": "아래 명제 전체와 공개 기록의 관계를 판단한다. 명제의 부정·시점·조건을 바꾸지 않는다. 명제 전체가 기록과 일치하면 supported, 같은 대상·사건·시점의 기록이 반대이면 contradicted, 판정할 수 없으면 unknown이다. 부정 단어가 있다는 이유로 contradicted가 되는 것은 아니다. 원문 '문을 닫지 않았다'는 명제 '문을 닫지 않았다'를 supported, '문을 닫았다'를 contradicted로 만든다. 원문 '문을 닫았다'는 위 두 명제에 각각 contradicted, supported다. 현재 관찰만으로 미래나 조건부 결과를 정하지 않는다.\n[판정할 명제] 채연의 검진 결과가 공개되지 않았다.\n원본의 행위자·회차·장면을 지킨다. 연속 문장의 생략된 주어는 같은 사건을 가리킬 수 있다. 같은 장면의 마지막 문장도 누락하지 않는다. 다른 사건/불명확한 대상이면 unknown이다. 공개 여부와 결과 내용은 다르다. reported는 발언 존재만 확인하며 내용의 실제 이행/진실은 확인하지 않는다. 기록 부재는 반대 사실의 증거가 아니다. 쟁반 개수로 주인/인원을, 방송실 접근으로 보고 완료/수신자를, 단어 사용으로 정의를 확인하지 않는다. evidence_ids는 관련 공개 원본 ID만 반환한다. 반대 사실을 명시한 원본도 반드시 인용한다. unknown에도 관련된 부분 원본이 있으면 인용한다. detail은 서버가 원문을 복원하므로 작성하지 않는다.\n[공개 기록]\n[public-1] (reported; 1회차; 장면 1: 공개 장면 1; 행위자: 명시되지 않음) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed; 1회차; 장면 1: 공개 장면 1; 행위자: 채연) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed; 1회차; 장면 2: 공개 장면 2; 행위자: 준) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed; 1회차; 장면 2: 공개 장면 2; 행위자: 은상) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed; 1회차; 장면 3: 공개 장면 3; 행위자: 민석) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed; 1회차; 장면 4: 공개 장면 4; 행위자: 채연) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과를 공개했다.\n[public-7] (observed; 1회차; 장면 5: 공개 장면 5; 행위자: 명시되지 않음) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed; 1회차; 장면 5: 공개 장면 5; 행위자: 민석) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다."
+          }
+        ],
+        "format": {
+          "additionalProperties": false,
+          "description": "Entailment of the entire claim, or direct answerability of a lookup.",
+          "properties": {
+            "evidence_ids": {
+              "description": "판정에 사용한 공개 원본 ID. 반대 사실의 근거와 미확인 질문의 부분 근거도 인용한다.",
+              "items": {
+                "type": "string"
+              },
+              "title": "Evidence Ids",
+              "type": "array"
+            },
+            "relation": {
+              "description": "supported=명제 전체가 근거와 일치하거나 조회의 실제 답 존재; contradicted=명제 전체와 근거가 반대; unknown=요청 정보 미확인. 부정 단어 유무의 분류가 아니다.",
+              "enum": [
+                "supported",
+                "contradicted",
+                "unknown"
+              ],
+              "title": "Relation",
+              "type": "string"
+            },
+            "detail": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Detail"
+            }
+          },
+          "required": [
+            "evidence_ids",
+            "relation"
+          ],
+          "title": "AdvisorEvidenceOutput",
+          "type": "object"
+        },
+        "stream": false,
+        "keep_alive": "2h",
+        "options": {
+          "temperature": 0
+        }
+      },
+      "started_at": "2026-09-09T07:07:44.831133+00:00",
+      "http_status": 200,
+      "raw_http_body": "{\"model\":\"gemma3:12b\",\"created_at\":\"2026-09-09T07:07:45.811901111Z\",\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"evidence_ids\\\": [\\\"public-6\\\"], \\\"relation\\\": \\\"contradicted\\\"}\"},\"done\":true,\"done_reason\":\"stop\",\"total_duration\":978000866,\"load_duration\":229971948,\"prompt_eval_count\":790,\"prompt_eval_duration\":272568000,\"eval_count\":18,\"eval_duration\":383418000}",
+      "provider_response": {
+        "model": "gemma3:12b",
+        "created_at": "2026-09-09T07:07:45.811901111Z",
+        "message": {
+          "role": "assistant",
+          "content": "{\"evidence_ids\": [\"public-6\"], \"relation\": \"contradicted\"}"
+        },
+        "done": true,
+        "done_reason": "stop",
+        "total_duration": 978000866,
+        "load_duration": 229971948,
+        "prompt_eval_count": 790,
+        "prompt_eval_duration": 272568000,
+        "eval_count": 18,
+        "eval_duration": 383418000
+      },
+      "provider_model": "gemma3:12b",
+      "raw_content": "{\"evidence_ids\": [\"public-6\"], \"relation\": \"contradicted\"}",
+      "output": {
+        "evidence_ids": [
+          "public-6"
+        ],
+        "relation": "contradicted"
+      },
+      "schema_valid": true,
+      "evidence_ids_valid": true,
+      "relation_has_evidence": true,
+      "elapsed_ms": 981
+    },
+    {
+      "control_id": "SPC2",
+      "variant": "concise",
+      "fixture": "synthetic-public-6-explicitly-published",
+      "original_question": "채연의 검진 결과가 공개되지 않았어?",
+      "claim": "채연의 검진 결과가 공개되지 않았다.",
+      "available_public_observations": [
+        {
+          "observation_id": "public-1",
+          "attempt_id": "e74f5ebe-3880-4739-aae0-555cfe93b589",
+          "loop_id": "07caf6a1-57a2-4221-8b61-334804bec895",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-2",
+          "attempt_id": "e74f5ebe-3880-4739-aae0-555cfe93b589",
+          "loop_id": "07caf6a1-57a2-4221-8b61-334804bec895",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-3",
+          "attempt_id": "e74f5ebe-3880-4739-aae0-555cfe93b589",
+          "loop_id": "07caf6a1-57a2-4221-8b61-334804bec895",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-4",
+          "attempt_id": "e74f5ebe-3880-4739-aae0-555cfe93b589",
+          "loop_id": "07caf6a1-57a2-4221-8b61-334804bec895",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "은상",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-5",
+          "attempt_id": "e74f5ebe-3880-4739-aae0-555cfe93b589",
+          "loop_id": "07caf6a1-57a2-4221-8b61-334804bec895",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "scene-3",
+          "scene_title": "공개 장면 3",
+          "actor": "민석",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-6",
+          "attempt_id": "e74f5ebe-3880-4739-aae0-555cfe93b589",
+          "loop_id": "07caf6a1-57a2-4221-8b61-334804bec895",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "scene-4",
+          "scene_title": "공개 장면 4",
+          "actor": "채연",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과를 공개했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-7",
+          "attempt_id": "e74f5ebe-3880-4739-aae0-555cfe93b589",
+          "loop_id": "07caf6a1-57a2-4221-8b61-334804bec895",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": null,
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-8",
+          "attempt_id": "e74f5ebe-3880-4739-aae0-555cfe93b589",
+          "loop_id": "07caf6a1-57a2-4221-8b61-334804bec895",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": "민석",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ],
+      "expected_relation": "contradicted",
+      "expected_evidence_ids": [
+        "public-6"
+      ],
+      "source_sha256": "eaafe160e5d1db8da5df3cef4a923e09a4d2ffe256e64150449b066f6e428b8c",
+      "request": {
+        "model": "gemma3:12b",
+        "messages": [
+          {
+            "role": "system",
+            "content": "공개 기록과 명제 전체의 논리적 관계를 판정하라. 기록이 명제 전체를 확인하면 supported, 같은 사건에서 반대를 명시하면 contradicted, 결정할 수 없으면 unknown. 명시적 부정은 기록이 없다는 것과 다르다. 명제의 부정·시간·조건을 그대로 읽어라. 행위자·회차·장면이 같은 연속 문장은 생략된 주어를 공유할 수 있다. 다른 사건으로 확대하지 마라. 전언은 발언 존재의 근거이며 내용의 실제 이행은 별개다. 판정 근거의 원본 ID를 evidence_ids에 적어라.\n[판정할 명제] 채연의 검진 결과가 공개되지 않았다.\n[공개 기록]\n[public-1] (reported; 1회차; 장면 1: 공개 장면 1; 행위자: 명시되지 않음) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed; 1회차; 장면 1: 공개 장면 1; 행위자: 채연) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed; 1회차; 장면 2: 공개 장면 2; 행위자: 준) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed; 1회차; 장면 2: 공개 장면 2; 행위자: 은상) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed; 1회차; 장면 3: 공개 장면 3; 행위자: 민석) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed; 1회차; 장면 4: 공개 장면 4; 행위자: 채연) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과를 공개했다.\n[public-7] (observed; 1회차; 장면 5: 공개 장면 5; 행위자: 명시되지 않음) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed; 1회차; 장면 5: 공개 장면 5; 행위자: 민석) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다."
+          }
+        ],
+        "format": {
+          "additionalProperties": false,
+          "description": "Entailment of the entire claim, or direct answerability of a lookup.",
+          "properties": {
+            "evidence_ids": {
+              "description": "판정에 사용한 공개 원본 ID. 반대 사실의 근거와 미확인 질문의 부분 근거도 인용한다.",
+              "items": {
+                "type": "string"
+              },
+              "title": "Evidence Ids",
+              "type": "array"
+            },
+            "relation": {
+              "description": "supported=명제 전체가 근거와 일치하거나 조회의 실제 답 존재; contradicted=명제 전체와 근거가 반대; unknown=요청 정보 미확인. 부정 단어 유무의 분류가 아니다.",
+              "enum": [
+                "supported",
+                "contradicted",
+                "unknown"
+              ],
+              "title": "Relation",
+              "type": "string"
+            },
+            "detail": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Detail"
+            }
+          },
+          "required": [
+            "evidence_ids",
+            "relation"
+          ],
+          "title": "AdvisorEvidenceOutput",
+          "type": "object"
+        },
+        "stream": false,
+        "keep_alive": "2h",
+        "options": {
+          "temperature": 0
+        }
+      },
+      "started_at": "2026-09-09T07:07:45.813003+00:00",
+      "http_status": 200,
+      "raw_http_body": "{\"model\":\"gemma3:12b\",\"created_at\":\"2026-09-09T07:07:46.936939715Z\",\"message\":{\"role\":\"assistant\",\"content\":\"{\\n\\\"evidence_ids\\\": [ \\\"public-6\\\" ],\\n\\\"relation\\\": \\\"contradicted\\\"\\n}\"},\"done\":true,\"done_reason\":\"stop\",\"total_duration\":1121136475,\"load_duration\":230822095,\"prompt_eval_count\":599,\"prompt_eval_duration\":265286999,\"eval_count\":25,\"eval_duration\":523427000}",
+      "provider_response": {
+        "model": "gemma3:12b",
+        "created_at": "2026-09-09T07:07:46.936939715Z",
+        "message": {
+          "role": "assistant",
+          "content": "{\n\"evidence_ids\": [ \"public-6\" ],\n\"relation\": \"contradicted\"\n}"
+        },
+        "done": true,
+        "done_reason": "stop",
+        "total_duration": 1121136475,
+        "load_duration": 230822095,
+        "prompt_eval_count": 599,
+        "prompt_eval_duration": 265286999,
+        "eval_count": 25,
+        "eval_duration": 523427000
+      },
+      "provider_model": "gemma3:12b",
+      "raw_content": "{\n\"evidence_ids\": [ \"public-6\" ],\n\"relation\": \"contradicted\"\n}",
+      "output": {
+        "evidence_ids": [
+          "public-6"
+        ],
+        "relation": "contradicted"
+      },
+      "schema_valid": true,
+      "evidence_ids_valid": true,
+      "relation_has_evidence": true,
+      "elapsed_ms": 1124
+    },
+    {
+      "control_id": "SPC2",
+      "variant": "extract_first",
+      "fixture": "synthetic-public-6-explicitly-published",
+      "original_question": "채연의 검진 결과가 공개되지 않았어?",
+      "claim": "채연의 검진 결과가 공개되지 않았다.",
+      "available_public_observations": [
+        {
+          "observation_id": "public-1",
+          "attempt_id": "e74f5ebe-3880-4739-aae0-555cfe93b589",
+          "loop_id": "07caf6a1-57a2-4221-8b61-334804bec895",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-2",
+          "attempt_id": "e74f5ebe-3880-4739-aae0-555cfe93b589",
+          "loop_id": "07caf6a1-57a2-4221-8b61-334804bec895",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-3",
+          "attempt_id": "e74f5ebe-3880-4739-aae0-555cfe93b589",
+          "loop_id": "07caf6a1-57a2-4221-8b61-334804bec895",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-4",
+          "attempt_id": "e74f5ebe-3880-4739-aae0-555cfe93b589",
+          "loop_id": "07caf6a1-57a2-4221-8b61-334804bec895",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "은상",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-5",
+          "attempt_id": "e74f5ebe-3880-4739-aae0-555cfe93b589",
+          "loop_id": "07caf6a1-57a2-4221-8b61-334804bec895",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "scene-3",
+          "scene_title": "공개 장면 3",
+          "actor": "민석",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-6",
+          "attempt_id": "e74f5ebe-3880-4739-aae0-555cfe93b589",
+          "loop_id": "07caf6a1-57a2-4221-8b61-334804bec895",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "scene-4",
+          "scene_title": "공개 장면 4",
+          "actor": "채연",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과를 공개했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-7",
+          "attempt_id": "e74f5ebe-3880-4739-aae0-555cfe93b589",
+          "loop_id": "07caf6a1-57a2-4221-8b61-334804bec895",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": null,
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-8",
+          "attempt_id": "e74f5ebe-3880-4739-aae0-555cfe93b589",
+          "loop_id": "07caf6a1-57a2-4221-8b61-334804bec895",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": "민석",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ],
+      "expected_relation": "contradicted",
+      "expected_evidence_ids": [
+        "public-6"
+      ],
+      "source_sha256": "eaafe160e5d1db8da5df3cef4a923e09a4d2ffe256e64150449b066f6e428b8c",
+      "request": {
+        "model": "gemma3:12b",
+        "messages": [
+          {
+            "role": "system",
+            "content": "공개 기록과 명제 전체의 논리적 관계를 판정하라. 기록이 명제 전체를 확인하면 supported, 같은 사건에서 반대를 명시하면 contradicted, 결정할 수 없으면 unknown. 명시적 부정은 기록이 없다는 것과 다르다. 명제의 부정·시간·조건을 그대로 읽어라. 행위자·회차·장면이 같은 연속 문장은 생략된 주어를 공유할 수 있다. 다른 사건으로 확대하지 마라. 전언은 발언 존재의 근거이며 내용의 실제 이행은 별개다. 판정 근거의 원본 ID를 evidence_ids에 적어라. 관계를 판정하기 전에 관련 원본의 짧은 구절을 evidence_quotes에 그대로 인용하라. 새로운 해석을 인용문으로 만들지 마라.\n[판정할 명제] 채연의 검진 결과가 공개되지 않았다.\n[공개 기록]\n[public-1] (reported; 1회차; 장면 1: 공개 장면 1; 행위자: 명시되지 않음) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed; 1회차; 장면 1: 공개 장면 1; 행위자: 채연) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed; 1회차; 장면 2: 공개 장면 2; 행위자: 준) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed; 1회차; 장면 2: 공개 장면 2; 행위자: 은상) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed; 1회차; 장면 3: 공개 장면 3; 행위자: 민석) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed; 1회차; 장면 4: 공개 장면 4; 행위자: 채연) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과를 공개했다.\n[public-7] (observed; 1회차; 장면 5: 공개 장면 5; 행위자: 명시되지 않음) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed; 1회차; 장면 5: 공개 장면 5; 행위자: 민석) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다."
+          }
+        ],
+        "format": {
+          "additionalProperties": false,
+          "description": "Entailment of the entire claim, or direct answerability of a lookup.",
+          "properties": {
+            "evidence_quotes": {
+              "type": "array",
+              "maxItems": 3,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "evidence_id": {
+                    "type": "string"
+                  },
+                  "quote": {
+                    "type": "string",
+                    "maxLength": 180
+                  }
+                },
+                "required": [
+                  "evidence_id",
+                  "quote"
+                ]
+              }
+            },
+            "evidence_ids": {
+              "description": "판정에 사용한 공개 원본 ID. 반대 사실의 근거와 미확인 질문의 부분 근거도 인용한다.",
+              "items": {
+                "type": "string"
+              },
+              "title": "Evidence Ids",
+              "type": "array"
+            },
+            "relation": {
+              "description": "supported=명제 전체가 근거와 일치하거나 조회의 실제 답 존재; contradicted=명제 전체와 근거가 반대; unknown=요청 정보 미확인. 부정 단어 유무의 분류가 아니다.",
+              "enum": [
+                "supported",
+                "contradicted",
+                "unknown"
+              ],
+              "title": "Relation",
+              "type": "string"
+            },
+            "detail": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Detail"
+            }
+          },
+          "required": [
+            "evidence_quotes",
+            "evidence_ids",
+            "relation"
+          ],
+          "title": "DiagnosticExtractFirst",
+          "type": "object"
+        },
+        "stream": false,
+        "keep_alive": "2h",
+        "options": {
+          "temperature": 0
+        }
+      },
+      "started_at": "2026-09-09T07:07:46.938024+00:00",
+      "http_status": 200,
+      "raw_http_body": "{\"model\":\"gemma3:12b\",\"created_at\":\"2026-09-09T07:07:49.462273606Z\",\"message\":{\"role\":\"assistant\",\"content\":\"{\\\"evidence_quotes\\\": [\\n  {\\n    \\\"evidence_id\\\": \\\"public-6\\\",\\n    \\\"quote\\\": \\\"채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과를 공개했다.\\\"\\n  }\\n], \\\"evidence_ids\\\": [\\n  \\\"public-6\\\"\\n], \\\"relation\\\": \\\"contradicted\\\"}\"},\"done\":true,\"done_reason\":\"stop\",\"total_duration\":2521528962,\"load_duration\":230199660,\"prompt_eval_count\":635,\"prompt_eval_duration\":293333000,\"eval_count\":88,\"eval_duration\":1920044000}",
+      "provider_response": {
+        "model": "gemma3:12b",
+        "created_at": "2026-09-09T07:07:49.462273606Z",
+        "message": {
+          "role": "assistant",
+          "content": "{\"evidence_quotes\": [\n  {\n    \"evidence_id\": \"public-6\",\n    \"quote\": \"채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과를 공개했다.\"\n  }\n], \"evidence_ids\": [\n  \"public-6\"\n], \"relation\": \"contradicted\"}"
+        },
+        "done": true,
+        "done_reason": "stop",
+        "total_duration": 2521528962,
+        "load_duration": 230199660,
+        "prompt_eval_count": 635,
+        "prompt_eval_duration": 293333000,
+        "eval_count": 88,
+        "eval_duration": 1920044000
+      },
+      "provider_model": "gemma3:12b",
+      "raw_content": "{\"evidence_quotes\": [\n  {\n    \"evidence_id\": \"public-6\",\n    \"quote\": \"채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과를 공개했다.\"\n  }\n], \"evidence_ids\": [\n  \"public-6\"\n], \"relation\": \"contradicted\"}",
+      "output": {
+        "evidence_quotes": [
+          {
+            "evidence_id": "public-6",
+            "quote": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과를 공개했다."
+          }
+        ],
+        "evidence_ids": [
+          "public-6"
+        ],
+        "relation": "contradicted"
+      },
+      "schema_valid": true,
+      "evidence_ids_valid": true,
+      "relation_has_evidence": true,
+      "quotes_verbatim": true,
+      "elapsed_ms": 2525
+    }
+  ],
+  "finished_at": "2026-09-09T07:07:49.463381+00:00"
+}

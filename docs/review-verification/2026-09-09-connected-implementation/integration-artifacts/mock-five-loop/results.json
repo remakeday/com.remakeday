@@ -1,0 +1,20 @@
+{
+  "mode": "mock API, real frontend; no game DB writes",
+  "checks": [
+    "unfinished retrospective locked",
+    "loop 1: 100% continues",
+    "loop 2: 100% continues",
+    "loop 3: 100% continues",
+    "loop 4: 100% continues",
+    "final 0%: ending, retrospective, fetch retry, mobile fit",
+    "final 0%: new attempt",
+    "unfinished retrospective locked",
+    "loop 1: 100% continues",
+    "loop 2: 100% continues",
+    "loop 3: 100% continues",
+    "loop 4: 100% continues",
+    "final 100%: ending, retrospective, fetch retry, mobile fit",
+    "final 100%: new attempt"
+  ],
+  "errors": []
+}

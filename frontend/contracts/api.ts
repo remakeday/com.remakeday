@@ -1,0 +1,457 @@
+/**
+ * REMAKE DAY — API 계약 v1 (MVP)
+ * 원본: docs/spec/api_contract.md — backend 8500 / frontend 3500
+ *
+ * 이 파일은 계약 문서의 요청·응답을 그대로 옮긴 것이다. 임의 변경 금지.
+ * 모든 응답은 JSON. 에러는 `{detail: string}` + 4xx. 잘못된 상태 전이는 409.
+ */
+
+// ── 타입 ──────────────────────────────────────────────
+
+export interface CellScores {
+  cause: number;
+  motive: number;
+  side_effect: number;
+  identity: number;
+}
+
+export type DamageLevel = 0 | 1 | 2 | 3;
+export type Mood = "calm" | "uneasy" | "wary";
+export type NoteKind = "fragment" | "confirmed" | "rule_observation";
+export type WorldOutcome = "truck" | "quiet" | "closure";
+export type ClosedBy = "clear" | "doom" | "understood" | "understood_all";
+export type ObservationSource = "scene" | "image" | "statement" | "rule_result";
+export type ObservationVerification = "observed" | "reported";
+export type QuestionStatus = "supported" | "contradicted" | "unknown";
+export type GodAnswer = string;
+
+export interface Npc {
+  code: string;
+  name: string;
+  mood: Mood;
+  /** 이번 비트에 이미 말을 걸었다 — 비트당 1회 제한 */
+  uttered: boolean;
+}
+
+export interface Note {
+  id: number;
+  kind: NoteKind;
+  text: string;
+  loop_n: number;
+  observation_ids: string[];
+  sources: Observation[];
+}
+
+export interface PawOffer {
+  offer_id: string;
+  rule_label: string;
+  shown_reason: string | null;
+}
+
+export interface Cookie {
+  text: string;
+  cell: string; // cause | motive | side_effect | identity
+  level: 1 | 2 | 3;
+}
+
+/** 비트 경계에서 NPC 둘이 지나가며 주고받는 2~4줄 (발화 예산 무관) */
+export interface AmbientUtterance {
+  lines: { code: string; name: string; text: string }[];
+}
+
+/** 이 비트에서 새로 발견된 감각 파편 (노트에 적힌 직후) */
+export interface NoteFound {
+  id: number;
+  kind: string;
+  text: string;
+}
+
+/** 시나리오가 지정한 현재 비트의 관찰 이미지. */
+export interface Illustration {
+  image_id: string;
+  caption: string;
+}
+
+export interface Observation {
+  observation_id: string;
+  attempt_id: string;
+  loop_id: string;
+  loop_n: number;
+  beat: number;
+  scene_id: string;
+  scene_title: string;
+  actor: string | null;
+  text: string;
+  source_kind: ObservationSource;
+  verification: ObservationVerification;
+  illustrations: Illustration[];
+  rule_id: string | null;
+}
+
+// ── 세션·회차 (P1) ────────────────────────────────────
+
+export interface CreateSessionReq {
+  prior_attempt_id?: string;
+}
+export interface CreateSessionRes {
+  attempt_id: string;
+  attempt_n: number;
+  entry_lines: string[]; // 3줄
+  prior_cell_results: CellScores | null;
+}
+
+export interface StartLoopRes {
+  loop_id: string;
+  loop_n: number;
+  morning_text: string;
+  damage_level: DamageLevel;
+  budget_left: number;
+  /** 첫 장면에서 자연스럽게 들리는 무료 대화. */
+  ambient?: AmbientUtterance | null;
+  beat: number; // 시작은 1
+  beat_title: string;
+  narration: string;
+  broadcast: string | null;
+  illustrations: Illustration[];
+  /** 전날 걸린 규칙이 부작용을 만들었을 때만 — "어제는 없던 일이 있었다" 톤 한 줄 */
+  aftermath: string | null;
+  /** 오늘 세계에 걸린 규칙 — 유저용 문구. 없으면 빈 배열 */
+  active_rules: string[];
+  observations: Observation[];
+}
+
+export interface UtteranceReq {
+  target: string; // NPC code
+  text: string;
+}
+export interface UtteranceRes {
+  reply: string;
+  npc: Npc;
+  budget_left: number;
+  beat: number;
+  tool_used: boolean;
+  observations: Observation[];
+}
+
+export interface BeatNextRes {
+  beat: number;
+  beat_title: string;
+  narration: string;
+  broadcast: string | null;
+  illustrations: Illustration[];
+  paw_offer: PawOffer | null;
+  day_done: boolean;
+  ambient: AmbientUtterance | null;
+  note_found: NoteFound | null;
+  observations: Observation[];
+  /** 현재 장면 처리 후 발화 예산. 구버전 응답에서는 없을 수 있다. */
+  budget_left?: number;
+}
+
+export interface PawRespondReq {
+  offer_id: string;
+  accept: boolean;
+}
+export interface PawRespondRes {
+  applied: boolean;
+  rule_label: string | null;
+}
+
+export interface NotesRes {
+  notes: Note[];
+}
+
+export interface NpcsRes {
+  npcs: Npc[];
+}
+
+export interface ObservationsRes {
+  observations: Observation[];
+}
+
+// ── 밤 (P2) ───────────────────────────────────────────
+
+export interface NightDraftReq {
+  tapped_note_ids: number[];
+  inherited_note_ids?: number[];
+  free_text: string;
+}
+export interface NightDraftRes {
+  night_id: string;
+  claims: string[]; // ≤8
+}
+
+export interface PatchClaimsReq {
+  claims: string[];
+}
+export interface PatchClaimsRes {
+  claims: string[];
+}
+
+export interface PreviousAnswer {
+  loop_n: number;
+  free_text: string;
+  claims: string[];
+  tapped_note_ids: number[];
+  draft_text: string;
+}
+
+export interface PreviousAnswerRes {
+  previous_answer: PreviousAnswer | null;
+}
+
+export interface SubmitRes {
+  total: number;
+  /** 호환용 50% 분류. 생존·회차 종료·회고 접근에는 사용하지 않는다. */
+  passed: boolean;
+  loop_n: number;
+  world_outcome: WorldOutcome | null;
+  is_final: boolean;
+  closed_by: ClosedBy | null;
+  cells: CellScores | null;
+  cookie: Cookie | null;
+  intervention_available: boolean;
+  /** 5회차 제출 완료 후 공개하는 시나리오 결말 */
+  ending_lines: string[] | null;
+  /** 매일 밤 — 칸별 점수는 숨긴 채 정성 문장만 */
+  cell_feedback: string | null;
+  /** 세계와 닿지 않은 주장 수 (감점 없음, 정보만) */
+  wrong_claim_count: number;
+}
+
+// ── 신의개입 (P3) ─────────────────────────────────────
+
+export interface GodQuestionReq {
+  text: string;
+}
+export interface GodQuestionRes {
+  answer: GodAnswer;
+  detail: string | null;
+  remaining: number;
+  status: QuestionStatus;
+  evidence_ids: string[];
+  evidence: Observation[];
+  next_observation: string | null;
+}
+
+export interface GodOption {
+  index: 1 | 2 | 3;
+  label: string;
+  target: string;
+  action: string;
+  effect: "enforce" | "suppress";
+  when_beat: number | "any";
+  reason: string;
+  evidence_ids: string[];
+  expected_observation: string;
+}
+export interface GodOptionsRes {
+  options: GodOption[];
+}
+
+export interface GodRuleReq {
+  choice: "1" | "2" | "3" | "custom";
+  custom_text?: string;
+  preview_id?: string;
+}
+export interface GodRuleRes {
+  ok: boolean;
+  rule_label: string | null;
+  conflicts: string[];
+  reason: string | null;
+}
+
+export interface RulePreviewReq {
+  custom_text: string;
+}
+
+export interface RulePreview {
+  preview_id: string;
+  original_text: string;
+  executable: boolean;
+  interpretation: string | null;
+  limitations: string[];
+  alternatives: string[];
+  conflicts: string[];
+  rule: null | {
+    target: string;
+    action: string;
+    effect: "enforce" | "suppress";
+    when_beat: number | "any";
+    label: string;
+  };
+}
+
+export interface RuleOpportunity {
+  loop_n: number;
+  beat: number;
+  condition: string;
+  actual_action: string | null;
+  result: "obeyed" | "violated" | "conflict" | "not_evaluable";
+  observation_ids: string[];
+  side_effect: string | null;
+}
+
+export interface Experiment {
+  rule_id: string;
+  intent: string | null;
+  interpretation: string;
+  opportunities: RuleOpportunity[];
+}
+
+export interface Metric {
+  numerator: number | null;
+  denominator: number;
+  value: number | null;
+  reviewed: number;
+  method: string;
+}
+
+// ── 판 종료 후 (P5) ───────────────────────────────────
+
+export interface HarnessRes {
+  rules: {
+    rule_id: string;
+    source: "monkey_paw" | "user_choice" | "user_custom";
+    target: string;
+    when_beat: number | null;
+    effect: "suppress" | "enforce";
+    action: string;
+    shown_reason: string | null;
+    hidden_side_effect: string | null;
+    created_loop: number;
+    conflict: boolean;
+  }[];
+  harness_summary: {
+    total_events: number;
+    harness_interventions: number;
+    fallbacks: number;
+    paw_accepted: number;
+    recommended_rules: number;
+    custom_rules: number;
+    rule_conflicts: number;
+    questions_asked: number;
+    rule_success_rate: number | null;
+    tool_side_effects: { loop_n: number; beat: number; text: string }[];
+    model_calls: number | null;
+    model_attempts: number | null;
+    model_call_coverage: "complete_logged_calls" | "legacy_partial_or_unavailable";
+  };
+  measurement_version: string;
+  experiments: Experiment[];
+  metrics: {
+    note_source_linkage: Metric;
+    rule_compliance: Metric;
+    question_grounding: Metric;
+    recommendation_relevance: Metric;
+    custom_semantics: Metric;
+    checker_accuracy: Metric;
+  };
+}
+
+export interface InspectorRes {
+  events: unknown[];
+  patches: unknown[];
+  paw_rules: unknown[];
+  scoring: unknown[];
+}
+
+export interface HealthRes {
+  scenario: string;
+  harness: string;
+  models: { npc: string; core: string; embedding: string };
+  db: string;
+}
+
+// ── 타입드 fetch 클라이언트 ───────────────────────────
+
+export const API_BASE =
+  process.env.NEXT_PUBLIC_API_BASE ?? "http://localhost:8500";
+
+export class ApiError extends Error {
+  readonly status: number;
+  readonly detail: string;
+  constructor(status: number, detail: string) {
+    super(`[${status}] ${detail}`);
+    this.name = "ApiError";
+    this.status = status;
+    this.detail = detail;
+  }
+}
+
+async function request<T>(
+  method: "GET" | "POST" | "PATCH",
+  path: string,
+  body?: unknown,
+): Promise<T> {
+  let res: Response;
+  try {
+    res = await fetch(`${API_BASE}${path}`, {
+      method,
+      headers: body !== undefined ? { "Content-Type": "application/json" } : {},
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+    });
+  } catch {
+    throw new ApiError(0, "서버에 연결할 수 없습니다");
+  }
+  if (!res.ok) {
+    let detail = res.statusText || "요청 실패";
+    try {
+      const data = (await res.json()) as { detail?: string };
+      if (typeof data.detail === "string") detail = data.detail;
+    } catch {
+      // 본문이 JSON이 아니면 statusText 유지
+    }
+    throw new ApiError(res.status, detail);
+  }
+  return (await res.json()) as T;
+}
+
+export const api = {
+  // 세션·회차
+  createSession: (req: CreateSessionReq) =>
+    request<CreateSessionRes>("POST", "/sessions", req),
+  startLoop: (attemptId: string) =>
+    request<StartLoopRes>("POST", `/sessions/${attemptId}/loops`),
+  sendUtterance: (loopId: string, req: UtteranceReq) =>
+    request<UtteranceRes>("POST", `/loops/${loopId}/utterances`, req),
+  nextBeat: (loopId: string) =>
+    request<BeatNextRes>("POST", `/loops/${loopId}/beats/next`),
+  respondPaw: (loopId: string, req: PawRespondReq) =>
+    request<PawRespondRes>("POST", `/loops/${loopId}/paw/respond`, req),
+  getNotes: (loopId: string) =>
+    request<NotesRes>("GET", `/loops/${loopId}/notes`),
+  getObservations: (loopId: string) =>
+    request<ObservationsRes>("GET", `/loops/${loopId}/observations`),
+  getNpcs: (loopId: string) => request<NpcsRes>("GET", `/loops/${loopId}/npcs`),
+
+  // 밤
+  nightDraft: (loopId: string, req: NightDraftReq) =>
+    request<NightDraftRes>("POST", `/loops/${loopId}/night/draft`, req),
+  getPreviousAnswer: (loopId: string) =>
+    request<PreviousAnswerRes>("GET", `/loops/${loopId}/night/previous`),
+  patchClaims: (nightId: string, req: PatchClaimsReq) =>
+    request<PatchClaimsRes>("PATCH", `/nights/${nightId}/claims`, req),
+  submitNight: (nightId: string) =>
+    request<SubmitRes>("POST", `/nights/${nightId}/submit`),
+
+  // 신의개입
+  askGod: (nightId: string, req: GodQuestionReq) =>
+    request<GodQuestionRes>("POST", `/nights/${nightId}/questions`, req),
+  getGodOptions: (nightId: string) =>
+    request<GodOptionsRes>("GET", `/nights/${nightId}/options`),
+  previewRule: (nightId: string, req: RulePreviewReq) =>
+    request<RulePreview>("POST", `/nights/${nightId}/rule/preview`, req),
+  chooseRule: (nightId: string, req: GodRuleReq) =>
+    request<GodRuleRes>("POST", `/nights/${nightId}/rule`, req),
+
+  // 판 종료 후
+  getHarness: (attemptId: string) =>
+    request<HarnessRes>("GET", `/attempts/${attemptId}/harness`),
+  getInspector: (attemptId: string, token: string) =>
+    request<InspectorRes>(
+      "GET",
+      `/attempts/${attemptId}/inspector?token=${encodeURIComponent(token)}`,
+    ),
+  getHealth: () => request<HealthRes>("GET", "/health"),
+};

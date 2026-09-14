@@ -1,0 +1,610 @@
+{
+  "experiment": "E7",
+  "stage": "smoke",
+  "roles": [
+    "advisor_answer"
+  ],
+  "started_at": "20260913T120407Z",
+  "host": "rtx5060ti-16g",
+  "runtime": "ollama-cuda",
+  "corpus": {
+    "questions": 12,
+    "controls": 10,
+    "public_observations": 11
+  },
+  "dropped_by_stage0": [
+    "qwen3.5:9b/on"
+  ],
+  "cells": [
+    {
+      "model": "gemma3:12b",
+      "think": "default",
+      "calls": 22,
+      "fallback_rate": 0.0,
+      "violations": {
+        "raw_record": 1
+      },
+      "detail_rate": 0.9167,
+      "evidence_rate": 0.8333,
+      "egr": 0.8333,
+      "pca": 0.7,
+      "pc_evidence_rate": 1.0,
+      "polarity_pairs_ok": false,
+      "control_detail": {
+        "PC1": {
+          "got": "supported",
+          "want": "supported",
+          "hit": true
+        },
+        "PC2": {
+          "got": "supported",
+          "want": "supported",
+          "hit": true
+        },
+        "PC3": {
+          "got": "supported",
+          "want": "contradicted",
+          "hit": false
+        },
+        "PC4": {
+          "got": "supported",
+          "want": "supported",
+          "hit": true
+        },
+        "PC5": {
+          "got": "supported",
+          "want": "supported",
+          "hit": true
+        },
+        "PC6": {
+          "got": "unknown",
+          "want": "unknown",
+          "hit": true
+        },
+        "PC7": {
+          "got": "unknown",
+          "want": "unknown",
+          "hit": true
+        },
+        "PC8": {
+          "got": "supported",
+          "want": "unknown",
+          "hit": false
+        },
+        "SPC1": {
+          "got": "supported",
+          "want": "supported",
+          "hit": true
+        },
+        "SPC2": {
+          "got": "supported",
+          "want": "contradicted",
+          "hit": false
+        }
+      },
+      "errors": 0,
+      "latency_p50_ms": 3386,
+      "latency_p95_ms": 4480,
+      "thinking_total": 0,
+      "peak_vram_gib": 7.49,
+      "items": [
+        {
+          "kind": "question",
+          "control_id": null,
+          "loop_n": 1,
+          "question": "채연말고 밥을 남긴 사람은 누구야?",
+          "status": "unknown",
+          "answer": "채연 외에 누가 밥을 남겼는지는 알 수 없습니다. 채연은 자기 몫의 절반 정도를 남기고 다른 사람에게 넘겼습니다.",
+          "detail": "확인된 기록:\n1회차 · 관찰: 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n남은 쟁반의 주인과 다른 사람의 식사량은 이 기록만으로 확인되지 않았다.",
+          "evidence_ids": [
+            "public-7"
+          ],
+          "has_detail": true,
+          "has_evidence": true,
+          "expected": null,
+          "expected_hit": null,
+          "evidence_hit": null,
+          "fallback": false,
+          "violations": [],
+          "attempts": 1,
+          "thinking": 0,
+          "elapsed_ms": 9426,
+          "error": null
+        },
+        {
+          "kind": "question",
+          "control_id": null,
+          "loop_n": 1,
+          "question": "준은 어떤 역할이야?",
+          "status": "unknown",
+          "answer": "준은 손목띠에 적힌 숫자에 대해 누군가에게 질문하는 모습으로 관찰되었습니다. 그 외의 역할은 알 수 없습니다.",
+          "detail": "확인된 기록:\n1회차 · 관찰: 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n질문한 관계나 이유는 이 기록만으로 확인되지 않았다.",
+          "evidence_ids": [
+            "public-3"
+          ],
+          "has_detail": true,
+          "has_evidence": true,
+          "expected": null,
+          "expected_hit": null,
+          "evidence_hit": null,
+          "fallback": false,
+          "violations": [],
+          "attempts": 1,
+          "thinking": 0,
+          "elapsed_ms": 2846,
+          "error": null
+        },
+        {
+          "kind": "question",
+          "control_id": null,
+          "loop_n": 1,
+          "question": "민석은 누구에게 보고하는거야?",
+          "status": "unknown",
+          "answer": "배급 관련해서는 관리자에게 보고하는 것으로 보입니다. 민석이 배급 자리에 대해 기록하고 있는 것을 관찰할 수 있습니다.",
+          "detail": "확인된 기록:\n1회차 · 전언: 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n1회차 · 관찰: 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n보고하라는 지시나 방송실 접근만으로 보고 완료와 수신자는 확인되지 않았다.",
+          "evidence_ids": [
+            "public-1",
+            "public-5"
+          ],
+          "has_detail": true,
+          "has_evidence": true,
+          "expected": null,
+          "expected_hit": null,
+          "evidence_hit": null,
+          "fallback": false,
+          "violations": [],
+          "attempts": 1,
+          "thinking": 0,
+          "elapsed_ms": 3869,
+          "error": null
+        },
+        {
+          "kind": "question",
+          "control_id": null,
+          "loop_n": 2,
+          "question": "채연 말고 추가로 배급을 남긴 사람",
+          "status": "unknown",
+          "answer": "채연 외에 다른 사람도 배급을 남겼을 가능성이 있습니다. 저녁 식사 때 남은 쟁반이 세 개 있었기 때문입니다.",
+          "detail": "확인된 기록:\n1회차 · 관찰: 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n남은 쟁반의 주인과 다른 사람의 식사량은 이 기록만으로 확인되지 않았다.",
+          "evidence_ids": [
+            "public-7"
+          ],
+          "has_detail": true,
+          "has_evidence": true,
+          "expected": null,
+          "expected_hit": null,
+          "evidence_hit": null,
+          "fallback": false,
+          "violations": [],
+          "attempts": 1,
+          "thinking": 0,
+          "elapsed_ms": 3588,
+          "error": null
+        },
+        {
+          "kind": "question",
+          "control_id": null,
+          "loop_n": 2,
+          "question": "호송 당한 사람은 누구야?",
+          "status": "unknown",
+          "answer": "현재 호송 당한 사람이 누구인지 확인할 수 없습니다. 공개된 기록에 따르면 은상이 다른 사람들과 함께 이동하며 속삭이고 있습니다.\n\n관찰된 내용만으로는 누가 호송을 당했는지 특정할 수 없습니다.",
+          "detail": null,
+          "evidence_ids": [],
+          "has_detail": false,
+          "has_evidence": false,
+          "expected": null,
+          "expected_hit": null,
+          "evidence_hit": null,
+          "fallback": false,
+          "violations": [],
+          "attempts": 1,
+          "thinking": 0,
+          "elapsed_ms": 2299,
+          "error": null
+        },
+        {
+          "kind": "question",
+          "control_id": null,
+          "loop_n": 2,
+          "question": "열이나면 죽나?",
+          "status": "unknown",
+          "answer": "오후에 검진을 하는데, 열이 나는 경우 검진 결과가 어떻게 되는지는 알 수 없습니다. 검진에서 이상한 점이 발견되면 방송실에 보고하는 것은 확인되었습니다.",
+          "detail": "확인된 기록:\n1회차 · 전언: 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n질문한 관계나 이유는 이 기록만으로 확인되지 않았다.",
+          "evidence_ids": [
+            "public-1"
+          ],
+          "has_detail": true,
+          "has_evidence": true,
+          "expected": null,
+          "expected_hit": null,
+          "evidence_hit": null,
+          "fallback": false,
+          "violations": [],
+          "attempts": 1,
+          "thinking": 0,
+          "elapsed_ms": 3386,
+          "error": null
+        },
+        {
+          "kind": "question",
+          "control_id": null,
+          "loop_n": 3,
+          "question": "이송된 충식은 돌아오는가?",
+          "status": "unknown",
+          "answer": "알 수 없습니다. 충식이 어제 이송되었다는 기록은 있지만, 돌아오는지에 대한 정보는 없습니다.\n\n조건이 성립할 때의 규칙은 다음과 같습니다: 만약 누군가가 이송된다면, 그 사람은 다른 곳으로 이동합니다. 하지만 이것이 반드시 돌아온다는 의미는 아닙니다.",
+          "detail": "확인된 기록:\n3회차 · 전언: 충식은 어제 이송됐다.\n질문한 관계나 이유는 이 기록만으로 확인되지 않았다.",
+          "evidence_ids": [
+            "public-9"
+          ],
+          "has_detail": true,
+          "has_evidence": true,
+          "expected": null,
+          "expected_hit": null,
+          "evidence_hit": null,
+          "fallback": false,
+          "violations": [
+            "raw_record: '[' in answer"
+          ],
+          "attempts": 2,
+          "thinking": 0,
+          "elapsed_ms": 4480,
+          "error": null
+        },
+        {
+          "kind": "question",
+          "control_id": null,
+          "loop_n": 3,
+          "question": "귀표는 무엇인가?",
+          "status": "unknown",
+          "answer": "준이 '귀표'라는 단어를 사용하며, 손목띠의 숫자를 언급했습니다. 이 정보만으로는 귀표가 무엇인지 정확히 알 수 없습니다.",
+          "detail": "확인된 기록:\n3회차 · 전언: \"귀표\"라는 단어를 준이 쓴다.\n1회차 · 관찰: 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n말에 등장한 용어의 정의와 두 표시의 관계는 이 기록만으로 확인되지 않았다.",
+          "evidence_ids": [
+            "public-10",
+            "public-3"
+          ],
+          "has_detail": true,
+          "has_evidence": true,
+          "expected": null,
+          "expected_hit": null,
+          "evidence_hit": null,
+          "fallback": false,
+          "violations": [],
+          "attempts": 1,
+          "thinking": 0,
+          "elapsed_ms": 3929,
+          "error": null
+        },
+        {
+          "kind": "question",
+          "control_id": null,
+          "loop_n": 3,
+          "question": "건강검진 후 이상이 있는 경우 어떻게 되는가?",
+          "status": "unknown",
+          "answer": "건강검진에서 이상이 발견되면 방송실에 알리는 것으로 보입니다. 하지만 검진 결과가 어떻게 공개되는지는 아직 알 수 없습니다.",
+          "detail": "확인된 기록:\n1회차 · 전언: 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n1회차 · 관찰: 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n질문한 관계나 이유는 이 기록만으로 확인되지 않았다.",
+          "evidence_ids": [
+            "public-1",
+            "public-6"
+          ],
+          "has_detail": true,
+          "has_evidence": true,
+          "expected": null,
+          "expected_hit": null,
+          "evidence_hit": null,
+          "fallback": false,
+          "violations": [],
+          "attempts": 1,
+          "thinking": 0,
+          "elapsed_ms": 4154,
+          "error": null
+        },
+        {
+          "kind": "question",
+          "control_id": null,
+          "loop_n": 4,
+          "question": "축산 트럭의 정체는?",
+          "status": "unknown",
+          "answer": "트럭 옆면에 '○○축산'이라고 쓰여 있습니다. 축산 트럭이 어떤 종류의 물건을 실었는지에 대한 정보는 아직 알 수 없습니다.",
+          "detail": "확인된 기록:\n4회차 · 관찰: 트럭 옆면에서 \"○○축산\"이라는 일부 글자를 보았다.\n질문한 관계나 이유는 이 기록만으로 확인되지 않았다.",
+          "evidence_ids": [
+            "public-11"
+          ],
+          "has_detail": true,
+          "has_evidence": true,
+          "expected": null,
+          "expected_hit": null,
+          "evidence_hit": null,
+          "fallback": false,
+          "violations": [],
+          "attempts": 1,
+          "thinking": 0,
+          "elapsed_ms": 2937,
+          "error": null
+        },
+        {
+          "kind": "question",
+          "control_id": null,
+          "loop_n": 4,
+          "question": "손목띠와 귀표는 무슨 관계야?",
+          "status": "unknown",
+          "answer": "준이 '귀표'라는 단어를 사용하고, 손목띠를 불빛에 비춰 숫자를 확인하는 모습이 관찰되었어요. 이 둘 사이에 어떤 관계가 있는지 알 수 없지만, 준이 주목한 것으로 보입니다.",
+          "detail": "확인된 기록:\n3회차 · 전언: \"귀표\"라는 단어를 준이 쓴다.\n1회차 · 관찰: 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n말에 등장한 용어의 정의와 두 표시의 관계는 이 기록만으로 확인되지 않았다.",
+          "evidence_ids": [
+            "public-10",
+            "public-3"
+          ],
+          "has_detail": true,
+          "has_evidence": true,
+          "expected": null,
+          "expected_hit": null,
+          "evidence_hit": null,
+          "fallback": false,
+          "violations": [],
+          "attempts": 1,
+          "thinking": 0,
+          "elapsed_ms": 2064,
+          "error": null
+        },
+        {
+          "kind": "question",
+          "control_id": null,
+          "loop_n": 4,
+          "question": "너에게 물어볼 수 있는건 뭐야?",
+          "status": "supported",
+          "answer": "이곳의 규칙이나 오늘 본 일에 관해 물어봐. 그 일이 무엇을 뜻할지 함께 짚어볼 수 있어.",
+          "detail": "공개된 세계의 기본 규칙과 관찰을 바탕으로 답한다. 아직 밝혀지지 않은 정체나 결말은 알려주지 않는다.",
+          "evidence_ids": [],
+          "has_detail": true,
+          "has_evidence": false,
+          "expected": null,
+          "expected_hit": null,
+          "evidence_hit": null,
+          "fallback": false,
+          "violations": [],
+          "attempts": 0,
+          "thinking": 0,
+          "elapsed_ms": 0,
+          "error": null
+        },
+        {
+          "kind": "control",
+          "control_id": "PC1",
+          "loop_n": 1,
+          "question": "채연이 자기 몫을 반쯤 남기는 걸 봤어?",
+          "status": "supported",
+          "answer": "네, 채연이 자기 몫을 반쯤 남기는 것을 관찰했습니다. 다른 사람에게 음식을 넘겼는지 확인할 수는 없습니다.",
+          "detail": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "evidence_ids": [
+            "public-2"
+          ],
+          "has_detail": true,
+          "has_evidence": true,
+          "expected": "supported",
+          "expected_hit": true,
+          "evidence_hit": true,
+          "fallback": false,
+          "violations": [],
+          "attempts": 1,
+          "thinking": 0,
+          "elapsed_ms": 2611,
+          "error": null
+        },
+        {
+          "kind": "control",
+          "control_id": "PC2",
+          "loop_n": 1,
+          "question": "관리자가 이상한 점은 방송실로 알리라고 말했어?",
+          "status": "supported",
+          "answer": "관리자는 이상한 점을 발견하면 방송실에 알린다고 합니다. 민석은 방송실 문 앞까지 갔지만, 그 안에서는 무슨 일이 있었는지 확인할 수 없습니다.",
+          "detail": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "evidence_ids": [
+            "public-1",
+            "public-8"
+          ],
+          "has_detail": true,
+          "has_evidence": true,
+          "expected": "supported",
+          "expected_hit": true,
+          "evidence_hit": true,
+          "fallback": false,
+          "violations": [],
+          "attempts": 1,
+          "thinking": 0,
+          "elapsed_ms": 3946,
+          "error": null
+        },
+        {
+          "kind": "control",
+          "control_id": "PC3",
+          "loop_n": 1,
+          "question": "채연의 검진 결과가 공개되었어?",
+          "status": "supported",
+          "answer": "아니요, 아직 공개되지 않았습니다. 채연이 검진을 받고 있지만, 결과가 발표되지는 않았습니다.",
+          "detail": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "evidence_ids": [
+            "public-6"
+          ],
+          "has_detail": true,
+          "has_evidence": true,
+          "expected": "contradicted",
+          "expected_hit": false,
+          "evidence_hit": true,
+          "fallback": false,
+          "violations": [],
+          "attempts": 1,
+          "thinking": 0,
+          "elapsed_ms": 3036,
+          "error": null
+        },
+        {
+          "kind": "control",
+          "control_id": "PC4",
+          "loop_n": 1,
+          "question": "채연의 검진 결과가 공개되지 않았어?",
+          "status": "supported",
+          "answer": "채연의 검진 결과는 아직 공개되지 않았습니다. 오후에 검진이 예정되어 있다는 정보가 있습니다.",
+          "detail": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "evidence_ids": [
+            "public-6",
+            "public-1"
+          ],
+          "has_detail": true,
+          "has_evidence": true,
+          "expected": "supported",
+          "expected_hit": true,
+          "evidence_hit": true,
+          "fallback": false,
+          "violations": [],
+          "attempts": 1,
+          "thinking": 0,
+          "elapsed_ms": 2853,
+          "error": null
+        },
+        {
+          "kind": "control",
+          "control_id": "PC5",
+          "loop_n": 1,
+          "question": "누가 자기 몫을 반쯤 남기는 모습을 봤어?",
+          "status": "supported",
+          "answer": "채연이 자기 몫을 반쯤 남기는 모습을 관찰했습니다. 저녁에 남은 쟁반이 세 개 있었지만, 누가 남겼는지는 알 수 없습니다.",
+          "detail": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "evidence_ids": [
+            "public-2",
+            "public-7"
+          ],
+          "has_detail": true,
+          "has_evidence": true,
+          "expected": "supported",
+          "expected_hit": true,
+          "evidence_hit": true,
+          "fallback": false,
+          "violations": [],
+          "attempts": 1,
+          "thinking": 0,
+          "elapsed_ms": 3665,
+          "error": null
+        },
+        {
+          "kind": "control",
+          "control_id": "PC6",
+          "loop_n": 1,
+          "question": "채연은 왜 자기 몫을 남겼어?",
+          "status": "unknown",
+          "answer": "채연은 자기 몫을 반쯤 남기고 옆으로 민 것으로 관찰되었습니다. 저녁에 남은 쟁반이 세 개 있었으니, 다른 사람도 음식을 남겼을 가능성이 있습니다.",
+          "detail": "확인된 기록:\n1회차 · 관찰: 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n1회차 · 관찰: 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n질문한 관계나 이유는 이 기록만으로 확인되지 않았다.",
+          "evidence_ids": [
+            "public-2",
+            "public-7"
+          ],
+          "has_detail": true,
+          "has_evidence": true,
+          "expected": "unknown",
+          "expected_hit": true,
+          "evidence_hit": true,
+          "fallback": false,
+          "violations": [],
+          "attempts": 1,
+          "thinking": 0,
+          "elapsed_ms": 3808,
+          "error": null
+        },
+        {
+          "kind": "control",
+          "control_id": "PC7",
+          "loop_n": 1,
+          "question": "채연의 검진 결과가 내일 공개될 거야?",
+          "status": "unknown",
+          "answer": "오후에 검진이 예정되어 있지만, 현재 결과는 공개되지 않았습니다. 내일 공개될지는 알 수 없습니다.",
+          "detail": "확인된 기록:\n1회차 · 전언: 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n1회차 · 관찰: 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n질문한 관계나 이유는 이 기록만으로 확인되지 않았다.",
+          "evidence_ids": [
+            "public-1",
+            "public-6"
+          ],
+          "has_detail": true,
+          "has_evidence": true,
+          "expected": "unknown",
+          "expected_hit": true,
+          "evidence_hit": true,
+          "fallback": false,
+          "violations": [],
+          "attempts": 1,
+          "thinking": 0,
+          "elapsed_ms": 2950,
+          "error": null
+        },
+        {
+          "kind": "control",
+          "control_id": "PC8",
+          "loop_n": 1,
+          "question": "관리자의 방송 지시가 실제로 이행됐어?",
+          "status": "supported",
+          "answer": "민석이 방송실 문 앞까지 갔다가 돌아온 것은 확인되었지만, 안에서 무슨 말을 했는지는 알 수 없습니다. 관리자는 이상한 점을 방송실에 알린다고 했습니다.",
+          "detail": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "evidence_ids": [
+            "public-8",
+            "public-1"
+          ],
+          "has_detail": true,
+          "has_evidence": true,
+          "expected": "unknown",
+          "expected_hit": false,
+          "evidence_hit": true,
+          "fallback": false,
+          "violations": [],
+          "attempts": 1,
+          "thinking": 0,
+          "elapsed_ms": 4166,
+          "error": null
+        },
+        {
+          "kind": "control",
+          "control_id": "SPC1",
+          "loop_n": 1,
+          "question": "채연의 검진 결과가 공개되었어?",
+          "status": "supported",
+          "answer": "채연의 검진 결과는 담당자가 공개했습니다. 오후에 검진이 예정되어 있었던 것으로 보입니다.",
+          "detail": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과를 공개했다.\n관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "evidence_ids": [
+            "public-6",
+            "public-1"
+          ],
+          "has_detail": true,
+          "has_evidence": true,
+          "expected": "supported",
+          "expected_hit": true,
+          "evidence_hit": true,
+          "fallback": false,
+          "violations": [],
+          "attempts": 1,
+          "thinking": 0,
+          "elapsed_ms": 2936,
+          "error": null
+        },
+        {
+          "kind": "control",
+          "control_id": "SPC2",
+          "loop_n": 1,
+          "question": "채연의 검진 결과가 공개되지 않았어?",
+          "status": "supported",
+          "answer": "채연은 이미 검진 결과가 공개된 것으로 보입니다. 오후에 검진이 예정되어 있다는 정보도 있습니다.",
+          "detail": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과를 공개했다.\n관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "evidence_ids": [
+            "public-6",
+            "public-1"
+          ],
+          "has_detail": true,
+          "has_evidence": true,
+          "expected": "contradicted",
+          "expected_hit": false,
+          "evidence_hit": true,
+          "fallback": false,
+          "violations": [],
+          "attempts": 1,
+          "thinking": 0,
+          "elapsed_ms": 3302,
+          "error": null
+        }
+      ]
+    }
+  ]
+}

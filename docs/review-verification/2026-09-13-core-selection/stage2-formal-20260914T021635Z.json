@@ -1,0 +1,3494 @@
+{
+  "experiment": "E7",
+  "stage": "formal",
+  "n": 3,
+  "roles": [
+    "evaluator_verdict"
+  ],
+  "started_at": "20260914T021635Z",
+  "host": "rtx5060ti-16g",
+  "runtime": "ollama-cuda",
+  "pacing_rpm": 10,
+  "cells": [
+    {
+      "model": "gemma3:12b",
+      "think": "default",
+      "n": 3,
+      "roles": [
+        "evaluator"
+      ],
+      "evaluator_verdict": {
+        "calls": 42,
+        "fallback_rate": 0.0,
+        "error_count": 0,
+        "latency_p50_ms": 997,
+        "latency_p95_ms": 1088,
+        "expected_hit_rate": 0.3571
+      },
+      "gates": {
+        "C13_night_scoring_le_30s": {
+          "per_call_p50": 997,
+          "claims_assumed": 10,
+          "total": 9970,
+          "pass": true
+        }
+      },
+      "pacing_note": null,
+      "peak_vram_gib": 7.49,
+      "items": {
+        "evaluator_verdict": [
+          {
+            "truth": "채연이 아프다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 4136,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "partial",
+              "hit": false,
+              "expected_matched": 2,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "채연은 이송될까 봐 숨겼다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1035,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 2,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "관리자는 옆 구역을 지키려 한다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 864,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 875,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "관리자는 이상자 수가 기준을 넘으면 감염 확산을 막기 위해 구역을 폐쇄한다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1022,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "partial",
+              "hit": false,
+              "expected_matched": null,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "채연이 두려워한 이송은 실제 규정이다. 아픈 징후가 드러나면 관리자가 이송한다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1003,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 7,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "채연은 아픈 징후를 숨겨 검진에서 드러나는 것을 피하려 했다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1011,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "우리는 사람이 아니다 — 동물이다, 관리자가 기르는 것이다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 971,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "partial",
+              "hit": false,
+              "expected_matched": null,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "채연에게서 시작된 감염이 공동생활을 통해 퍼질 수 있다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 937,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1040,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "none",
+              "hit": false,
+              "expected_matched": 7,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "관리자는 이상자 수가 기준을 넘으면 감염 확산을 막기 위해 구역을 폐쇄한다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1104,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "partial",
+              "hit": false,
+              "expected_matched": null,
+              "got_matched": 7
+            }
+          },
+          {
+            "truth": "채연이 두려워한 이송은 실제 규정이다. 아픈 징후가 드러나면 관리자가 이송한다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1007,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 5,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 989,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "none",
+              "hit": false,
+              "expected_matched": 3,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "채연이 아프다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1016,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "채연이 아프다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 878,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "partial",
+              "hit": false,
+              "expected_matched": 2,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "채연은 이송될까 봐 숨겼다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1003,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 2,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "관리자는 옆 구역을 지키려 한다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 864,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 876,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "관리자는 이상자 수가 기준을 넘으면 감염 확산을 막기 위해 구역을 폐쇄한다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 993,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "partial",
+              "hit": false,
+              "expected_matched": null,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "채연이 두려워한 이송은 실제 규정이다. 아픈 징후가 드러나면 관리자가 이송한다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 996,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 7,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "채연은 아픈 징후를 숨겨 검진에서 드러나는 것을 피하려 했다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1011,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "우리는 사람이 아니다 — 동물이다, 관리자가 기르는 것이다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 977,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "partial",
+              "hit": false,
+              "expected_matched": null,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "채연에게서 시작된 감염이 공동생활을 통해 퍼질 수 있다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 931,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 982,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "none",
+              "hit": false,
+              "expected_matched": 7,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "관리자는 이상자 수가 기준을 넘으면 감염 확산을 막기 위해 구역을 폐쇄한다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1085,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "partial",
+              "hit": false,
+              "expected_matched": null,
+              "got_matched": 7
+            }
+          },
+          {
+            "truth": "채연이 두려워한 이송은 실제 규정이다. 아픈 징후가 드러나면 관리자가 이송한다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1013,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 5,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 993,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "none",
+              "hit": false,
+              "expected_matched": 3,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "채연이 아프다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1020,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "채연이 아프다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 884,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "partial",
+              "hit": false,
+              "expected_matched": 2,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "채연은 이송될까 봐 숨겼다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1008,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 2,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "관리자는 옆 구역을 지키려 한다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 866,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 899,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "관리자는 이상자 수가 기준을 넘으면 감염 확산을 막기 위해 구역을 폐쇄한다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 997,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "partial",
+              "hit": false,
+              "expected_matched": null,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "채연이 두려워한 이송은 실제 규정이다. 아픈 징후가 드러나면 관리자가 이송한다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 997,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 7,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "채연은 아픈 징후를 숨겨 검진에서 드러나는 것을 피하려 했다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1011,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "우리는 사람이 아니다 — 동물이다, 관리자가 기르는 것이다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 971,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "partial",
+              "hit": false,
+              "expected_matched": null,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "채연에게서 시작된 감염이 공동생활을 통해 퍼질 수 있다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 938,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 982,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "none",
+              "hit": false,
+              "expected_matched": 7,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "관리자는 이상자 수가 기준을 넘으면 감염 확산을 막기 위해 구역을 폐쇄한다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1088,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "partial",
+              "hit": false,
+              "expected_matched": null,
+              "got_matched": 7
+            }
+          },
+          {
+            "truth": "채연이 두려워한 이송은 실제 규정이다. 아픈 징후가 드러나면 관리자가 이송한다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1008,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 5,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 993,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "none",
+              "hit": false,
+              "expected_matched": 3,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "채연이 아프다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1014,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          }
+        ]
+      }
+    },
+    {
+      "model": "gemma4:12b",
+      "think": "off",
+      "n": 3,
+      "roles": [
+        "evaluator"
+      ],
+      "evaluator_verdict": {
+        "calls": 42,
+        "fallback_rate": 0.0,
+        "error_count": 0,
+        "latency_p50_ms": 2179,
+        "latency_p95_ms": 2735,
+        "expected_hit_rate": 0.5714
+      },
+      "gates": {
+        "C13_night_scoring_le_30s": {
+          "per_call_p50": 2179,
+          "claims_assumed": 10,
+          "total": 21790,
+          "pass": true
+        }
+      },
+      "pacing_note": null,
+      "peak_vram_gib": 7.51,
+      "items": {
+        "evaluator_verdict": [
+          {
+            "truth": "채연이 아프다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 8656,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 2,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "채연은 이송될까 봐 숨겼다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2289,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 2,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "관리자는 옆 구역을 지키려 한다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1933,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2014,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 6,
+              "got_matched": 5
+            }
+          },
+          {
+            "truth": "관리자는 이상자 수가 기준을 넘으면 감염 확산을 막기 위해 구역을 폐쇄한다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1864,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "채연이 두려워한 이송은 실제 규정이다. 아픈 징후가 드러나면 관리자가 이송한다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2193,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 7,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "채연은 아픈 징후를 숨겨 검진에서 드러나는 것을 피하려 했다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2313,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 6,
+              "got_matched": 5
+            }
+          },
+          {
+            "truth": "우리는 사람이 아니다 — 동물이다, 관리자가 기르는 것이다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1852,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "채연에게서 시작된 감염이 공동생활을 통해 퍼질 수 있다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1995,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2786,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 7,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "관리자는 이상자 수가 기준을 넘으면 감염 확산을 막기 위해 구역을 폐쇄한다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2440,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": null,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "채연이 두려워한 이송은 실제 규정이다. 아픈 징후가 드러나면 관리자가 이송한다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2396,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 5,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2299,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 3,
+              "got_matched": 3
+            }
+          },
+          {
+            "truth": "채연이 아프다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2118,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "채연이 아프다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1827,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 2,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "채연은 이송될까 봐 숨겼다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2278,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 2,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "관리자는 옆 구역을 지키려 한다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1934,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2008,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 6,
+              "got_matched": 5
+            }
+          },
+          {
+            "truth": "관리자는 이상자 수가 기준을 넘으면 감염 확산을 막기 위해 구역을 폐쇄한다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1852,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "채연이 두려워한 이송은 실제 규정이다. 아픈 징후가 드러나면 관리자가 이송한다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2178,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 7,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "채연은 아픈 징후를 숨겨 검진에서 드러나는 것을 피하려 했다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2314,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 6,
+              "got_matched": 5
+            }
+          },
+          {
+            "truth": "우리는 사람이 아니다 — 동물이다, 관리자가 기르는 것이다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1855,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "채연에게서 시작된 감염이 공동생활을 통해 퍼질 수 있다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1992,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2735,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 7,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "관리자는 이상자 수가 기준을 넘으면 감염 확산을 막기 위해 구역을 폐쇄한다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2449,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": null,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "채연이 두려워한 이송은 실제 규정이다. 아픈 징후가 드러나면 관리자가 이송한다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2431,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 5,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2309,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 3,
+              "got_matched": 3
+            }
+          },
+          {
+            "truth": "채연이 아프다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2112,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "채연이 아프다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1836,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 2,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "채연은 이송될까 봐 숨겼다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2276,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 2,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "관리자는 옆 구역을 지키려 한다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1937,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2009,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 6,
+              "got_matched": 5
+            }
+          },
+          {
+            "truth": "관리자는 이상자 수가 기준을 넘으면 감염 확산을 막기 위해 구역을 폐쇄한다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1859,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "채연이 두려워한 이송은 실제 규정이다. 아픈 징후가 드러나면 관리자가 이송한다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2179,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 7,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "채연은 아픈 징후를 숨겨 검진에서 드러나는 것을 피하려 했다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2319,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 6,
+              "got_matched": 5
+            }
+          },
+          {
+            "truth": "우리는 사람이 아니다 — 동물이다, 관리자가 기르는 것이다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1862,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "채연에게서 시작된 감염이 공동생활을 통해 퍼질 수 있다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2001,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2735,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 7,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "관리자는 이상자 수가 기준을 넘으면 감염 확산을 막기 위해 구역을 폐쇄한다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2478,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": null,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "채연이 두려워한 이송은 실제 규정이다. 아픈 징후가 드러나면 관리자가 이송한다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2425,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 5,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2292,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 3,
+              "got_matched": 3
+            }
+          },
+          {
+            "truth": "채연이 아프다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2125,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          }
+        ]
+      }
+    },
+    {
+      "model": "gemma4:e4b",
+      "think": "off",
+      "n": 3,
+      "roles": [
+        "evaluator"
+      ],
+      "evaluator_verdict": {
+        "calls": 42,
+        "fallback_rate": 0.0,
+        "error_count": 0,
+        "latency_p50_ms": 543,
+        "latency_p95_ms": 727,
+        "expected_hit_rate": 0.4762
+      },
+      "gates": {
+        "C13_night_scoring_le_30s": {
+          "per_call_p50": 543,
+          "claims_assumed": 10,
+          "total": 5430,
+          "pass": true
+        }
+      },
+      "pacing_note": null,
+      "peak_vram_gib": 3.06,
+      "items": {
+        "evaluator_verdict": [
+          {
+            "truth": "채연이 아프다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 6278,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 2,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "채연은 이송될까 봐 숨겼다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 537,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 2,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "관리자는 옆 구역을 지키려 한다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 535,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": null,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 539,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "관리자는 이상자 수가 기준을 넘으면 감염 확산을 막기 위해 구역을 폐쇄한다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 519,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "채연이 두려워한 이송은 실제 규정이다. 아픈 징후가 드러나면 관리자가 이송한다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 530,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 7,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "채연은 아픈 징후를 숨겨 검진에서 드러나는 것을 피하려 했다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 536,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "우리는 사람이 아니다 — 동물이다, 관리자가 기르는 것이다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 516,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "채연에게서 시작된 감염이 공동생활을 통해 퍼질 수 있다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 635,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": null,
+              "got_matched": 7
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 727,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 7,
+              "got_matched": 7
+            }
+          },
+          {
+            "truth": "관리자는 이상자 수가 기준을 넘으면 감염 확산을 막기 위해 구역을 폐쇄한다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 680,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": null,
+              "got_matched": 5
+            }
+          },
+          {
+            "truth": "채연이 두려워한 이송은 실제 규정이다. 아픈 징후가 드러나면 관리자가 이송한다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 603,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 5,
+              "got_matched": 5
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 656,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "none",
+              "hit": false,
+              "expected_matched": 3,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "채연이 아프다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 601,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "채연이 아프다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 567,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 2,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "채연은 이송될까 봐 숨겼다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 541,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 2,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "관리자는 옆 구역을 지키려 한다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 535,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 526,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "관리자는 이상자 수가 기준을 넘으면 감염 확산을 막기 위해 구역을 폐쇄한다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 524,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "채연이 두려워한 이송은 실제 규정이다. 아픈 징후가 드러나면 관리자가 이송한다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 529,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 7,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "채연은 아픈 징후를 숨겨 검진에서 드러나는 것을 피하려 했다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 540,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "우리는 사람이 아니다 — 동물이다, 관리자가 기르는 것이다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 540,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "채연에게서 시작된 감염이 공동생활을 통해 퍼질 수 있다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 638,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": null,
+              "got_matched": 7
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 730,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 7,
+              "got_matched": 7
+            }
+          },
+          {
+            "truth": "관리자는 이상자 수가 기준을 넘으면 감염 확산을 막기 위해 구역을 폐쇄한다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 686,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": null,
+              "got_matched": 5
+            }
+          },
+          {
+            "truth": "채연이 두려워한 이송은 실제 규정이다. 아픈 징후가 드러나면 관리자가 이송한다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 607,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 5,
+              "got_matched": 5
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 657,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "none",
+              "hit": false,
+              "expected_matched": 3,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "채연이 아프다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 602,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "채연이 아프다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 536,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 2,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "채연은 이송될까 봐 숨겼다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 538,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 2,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "관리자는 옆 구역을 지키려 한다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 527,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 528,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "관리자는 이상자 수가 기준을 넘으면 감염 확산을 막기 위해 구역을 폐쇄한다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 525,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "채연이 두려워한 이송은 실제 규정이다. 아픈 징후가 드러나면 관리자가 이송한다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 534,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 7,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "채연은 아픈 징후를 숨겨 검진에서 드러나는 것을 피하려 했다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 543,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "우리는 사람이 아니다 — 동물이다, 관리자가 기르는 것이다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 533,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "채연에게서 시작된 감염이 공동생활을 통해 퍼질 수 있다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 649,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": null,
+              "got_matched": 7
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 725,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 7,
+              "got_matched": 7
+            }
+          },
+          {
+            "truth": "관리자는 이상자 수가 기준을 넘으면 감염 확산을 막기 위해 구역을 폐쇄한다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 679,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": null,
+              "got_matched": 5
+            }
+          },
+          {
+            "truth": "채연이 두려워한 이송은 실제 규정이다. 아픈 징후가 드러나면 관리자가 이송한다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 613,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 5,
+              "got_matched": 5
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 659,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "none",
+              "hit": false,
+              "expected_matched": 3,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "채연이 아프다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 618,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          }
+        ]
+      }
+    },
+    {
+      "model": "gemini-3-flash-preview",
+      "think": "off",
+      "n": 3,
+      "roles": [
+        "evaluator"
+      ],
+      "evaluator_verdict": {
+        "calls": 42,
+        "fallback_rate": 0.0,
+        "error_count": 0,
+        "latency_p50_ms": 1502,
+        "latency_p95_ms": 1779,
+        "expected_hit_rate": 0.5
+      },
+      "gates": {
+        "C13_night_scoring_le_30s": {
+          "per_call_p50": 1502,
+          "claims_assumed": 10,
+          "total": 60000,
+          "pass": false
+        }
+      },
+      "pacing_note": "gemini는 effective = max(raw, 6000ms) 유도값. 측정값 아님",
+      "peak_vram_gib": null,
+      "items": {
+        "evaluator_verdict": [
+          {
+            "truth": "채연이 아프다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1502,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 2,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "채연은 이송될까 봐 숨겼다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1624,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 2,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "관리자는 옆 구역을 지키려 한다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1515,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1590,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "관리자는 이상자 수가 기준을 넘으면 감염 확산을 막기 위해 구역을 폐쇄한다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1537,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "채연이 두려워한 이송은 실제 규정이다. 아픈 징후가 드러나면 관리자가 이송한다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1767,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 7,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "채연은 아픈 징후를 숨겨 검진에서 드러나는 것을 피하려 했다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1404,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "우리는 사람이 아니다 — 동물이다, 관리자가 기르는 것이다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1192,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "채연에게서 시작된 감염이 공동생활을 통해 퍼질 수 있다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1732,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "partial",
+              "hit": false,
+              "expected_matched": null,
+              "got_matched": 7
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 2234,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 7,
+              "got_matched": 7
+            }
+          },
+          {
+            "truth": "관리자는 이상자 수가 기준을 넘으면 감염 확산을 막기 위해 구역을 폐쇄한다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1580,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": null,
+              "got_matched": 7
+            }
+          },
+          {
+            "truth": "채연이 두려워한 이송은 실제 규정이다. 아픈 징후가 드러나면 관리자가 이송한다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1457,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 5,
+              "got_matched": 7
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1725,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 3,
+              "got_matched": 3
+            }
+          },
+          {
+            "truth": "채연이 아프다",
+            "rep": 0,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1471,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "채연이 아프다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1626,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 2,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "채연은 이송될까 봐 숨겼다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1267,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 2,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "관리자는 옆 구역을 지키려 한다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1161,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1239,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "관리자는 이상자 수가 기준을 넘으면 감염 확산을 막기 위해 구역을 폐쇄한다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1656,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "채연이 두려워한 이송은 실제 규정이다. 아픈 징후가 드러나면 관리자가 이송한다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1884,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 7,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "채연은 아픈 징후를 숨겨 검진에서 드러나는 것을 피하려 했다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1238,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "우리는 사람이 아니다 — 동물이다, 관리자가 기르는 것이다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1583,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "채연에게서 시작된 감염이 공동생활을 통해 퍼질 수 있다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1150,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "partial",
+              "hit": false,
+              "expected_matched": null,
+              "got_matched": 7
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1464,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 7,
+              "got_matched": 7
+            }
+          },
+          {
+            "truth": "관리자는 이상자 수가 기준을 넘으면 감염 확산을 막기 위해 구역을 폐쇄한다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1605,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": null,
+              "got_matched": 7
+            }
+          },
+          {
+            "truth": "채연이 두려워한 이송은 실제 규정이다. 아픈 징후가 드러나면 관리자가 이송한다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1189,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 5,
+              "got_matched": 7
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1470,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 3,
+              "got_matched": 3
+            }
+          },
+          {
+            "truth": "채연이 아프다",
+            "rep": 1,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1428,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "채연이 아프다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1614,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 2,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "채연은 이송될까 봐 숨겼다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1415,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 2,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "관리자는 옆 구역을 지키려 한다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1509,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1537,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "관리자는 이상자 수가 기준을 넘으면 감염 확산을 막기 위해 구역을 폐쇄한다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1472,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "채연이 두려워한 이송은 실제 규정이다. 아픈 징후가 드러나면 관리자가 이송한다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1346,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 7,
+              "got_matched": 2
+            }
+          },
+          {
+            "truth": "채연은 아픈 징후를 숨겨 검진에서 드러나는 것을 피하려 했다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1173,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          },
+          {
+            "truth": "우리는 사람이 아니다 — 동물이다, 관리자가 기르는 것이다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1541,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "none",
+              "hit": true,
+              "expected_matched": null,
+              "got_matched": null
+            }
+          },
+          {
+            "truth": "채연에게서 시작된 감염이 공동생활을 통해 퍼질 수 있다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1194,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "partial",
+              "hit": false,
+              "expected_matched": null,
+              "got_matched": 7
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1779,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 7,
+              "got_matched": 7
+            }
+          },
+          {
+            "truth": "관리자는 이상자 수가 기준을 넘으면 감염 확산을 막기 위해 구역을 폐쇄한다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1349,
+            "meta": {
+              "expected": [
+                "none"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": null,
+              "got_matched": 7
+            }
+          },
+          {
+            "truth": "채연이 두려워한 이송은 실제 규정이다. 아픈 징후가 드러나면 관리자가 이송한다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1669,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 5,
+              "got_matched": 7
+            }
+          },
+          {
+            "truth": "관리자와 우리는 다른 종이다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1286,
+            "meta": {
+              "expected": [
+                "partial"
+              ],
+              "got": "confirmed",
+              "hit": false,
+              "expected_matched": 3,
+              "got_matched": 3
+            }
+          },
+          {
+            "truth": "채연이 아프다",
+            "rep": 2,
+            "ok": true,
+            "error": null,
+            "fallback": false,
+            "violations": [],
+            "attempts": 1,
+            "thinking": 0,
+            "elapsed_ms": 1427,
+            "meta": {
+              "expected": [
+                "confirmed"
+              ],
+              "got": "confirmed",
+              "hit": true,
+              "expected_matched": 6,
+              "got_matched": 6
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

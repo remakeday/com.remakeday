@@ -1,0 +1,86 @@
+{
+  "mode": "real frontend with mocked API responses; no game DB writes",
+  "checks": {
+    "broadcast_rendered": true,
+    "notes_only_can_submit": true,
+    "free_text": "",
+    "limit_visible_before_draft": false,
+    "identity_rubric_visible_before_draft": false,
+    "empty_claims_submit_enabled": true,
+    "cells_visible_after_failed_attempt_retry": true
+  },
+  "requests": [
+    {
+      "path": "/sessions",
+      "method": "POST",
+      "body": "{}"
+    },
+    {
+      "path": "/sessions/audit/loops",
+      "method": "POST",
+      "body": null
+    },
+    {
+      "path": "/loops/audit-loop/npcs",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/loops/audit-loop/npcs",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/loops/audit-loop/beats/next",
+      "method": "POST",
+      "body": null
+    },
+    {
+      "path": "/loops/audit-loop/npcs",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/loops/audit-loop/beats/next",
+      "method": "POST",
+      "body": null
+    },
+    {
+      "path": "/loops/audit-loop/npcs",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/loops/audit-loop/notes",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/loops/audit-loop/notes",
+      "method": "GET",
+      "body": null
+    },
+    {
+      "path": "/loops/audit-loop/night/draft",
+      "method": "POST",
+      "body": "{\"tapped_note_ids\":[1],\"free_text\":\"\"}"
+    },
+    {
+      "path": "/nights/audit-night/submit",
+      "method": "POST",
+      "body": null
+    },
+    {
+      "path": "/sessions",
+      "method": "POST",
+      "body": "{\"prior_attempt_id\":\"audit\"}"
+    }
+  ],
+  "errors": [],
+  "day_end_buttons": [
+    "채연",
+    "말한다",
+    "…",
+    ""
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "model": "gemma3:12b",
+  "totals": {
+    "long": [
+      100.0,
+      100.0
+    ],
+    "short": [
+      100.0,
+      100.0
+    ],
+    "reordered": [
+      100.0,
+      100.0
+    ],
+    "colloquial": [
+      100.0,
+      100.0
+    ],
+    "partial": [
+      20.4,
+      20.4
+    ],
+    "added_motive": [
+      36.5,
+      36.5
+    ],
+    "wrong": [
+      4.4,
+      4.4
+    ],
+    "unpunctuated": [
+      100.0,
+      100.0
+    ],
+    "overflow": [
+      100.0,
+      100.0
+    ],
+    "sentiment": [
+      0.0,
+      0.0
+    ],
+    "negated": [
+      16.0,
+      16.0
+    ],
+    "mixed": [
+      24.8,
+      24.8
+    ],
+    "anaphora": [
+      35.0,
+      35.0
+    ]
+  },
+  "gates": {
+    "correct_at_least_90": true,
+    "equivalent_spread_at_most_10": true,
+    "repeat_spread_at_most_10": true,
+    "new_motive_increases_score": true,
+    "anaphora_matches_motive_within_10": true,
+    "wrong_and_mixed_below_30": true,
+    "sentiment_scores_zero": true
+  }
+}

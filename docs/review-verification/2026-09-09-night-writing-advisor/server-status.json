@@ -1,0 +1,14 @@
+{
+  "backend_pid": 2022646,
+  "health": {
+    "scenario": "a",
+    "harness": "on",
+    "models": {
+      "npc": "ollama:exaone3.5:7.8b",
+      "core": "gemini:gemini-3-flash-preview",
+      "embedding": "gemini"
+    },
+    "db": "ok"
+  },
+  "play_url": "http://localhost:3500/play"
+}

@@ -1,0 +1,323 @@
+{
+  "experiment": "E7",
+  "stage": "concurrency",
+  "npc": "exaone3.5:7.8b",
+  "started_at": "20260914T022551Z",
+  "host": "rtx5060ti-16g",
+  "runtime": "ollama-cuda",
+  "cells": [
+    {
+      "candidate": "gemma4:12b",
+      "think": "off",
+      "npc": "exaone3.5:7.8b",
+      "rounds": 3,
+      "pair_peak_vram_gib": 12.34,
+      "gpu_peak_used_mib": 13326,
+      "gpu_total_mib": 16311,
+      "npc_latency_ms": [
+        4284,
+        173,
+        196,
+        219
+      ],
+      "core_latency_ms": [
+        4087,
+        1905,
+        12174,
+        2125
+      ],
+      "evictions": [],
+      "partial_offloads": [],
+      "gate_no_eviction": {
+        "pass": true
+      },
+      "snapshots": [
+        {
+          "after": "npc_warm",
+          "resident": [
+            {
+              "model": "exaone3.5:7.8b",
+              "size_vram_gib": 4.83,
+              "size_gib": 4.83
+            }
+          ],
+          "gpu_used_mib": 5117,
+          "gpu_total_mib": 16311
+        },
+        {
+          "after": "core_warm",
+          "resident": [
+            {
+              "model": "gemma4:12b",
+              "size_vram_gib": 7.51,
+              "size_gib": 7.51
+            },
+            {
+              "model": "exaone3.5:7.8b",
+              "size_vram_gib": 4.83,
+              "size_gib": 4.83
+            }
+          ],
+          "gpu_used_mib": 13326,
+          "gpu_total_mib": 16311
+        },
+        {
+          "after": "round1_npc",
+          "resident": [
+            {
+              "model": "gemma4:12b",
+              "size_vram_gib": 7.51,
+              "size_gib": 7.51
+            },
+            {
+              "model": "exaone3.5:7.8b",
+              "size_vram_gib": 4.83,
+              "size_gib": 4.83
+            }
+          ],
+          "gpu_used_mib": 13326,
+          "gpu_total_mib": 16311
+        },
+        {
+          "after": "round1_core",
+          "resident": [
+            {
+              "model": "gemma4:12b",
+              "size_vram_gib": 7.51,
+              "size_gib": 7.51
+            },
+            {
+              "model": "exaone3.5:7.8b",
+              "size_vram_gib": 4.83,
+              "size_gib": 4.83
+            }
+          ],
+          "gpu_used_mib": 13326,
+          "gpu_total_mib": 16311
+        },
+        {
+          "after": "round2_npc",
+          "resident": [
+            {
+              "model": "gemma4:12b",
+              "size_vram_gib": 7.51,
+              "size_gib": 7.51
+            },
+            {
+              "model": "exaone3.5:7.8b",
+              "size_vram_gib": 4.83,
+              "size_gib": 4.83
+            }
+          ],
+          "gpu_used_mib": 13326,
+          "gpu_total_mib": 16311
+        },
+        {
+          "after": "round2_core",
+          "resident": [
+            {
+              "model": "gemma4:12b",
+              "size_vram_gib": 7.51,
+              "size_gib": 7.51
+            },
+            {
+              "model": "exaone3.5:7.8b",
+              "size_vram_gib": 4.83,
+              "size_gib": 4.83
+            }
+          ],
+          "gpu_used_mib": 13326,
+          "gpu_total_mib": 16311
+        },
+        {
+          "after": "round3_npc",
+          "resident": [
+            {
+              "model": "gemma4:12b",
+              "size_vram_gib": 7.51,
+              "size_gib": 7.51
+            },
+            {
+              "model": "exaone3.5:7.8b",
+              "size_vram_gib": 4.83,
+              "size_gib": 4.83
+            }
+          ],
+          "gpu_used_mib": 13326,
+          "gpu_total_mib": 16311
+        },
+        {
+          "after": "round3_core",
+          "resident": [
+            {
+              "model": "gemma4:12b",
+              "size_vram_gib": 7.51,
+              "size_gib": 7.51
+            },
+            {
+              "model": "exaone3.5:7.8b",
+              "size_vram_gib": 4.83,
+              "size_gib": 4.83
+            }
+          ],
+          "gpu_used_mib": 13326,
+          "gpu_total_mib": 16311
+        }
+      ]
+    },
+    {
+      "candidate": "gemma4:e4b",
+      "think": "off",
+      "npc": "exaone3.5:7.8b",
+      "rounds": 3,
+      "pair_peak_vram_gib": 7.890000000000001,
+      "gpu_peak_used_mib": 9520,
+      "gpu_total_mib": 16311,
+      "npc_latency_ms": [
+        196,
+        1007,
+        253,
+        230
+      ],
+      "core_latency_ms": [
+        8266,
+        480,
+        5760,
+        625
+      ],
+      "evictions": [],
+      "partial_offloads": [],
+      "gate_no_eviction": {
+        "pass": true
+      },
+      "snapshots": [
+        {
+          "after": "npc_warm",
+          "resident": [
+            {
+              "model": "exaone3.5:7.8b",
+              "size_vram_gib": 4.83,
+              "size_gib": 4.83
+            }
+          ],
+          "gpu_used_mib": 5117,
+          "gpu_total_mib": 16311
+        },
+        {
+          "after": "core_warm",
+          "resident": [
+            {
+              "model": "gemma4:e4b",
+              "size_vram_gib": 3.06,
+              "size_gib": 3.06
+            }
+          ],
+          "gpu_used_mib": 4419,
+          "gpu_total_mib": 16311
+        },
+        {
+          "after": "round1_npc",
+          "resident": [
+            {
+              "model": "gemma4:e4b",
+              "size_vram_gib": 3.06,
+              "size_gib": 3.06
+            },
+            {
+              "model": "exaone3.5:7.8b",
+              "size_vram_gib": 4.83,
+              "size_gib": 4.83
+            }
+          ],
+          "gpu_used_mib": 9520,
+          "gpu_total_mib": 16311
+        },
+        {
+          "after": "round1_core",
+          "resident": [
+            {
+              "model": "gemma4:e4b",
+              "size_vram_gib": 3.06,
+              "size_gib": 3.06
+            },
+            {
+              "model": "exaone3.5:7.8b",
+              "size_vram_gib": 4.83,
+              "size_gib": 4.83
+            }
+          ],
+          "gpu_used_mib": 9520,
+          "gpu_total_mib": 16311
+        },
+        {
+          "after": "round2_npc",
+          "resident": [
+            {
+              "model": "gemma4:e4b",
+              "size_vram_gib": 3.06,
+              "size_gib": 3.06
+            },
+            {
+              "model": "exaone3.5:7.8b",
+              "size_vram_gib": 4.83,
+              "size_gib": 4.83
+            }
+          ],
+          "gpu_used_mib": 9520,
+          "gpu_total_mib": 16311
+        },
+        {
+          "after": "round2_core",
+          "resident": [
+            {
+              "model": "gemma4:e4b",
+              "size_vram_gib": 3.06,
+              "size_gib": 3.06
+            },
+            {
+              "model": "exaone3.5:7.8b",
+              "size_vram_gib": 4.83,
+              "size_gib": 4.83
+            }
+          ],
+          "gpu_used_mib": 9520,
+          "gpu_total_mib": 16311
+        },
+        {
+          "after": "round3_npc",
+          "resident": [
+            {
+              "model": "gemma4:e4b",
+              "size_vram_gib": 3.06,
+              "size_gib": 3.06
+            },
+            {
+              "model": "exaone3.5:7.8b",
+              "size_vram_gib": 4.83,
+              "size_gib": 4.83
+            }
+          ],
+          "gpu_used_mib": 9520,
+          "gpu_total_mib": 16311
+        },
+        {
+          "after": "round3_core",
+          "resident": [
+            {
+              "model": "gemma4:e4b",
+              "size_vram_gib": 3.06,
+              "size_gib": 3.06
+            },
+            {
+              "model": "exaone3.5:7.8b",
+              "size_vram_gib": 4.83,
+              "size_gib": 4.83
+            }
+          ],
+          "gpu_used_mib": 9520,
+          "gpu_total_mib": 16311
+        }
+      ]
+    }
+  ]
+}

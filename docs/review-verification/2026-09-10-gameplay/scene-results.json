@@ -1,0 +1,9 @@
+{
+  "checks": [
+    "1440px new: day sequence, scene navigation/reset, assets loaded, closure branch",
+    "390px new: day sequence, scene navigation/reset, assets loaded, truck branch",
+    "1440px legacy: day sequence, scene navigation/reset, assets loaded, quiet branch",
+    "1440px unknown: day sequence, scene navigation/reset, assets loaded, truck branch"
+  ],
+  "errors": []
+}

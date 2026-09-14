@@ -1,0 +1,24 @@
+# 프로젝트명 고정 — 폴더명이 바뀌어도 기존 볼륨(demopigfarm_pigfarm-db-data, 테스터 데이터)을 계속 쓴다
+name: demopigfarm
+
+services:
+  pigfarm-db:
+    image: pgvector/pgvector:pg17
+    container_name: pigfarm-db
+    # 5432(kr.co.foodrm) · 5433(lifetutorial) · 5434(beyondfacade)가 사용 중이므로 5435로 분리
+    ports:
+      - "127.0.0.1:5435:5432"
+    environment:
+      POSTGRES_USER: pigfarm
+      POSTGRES_PASSWORD: pigfarm-dev
+      POSTGRES_DB: pigfarm
+    volumes:
+      - pigfarm-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pigfarm -d pigfarm"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pigfarm-db-data:

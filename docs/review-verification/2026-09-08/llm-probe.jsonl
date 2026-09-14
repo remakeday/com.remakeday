@@ -1,0 +1,6 @@
+{"probe": "normalizer", "source": "채연은 열이 나지만 이송될까 봐 숨긴다. 충식은 어제 이송됐고 돌아오지 않는다. 우리는 사육당하는 가축이고 관리자는 사육사다.", "result": {"claims": ["채연은 열이 나지만 숨긴다.", "충식은 어제 이송됐고 돌아오지 않는다.", "우리는 가축으로 사육당하는 것 같다.", "관리자는 우리를 사육하는 사육사다."]}, "dropped_tokens": {"채연은 열이 나지만 숨긴다.": [], "충식은 어제 이송됐고 돌아오지 않는다.": [], "우리는 가축으로 사육당하는 것 같다.": [], "관리자는 우리를 사육하는 사육사다.": []}, "seconds": 4.24}
+{"probe": "motive-1", "truth": "채연은 이송될까 봐 숨겼다", "claims": ["채연은 열이 나지만 이송될까 봐 숨긴다."], "result": {"why": "", "matched_index": 0, "verdict": "confirmed"}, "violations": [], "seconds": 1.1}
+{"probe": "cause-4", "truth": "저녁까지 퍼졌다", "claims": ["채연의 열병이 저녁까지 다른 사람에게 퍼졌다."], "result": {"why": "", "matched_index": 0, "verdict": "confirmed"}, "violations": [], "seconds": 0.98}
+{"probe": "cause-5", "truth": "이상자 3명 넘어 구역 폐쇄", "claims": ["아픈 사람이 셋을 넘으면 구역이 폐쇄된다."], "result": {"why": "", "matched_index": 0, "verdict": "confirmed"}, "violations": [], "seconds": 0.97}
+{"probe": "motive-2", "truth": "그 두려움은 사실이다", "claims": ["이송된 사람은 돌아오지 않는다. 채연이 이송될까 봐 두려워한 것은 사실이었다."], "result": {"why": "", "matched_index": 0, "verdict": "confirmed"}, "violations": [], "seconds": 1.0}
+{"probe": "motive-3", "truth": "관리자는 옆 구역을 지키려 한다", "claims": ["관리자는 열병이 옆 구역으로 퍼지는 걸 막으려고 우리 구역을 폐쇄했다."], "result": {"why": "", "matched_index": null, "verdict": "none"}, "violations": [], "seconds": 0.99}

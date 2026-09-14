@@ -1,0 +1,50 @@
+Connected investigation final validation summary
+Date: 2026-09-09
+
+Current Gemini/Ollama-adapter backend full suite
+- Working directory: backend
+- Command: env -i HOME=/home/kimchungsik PATH=/usr/bin:/bin LANG=C.UTF-8 PYTHONPATH=/home/kimchungsik/projects/demo.pigfarm/backend .venv/bin/python -m pytest -q
+- Unified execution session: 60744
+- Exit code: 0
+- Result: 327 passed, 3 warnings in 6.86s
+- Warnings: existing dependency deprecations from Starlette TestClient/httpx,
+  anyio BlockingPortal, and google-genai UnionGenericAlias handling.
+
+Evidence boundary
+- This record is transcribed from the root-run command result after the
+  Gemini/Ollama adapter and process-wide 10 RPM pacing implementation, with
+  exclusive pigfarm_test ownership.
+- The preceding 325-passed result (session 61313) is an earlier adapter checkpoint.
+- Prior command .venv/bin/pytest -q in backend lacked PYTHONPATH: 27 import
+  collection errors, exit2, 0.40s. It is a command attempt, not passing tests.
+- Independent reviewer targeted suite: 20 passed in 0.25s.
+- Confirmed minimum backend pytest command attempts: 81 = full21 + owner
+  focused49 + reviewer focused11. Full21 includes the collection failure.
+- The earlier 254-passed run is a valid pre-correction checkpoint, not the final
+  source result.
+- The later 261- and 278-passed runs are valid intermediate source checkpoints.
+- /tmp/connected-backend-suite-final.log contains an earlier sandbox-blocked run
+  with 254 setup errors and is not evidence for the passing result above.
+- The earlier 289-, 293-, and 294-passed results belong to earlier source
+  checkpoints.
+- The pre-adapter 07:35 UTC actual Ollama run had
+  45 accepted provider outputs, no error or fallback, kind21/21, and 30 valid
+  source quotes, but SPC2 was still semantically wrong. RM1 remains open.
+- The semantic gate failed. For a disclosed Tester2 manual preview, the final
+  prompt source was later started in foreground session 32276/PID 1478841.
+  Read-only GET verified health, all three connected OpenAPI paths, and frontend
+  /play HTTP 200. Serving this preview is not semantic approval.
+- Earlier gemini-2.5-pro generation returned 404. The user subsequently selected
+  Gemini 3 Flash, exact model gemini-3-flash-preview, not Pro or Flash Lite.
+  A real product-adapter structured call returned expected no in 2.543s.
+  This verifies connectivity, not full-corpus semantic accuracy.
+- Local health verified at 2026-09-09 17:15:54 KST: core
+  gemini:gemini-3-flash-preview; NPC ollama:exaone3.5:7.8b; embedding gemini;
+  db ok. This PC localhost:3500/play returned HTTP200.
+- Tester2 is scheduled to start on another PC after the user gives that agent
+  HANDOFF.md and says “테스터 2 시작”. Only documentation is finished here.
+  No human attempt, start time, or scores have been collected. The destination
+  agent must confirm the actual connection URL and its backend health; this PC
+  localhost is not a remote URL. Record the new attempt_id and start time when
+  the user starts a new game. Preserve Tester1; no DB reset, regrading, or
+  operational-record edits during verification.

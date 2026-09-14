@@ -1,0 +1,481 @@
+{
+  "at": "2026-09-08T05:05:41.686563+00:00",
+  "counts": {
+    "attempts": 66,
+    "loops": 81,
+    "nights": 65,
+    "events": 2504,
+    "attempts_with_loops": 36
+  },
+  "event_types": {
+    "session_start": 66,
+    "harness_event": 210,
+    "loop_start": 81,
+    "utterance": 1235,
+    "manager_check": 203,
+    "answer_draft": 65,
+    "answer_normalized": 87,
+    "answer_scored": 65,
+    "answer_wrong_claims": 60,
+    "loop_end": 65,
+    "death": 63,
+    "intervention_question": 131,
+    "intervention_options": 55,
+    "rule_applied": 62,
+    "monkey_paw_offer": 25,
+    "tool_call": 21,
+    "session_end": 10
+  },
+  "submitted": 65,
+  "passed": 2,
+  "mean": 20.311,
+  "by_loop": {
+    "1": {
+      "n": 24,
+      "mean": 11.62
+    },
+    "2": {
+      "n": 15,
+      "mean": 20.47
+    },
+    "3": {
+      "n": 10,
+      "mean": 30.12
+    },
+    "4": {
+      "n": 8,
+      "mean": 25.14
+    },
+    "5": {
+      "n": 8,
+      "mean": 29.0
+    }
+  },
+  "verdicts": {
+    "cause-1": {
+      "none": 33,
+      "confirmed": 10,
+      "partial": 22
+    },
+    "cause-2": {
+      "none": 39,
+      "confirmed": 5,
+      "partial": 21
+    },
+    "cause-3": {
+      "none": 59,
+      "partial": 3,
+      "confirmed": 3
+    },
+    "cause-4": {
+      "none": 55,
+      "partial": 10
+    },
+    "cause-5": {
+      "none": 50,
+      "partial": 15
+    },
+    "motive-1": {
+      "none": 35,
+      "partial": 23,
+      "confirmed": 7
+    },
+    "motive-2": {
+      "none": 56,
+      "partial": 9
+    },
+    "motive-3": {
+      "none": 56,
+      "partial": 9
+    },
+    "identity-1": {
+      "none": 52,
+      "confirmed": 3,
+      "partial": 10
+    },
+    "identity-2": {
+      "none": 36,
+      "confirmed": 11,
+      "partial": 18
+    },
+    "side-1": {
+      "none": 36,
+      "partial": 6,
+      "confirmed": 3
+    },
+    "side-2": {
+      "none": 25,
+      "partial": 9,
+      "confirmed": 5
+    },
+    "side-3": {
+      "none": 14,
+      "partial": 2,
+      "confirmed": 3
+    },
+    "side-4": {
+      "none": 8,
+      "partial": 2
+    },
+    "side-5": {
+      "none": 6
+    },
+    "side-6": {
+      "none": 1
+    },
+    "side-7": {
+      "none": 1
+    }
+  },
+  "five_loop_scores": [
+    [
+      [
+        1,
+        19.4
+      ],
+      [
+        2,
+        41.7
+      ],
+      [
+        3,
+        41.7
+      ],
+      [
+        4,
+        33.3
+      ],
+      [
+        5,
+        41.7
+      ]
+    ],
+    [
+      [
+        1,
+        8.3
+      ],
+      [
+        2,
+        7.8
+      ],
+      [
+        3,
+        33.3
+      ],
+      [
+        4,
+        28.4
+      ],
+      [
+        5,
+        30.2
+      ]
+    ],
+    [
+      [
+        1,
+        8.3
+      ],
+      [
+        2,
+        9.4
+      ],
+      [
+        3,
+        4.2
+      ],
+      [
+        4,
+        0.0
+      ],
+      [
+        5,
+        10.9
+      ]
+    ],
+    [
+      [
+        1,
+        19.4
+      ],
+      [
+        2,
+        38.0
+      ],
+      [
+        3,
+        19.2
+      ],
+      [
+        4,
+        31.8
+      ],
+      [
+        5,
+        32.8
+      ]
+    ],
+    [
+      [
+        1,
+        8.3
+      ],
+      [
+        2,
+        28.1
+      ],
+      [
+        3,
+        37.5
+      ],
+      [
+        4,
+        33.9
+      ],
+      [
+        5,
+        20.8
+      ]
+    ],
+    [
+      [
+        1,
+        8.3
+      ],
+      [
+        2,
+        19.2
+      ],
+      [
+        3,
+        40.3
+      ],
+      [
+        4,
+        7.8
+      ],
+      [
+        5,
+        29.8
+      ]
+    ],
+    [
+      [
+        1,
+        41.0
+      ],
+      [
+        2,
+        28.1
+      ],
+      [
+        3,
+        25.5
+      ],
+      [
+        4,
+        27.1
+      ],
+      [
+        5,
+        23.9
+      ]
+    ],
+    [
+      [
+        1,
+        19.4
+      ],
+      [
+        2,
+        35.4
+      ],
+      [
+        3,
+        33.9
+      ],
+      [
+        4,
+        38.8
+      ],
+      [
+        5,
+        41.9
+      ]
+    ]
+  ],
+  "dropped": {
+    "nights": 26,
+    "claims": 39,
+    "empty_nights": 2
+  },
+  "dropped_replay_current": {
+    "total": 39,
+    "still_dropped": 17,
+    "now_kept": 22
+  },
+  "harness_by_role": {
+    "planner": 81,
+    "manager_paw": 17,
+    "advisor_options": 25,
+    "agent": 55,
+    "ambient": 22,
+    "ask_npc": 3,
+    "evaluator_chain": 5,
+    "evaluator_side_effect": 2
+  },
+  "planner": {
+    "events": 81,
+    "fallback": 81,
+    "unique_loops": 81
+  },
+  "planner_violations": {
+    "action_vocab: '소등'": 80,
+    "action_vocab: '채연을 지켜본다'": 1,
+    "action_vocab: '혼자 있다'": 154,
+    "action_vocab: '말한다'": 8
+  },
+  "unknown_violations": {
+    "unknown_person: '대피소' in reply": 5,
+    "unknown_person: '일이' in reply": 2,
+    "unknown_person: '중이' in line": 1,
+    "unknown_person: '먹어' in reply": 4,
+    "unknown_person: '지켜' in reply": 4,
+    "unknown_person: '명이' in reply": 8,
+    "unknown_person: '조심해' in reply": 2,
+    "unknown_person: '활동' in reply": 1,
+    "unknown_person: '친구' in reply": 1,
+    "unknown_person: '관리해' in reply": 1,
+    "unknown_person: '알려' in reply": 3,
+    "unknown_person: '움직여' in text_all": 1,
+    "unknown_person: '대로' in reply": 1,
+    "unknown_person: '걸어' in reply": 1,
+    "unknown_person: '따라' in reply": 1,
+    "unknown_person: '안내' in reply": 1,
+    "unknown_person: '걱정' in reply": 1,
+    "unknown_person: '말해' in answer": 1,
+    "unknown_person: '중이' in reply": 3,
+    "unknown_person: '행동' in line": 1,
+    "unknown_person: '숨어' in line": 3,
+    "unknown_person: '번이' in reply": 8,
+    "unknown_person: '말해줘' in reply": 1,
+    "unknown_person: '규칙' in reply": 3,
+    "unknown_person: '기록해' in reply": 1,
+    "unknown_person: '편이' in answer": 1,
+    "unknown_person: '음식들' in reply": 1,
+    "unknown_person: '지켜' in text_all": 2,
+    "unknown_person: '해줘' in reply": 1,
+    "unknown_person: '소문' in text_all": 2,
+    "unknown_person: '괜찮아' in reply": 1,
+    "unknown_person: '뿐이' in reply": 2,
+    "unknown_person: '다행' in reply": 2,
+    "unknown_person: '시간' in reply": 4,
+    "unknown_person: '걱정' in text_all": 2,
+    "unknown_person: '표시' in text_all": 1,
+    "unknown_person: '기록' in reply": 1,
+    "unknown_person: '존재' in reply": 1,
+    "unknown_person: '주의해' in reply": 1,
+    "unknown_person: '지켜봐' in reply": 3,
+    "unknown_person: '기다려' in reply": 1,
+    "unknown_person: '일이' in text_all": 1,
+    "unknown_person: '옮겨' in reply": 1,
+    "unknown_person: '모양' in reply": 1,
+    "unknown_person: '중이' in text_all": 1,
+    "unknown_person: '신고해' in reply": 1,
+    "unknown_person: '규정' in reply": 1,
+    "unknown_person: '나와' in text_all": 1,
+    "unknown_person: '소문' in reply": 1,
+    "unknown_person: '살아' in reply": 1,
+    "unknown_person: '곳이' in reply": 1,
+    "unknown_person: '알려' in text_all": 6,
+    "unknown_person: '말이' in reply": 2,
+    "unknown_person: '숨어' in text_all": 1,
+    "unknown_person: '제일' in answer": 1,
+    "unknown_person: '숨겨' in text_all": 1,
+    "unknown_person: '먼저' in text_all": 1,
+    "unknown_person: '숨혀' in text_all": 1
+  },
+  "side_included": 37,
+  "simulations": {
+    "current": {
+      "mean": 20.3,
+      "pass_n": 2,
+      "pass_pct": 3.1
+    },
+    "A": {
+      "mean": 25.8,
+      "pass_n": 7,
+      "pass_pct": 10.8
+    },
+    "B": {
+      "mean": 25.2,
+      "pass_n": 5,
+      "pass_pct": 7.7
+    },
+    "C": {
+      "mean": 25.9,
+      "pass_n": 9,
+      "pass_pct": 13.8
+    },
+    "D": {
+      "mean": 21.3,
+      "pass_n": 4,
+      "pass_pct": 6.2
+    },
+    "E": {
+      "mean": 21.8,
+      "pass_n": 2,
+      "pass_pct": 3.1
+    },
+    "C+D": {
+      "mean": 28.2,
+      "pass_n": 13,
+      "pass_pct": 20.0
+    },
+    "A+C": {
+      "mean": 32.2,
+      "pass_n": 20,
+      "pass_pct": 30.8
+    },
+    "A+C+D": {
+      "mean": 35.1,
+      "pass_n": 26,
+      "pass_pct": 40.0
+    },
+    "G": {
+      "mean": 31.2,
+      "pass_n": 15,
+      "pass_pct": 23.1
+    },
+    "G+C": {
+      "mean": 37.4,
+      "pass_n": 28,
+      "pass_pct": 43.1
+    }
+  },
+  "pure_checks": {
+    "cookie_at_49": null,
+    "review_448_without_side": 59.7,
+    "both_identity_confirmed_with_side_zero": 54.2,
+    "closure_at_3": "closure",
+    "broadcasts": [
+      [
+        4,
+        "오후 검진이 있겠습니다. 각자 자리에서 대기합니다."
+      ],
+      [
+        6,
+        "소등하겠습니다. 모두 자리에서 움직이지 않습니다."
+      ]
+    ],
+    "source_exact_claim_preserved": []
+  },
+  "notes_only_summary": {
+    "submissions": 6,
+    "zero_score": 5,
+    "nonzero_score": [
+      13.5
+    ]
+  }
+}

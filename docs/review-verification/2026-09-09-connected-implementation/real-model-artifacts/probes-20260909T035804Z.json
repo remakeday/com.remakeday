@@ -1,0 +1,3163 @@
+{
+  "mode": "DB-free in-memory use-case/harness; real Ollama; not a human playtest",
+  "models": {
+    "questions": "gemma3:12b",
+    "ambient": "exaone3.5:7.8b"
+  },
+  "started_at": "2026-09-09T03:58:04.772322+00:00",
+  "finished_at": "2026-09-09T03:58:52.011125+00:00",
+  "questions": [
+    {
+      "loop_n": 1,
+      "question": "채연말고 밥을 남긴 사람은 누구야?",
+      "available_public_observations": [
+        {
+          "observation_id": "public-1",
+          "attempt_id": "56a426ec-59cd-4199-86d3-a3d7975e3cc9",
+          "loop_id": "93889e7c-35a4-459e-adae-4984302f18ef",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-2",
+          "attempt_id": "56a426ec-59cd-4199-86d3-a3d7975e3cc9",
+          "loop_id": "93889e7c-35a4-459e-adae-4984302f18ef",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-3",
+          "attempt_id": "56a426ec-59cd-4199-86d3-a3d7975e3cc9",
+          "loop_id": "93889e7c-35a4-459e-adae-4984302f18ef",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-4",
+          "attempt_id": "56a426ec-59cd-4199-86d3-a3d7975e3cc9",
+          "loop_id": "93889e7c-35a4-459e-adae-4984302f18ef",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "은상",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-5",
+          "attempt_id": "56a426ec-59cd-4199-86d3-a3d7975e3cc9",
+          "loop_id": "93889e7c-35a4-459e-adae-4984302f18ef",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "scene-3",
+          "scene_title": "공개 장면 3",
+          "actor": "민석",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-6",
+          "attempt_id": "56a426ec-59cd-4199-86d3-a3d7975e3cc9",
+          "loop_id": "93889e7c-35a4-459e-adae-4984302f18ef",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "scene-4",
+          "scene_title": "공개 장면 4",
+          "actor": "채연",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-7",
+          "attempt_id": "56a426ec-59cd-4199-86d3-a3d7975e3cc9",
+          "loop_id": "93889e7c-35a4-459e-adae-4984302f18ef",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": null,
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-8",
+          "attempt_id": "56a426ec-59cd-4199-86d3-a3d7975e3cc9",
+          "loop_id": "93889e7c-35a4-459e-adae-4984302f18ef",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": "민석",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ],
+      "result": {
+        "answer": "그건 알 수 없다",
+        "detail": null,
+        "remaining": 2,
+        "status": "unknown",
+        "evidence_ids": [],
+        "evidence": [],
+        "next_observation": "다음 낮에 채연에게 방금 본 행동을 물어볼 수 있다."
+      },
+      "elapsed_ms": 2963,
+      "harness": [
+        {
+          "type": "harness_event",
+          "loop_n": 1,
+          "beat": null,
+          "role": "advisor_answer",
+          "violations": [
+            "non_verbatim_evidence",
+            "non_verbatim_evidence",
+            "non_verbatim_evidence"
+          ],
+          "attempts": 3,
+          "fallback_used": true,
+          "call_records": [
+            {
+              "attempt": 1,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n질문: 채연말고 밥을 남긴 사람은 누구야?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-2"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 1282
+            },
+            {
+              "attempt": 2,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n질문: 채연말고 밥을 남긴 사람은 누구야?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-2"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 848
+            },
+            {
+              "attempt": 3,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n질문: 채연말고 밥을 남긴 사람은 누구야?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-2"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 833
+            }
+          ],
+          "model": "gemma3:12b",
+          "version": "connected-investigation-1"
+        }
+      ]
+    },
+    {
+      "loop_n": 1,
+      "question": "준은 어떤 역할이야?",
+      "available_public_observations": [
+        {
+          "observation_id": "public-1",
+          "attempt_id": "89203704-6cdd-4295-9b88-0d5a9e8c42b8",
+          "loop_id": "3136eed2-8b27-4eff-8eaa-31895322f47f",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-2",
+          "attempt_id": "89203704-6cdd-4295-9b88-0d5a9e8c42b8",
+          "loop_id": "3136eed2-8b27-4eff-8eaa-31895322f47f",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-3",
+          "attempt_id": "89203704-6cdd-4295-9b88-0d5a9e8c42b8",
+          "loop_id": "3136eed2-8b27-4eff-8eaa-31895322f47f",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-4",
+          "attempt_id": "89203704-6cdd-4295-9b88-0d5a9e8c42b8",
+          "loop_id": "3136eed2-8b27-4eff-8eaa-31895322f47f",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "은상",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-5",
+          "attempt_id": "89203704-6cdd-4295-9b88-0d5a9e8c42b8",
+          "loop_id": "3136eed2-8b27-4eff-8eaa-31895322f47f",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "scene-3",
+          "scene_title": "공개 장면 3",
+          "actor": "민석",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-6",
+          "attempt_id": "89203704-6cdd-4295-9b88-0d5a9e8c42b8",
+          "loop_id": "3136eed2-8b27-4eff-8eaa-31895322f47f",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "scene-4",
+          "scene_title": "공개 장면 4",
+          "actor": "채연",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-7",
+          "attempt_id": "89203704-6cdd-4295-9b88-0d5a9e8c42b8",
+          "loop_id": "3136eed2-8b27-4eff-8eaa-31895322f47f",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": null,
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-8",
+          "attempt_id": "89203704-6cdd-4295-9b88-0d5a9e8c42b8",
+          "loop_id": "3136eed2-8b27-4eff-8eaa-31895322f47f",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": "민석",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ],
+      "result": {
+        "answer": "그건 알 수 없다",
+        "detail": null,
+        "remaining": 2,
+        "status": "unknown",
+        "evidence_ids": [],
+        "evidence": [],
+        "next_observation": "다음 낮에 준에게 방금 본 행동을 물어볼 수 있다."
+      },
+      "elapsed_ms": 2781,
+      "harness": [
+        {
+          "type": "harness_event",
+          "loop_n": 1,
+          "beat": null,
+          "role": "advisor_answer",
+          "violations": [
+            "non_verbatim_evidence",
+            "non_verbatim_evidence",
+            "non_verbatim_evidence"
+          ],
+          "attempts": 3,
+          "fallback_used": true,
+          "call_records": [
+            {
+              "attempt": 1,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n질문: 준은 어떤 역할이야?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-3"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 1065
+            },
+            {
+              "attempt": 2,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n질문: 준은 어떤 역할이야?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-3"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 861
+            },
+            {
+              "attempt": 3,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n질문: 준은 어떤 역할이야?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-3"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 856
+            }
+          ],
+          "model": "gemma3:12b",
+          "version": "connected-investigation-1"
+        }
+      ]
+    },
+    {
+      "loop_n": 1,
+      "question": "민석은 누구에게 보고하는거야?",
+      "available_public_observations": [
+        {
+          "observation_id": "public-1",
+          "attempt_id": "797c33c6-6b3d-4829-9be9-60a5efaf8e03",
+          "loop_id": "0d5534dd-b879-4a5f-9d8c-2fc42492c65c",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-2",
+          "attempt_id": "797c33c6-6b3d-4829-9be9-60a5efaf8e03",
+          "loop_id": "0d5534dd-b879-4a5f-9d8c-2fc42492c65c",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-3",
+          "attempt_id": "797c33c6-6b3d-4829-9be9-60a5efaf8e03",
+          "loop_id": "0d5534dd-b879-4a5f-9d8c-2fc42492c65c",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-4",
+          "attempt_id": "797c33c6-6b3d-4829-9be9-60a5efaf8e03",
+          "loop_id": "0d5534dd-b879-4a5f-9d8c-2fc42492c65c",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "은상",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-5",
+          "attempt_id": "797c33c6-6b3d-4829-9be9-60a5efaf8e03",
+          "loop_id": "0d5534dd-b879-4a5f-9d8c-2fc42492c65c",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "scene-3",
+          "scene_title": "공개 장면 3",
+          "actor": "민석",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-6",
+          "attempt_id": "797c33c6-6b3d-4829-9be9-60a5efaf8e03",
+          "loop_id": "0d5534dd-b879-4a5f-9d8c-2fc42492c65c",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "scene-4",
+          "scene_title": "공개 장면 4",
+          "actor": "채연",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-7",
+          "attempt_id": "797c33c6-6b3d-4829-9be9-60a5efaf8e03",
+          "loop_id": "0d5534dd-b879-4a5f-9d8c-2fc42492c65c",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": null,
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-8",
+          "attempt_id": "797c33c6-6b3d-4829-9be9-60a5efaf8e03",
+          "loop_id": "0d5534dd-b879-4a5f-9d8c-2fc42492c65c",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": "민석",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ],
+      "result": {
+        "answer": "그건 알 수 없다",
+        "detail": null,
+        "remaining": 2,
+        "status": "unknown",
+        "evidence_ids": [],
+        "evidence": [],
+        "next_observation": "다음 낮에 민석에게 방금 본 행동을 물어볼 수 있다."
+      },
+      "elapsed_ms": 2820,
+      "harness": [
+        {
+          "type": "harness_event",
+          "loop_n": 1,
+          "beat": null,
+          "role": "advisor_answer",
+          "violations": [
+            "non_verbatim_evidence",
+            "non_verbatim_evidence",
+            "non_verbatim_evidence"
+          ],
+          "attempts": 3,
+          "fallback_used": true,
+          "call_records": [
+            {
+              "attempt": 1,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n질문: 민석은 누구에게 보고하는거야?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-8"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 1053
+            },
+            {
+              "attempt": 2,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n질문: 민석은 누구에게 보고하는거야?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-8"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 900
+            },
+            {
+              "attempt": 3,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n질문: 민석은 누구에게 보고하는거야?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-8"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 866
+            }
+          ],
+          "model": "gemma3:12b",
+          "version": "connected-investigation-1"
+        }
+      ]
+    },
+    {
+      "loop_n": 2,
+      "question": "채연 말고 추가로 배급을 남긴 사람",
+      "available_public_observations": [
+        {
+          "observation_id": "public-1",
+          "attempt_id": "c5e99425-1bd2-4517-ab5e-1b9b34bc5d47",
+          "loop_id": "40c2c1e8-69c5-4bb6-b8a6-df09b36fa07e",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-2",
+          "attempt_id": "c5e99425-1bd2-4517-ab5e-1b9b34bc5d47",
+          "loop_id": "40c2c1e8-69c5-4bb6-b8a6-df09b36fa07e",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-3",
+          "attempt_id": "c5e99425-1bd2-4517-ab5e-1b9b34bc5d47",
+          "loop_id": "40c2c1e8-69c5-4bb6-b8a6-df09b36fa07e",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-4",
+          "attempt_id": "c5e99425-1bd2-4517-ab5e-1b9b34bc5d47",
+          "loop_id": "40c2c1e8-69c5-4bb6-b8a6-df09b36fa07e",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "은상",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-5",
+          "attempt_id": "c5e99425-1bd2-4517-ab5e-1b9b34bc5d47",
+          "loop_id": "40c2c1e8-69c5-4bb6-b8a6-df09b36fa07e",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "scene-3",
+          "scene_title": "공개 장면 3",
+          "actor": "민석",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-6",
+          "attempt_id": "c5e99425-1bd2-4517-ab5e-1b9b34bc5d47",
+          "loop_id": "40c2c1e8-69c5-4bb6-b8a6-df09b36fa07e",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "scene-4",
+          "scene_title": "공개 장면 4",
+          "actor": "채연",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-7",
+          "attempt_id": "c5e99425-1bd2-4517-ab5e-1b9b34bc5d47",
+          "loop_id": "40c2c1e8-69c5-4bb6-b8a6-df09b36fa07e",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": null,
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-8",
+          "attempt_id": "c5e99425-1bd2-4517-ab5e-1b9b34bc5d47",
+          "loop_id": "40c2c1e8-69c5-4bb6-b8a6-df09b36fa07e",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": "민석",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ],
+      "result": {
+        "answer": "그건 알 수 없다",
+        "detail": null,
+        "remaining": 2,
+        "status": "unknown",
+        "evidence_ids": [],
+        "evidence": [],
+        "next_observation": "다음 낮에 채연에게 방금 본 행동을 물어볼 수 있다."
+      },
+      "elapsed_ms": 3029,
+      "harness": [
+        {
+          "type": "harness_event",
+          "loop_n": 2,
+          "beat": null,
+          "role": "advisor_answer",
+          "violations": [
+            "non_verbatim_evidence",
+            "non_verbatim_evidence",
+            "non_verbatim_evidence"
+          ],
+          "attempts": 3,
+          "fallback_used": true,
+          "call_records": [
+            {
+              "attempt": 1,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n질문: 채연 말고 추가로 배급을 남긴 사람"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-7"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 1263
+            },
+            {
+              "attempt": 2,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n질문: 채연 말고 추가로 배급을 남긴 사람"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-7"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 886
+            },
+            {
+              "attempt": 3,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n질문: 채연 말고 추가로 배급을 남긴 사람"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-7"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 879
+            }
+          ],
+          "model": "gemma3:12b",
+          "version": "connected-investigation-1"
+        }
+      ]
+    },
+    {
+      "loop_n": 2,
+      "question": "호송 당한 사람은 누구야?",
+      "available_public_observations": [
+        {
+          "observation_id": "public-1",
+          "attempt_id": "95e5e782-27f4-471b-9a92-d44ef0f9e7e4",
+          "loop_id": "a33f728b-c4c5-436a-b064-1b6352ddc743",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-2",
+          "attempt_id": "95e5e782-27f4-471b-9a92-d44ef0f9e7e4",
+          "loop_id": "a33f728b-c4c5-436a-b064-1b6352ddc743",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-3",
+          "attempt_id": "95e5e782-27f4-471b-9a92-d44ef0f9e7e4",
+          "loop_id": "a33f728b-c4c5-436a-b064-1b6352ddc743",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-4",
+          "attempt_id": "95e5e782-27f4-471b-9a92-d44ef0f9e7e4",
+          "loop_id": "a33f728b-c4c5-436a-b064-1b6352ddc743",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "은상",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-5",
+          "attempt_id": "95e5e782-27f4-471b-9a92-d44ef0f9e7e4",
+          "loop_id": "a33f728b-c4c5-436a-b064-1b6352ddc743",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "scene-3",
+          "scene_title": "공개 장면 3",
+          "actor": "민석",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-6",
+          "attempt_id": "95e5e782-27f4-471b-9a92-d44ef0f9e7e4",
+          "loop_id": "a33f728b-c4c5-436a-b064-1b6352ddc743",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "scene-4",
+          "scene_title": "공개 장면 4",
+          "actor": "채연",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-7",
+          "attempt_id": "95e5e782-27f4-471b-9a92-d44ef0f9e7e4",
+          "loop_id": "a33f728b-c4c5-436a-b064-1b6352ddc743",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": null,
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-8",
+          "attempt_id": "95e5e782-27f4-471b-9a92-d44ef0f9e7e4",
+          "loop_id": "a33f728b-c4c5-436a-b064-1b6352ddc743",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": "민석",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ],
+      "result": {
+        "answer": "그건 알 수 없다",
+        "detail": null,
+        "remaining": 2,
+        "status": "unknown",
+        "evidence_ids": [],
+        "evidence": [],
+        "next_observation": "낮에 이미 본 장면의 노트를 다시 확인할 수 있다."
+      },
+      "elapsed_ms": 3083,
+      "harness": [
+        {
+          "type": "harness_event",
+          "loop_n": 2,
+          "beat": null,
+          "role": "advisor_answer",
+          "violations": [
+            "non_verbatim_evidence",
+            "non_verbatim_evidence",
+            "non_verbatim_evidence"
+          ],
+          "attempts": 3,
+          "fallback_used": true,
+          "call_records": [
+            {
+              "attempt": 1,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n질문: 호송 당한 사람은 누구야?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-6"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 1132
+            },
+            {
+              "attempt": 2,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n질문: 호송 당한 사람은 누구야?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-4"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 1029
+            },
+            {
+              "attempt": 3,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n질문: 호송 당한 사람은 누구야?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-6"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 921
+            }
+          ],
+          "model": "gemma3:12b",
+          "version": "connected-investigation-1"
+        }
+      ]
+    },
+    {
+      "loop_n": 2,
+      "question": "열이나면 죽나?",
+      "available_public_observations": [
+        {
+          "observation_id": "public-1",
+          "attempt_id": "d3ea0bb5-0427-49ee-a67d-b78a7f118f76",
+          "loop_id": "ec84ed1c-2cfa-4010-a450-c947cbf8e24f",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-2",
+          "attempt_id": "d3ea0bb5-0427-49ee-a67d-b78a7f118f76",
+          "loop_id": "ec84ed1c-2cfa-4010-a450-c947cbf8e24f",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-3",
+          "attempt_id": "d3ea0bb5-0427-49ee-a67d-b78a7f118f76",
+          "loop_id": "ec84ed1c-2cfa-4010-a450-c947cbf8e24f",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-4",
+          "attempt_id": "d3ea0bb5-0427-49ee-a67d-b78a7f118f76",
+          "loop_id": "ec84ed1c-2cfa-4010-a450-c947cbf8e24f",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "은상",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-5",
+          "attempt_id": "d3ea0bb5-0427-49ee-a67d-b78a7f118f76",
+          "loop_id": "ec84ed1c-2cfa-4010-a450-c947cbf8e24f",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "scene-3",
+          "scene_title": "공개 장면 3",
+          "actor": "민석",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-6",
+          "attempt_id": "d3ea0bb5-0427-49ee-a67d-b78a7f118f76",
+          "loop_id": "ec84ed1c-2cfa-4010-a450-c947cbf8e24f",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "scene-4",
+          "scene_title": "공개 장면 4",
+          "actor": "채연",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-7",
+          "attempt_id": "d3ea0bb5-0427-49ee-a67d-b78a7f118f76",
+          "loop_id": "ec84ed1c-2cfa-4010-a450-c947cbf8e24f",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": null,
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-8",
+          "attempt_id": "d3ea0bb5-0427-49ee-a67d-b78a7f118f76",
+          "loop_id": "ec84ed1c-2cfa-4010-a450-c947cbf8e24f",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": "민석",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ],
+      "result": {
+        "answer": "그건 알 수 없다",
+        "detail": null,
+        "remaining": 2,
+        "status": "unknown",
+        "evidence_ids": [],
+        "evidence": [],
+        "next_observation": "낮에 이미 본 장면의 노트를 다시 확인할 수 있다."
+      },
+      "elapsed_ms": 2873,
+      "harness": [
+        {
+          "type": "harness_event",
+          "loop_n": 2,
+          "beat": null,
+          "role": "advisor_answer",
+          "violations": [
+            "non_verbatim_evidence",
+            "non_verbatim_evidence",
+            "non_verbatim_evidence"
+          ],
+          "attempts": 3,
+          "fallback_used": true,
+          "call_records": [
+            {
+              "attempt": 1,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n질문: 열이나면 죽나?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-6"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 1111
+            },
+            {
+              "attempt": 2,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n질문: 열이나면 죽나?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-6"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 887
+            },
+            {
+              "attempt": 3,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n질문: 열이나면 죽나?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-6"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 875
+            }
+          ],
+          "model": "gemma3:12b",
+          "version": "connected-investigation-1"
+        }
+      ]
+    },
+    {
+      "loop_n": 3,
+      "question": "이송된 충식은 돌아오는가?",
+      "available_public_observations": [
+        {
+          "observation_id": "public-1",
+          "attempt_id": "e74779e6-0ff5-463f-bcbd-d049033e5a34",
+          "loop_id": "b79da18a-c9f6-49fd-be87-4e816c6ce2c1",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-2",
+          "attempt_id": "e74779e6-0ff5-463f-bcbd-d049033e5a34",
+          "loop_id": "b79da18a-c9f6-49fd-be87-4e816c6ce2c1",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-3",
+          "attempt_id": "e74779e6-0ff5-463f-bcbd-d049033e5a34",
+          "loop_id": "b79da18a-c9f6-49fd-be87-4e816c6ce2c1",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-4",
+          "attempt_id": "e74779e6-0ff5-463f-bcbd-d049033e5a34",
+          "loop_id": "b79da18a-c9f6-49fd-be87-4e816c6ce2c1",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "은상",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-5",
+          "attempt_id": "e74779e6-0ff5-463f-bcbd-d049033e5a34",
+          "loop_id": "b79da18a-c9f6-49fd-be87-4e816c6ce2c1",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "scene-3",
+          "scene_title": "공개 장면 3",
+          "actor": "민석",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-6",
+          "attempt_id": "e74779e6-0ff5-463f-bcbd-d049033e5a34",
+          "loop_id": "b79da18a-c9f6-49fd-be87-4e816c6ce2c1",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "scene-4",
+          "scene_title": "공개 장면 4",
+          "actor": "채연",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-7",
+          "attempt_id": "e74779e6-0ff5-463f-bcbd-d049033e5a34",
+          "loop_id": "b79da18a-c9f6-49fd-be87-4e816c6ce2c1",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": null,
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-8",
+          "attempt_id": "e74779e6-0ff5-463f-bcbd-d049033e5a34",
+          "loop_id": "b79da18a-c9f6-49fd-be87-4e816c6ce2c1",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": "민석",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-9",
+          "attempt_id": "e74779e6-0ff5-463f-bcbd-d049033e5a34",
+          "loop_id": "b79da18a-c9f6-49fd-be87-4e816c6ce2c1",
+          "loop_n": 3,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": null,
+          "text": "충식은 어제 이송됐다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-10",
+          "attempt_id": "e74779e6-0ff5-463f-bcbd-d049033e5a34",
+          "loop_id": "b79da18a-c9f6-49fd-be87-4e816c6ce2c1",
+          "loop_n": 3,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "\"귀표\"라는 단어를 준이 쓴다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ],
+      "result": {
+        "answer": "그건 알 수 없다",
+        "detail": null,
+        "remaining": 2,
+        "status": "unknown",
+        "evidence_ids": [],
+        "evidence": [],
+        "next_observation": "낮에 이미 본 장면의 노트를 다시 확인할 수 있다."
+      },
+      "elapsed_ms": 3836,
+      "harness": [
+        {
+          "type": "harness_event",
+          "loop_n": 3,
+          "beat": null,
+          "role": "advisor_answer",
+          "violations": [
+            "non_verbatim_evidence",
+            "non_verbatim_evidence",
+            "non_verbatim_evidence"
+          ],
+          "attempts": 3,
+          "fallback_used": true,
+          "call_records": [
+            {
+              "attempt": 1,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n[public-9] (reported) 충식은 어제 이송됐다.\n[public-10] (reported) \"귀표\"라는 단어를 준이 쓴다.\n질문: 이송된 충식은 돌아오는가?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-9"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 1300
+            },
+            {
+              "attempt": 2,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n[public-9] (reported) 충식은 어제 이송됐다.\n[public-10] (reported) \"귀표\"라는 단어를 준이 쓴다.\n질문: 이송된 충식은 돌아오는가?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-9"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 1268
+            },
+            {
+              "attempt": 3,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n[public-9] (reported) 충식은 어제 이송됐다.\n[public-10] (reported) \"귀표\"라는 단어를 준이 쓴다.\n질문: 이송된 충식은 돌아오는가?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-9"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 1268
+            }
+          ],
+          "model": "gemma3:12b",
+          "version": "connected-investigation-1"
+        }
+      ]
+    },
+    {
+      "loop_n": 3,
+      "question": "귀표는 무엇인가?",
+      "available_public_observations": [
+        {
+          "observation_id": "public-1",
+          "attempt_id": "f8ce643e-4eeb-4ffa-a32a-ce21e7caf13c",
+          "loop_id": "5d6eb902-bec2-48d1-b8b0-a5d7274e4201",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-2",
+          "attempt_id": "f8ce643e-4eeb-4ffa-a32a-ce21e7caf13c",
+          "loop_id": "5d6eb902-bec2-48d1-b8b0-a5d7274e4201",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-3",
+          "attempt_id": "f8ce643e-4eeb-4ffa-a32a-ce21e7caf13c",
+          "loop_id": "5d6eb902-bec2-48d1-b8b0-a5d7274e4201",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-4",
+          "attempt_id": "f8ce643e-4eeb-4ffa-a32a-ce21e7caf13c",
+          "loop_id": "5d6eb902-bec2-48d1-b8b0-a5d7274e4201",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "은상",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-5",
+          "attempt_id": "f8ce643e-4eeb-4ffa-a32a-ce21e7caf13c",
+          "loop_id": "5d6eb902-bec2-48d1-b8b0-a5d7274e4201",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "scene-3",
+          "scene_title": "공개 장면 3",
+          "actor": "민석",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-6",
+          "attempt_id": "f8ce643e-4eeb-4ffa-a32a-ce21e7caf13c",
+          "loop_id": "5d6eb902-bec2-48d1-b8b0-a5d7274e4201",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "scene-4",
+          "scene_title": "공개 장면 4",
+          "actor": "채연",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-7",
+          "attempt_id": "f8ce643e-4eeb-4ffa-a32a-ce21e7caf13c",
+          "loop_id": "5d6eb902-bec2-48d1-b8b0-a5d7274e4201",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": null,
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-8",
+          "attempt_id": "f8ce643e-4eeb-4ffa-a32a-ce21e7caf13c",
+          "loop_id": "5d6eb902-bec2-48d1-b8b0-a5d7274e4201",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": "민석",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-9",
+          "attempt_id": "f8ce643e-4eeb-4ffa-a32a-ce21e7caf13c",
+          "loop_id": "5d6eb902-bec2-48d1-b8b0-a5d7274e4201",
+          "loop_n": 3,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": null,
+          "text": "충식은 어제 이송됐다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-10",
+          "attempt_id": "f8ce643e-4eeb-4ffa-a32a-ce21e7caf13c",
+          "loop_id": "5d6eb902-bec2-48d1-b8b0-a5d7274e4201",
+          "loop_n": 3,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "\"귀표\"라는 단어를 준이 쓴다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ],
+      "result": {
+        "answer": "그건 알 수 없다",
+        "detail": null,
+        "remaining": 2,
+        "status": "unknown",
+        "evidence_ids": [],
+        "evidence": [],
+        "next_observation": "낮에 이미 본 장면의 노트를 다시 확인할 수 있다."
+      },
+      "elapsed_ms": 3733,
+      "harness": [
+        {
+          "type": "harness_event",
+          "loop_n": 3,
+          "beat": null,
+          "role": "advisor_answer",
+          "violations": [
+            "missing_public_evidence",
+            "missing_public_evidence",
+            "non_verbatim_evidence"
+          ],
+          "attempts": 3,
+          "fallback_used": true,
+          "call_records": [
+            {
+              "attempt": 1,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n[public-9] (reported) 충식은 어제 이송됐다.\n[public-10] (reported) \"귀표\"라는 단어를 준이 쓴다.\n질문: 귀표는 무엇인가?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-10-detail: \"귀표\"라는 단어를 준이가 쓴다."
+                ]
+              },
+              "checks": [
+                "missing_public_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 1363
+            },
+            {
+              "attempt": 2,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n[public-9] (reported) 충식은 어제 이송됐다.\n[public-10] (reported) \"귀표\"라는 단어를 준이 쓴다.\n질문: 귀표는 무엇인가?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-10, reported \"귀표\"라는 단어를 준이가 쓴다."
+                ]
+              },
+              "checks": [
+                "missing_public_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 1376
+            },
+            {
+              "attempt": 3,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n[public-9] (reported) 충식은 어제 이송됐다.\n[public-10] (reported) \"귀표\"라는 단어를 준이 쓴다.\n질문: 귀표는 무엇인가?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-10"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 994
+            }
+          ],
+          "model": "gemma3:12b",
+          "version": "connected-investigation-1"
+        }
+      ]
+    },
+    {
+      "loop_n": 3,
+      "question": "건강검진 후 이상이 있는 경우 어떻게 되는가?",
+      "available_public_observations": [
+        {
+          "observation_id": "public-1",
+          "attempt_id": "f73ddd98-acb0-432d-ba8d-0eb47e1663a5",
+          "loop_id": "b2dba753-9045-4b5c-8275-fd89c89118e8",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-2",
+          "attempt_id": "f73ddd98-acb0-432d-ba8d-0eb47e1663a5",
+          "loop_id": "b2dba753-9045-4b5c-8275-fd89c89118e8",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-3",
+          "attempt_id": "f73ddd98-acb0-432d-ba8d-0eb47e1663a5",
+          "loop_id": "b2dba753-9045-4b5c-8275-fd89c89118e8",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-4",
+          "attempt_id": "f73ddd98-acb0-432d-ba8d-0eb47e1663a5",
+          "loop_id": "b2dba753-9045-4b5c-8275-fd89c89118e8",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "은상",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-5",
+          "attempt_id": "f73ddd98-acb0-432d-ba8d-0eb47e1663a5",
+          "loop_id": "b2dba753-9045-4b5c-8275-fd89c89118e8",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "scene-3",
+          "scene_title": "공개 장면 3",
+          "actor": "민석",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-6",
+          "attempt_id": "f73ddd98-acb0-432d-ba8d-0eb47e1663a5",
+          "loop_id": "b2dba753-9045-4b5c-8275-fd89c89118e8",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "scene-4",
+          "scene_title": "공개 장면 4",
+          "actor": "채연",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-7",
+          "attempt_id": "f73ddd98-acb0-432d-ba8d-0eb47e1663a5",
+          "loop_id": "b2dba753-9045-4b5c-8275-fd89c89118e8",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": null,
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-8",
+          "attempt_id": "f73ddd98-acb0-432d-ba8d-0eb47e1663a5",
+          "loop_id": "b2dba753-9045-4b5c-8275-fd89c89118e8",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": "민석",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-9",
+          "attempt_id": "f73ddd98-acb0-432d-ba8d-0eb47e1663a5",
+          "loop_id": "b2dba753-9045-4b5c-8275-fd89c89118e8",
+          "loop_n": 3,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": null,
+          "text": "충식은 어제 이송됐다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-10",
+          "attempt_id": "f73ddd98-acb0-432d-ba8d-0eb47e1663a5",
+          "loop_id": "b2dba753-9045-4b5c-8275-fd89c89118e8",
+          "loop_n": 3,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "\"귀표\"라는 단어를 준이 쓴다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ],
+      "result": {
+        "answer": "그건 알 수 없다",
+        "detail": null,
+        "remaining": 2,
+        "status": "unknown",
+        "evidence_ids": [],
+        "evidence": [],
+        "next_observation": "낮에 이미 본 장면의 노트를 다시 확인할 수 있다."
+      },
+      "elapsed_ms": 3903,
+      "harness": [
+        {
+          "type": "harness_event",
+          "loop_n": 3,
+          "beat": null,
+          "role": "advisor_answer",
+          "violations": [
+            "non_verbatim_evidence",
+            "non_verbatim_evidence",
+            "non_verbatim_evidence"
+          ],
+          "attempts": 3,
+          "fallback_used": true,
+          "call_records": [
+            {
+              "attempt": 1,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n[public-9] (reported) 충식은 어제 이송됐다.\n[public-10] (reported) \"귀표\"라는 단어를 준이 쓴다.\n질문: 건강검진 후 이상이 있는 경우 어떻게 되는가?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-1"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 1280
+            },
+            {
+              "attempt": 2,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n[public-9] (reported) 충식은 어제 이송됐다.\n[public-10] (reported) \"귀표\"라는 단어를 준이 쓴다.\n질문: 건강검진 후 이상이 있는 경우 어떻게 되는가?"
+                }
+              ],
+              "output": {
+                "answer": "기록은 이렇다",
+                "evidence_ids": [
+                  "public-1"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 1350
+            },
+            {
+              "attempt": 3,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n[public-9] (reported) 충식은 어제 이송됐다.\n[public-10] (reported) \"귀표\"라는 단어를 준이 쓴다.\n질문: 건강검진 후 이상이 있는 경우 어떻게 되는가?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-1"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 1273
+            }
+          ],
+          "model": "gemma3:12b",
+          "version": "connected-investigation-1"
+        }
+      ]
+    },
+    {
+      "loop_n": 4,
+      "question": "축산 트럭의 정체는?",
+      "available_public_observations": [
+        {
+          "observation_id": "public-1",
+          "attempt_id": "0d3b2afb-6569-462a-b1a5-4160686e69f9",
+          "loop_id": "dce64169-2940-48b0-bb1d-5fd0e64ded74",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-2",
+          "attempt_id": "0d3b2afb-6569-462a-b1a5-4160686e69f9",
+          "loop_id": "dce64169-2940-48b0-bb1d-5fd0e64ded74",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-3",
+          "attempt_id": "0d3b2afb-6569-462a-b1a5-4160686e69f9",
+          "loop_id": "dce64169-2940-48b0-bb1d-5fd0e64ded74",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-4",
+          "attempt_id": "0d3b2afb-6569-462a-b1a5-4160686e69f9",
+          "loop_id": "dce64169-2940-48b0-bb1d-5fd0e64ded74",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "은상",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-5",
+          "attempt_id": "0d3b2afb-6569-462a-b1a5-4160686e69f9",
+          "loop_id": "dce64169-2940-48b0-bb1d-5fd0e64ded74",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "scene-3",
+          "scene_title": "공개 장면 3",
+          "actor": "민석",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-6",
+          "attempt_id": "0d3b2afb-6569-462a-b1a5-4160686e69f9",
+          "loop_id": "dce64169-2940-48b0-bb1d-5fd0e64ded74",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "scene-4",
+          "scene_title": "공개 장면 4",
+          "actor": "채연",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-7",
+          "attempt_id": "0d3b2afb-6569-462a-b1a5-4160686e69f9",
+          "loop_id": "dce64169-2940-48b0-bb1d-5fd0e64ded74",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": null,
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-8",
+          "attempt_id": "0d3b2afb-6569-462a-b1a5-4160686e69f9",
+          "loop_id": "dce64169-2940-48b0-bb1d-5fd0e64ded74",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": "민석",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-9",
+          "attempt_id": "0d3b2afb-6569-462a-b1a5-4160686e69f9",
+          "loop_id": "dce64169-2940-48b0-bb1d-5fd0e64ded74",
+          "loop_n": 3,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": null,
+          "text": "충식은 어제 이송됐다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-10",
+          "attempt_id": "0d3b2afb-6569-462a-b1a5-4160686e69f9",
+          "loop_id": "dce64169-2940-48b0-bb1d-5fd0e64ded74",
+          "loop_n": 3,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "\"귀표\"라는 단어를 준이 쓴다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-11",
+          "attempt_id": "0d3b2afb-6569-462a-b1a5-4160686e69f9",
+          "loop_id": "dce64169-2940-48b0-bb1d-5fd0e64ded74",
+          "loop_n": 4,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": null,
+          "text": "트럭 옆면에서 \"○○축산\"이라는 일부 글자를 보았다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ],
+      "result": {
+        "answer": "그건 알 수 없다",
+        "detail": null,
+        "remaining": 2,
+        "status": "unknown",
+        "evidence_ids": [],
+        "evidence": [],
+        "next_observation": "낮에 이미 본 장면의 노트를 다시 확인할 수 있다."
+      },
+      "elapsed_ms": 3433,
+      "harness": [
+        {
+          "type": "harness_event",
+          "loop_n": 4,
+          "beat": null,
+          "role": "advisor_answer",
+          "violations": [
+            "missing_public_evidence",
+            "non_verbatim_evidence",
+            "non_verbatim_evidence"
+          ],
+          "attempts": 3,
+          "fallback_used": true,
+          "call_records": [
+            {
+              "attempt": 1,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n[public-9] (reported) 충식은 어제 이송됐다.\n[public-10] (reported) \"귀표\"라는 단어를 준이 쓴다.\n[public-11] (observed) 트럭 옆면에서 \"○○축산\"이라는 일부 글자를 보았다.\n질문: 축산 트럭의 정체는?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-11-1"
+                ]
+              },
+              "checks": [
+                "missing_public_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 1086
+            },
+            {
+              "attempt": 2,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n[public-9] (reported) 충식은 어제 이송됐다.\n[public-10] (reported) \"귀표\"라는 단어를 준이 쓴다.\n[public-11] (observed) 트럭 옆면에서 \"○○축산\"이라는 일부 글자를 보았다.\n질문: 축산 트럭의 정체는?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-11"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 1050
+            },
+            {
+              "attempt": 3,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n[public-9] (reported) 충식은 어제 이송됐다.\n[public-10] (reported) \"귀표\"라는 단어를 준이 쓴다.\n[public-11] (observed) 트럭 옆면에서 \"○○축산\"이라는 일부 글자를 보았다.\n질문: 축산 트럭의 정체는?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-11"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 1296
+            }
+          ],
+          "model": "gemma3:12b",
+          "version": "connected-investigation-1"
+        }
+      ]
+    },
+    {
+      "loop_n": 4,
+      "question": "손목띠와 귀표는 무슨 관계야?",
+      "available_public_observations": [
+        {
+          "observation_id": "public-1",
+          "attempt_id": "91beb154-2f81-4fbd-8d37-3c1681b12bdf",
+          "loop_id": "a3385764-f4f2-4b59-8c89-948fea8b0cbb",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-2",
+          "attempt_id": "91beb154-2f81-4fbd-8d37-3c1681b12bdf",
+          "loop_id": "a3385764-f4f2-4b59-8c89-948fea8b0cbb",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-3",
+          "attempt_id": "91beb154-2f81-4fbd-8d37-3c1681b12bdf",
+          "loop_id": "a3385764-f4f2-4b59-8c89-948fea8b0cbb",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-4",
+          "attempt_id": "91beb154-2f81-4fbd-8d37-3c1681b12bdf",
+          "loop_id": "a3385764-f4f2-4b59-8c89-948fea8b0cbb",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "은상",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-5",
+          "attempt_id": "91beb154-2f81-4fbd-8d37-3c1681b12bdf",
+          "loop_id": "a3385764-f4f2-4b59-8c89-948fea8b0cbb",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "scene-3",
+          "scene_title": "공개 장면 3",
+          "actor": "민석",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-6",
+          "attempt_id": "91beb154-2f81-4fbd-8d37-3c1681b12bdf",
+          "loop_id": "a3385764-f4f2-4b59-8c89-948fea8b0cbb",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "scene-4",
+          "scene_title": "공개 장면 4",
+          "actor": "채연",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-7",
+          "attempt_id": "91beb154-2f81-4fbd-8d37-3c1681b12bdf",
+          "loop_id": "a3385764-f4f2-4b59-8c89-948fea8b0cbb",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": null,
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-8",
+          "attempt_id": "91beb154-2f81-4fbd-8d37-3c1681b12bdf",
+          "loop_id": "a3385764-f4f2-4b59-8c89-948fea8b0cbb",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": "민석",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-9",
+          "attempt_id": "91beb154-2f81-4fbd-8d37-3c1681b12bdf",
+          "loop_id": "a3385764-f4f2-4b59-8c89-948fea8b0cbb",
+          "loop_n": 3,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": null,
+          "text": "충식은 어제 이송됐다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-10",
+          "attempt_id": "91beb154-2f81-4fbd-8d37-3c1681b12bdf",
+          "loop_id": "a3385764-f4f2-4b59-8c89-948fea8b0cbb",
+          "loop_n": 3,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "\"귀표\"라는 단어를 준이 쓴다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-11",
+          "attempt_id": "91beb154-2f81-4fbd-8d37-3c1681b12bdf",
+          "loop_id": "a3385764-f4f2-4b59-8c89-948fea8b0cbb",
+          "loop_n": 4,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": null,
+          "text": "트럭 옆면에서 \"○○축산\"이라는 일부 글자를 보았다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ],
+      "result": {
+        "answer": "그건 알 수 없다",
+        "detail": null,
+        "remaining": 2,
+        "status": "unknown",
+        "evidence_ids": [],
+        "evidence": [],
+        "next_observation": "낮에 이미 본 장면의 노트를 다시 확인할 수 있다."
+      },
+      "elapsed_ms": 3690,
+      "harness": [
+        {
+          "type": "harness_event",
+          "loop_n": 4,
+          "beat": null,
+          "role": "advisor_answer",
+          "violations": [
+            "non_verbatim_evidence",
+            "non_verbatim_evidence",
+            "non_verbatim_evidence"
+          ],
+          "attempts": 3,
+          "fallback_used": true,
+          "call_records": [
+            {
+              "attempt": 1,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n[public-9] (reported) 충식은 어제 이송됐다.\n[public-10] (reported) \"귀표\"라는 단어를 준이 쓴다.\n[public-11] (observed) 트럭 옆면에서 \"○○축산\"이라는 일부 글자를 보았다.\n질문: 손목띠와 귀표는 무슨 관계야?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-3",
+                  "public-10"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 1116
+            },
+            {
+              "attempt": 2,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n[public-9] (reported) 충식은 어제 이송됐다.\n[public-10] (reported) \"귀표\"라는 단어를 준이 쓴다.\n[public-11] (observed) 트럭 옆면에서 \"○○축산\"이라는 일부 글자를 보았다.\n질문: 손목띠와 귀표는 무슨 관계야?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-3",
+                  "public-10"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 1459
+            },
+            {
+              "attempt": 3,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n[public-9] (reported) 충식은 어제 이송됐다.\n[public-10] (reported) \"귀표\"라는 단어를 준이 쓴다.\n[public-11] (observed) 트럭 옆면에서 \"○○축산\"이라는 일부 글자를 보았다.\n질문: 손목띠와 귀표는 무슨 관계야?"
+                }
+              ],
+              "output": {
+                "answer": "그건 알 수 없다",
+                "evidence_ids": [
+                  "public-3",
+                  "public-10"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 1114
+            }
+          ],
+          "model": "gemma3:12b",
+          "version": "connected-investigation-1"
+        }
+      ]
+    },
+    {
+      "loop_n": 4,
+      "question": "너에게 물어볼 수 있는건 뭐야?",
+      "available_public_observations": [
+        {
+          "observation_id": "public-1",
+          "attempt_id": "1ce9c516-2c73-40ce-afa2-4d7d80a89c0e",
+          "loop_id": "d2a6bbb0-7797-44a3-a574-c8b654b16df9",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-2",
+          "attempt_id": "1ce9c516-2c73-40ce-afa2-4d7d80a89c0e",
+          "loop_id": "d2a6bbb0-7797-44a3-a574-c8b654b16df9",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "scene-1",
+          "scene_title": "공개 장면 1",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-3",
+          "attempt_id": "1ce9c516-2c73-40ce-afa2-4d7d80a89c0e",
+          "loop_id": "d2a6bbb0-7797-44a3-a574-c8b654b16df9",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-4",
+          "attempt_id": "1ce9c516-2c73-40ce-afa2-4d7d80a89c0e",
+          "loop_id": "d2a6bbb0-7797-44a3-a574-c8b654b16df9",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "은상",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-5",
+          "attempt_id": "1ce9c516-2c73-40ce-afa2-4d7d80a89c0e",
+          "loop_id": "d2a6bbb0-7797-44a3-a574-c8b654b16df9",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "scene-3",
+          "scene_title": "공개 장면 3",
+          "actor": "민석",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-6",
+          "attempt_id": "1ce9c516-2c73-40ce-afa2-4d7d80a89c0e",
+          "loop_id": "d2a6bbb0-7797-44a3-a574-c8b654b16df9",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "scene-4",
+          "scene_title": "공개 장면 4",
+          "actor": "채연",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-7",
+          "attempt_id": "1ce9c516-2c73-40ce-afa2-4d7d80a89c0e",
+          "loop_id": "d2a6bbb0-7797-44a3-a574-c8b654b16df9",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": null,
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-8",
+          "attempt_id": "1ce9c516-2c73-40ce-afa2-4d7d80a89c0e",
+          "loop_id": "d2a6bbb0-7797-44a3-a574-c8b654b16df9",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": "민석",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-9",
+          "attempt_id": "1ce9c516-2c73-40ce-afa2-4d7d80a89c0e",
+          "loop_id": "d2a6bbb0-7797-44a3-a574-c8b654b16df9",
+          "loop_n": 3,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": null,
+          "text": "충식은 어제 이송됐다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-10",
+          "attempt_id": "1ce9c516-2c73-40ce-afa2-4d7d80a89c0e",
+          "loop_id": "d2a6bbb0-7797-44a3-a574-c8b654b16df9",
+          "loop_n": 3,
+          "beat": 2,
+          "scene_id": "scene-2",
+          "scene_title": "공개 장면 2",
+          "actor": "준",
+          "text": "\"귀표\"라는 단어를 준이 쓴다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "public-11",
+          "attempt_id": "1ce9c516-2c73-40ce-afa2-4d7d80a89c0e",
+          "loop_id": "d2a6bbb0-7797-44a3-a574-c8b654b16df9",
+          "loop_n": 4,
+          "beat": 5,
+          "scene_id": "scene-5",
+          "scene_title": "공개 장면 5",
+          "actor": null,
+          "text": "트럭 옆면에서 \"○○축산\"이라는 일부 글자를 보았다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ],
+      "result": {
+        "answer": "그건 알 수 없다",
+        "detail": null,
+        "remaining": 2,
+        "status": "unknown",
+        "evidence_ids": [],
+        "evidence": [],
+        "next_observation": "낮에 이미 본 장면의 노트를 다시 확인할 수 있다."
+      },
+      "elapsed_ms": 6467,
+      "harness": [
+        {
+          "type": "harness_event",
+          "loop_n": 4,
+          "beat": null,
+          "role": "advisor_answer",
+          "violations": [
+            "non_verbatim_evidence",
+            "non_verbatim_evidence",
+            "missing_public_evidence"
+          ],
+          "attempts": 3,
+          "fallback_used": true,
+          "call_records": [
+            {
+              "attempt": 1,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n[public-9] (reported) 충식은 어제 이송됐다.\n[public-10] (reported) \"귀표\"라는 단어를 준이 쓴다.\n[public-11] (observed) 트럭 옆면에서 \"○○축산\"이라는 일부 글자를 보았다.\n질문: 너에게 물어볼 수 있는건 뭐야?"
+                }
+              ],
+              "output": {
+                "answer": "기록은 이렇다",
+                "evidence_ids": [
+                  "public-1",
+                  "public-2",
+                  "public-3",
+                  "public-4",
+                  "public-5",
+                  "public-6",
+                  "public-7",
+                  "public-8",
+                  "public-9",
+                  "public-10",
+                  "public-11"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 2811
+            },
+            {
+              "attempt": 2,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n[public-9] (reported) 충식은 어제 이송됐다.\n[public-10] (reported) \"귀표\"라는 단어를 준이 쓴다.\n[public-11] (observed) 트럭 옆면에서 \"○○축산\"이라는 일부 글자를 보았다.\n질문: 너에게 물어볼 수 있는건 뭐야?"
+                }
+              ],
+              "output": {
+                "answer": "기록은 이렇다",
+                "evidence_ids": [
+                  "public-1",
+                  "public-2",
+                  "public-3",
+                  "public-4",
+                  "public-5",
+                  "public-6",
+                  "public-7",
+                  "public-8",
+                  "public-9",
+                  "public-10",
+                  "public-11"
+                ]
+              },
+              "checks": [
+                "non_verbatim_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 2820
+            },
+            {
+              "attempt": 3,
+              "messages": [
+                {
+                  "role": "system",
+                  "content": "공개된 원본 관찰로만 질문에 답한다. 질문이 요구한 사실을 다루지 못하면 그건 알 수 없다. reported는 누군가 말했음만 확인되며 내용의 진실은 확인되지 않았다. 기록 부재는 그런 일이 없었다는 뜻이 아니다. 숨은 이유/정체를 추론하지 않는다. 확인 답변은 evidence_ids에 근거 ID를 넣고 detail에는 해당 원본 문장을 그대로 인용한다. 질문의 이유를 모르면 관련 없는 행동을 답 대신 내놓지 않는다. 부분적으로 알려진 기록이 있으면 그건 알 수 없다와 함께 해당 evidence_ids와 원문 detail을 반환한다. 쟁반 세 개는 주인 세 명이나 특정 인물의 식사량을 확인하지 않는다. 방송실로 알리라는 지시는 특정 인물의 보고 완료나 수신자를 확인하지 않는다. 단어를 썼다는 관찰은 그 단어의 정의를 확인하지 않는다. 원본의 reported/관찰 당시 회차를 지킨다. 과거 기록은 현재 인물의 존재를 보장하지 않는다.\n[public-1] (reported) 관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.\n[public-2] (observed) 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.\n[public-3] (observed) 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"\n[public-4] (observed) 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n[public-5] (observed) 민석이 배급 자리를 보고 수첩에 뭔가 적는다.\n[public-6] (observed) 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n[public-7] (observed) 저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.\n[public-8] (observed) 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.\n[public-9] (reported) 충식은 어제 이송됐다.\n[public-10] (reported) \"귀표\"라는 단어를 준이 쓴다.\n[public-11] (observed) 트럭 옆면에서 \"○○축산\"이라는 일부 글자를 보았다.\n질문: 너에게 물어볼 수 있는건 뭐야?"
+                }
+              ],
+              "output": {
+                "answer": "기록은 이렇다"
+              },
+              "checks": [
+                "missing_public_evidence"
+              ],
+              "accepted": false,
+              "temperature": null,
+              "elapsed_ms": 836
+            }
+          ],
+          "model": "gemma3:12b",
+          "version": "connected-investigation-1"
+        }
+      ]
+    }
+  ],
+  "custom_previews": [
+    {
+      "custom_text": "민석이 내 질문에 자세하게 답할 수 있도록 한다.",
+      "preview": {
+        "preview_id": "5b3638e0-6e2c-4700-96af-4ae6d26b8b36",
+        "original_text": "민석이 내 질문에 자세하게 답할 수 있도록 한다.",
+        "executable": false,
+        "interpretation": null,
+        "limitations": [
+          "실행할 행동을 확정할 수 없다. 아래 대안을 선택해 다시 미리 보세요."
+        ],
+        "alternatives": [
+          "민석은 알고 있는 관찰을 설명한다"
+        ],
+        "conflicts": [],
+        "rule": null
+      }
+    },
+    {
+      "custom_text": "채연은 묻는말에 자세하게 대답한다.",
+      "preview": {
+        "preview_id": "878762a8-35a4-436e-816c-74c9c1bbcfd2",
+        "original_text": "채연은 묻는말에 자세하게 대답한다.",
+        "executable": false,
+        "interpretation": null,
+        "limitations": [
+          "실행할 행동을 확정할 수 없다. 아래 대안을 선택해 다시 미리 보세요."
+        ],
+        "alternatives": [
+          "채연은 알고 있는 관찰을 설명한다"
+        ],
+        "conflicts": [],
+        "rule": null
+      }
+    },
+    {
+      "custom_text": "은상은 소문의 진실을 무조건 나에게 이야기 해준다.",
+      "preview": {
+        "preview_id": "7fc75b36-22c2-4233-802b-40f8aca836d9",
+        "original_text": "은상은 소문의 진실을 무조건 나에게 이야기 해준다.",
+        "executable": false,
+        "interpretation": null,
+        "limitations": [
+          "그런 사람은 여기 없다"
+        ],
+        "alternatives": [
+          "은상은 알고 있는 관찰을 설명한다",
+          "준은 알고 있는 관찰을 설명한다"
+        ],
+        "conflicts": [],
+        "rule": null
+      }
+    }
+  ],
+  "ambient": [
+    {
+      "name": "ration-rumor",
+      "actors": [
+        "은상",
+        "준"
+      ],
+      "public_observation": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다. 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+      "output": {
+        "lines": [
+          {
+            "name": "은상",
+            "line": "음식 남았네."
+          },
+          {
+            "name": "준",
+            "line": "그럼 먹어야지."
+          },
+          {
+            "name": "은상",
+            "line": "민석이 좋아하는 거 있어."
+          },
+          {
+            "name": "준",
+            "line": "그럼 민석이 먼저 먹어."
+          }
+        ]
+      },
+      "elapsed_ms": 1482,
+      "harness": {
+        "role": "ambient_probe",
+        "attempts": 1,
+        "violations": [],
+        "fallback_used": false,
+        "call_records": [
+          {
+            "attempt": 1,
+            "messages": [
+              {
+                "role": "system",
+                "content": "은상과 준이 지나가며 짧게 주고받는다. 누가 묻지 않았다 — 둘만의 잡담이다.\n\n[오늘의 규칙]  (가장 먼저 지켜야 할 오늘의 법. 아래 규칙은 세계의 법이다. 대화 내용도 규칙을 따른 하루를 산 사람처럼 말한다)\n은상: (없음)\n준: (없음)\n\n은상: 오늘 공개된 장면을 본다.\n  목표: 본 것만 짧게 말한다 / 지금 하려던 일: 지금 장면에 있다\n준: 오늘 공개된 장면을 본다.\n  목표: 들은 말과 본 일을 구분한다 / 지금 하려던 일: 지금 장면에 있다\n여기 있는 사람은 채연, 민석, 은상, 준 — 이게 전부다. 여기 없는 사람의 이름을 지어내지 않는다.\n충식은 지금 여기 없다.\n2~4줄. 한 줄 = 한 사람의 한 문장. 반말. 일곱 살처럼 짧고 단순하게.\n각자 자기 목표나 오늘 본 것을 무심코 흘린다. 서로 딴소리해도 된다.\n오늘 이 안에서 본 것·들은 것·자기 할 일 얘기만 한다. 바깥 세상의 물건·음식·놀이는 모른다 —\n이곳에 없는 것을 사 오거나 놀러 가자는 말은 하지 않는다.\n한 줄은 완전한 문장 하나다 — 명사만 던지지 않는다.\n각 줄의 name은 반드시 은상 또는 준이다.\n\n출력: JSON만.\n[현재 공개된 장면]\n저녁에는 음식이 남은 쟁반이 세 개 놓여 있다. 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.\n연결되는 말이 없으면 빈 lines를 반환한다. 대사만으로 새로운 사건이 일어나지는 않는다."
+              }
+            ],
+            "output": {
+              "lines": [
+                {
+                  "name": "은상",
+                  "line": "음식 남았네."
+                },
+                {
+                  "name": "준",
+                  "line": "그럼 먹어야지."
+                },
+                {
+                  "name": "은상",
+                  "line": "민석이 좋아하는 거 있어."
+                },
+                {
+                  "name": "준",
+                  "line": "그럼 민석이 먼저 먹어."
+                }
+              ]
+            },
+            "checks": [],
+            "accepted": true,
+            "temperature": 0.0,
+            "elapsed_ms": 1481
+          }
+        ],
+        "model": "exaone3.5:7.8b"
+      }
+    },
+    {
+      "name": "record-checkup",
+      "actors": [
+        "민석",
+        "채연"
+      ],
+      "public_observation": "민석이 배급 자리를 보고 수첩에 뭔가 적는다. 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+      "output": {
+        "lines": [
+          {
+            "name": "민석",
+            "line": "배급 자리에 적힌 숫자 확인"
+          },
+          {
+            "name": "채연",
+            "line": "담요 더 따뜻하게"
+          },
+          {
+            "name": "민석",
+            "line": "수첩에 기록 완료"
+          },
+          {
+            "name": "채연",
+            "line": "내 차례 준비 완료"
+          }
+        ]
+      },
+      "elapsed_ms": 1519,
+      "harness": {
+        "role": "ambient_probe",
+        "attempts": 1,
+        "violations": [],
+        "fallback_used": false,
+        "call_records": [
+          {
+            "attempt": 1,
+            "messages": [
+              {
+                "role": "system",
+                "content": "민석과 채연이 지나가며 짧게 주고받는다. 누가 묻지 않았다 — 둘만의 잡담이다.\n\n[오늘의 규칙]  (가장 먼저 지켜야 할 오늘의 법. 아래 규칙은 세계의 법이다. 대화 내용도 규칙을 따른 하루를 산 사람처럼 말한다)\n민석: (없음)\n채연: (없음)\n\n민석: 오늘 공개된 장면을 본다.\n  목표: 본 것만 짧게 말한다 / 지금 하려던 일: 지금 장면에 있다\n채연: 오늘 공개된 장면을 본다.\n  목표: 들은 말과 본 일을 구분한다 / 지금 하려던 일: 지금 장면에 있다\n여기 있는 사람은 채연, 민석, 은상, 준 — 이게 전부다. 여기 없는 사람의 이름을 지어내지 않는다.\n충식은 지금 여기 없다.\n2~4줄. 한 줄 = 한 사람의 한 문장. 반말. 일곱 살처럼 짧고 단순하게.\n각자 자기 목표나 오늘 본 것을 무심코 흘린다. 서로 딴소리해도 된다.\n오늘 이 안에서 본 것·들은 것·자기 할 일 얘기만 한다. 바깥 세상의 물건·음식·놀이는 모른다 —\n이곳에 없는 것을 사 오거나 놀러 가자는 말은 하지 않는다.\n한 줄은 완전한 문장 하나다 — 명사만 던지지 않는다.\n각 줄의 name은 반드시 민석 또는 채연이다.\n\n출력: JSON만.\n[현재 공개된 장면]\n민석이 배급 자리를 보고 수첩에 뭔가 적는다. 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.\n연결되는 말이 없으면 빈 lines를 반환한다. 대사만으로 새로운 사건이 일어나지는 않는다."
+              }
+            ],
+            "output": {
+              "lines": [
+                {
+                  "name": "민석",
+                  "line": "배급 자리에 적힌 숫자 확인"
+                },
+                {
+                  "name": "채연",
+                  "line": "담요 더 따뜻하게"
+                },
+                {
+                  "name": "민석",
+                  "line": "수첩에 기록 완료"
+                },
+                {
+                  "name": "채연",
+                  "line": "내 차례 준비 완료"
+                }
+              ]
+            },
+            "checks": [],
+            "accepted": true,
+            "temperature": 0.0,
+            "elapsed_ms": 1519
+          }
+        ],
+        "model": "exaone3.5:7.8b"
+      }
+    },
+    {
+      "name": "known-source",
+      "actors": [
+        "은상",
+        "민석"
+      ],
+      "public_observation": "은상이 말을 옮겼지만 출처는 직접 확인하지 못한 들은 말이라고 밝혔다.",
+      "output": {
+        "lines": [
+          {
+            "name": "은상",
+            "line": "채연이 웃었어."
+          },
+          {
+            "name": "민석",
+            "line": "그럼 나도 웃어야지."
+          },
+          {
+            "name": "은상",
+            "line": "준이는 어디 있지?"
+          },
+          {
+            "name": "민석",
+            "line": "모르겠어, 방금 전엔 여기 없었어."
+          }
+        ]
+      },
+      "elapsed_ms": 1615,
+      "harness": {
+        "role": "ambient_probe",
+        "attempts": 1,
+        "violations": [],
+        "fallback_used": false,
+        "call_records": [
+          {
+            "attempt": 1,
+            "messages": [
+              {
+                "role": "system",
+                "content": "은상과 민석이 지나가며 짧게 주고받는다. 누가 묻지 않았다 — 둘만의 잡담이다.\n\n[오늘의 규칙]  (가장 먼저 지켜야 할 오늘의 법. 아래 규칙은 세계의 법이다. 대화 내용도 규칙을 따른 하루를 산 사람처럼 말한다)\n은상: (없음)\n민석: (없음)\n\n은상: 오늘 공개된 장면을 본다.\n  목표: 본 것만 짧게 말한다 / 지금 하려던 일: 지금 장면에 있다\n민석: 오늘 공개된 장면을 본다.\n  목표: 들은 말과 본 일을 구분한다 / 지금 하려던 일: 지금 장면에 있다\n여기 있는 사람은 채연, 민석, 은상, 준 — 이게 전부다. 여기 없는 사람의 이름을 지어내지 않는다.\n충식은 지금 여기 없다.\n2~4줄. 한 줄 = 한 사람의 한 문장. 반말. 일곱 살처럼 짧고 단순하게.\n각자 자기 목표나 오늘 본 것을 무심코 흘린다. 서로 딴소리해도 된다.\n오늘 이 안에서 본 것·들은 것·자기 할 일 얘기만 한다. 바깥 세상의 물건·음식·놀이는 모른다 —\n이곳에 없는 것을 사 오거나 놀러 가자는 말은 하지 않는다.\n한 줄은 완전한 문장 하나다 — 명사만 던지지 않는다.\n각 줄의 name은 반드시 은상 또는 민석이다.\n\n출력: JSON만.\n[현재 공개된 장면]\n은상이 말을 옮겼지만 출처는 직접 확인하지 못한 들은 말이라고 밝혔다.\n연결되는 말이 없으면 빈 lines를 반환한다. 대사만으로 새로운 사건이 일어나지는 않는다."
+              }
+            ],
+            "output": {
+              "lines": [
+                {
+                  "name": "은상",
+                  "line": "채연이 웃었어."
+                },
+                {
+                  "name": "민석",
+                  "line": "그럼 나도 웃어야지."
+                },
+                {
+                  "name": "은상",
+                  "line": "준이는 어디 있지?"
+                },
+                {
+                  "name": "민석",
+                  "line": "모르겠어, 방금 전엔 여기 없었어."
+                }
+              ]
+            },
+            "checks": [],
+            "accepted": true,
+            "temperature": 0.0,
+            "elapsed_ms": 1615
+          }
+        ],
+        "model": "exaone3.5:7.8b"
+      }
+    }
+  ],
+  "review_template": {
+    "question_fields": [
+      "addresses_requested_subject",
+      "evidence_directly_supports_detail",
+      "reported_not_promoted",
+      "unknown_not_denial",
+      "next_observation_available"
+    ],
+    "custom_fields": [
+      "target_preserved",
+      "answer_not_mapped_to_ask",
+      "truth_not_mapped_to_rumor",
+      "unsupported_has_limit_or_alternative"
+    ],
+    "ambient_fields": [
+      "scene_relevant_or_empty",
+      "no_invented_event",
+      "only_present_names",
+      "rules_respected"
+    ],
+    "reviewed": false
+  }
+}

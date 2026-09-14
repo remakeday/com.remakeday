@@ -1,0 +1,362 @@
+{
+  "source_sha256": {
+    "backend/apps/engine/app/use_cases/night_interactor.py": "e8d266fc4d858c249324385ebaee6e8690aa97be9261c62ac40bedbff305b6a0",
+    "backend/apps/engine/app/use_cases/prompts.py": "e5d3d62b4c59bedb13d091a96a142af6f67e2f51a3b821ab86320c14074871be",
+    "backend/apps/engine/app/dtos/llm_output_dto.py": "fdccfec4affc92f4fc69b4b4efd7ab92f82c148ab12b56e2c0dceecedcc90ddd",
+    "backend/scripts/run_free_text_scoring.py": "6451a4d6161d5f1b51a7c21acaeb3e0843ab85d1df6209d308fd14824f26a835"
+  },
+  "output_schemas": {
+    "1": {
+      "additionalProperties": false,
+      "properties": {
+        "why": {
+          "default": "",
+          "title": "Why",
+          "type": "string"
+        },
+        "matched_index": {
+          "anyOf": [
+            {
+              "const": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Matched Index"
+        },
+        "verdict": {
+          "enum": [
+            "confirmed",
+            "partial",
+            "none"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        }
+      },
+      "required": [
+        "verdict"
+      ],
+      "title": "EvaluatorVerdictOutput",
+      "type": "object"
+    },
+    "2": {
+      "additionalProperties": false,
+      "properties": {
+        "why": {
+          "default": "",
+          "title": "Why",
+          "type": "string"
+        },
+        "matched_index": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Matched Index"
+        },
+        "verdict": {
+          "enum": [
+            "confirmed",
+            "partial",
+            "none"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        }
+      },
+      "required": [
+        "verdict"
+      ],
+      "title": "EvaluatorVerdictOutput",
+      "type": "object"
+    },
+    "3": {
+      "additionalProperties": false,
+      "properties": {
+        "why": {
+          "default": "",
+          "title": "Why",
+          "type": "string"
+        },
+        "matched_index": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1,
+                2
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Matched Index"
+        },
+        "verdict": {
+          "enum": [
+            "confirmed",
+            "partial",
+            "none"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        }
+      },
+      "required": [
+        "verdict"
+      ],
+      "title": "EvaluatorVerdictOutput",
+      "type": "object"
+    },
+    "4": {
+      "additionalProperties": false,
+      "properties": {
+        "why": {
+          "default": "",
+          "title": "Why",
+          "type": "string"
+        },
+        "matched_index": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1,
+                2,
+                3
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Matched Index"
+        },
+        "verdict": {
+          "enum": [
+            "confirmed",
+            "partial",
+            "none"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        }
+      },
+      "required": [
+        "verdict"
+      ],
+      "title": "EvaluatorVerdictOutput",
+      "type": "object"
+    },
+    "5": {
+      "additionalProperties": false,
+      "properties": {
+        "why": {
+          "default": "",
+          "title": "Why",
+          "type": "string"
+        },
+        "matched_index": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1,
+                2,
+                3,
+                4
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Matched Index"
+        },
+        "verdict": {
+          "enum": [
+            "confirmed",
+            "partial",
+            "none"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        }
+      },
+      "required": [
+        "verdict"
+      ],
+      "title": "EvaluatorVerdictOutput",
+      "type": "object"
+    },
+    "6": {
+      "additionalProperties": false,
+      "properties": {
+        "why": {
+          "default": "",
+          "title": "Why",
+          "type": "string"
+        },
+        "matched_index": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Matched Index"
+        },
+        "verdict": {
+          "enum": [
+            "confirmed",
+            "partial",
+            "none"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        }
+      },
+      "required": [
+        "verdict"
+      ],
+      "title": "EvaluatorVerdictOutput",
+      "type": "object"
+    },
+    "7": {
+      "additionalProperties": false,
+      "properties": {
+        "why": {
+          "default": "",
+          "title": "Why",
+          "type": "string"
+        },
+        "matched_index": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Matched Index"
+        },
+        "verdict": {
+          "enum": [
+            "confirmed",
+            "partial",
+            "none"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        }
+      },
+      "required": [
+        "verdict"
+      ],
+      "title": "EvaluatorVerdictOutput",
+      "type": "object"
+    },
+    "8": {
+      "additionalProperties": false,
+      "properties": {
+        "why": {
+          "default": "",
+          "title": "Why",
+          "type": "string"
+        },
+        "matched_index": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Matched Index"
+        },
+        "verdict": {
+          "enum": [
+            "confirmed",
+            "partial",
+            "none"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        }
+      },
+      "required": [
+        "verdict"
+      ],
+      "title": "EvaluatorVerdictOutput",
+      "type": "object"
+    }
+  },
+  "engine_tests": {
+    "command": ".venv/bin/python -m pytest tests/engine -q --tb=short",
+    "passed": 186,
+    "warnings": 3,
+    "seconds": 2.57,
+    "database": "pigfarm_test",
+    "llm": "fake"
+  },
+  "import_contracts": {
+    "command": ".venv/bin/lint-imports",
+    "kept": 4,
+    "broken": 0
+  },
+  "review": "Independent read-only reviewer: no blockers in final schema-based fix"
+}

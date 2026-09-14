@@ -1,0 +1,46 @@
+[
+  {
+    "character": "준",
+    "scene": 2,
+    "question": "손목띠 숫자가 왜 궁금해?",
+    "conditional_rule": false,
+    "reply": "그냥 궁금해서. 다른 사람들도 다 보고 있잖아. 뭔가 중요한 거 같아서...",
+    "elapsed_seconds": 0.98,
+    "attempts": 1,
+    "fallbacks": 0,
+    "model": "exaone3.5:7.8b"
+  },
+  {
+    "character": "채연",
+    "scene": 3,
+    "question": "왜 밥을 안 먹고 싶어?",
+    "conditional_rule": false,
+    "reply": "추워. 그래서 밥 생각이 없어.",
+    "elapsed_seconds": 0.82,
+    "attempts": 1,
+    "fallbacks": 0,
+    "model": "exaone3.5:7.8b"
+  },
+  {
+    "character": "민석",
+    "scene": 3,
+    "question": "방송실에 뭘 보고하는 거야? 자세히 말해 줘.",
+    "conditional_rule": true,
+    "reply": "채연이 배급을 남겨서 적었어. 이상한 건 방송실에 알리랬잖아. 아직 알리러 가진 않았어.",
+    "elapsed_seconds": 0.0,
+    "attempts": 0,
+    "fallbacks": 0,
+    "model": "exaone3.5:7.8b"
+  },
+  {
+    "character": "민석",
+    "scene": 5,
+    "question": "방송실에 누구 얘기를 보고했어?",
+    "conditional_rule": true,
+    "reply": "채연이 배급을 남긴다고 알렸어. 배급 자리에서 보고 수첩에도 적어 뒀어. 아픈지는 몰라.",
+    "elapsed_seconds": 0.0,
+    "attempts": 0,
+    "fallbacks": 0,
+    "model": "exaone3.5:7.8b"
+  }
+]

@@ -1,0 +1,27 @@
+{
+  "mode": "real frontend 3500 + isolated pigfarm_test backend; fake models; automated observation, not human playtest",
+  "checks": [
+    "mobile: live notebook budget, exact observed gallery, source replay, fixed portraits, no overflow",
+    "desktop: live notebook budget, exact observed gallery, source replay, fixed portraits, no overflow"
+  ],
+  "errors": [],
+  "failed_requests": [],
+  "attempts": [
+    {
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "attempt_id": "b4c12b07-f6ca-4c03-bcd0-d5483afbe889"
+    },
+    {
+      "viewport": {
+        "name": "desktop",
+        "width": 1440,
+        "height": 1000
+      },
+      "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c"
+    }
+  ]
+}

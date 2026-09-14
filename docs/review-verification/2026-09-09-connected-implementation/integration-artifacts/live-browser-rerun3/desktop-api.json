@@ -1,0 +1,3966 @@
+[
+  {
+    "status": 200,
+    "path": "/sessions",
+    "body": {
+      "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+      "attempt_n": 1,
+      "entry_lines": [
+        "세계가 이상하다.",
+        "오늘이 지나면, 세계는 멸망한다.",
+        "다섯 번의 하루 안에, 왜 멸망했는지 알아내야 한다."
+      ],
+      "prior_cell_results": null
+    }
+  },
+  {
+    "status": 200,
+    "path": "/sessions/84ed0510-10af-461a-a4cb-bde26ca4537c/loops",
+    "body": {
+      "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+      "loop_n": 1,
+      "morning_text": "7시 12분. 눈을 뜬다. 관리자 방송이 끝나고 배급이 나온다.",
+      "damage_level": 0,
+      "budget_left": 8,
+      "beat": 1,
+      "beat_title": "기상 — 7:12",
+      "narration": "스피커가 켜지고 배급 줄이 생긴다. 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+      "broadcast": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+      "illustrations": [
+        {
+          "image_id": "clue-07",
+          "caption": "관리자의 방송 아래 네 사람이 배급을 기다린다."
+        },
+        {
+          "image_id": "clue-01",
+          "caption": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다."
+        }
+      ],
+      "aftermath": null,
+      "observations": [
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-1-채연-배급을 남긴다",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+          "scene_title": "기상 — 7:12",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-01",
+              "caption": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-1",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+          "scene_title": "기상 — 7:12",
+          "actor": null,
+          "text": "스피커가 켜지고 배급 줄이 생긴다. 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-07",
+              "caption": "관리자의 방송 아래 네 사람이 배급을 기다린다."
+            },
+            {
+              "image_id": "clue-01",
+              "caption": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:broadcast-1",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+          "scene_title": "기상 — 7:12",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-1-clue-07",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+          "scene_title": "기상 — 7:12",
+          "actor": null,
+          "text": "관리자의 방송 아래 네 사람이 배급을 기다린다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-07",
+              "caption": "관리자의 방송 아래 네 사람이 배급을 기다린다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-1-clue-01",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+          "scene_title": "기상 — 7:12",
+          "actor": null,
+          "text": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-01",
+              "caption": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:fragment-0",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+          "scene_title": "기상 — 7:12",
+          "actor": null,
+          "text": "소독약 냄새.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ],
+      "note_found": {
+        "id": 195,
+        "kind": "fragment",
+        "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다."
+      },
+      "active_rules": []
+    }
+  },
+  {
+    "status": 200,
+    "path": "/loops/6e82df73-0e1b-4f8a-b8e6-8018f8e5d619/npcs",
+    "body": {
+      "npcs": [
+        {
+          "code": "chaeyeon",
+          "name": "채연",
+          "mood": "calm",
+          "uttered": false
+        },
+        {
+          "code": "minseok",
+          "name": "민석",
+          "mood": "calm",
+          "uttered": false
+        },
+        {
+          "code": "eunsang",
+          "name": "은상",
+          "mood": "calm",
+          "uttered": false
+        },
+        {
+          "code": "jun",
+          "name": "준",
+          "mood": "calm",
+          "uttered": false
+        }
+      ]
+    }
+  },
+  {
+    "status": 200,
+    "path": "/loops/6e82df73-0e1b-4f8a-b8e6-8018f8e5d619/npcs",
+    "body": {
+      "npcs": [
+        {
+          "code": "chaeyeon",
+          "name": "채연",
+          "mood": "calm",
+          "uttered": false
+        },
+        {
+          "code": "minseok",
+          "name": "민석",
+          "mood": "calm",
+          "uttered": false
+        },
+        {
+          "code": "eunsang",
+          "name": "은상",
+          "mood": "calm",
+          "uttered": false
+        },
+        {
+          "code": "jun",
+          "name": "준",
+          "mood": "calm",
+          "uttered": false
+        }
+      ]
+    }
+  },
+  {
+    "status": 200,
+    "path": "/loops/6e82df73-0e1b-4f8a-b8e6-8018f8e5d619/observations",
+    "body": {
+      "observations": [
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-1-채연-배급을 남긴다",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+          "scene_title": "기상 — 7:12",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-01",
+              "caption": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-1",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+          "scene_title": "기상 — 7:12",
+          "actor": null,
+          "text": "스피커가 켜지고 배급 줄이 생긴다. 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-07",
+              "caption": "관리자의 방송 아래 네 사람이 배급을 기다린다."
+            },
+            {
+              "image_id": "clue-01",
+              "caption": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:broadcast-1",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+          "scene_title": "기상 — 7:12",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-1-clue-07",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+          "scene_title": "기상 — 7:12",
+          "actor": null,
+          "text": "관리자의 방송 아래 네 사람이 배급을 기다린다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-07",
+              "caption": "관리자의 방송 아래 네 사람이 배급을 기다린다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-1-clue-01",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+          "scene_title": "기상 — 7:12",
+          "actor": null,
+          "text": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-01",
+              "caption": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:fragment-0",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+          "scene_title": "기상 — 7:12",
+          "actor": null,
+          "text": "소독약 냄새.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ]
+    }
+  },
+  {
+    "status": 200,
+    "path": "/loops/6e82df73-0e1b-4f8a-b8e6-8018f8e5d619/beats/next",
+    "body": {
+      "beat": 2,
+      "beat_title": "오전 — 자유 시간",
+      "narration": "할 일이 없는 시간. 채연이 담요를 쓰고 벽 쪽을 본다. 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\" 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+      "budget_left": 8,
+      "broadcast": null,
+      "paw_offer": {
+        "offer_id": "313051f2",
+        "rule_label": "채연: 알고 있는 관찰을 설명한다 — 강제",
+        "shown_reason": "채연이(가) 다음에 직접 한 일을 말로 설명한다. 놓친 관찰을 들을 수 있다."
+      },
+      "day_done": false,
+      "illustrations": [
+        {
+          "image_id": "clue-11",
+          "caption": "준이 숫자가 적힌 띠를 들여다본다."
+        },
+        {
+          "image_id": "clue-10",
+          "caption": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다."
+        }
+      ],
+      "ambient": null,
+      "note_found": {
+        "id": 201,
+        "kind": "fragment",
+        "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\""
+      },
+      "observations": [
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-2-준-손목띠를 만진다",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+          "scene_title": "오전 — 자유 시간",
+          "actor": "준",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-11",
+              "caption": "준이 숫자가 적힌 띠를 들여다본다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-2-은상-소문을 낸다",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+          "scene_title": "오전 — 자유 시간",
+          "actor": "은상",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-10",
+              "caption": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-2",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+          "scene_title": "오전 — 자유 시간",
+          "actor": null,
+          "text": "할 일이 없는 시간. 채연이 담요를 쓰고 벽 쪽을 본다. 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\" 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-11",
+              "caption": "준이 숫자가 적힌 띠를 들여다본다."
+            },
+            {
+              "image_id": "clue-10",
+              "caption": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-2-clue-11",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+          "scene_title": "오전 — 자유 시간",
+          "actor": null,
+          "text": "준이 숫자가 적힌 띠를 들여다본다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-11",
+              "caption": "준이 숫자가 적힌 띠를 들여다본다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-2-clue-10",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+          "scene_title": "오전 — 자유 시간",
+          "actor": null,
+          "text": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-10",
+              "caption": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:fragment-2",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+          "scene_title": "오전 — 자유 시간",
+          "actor": null,
+          "text": "발 아래 콘크리트가 차다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ]
+    }
+  },
+  {
+    "status": 200,
+    "path": "/loops/6e82df73-0e1b-4f8a-b8e6-8018f8e5d619/npcs",
+    "body": {
+      "npcs": [
+        {
+          "code": "chaeyeon",
+          "name": "채연",
+          "mood": "calm",
+          "uttered": false
+        },
+        {
+          "code": "minseok",
+          "name": "민석",
+          "mood": "calm",
+          "uttered": false
+        },
+        {
+          "code": "eunsang",
+          "name": "은상",
+          "mood": "calm",
+          "uttered": false
+        },
+        {
+          "code": "jun",
+          "name": "준",
+          "mood": "calm",
+          "uttered": false
+        }
+      ]
+    }
+  },
+  {
+    "status": 200,
+    "path": "/loops/6e82df73-0e1b-4f8a-b8e6-8018f8e5d619/paw/respond",
+    "body": {
+      "applied": false,
+      "rule_label": null
+    }
+  },
+  {
+    "status": 200,
+    "path": "/loops/6e82df73-0e1b-4f8a-b8e6-8018f8e5d619/beats/next",
+    "body": {
+      "beat": 3,
+      "beat_title": "정오 — 배급",
+      "narration": "정오 배급이 나온다. 채연이 쟁반을 밀어낸다. 민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+      "budget_left": 8,
+      "broadcast": null,
+      "paw_offer": null,
+      "day_done": false,
+      "illustrations": [
+        {
+          "image_id": "clue-08",
+          "caption": "민석이 배급 자리 옆에서 수첩에 기록한다."
+        }
+      ],
+      "ambient": null,
+      "note_found": {
+        "id": 207,
+        "kind": "fragment",
+        "text": "채연이 쟁반을 밀어낸다."
+      },
+      "observations": [
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-3-채연-배급을 남긴다",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-3",
+          "scene_title": "정오 — 배급",
+          "actor": "채연",
+          "text": "채연이 쟁반을 밀어낸다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-3-민석-기록한다",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-3",
+          "scene_title": "정오 — 배급",
+          "actor": "민석",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-08",
+              "caption": "민석이 배급 자리 옆에서 수첩에 기록한다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-3",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-3",
+          "scene_title": "정오 — 배급",
+          "actor": null,
+          "text": "정오 배급이 나온다. 채연이 쟁반을 밀어낸다. 민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-08",
+              "caption": "민석이 배급 자리 옆에서 수첩에 기록한다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-3-clue-08",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-3",
+          "scene_title": "정오 — 배급",
+          "actor": null,
+          "text": "민석이 배급 자리 옆에서 수첩에 기록한다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-08",
+              "caption": "민석이 배급 자리 옆에서 수첩에 기록한다."
+            }
+          ],
+          "rule_id": null
+        }
+      ]
+    }
+  },
+  {
+    "status": 200,
+    "path": "/loops/6e82df73-0e1b-4f8a-b8e6-8018f8e5d619/npcs",
+    "body": {
+      "npcs": [
+        {
+          "code": "chaeyeon",
+          "name": "채연",
+          "mood": "calm",
+          "uttered": false
+        },
+        {
+          "code": "minseok",
+          "name": "민석",
+          "mood": "calm",
+          "uttered": false
+        },
+        {
+          "code": "eunsang",
+          "name": "은상",
+          "mood": "calm",
+          "uttered": false
+        },
+        {
+          "code": "jun",
+          "name": "준",
+          "mood": "calm",
+          "uttered": false
+        }
+      ]
+    }
+  },
+  {
+    "status": 200,
+    "path": "/loops/6e82df73-0e1b-4f8a-b8e6-8018f8e5d619/beats/next",
+    "body": {
+      "beat": 4,
+      "beat_title": "오후 — 검진",
+      "narration": "흰 옷 입은 사람들이 침상 사이를 지나간다. 종이에 적는 소리가 난다. 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+      "budget_left": 8,
+      "broadcast": "오후 검진이 있겠습니다. 각자 자리에서 대기합니다.",
+      "paw_offer": null,
+      "day_done": false,
+      "illustrations": [
+        {
+          "image_id": "clue-12",
+          "caption": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다."
+        }
+      ],
+      "ambient": null,
+      "note_found": {
+        "id": 211,
+        "kind": "fragment",
+        "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다."
+      },
+      "observations": [
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-4-채연-검진을 받는다",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-4",
+          "scene_title": "오후 — 검진",
+          "actor": "채연",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-12",
+              "caption": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-4",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-4",
+          "scene_title": "오후 — 검진",
+          "actor": null,
+          "text": "흰 옷 입은 사람들이 침상 사이를 지나간다. 종이에 적는 소리가 난다. 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-12",
+              "caption": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:broadcast-4",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-4",
+          "scene_title": "오후 — 검진",
+          "actor": null,
+          "text": "오후 검진이 있겠습니다. 각자 자리에서 대기합니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-4-clue-12",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-4",
+          "scene_title": "오후 — 검진",
+          "actor": null,
+          "text": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-12",
+              "caption": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다."
+            }
+          ],
+          "rule_id": null
+        }
+      ]
+    }
+  },
+  {
+    "status": 200,
+    "path": "/loops/6e82df73-0e1b-4f8a-b8e6-8018f8e5d619/npcs",
+    "body": {
+      "npcs": [
+        {
+          "code": "chaeyeon",
+          "name": "채연",
+          "mood": "calm",
+          "uttered": false
+        },
+        {
+          "code": "minseok",
+          "name": "민석",
+          "mood": "calm",
+          "uttered": false
+        },
+        {
+          "code": "eunsang",
+          "name": "은상",
+          "mood": "calm",
+          "uttered": false
+        },
+        {
+          "code": "jun",
+          "name": "준",
+          "mood": "calm",
+          "uttered": false
+        }
+      ]
+    }
+  },
+  {
+    "status": 200,
+    "path": "/loops/6e82df73-0e1b-4f8a-b8e6-8018f8e5d619/beats/next",
+    "body": {
+      "beat": 5,
+      "beat_title": "저녁",
+      "narration": "어둑해진 방. 음식이 남은 쟁반 세 개가 보인다. 은상이 사람들 사이를 오가며 귓속말을 한다. 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+      "budget_left": 8,
+      "broadcast": null,
+      "paw_offer": null,
+      "day_done": false,
+      "illustrations": [
+        {
+          "image_id": "clue-04",
+          "caption": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다."
+        },
+        {
+          "image_id": "clue-10",
+          "caption": "은상이 사람들 사이에서 귓속말을 한다."
+        },
+        {
+          "image_id": "clue-09",
+          "caption": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다."
+        }
+      ],
+      "ambient": null,
+      "note_found": {
+        "id": 215,
+        "kind": "fragment",
+        "text": "은상이 사람들 사이를 오가며 귓속말을 한다."
+      },
+      "observations": [
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-5-은상-소문을 낸다",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+          "scene_title": "저녁",
+          "actor": "은상",
+          "text": "은상이 사람들 사이를 오가며 귓속말을 한다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-10",
+              "caption": "은상이 사람들 사이에서 귓속말을 한다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-5-민석-방송실에 간다",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+          "scene_title": "저녁",
+          "actor": "민석",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-09",
+              "caption": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-5",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+          "scene_title": "저녁",
+          "actor": null,
+          "text": "어둑해진 방. 음식이 남은 쟁반 세 개가 보인다. 은상이 사람들 사이를 오가며 귓속말을 한다. 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-04",
+              "caption": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다."
+            },
+            {
+              "image_id": "clue-10",
+              "caption": "은상이 사람들 사이에서 귓속말을 한다."
+            },
+            {
+              "image_id": "clue-09",
+              "caption": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-5-clue-04",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+          "scene_title": "저녁",
+          "actor": null,
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-04",
+              "caption": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-5-clue-10",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+          "scene_title": "저녁",
+          "actor": null,
+          "text": "은상이 사람들 사이에서 귓속말을 한다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-10",
+              "caption": "은상이 사람들 사이에서 귓속말을 한다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-5-clue-09",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+          "scene_title": "저녁",
+          "actor": null,
+          "text": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-09",
+              "caption": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다."
+            }
+          ],
+          "rule_id": null
+        }
+      ]
+    }
+  },
+  {
+    "status": 200,
+    "path": "/loops/6e82df73-0e1b-4f8a-b8e6-8018f8e5d619/npcs",
+    "body": {
+      "npcs": [
+        {
+          "code": "chaeyeon",
+          "name": "채연",
+          "mood": "calm",
+          "uttered": false
+        },
+        {
+          "code": "minseok",
+          "name": "민석",
+          "mood": "calm",
+          "uttered": false
+        },
+        {
+          "code": "eunsang",
+          "name": "은상",
+          "mood": "calm",
+          "uttered": false
+        },
+        {
+          "code": "jun",
+          "name": "준",
+          "mood": "calm",
+          "uttered": false
+        }
+      ]
+    }
+  },
+  {
+    "status": 200,
+    "path": "/loops/6e82df73-0e1b-4f8a-b8e6-8018f8e5d619/beats/next",
+    "body": {
+      "beat": 6,
+      "beat_title": "소등 후",
+      "narration": "불이 꺼진다. 어둠 속에서 다들 숨소리를 죽인다.",
+      "budget_left": 8,
+      "broadcast": "소등하겠습니다. 모두 자리에서 움직이지 않습니다.",
+      "paw_offer": null,
+      "day_done": false,
+      "illustrations": [],
+      "ambient": null,
+      "note_found": {
+        "id": 221,
+        "kind": "fragment",
+        "text": "불이 꺼진다. 어둠 속에서 다들 숨소리를 죽인다."
+      },
+      "observations": [
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-6",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 6,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-6",
+          "scene_title": "소등 후",
+          "actor": null,
+          "text": "불이 꺼진다. 어둠 속에서 다들 숨소리를 죽인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:broadcast-6",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 6,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-6",
+          "scene_title": "소등 후",
+          "actor": null,
+          "text": "소등하겠습니다. 모두 자리에서 움직이지 않습니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ]
+    }
+  },
+  {
+    "status": 200,
+    "path": "/loops/6e82df73-0e1b-4f8a-b8e6-8018f8e5d619/npcs",
+    "body": {
+      "npcs": [
+        {
+          "code": "chaeyeon",
+          "name": "채연",
+          "mood": "calm",
+          "uttered": false
+        },
+        {
+          "code": "minseok",
+          "name": "민석",
+          "mood": "calm",
+          "uttered": false
+        },
+        {
+          "code": "eunsang",
+          "name": "은상",
+          "mood": "calm",
+          "uttered": false
+        },
+        {
+          "code": "jun",
+          "name": "준",
+          "mood": "calm",
+          "uttered": false
+        }
+      ]
+    }
+  },
+  {
+    "status": 200,
+    "path": "/loops/6e82df73-0e1b-4f8a-b8e6-8018f8e5d619/beats/next",
+    "body": {
+      "beat": 6,
+      "beat_title": "",
+      "narration": "",
+      "broadcast": null,
+      "paw_offer": null,
+      "day_done": true,
+      "ambient": null,
+      "note_found": null,
+      "illustrations": [],
+      "observations": [],
+      "budget_left": 8
+    }
+  },
+  {
+    "status": 200,
+    "path": "/loops/6e82df73-0e1b-4f8a-b8e6-8018f8e5d619/npcs",
+    "body": {
+      "npcs": [
+        {
+          "code": "chaeyeon",
+          "name": "채연",
+          "mood": "calm",
+          "uttered": false
+        },
+        {
+          "code": "minseok",
+          "name": "민석",
+          "mood": "calm",
+          "uttered": false
+        },
+        {
+          "code": "eunsang",
+          "name": "은상",
+          "mood": "calm",
+          "uttered": false
+        },
+        {
+          "code": "jun",
+          "name": "준",
+          "mood": "calm",
+          "uttered": false
+        }
+      ]
+    }
+  },
+  {
+    "status": 200,
+    "path": "/loops/6e82df73-0e1b-4f8a-b8e6-8018f8e5d619/notes",
+    "body": {
+      "notes": [
+        {
+          "id": 195,
+          "kind": "fragment",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-1-채연-배급을 남긴다"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-1-채연-배급을 남긴다",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 1,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+              "scene_title": "기상 — 7:12",
+              "actor": "채연",
+              "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-01",
+                  "caption": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 196,
+          "kind": "fragment",
+          "text": "스피커가 켜지고 배급 줄이 생긴다. 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-1"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-1",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 1,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+              "scene_title": "기상 — 7:12",
+              "actor": null,
+              "text": "스피커가 켜지고 배급 줄이 생긴다. 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-07",
+                  "caption": "관리자의 방송 아래 네 사람이 배급을 기다린다."
+                },
+                {
+                  "image_id": "clue-01",
+                  "caption": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 197,
+          "kind": "fragment",
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:broadcast-1"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:broadcast-1",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 1,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+              "scene_title": "기상 — 7:12",
+              "actor": null,
+              "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+              "source_kind": "statement",
+              "verification": "reported",
+              "illustrations": [],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 198,
+          "kind": "fragment",
+          "text": "관리자의 방송 아래 네 사람이 배급을 기다린다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-1-clue-07"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-1-clue-07",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 1,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+              "scene_title": "기상 — 7:12",
+              "actor": null,
+              "text": "관리자의 방송 아래 네 사람이 배급을 기다린다.",
+              "source_kind": "image",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-07",
+                  "caption": "관리자의 방송 아래 네 사람이 배급을 기다린다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 199,
+          "kind": "fragment",
+          "text": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-1-clue-01"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-1-clue-01",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 1,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+              "scene_title": "기상 — 7:12",
+              "actor": null,
+              "text": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다.",
+              "source_kind": "image",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-01",
+                  "caption": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 200,
+          "kind": "fragment",
+          "text": "소독약 냄새.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:fragment-0"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:fragment-0",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 1,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+              "scene_title": "기상 — 7:12",
+              "actor": null,
+              "text": "소독약 냄새.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 201,
+          "kind": "fragment",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-2-준-손목띠를 만진다"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-2-준-손목띠를 만진다",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 2,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+              "scene_title": "오전 — 자유 시간",
+              "actor": "준",
+              "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-11",
+                  "caption": "준이 숫자가 적힌 띠를 들여다본다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 202,
+          "kind": "fragment",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-2-은상-소문을 낸다"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-2-은상-소문을 낸다",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 2,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+              "scene_title": "오전 — 자유 시간",
+              "actor": "은상",
+              "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-10",
+                  "caption": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 203,
+          "kind": "fragment",
+          "text": "할 일이 없는 시간. 채연이 담요를 쓰고 벽 쪽을 본다. 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\" 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-2"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-2",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 2,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+              "scene_title": "오전 — 자유 시간",
+              "actor": null,
+              "text": "할 일이 없는 시간. 채연이 담요를 쓰고 벽 쪽을 본다. 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\" 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-11",
+                  "caption": "준이 숫자가 적힌 띠를 들여다본다."
+                },
+                {
+                  "image_id": "clue-10",
+                  "caption": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 204,
+          "kind": "fragment",
+          "text": "준이 숫자가 적힌 띠를 들여다본다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-2-clue-11"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-2-clue-11",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 2,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+              "scene_title": "오전 — 자유 시간",
+              "actor": null,
+              "text": "준이 숫자가 적힌 띠를 들여다본다.",
+              "source_kind": "image",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-11",
+                  "caption": "준이 숫자가 적힌 띠를 들여다본다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 205,
+          "kind": "fragment",
+          "text": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-2-clue-10"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-2-clue-10",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 2,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+              "scene_title": "오전 — 자유 시간",
+              "actor": null,
+              "text": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다.",
+              "source_kind": "image",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-10",
+                  "caption": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 206,
+          "kind": "fragment",
+          "text": "발 아래 콘크리트가 차다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:fragment-2"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:fragment-2",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 2,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+              "scene_title": "오전 — 자유 시간",
+              "actor": null,
+              "text": "발 아래 콘크리트가 차다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 207,
+          "kind": "fragment",
+          "text": "채연이 쟁반을 밀어낸다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-3-채연-배급을 남긴다"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-3-채연-배급을 남긴다",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 3,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-3",
+              "scene_title": "정오 — 배급",
+              "actor": "채연",
+              "text": "채연이 쟁반을 밀어낸다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 208,
+          "kind": "fragment",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-3-민석-기록한다"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-3-민석-기록한다",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 3,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-3",
+              "scene_title": "정오 — 배급",
+              "actor": "민석",
+              "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-08",
+                  "caption": "민석이 배급 자리 옆에서 수첩에 기록한다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 209,
+          "kind": "fragment",
+          "text": "정오 배급이 나온다. 채연이 쟁반을 밀어낸다. 민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-3"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-3",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 3,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-3",
+              "scene_title": "정오 — 배급",
+              "actor": null,
+              "text": "정오 배급이 나온다. 채연이 쟁반을 밀어낸다. 민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-08",
+                  "caption": "민석이 배급 자리 옆에서 수첩에 기록한다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 210,
+          "kind": "fragment",
+          "text": "민석이 배급 자리 옆에서 수첩에 기록한다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-3-clue-08"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-3-clue-08",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 3,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-3",
+              "scene_title": "정오 — 배급",
+              "actor": null,
+              "text": "민석이 배급 자리 옆에서 수첩에 기록한다.",
+              "source_kind": "image",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-08",
+                  "caption": "민석이 배급 자리 옆에서 수첩에 기록한다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 211,
+          "kind": "fragment",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-4-채연-검진을 받는다"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-4-채연-검진을 받는다",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 4,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-4",
+              "scene_title": "오후 — 검진",
+              "actor": "채연",
+              "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-12",
+                  "caption": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 212,
+          "kind": "fragment",
+          "text": "흰 옷 입은 사람들이 침상 사이를 지나간다. 종이에 적는 소리가 난다. 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-4"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-4",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 4,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-4",
+              "scene_title": "오후 — 검진",
+              "actor": null,
+              "text": "흰 옷 입은 사람들이 침상 사이를 지나간다. 종이에 적는 소리가 난다. 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-12",
+                  "caption": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 213,
+          "kind": "fragment",
+          "text": "오후 검진이 있겠습니다. 각자 자리에서 대기합니다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:broadcast-4"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:broadcast-4",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 4,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-4",
+              "scene_title": "오후 — 검진",
+              "actor": null,
+              "text": "오후 검진이 있겠습니다. 각자 자리에서 대기합니다.",
+              "source_kind": "statement",
+              "verification": "reported",
+              "illustrations": [],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 214,
+          "kind": "fragment",
+          "text": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-4-clue-12"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-4-clue-12",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 4,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-4",
+              "scene_title": "오후 — 검진",
+              "actor": null,
+              "text": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다.",
+              "source_kind": "image",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-12",
+                  "caption": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 215,
+          "kind": "fragment",
+          "text": "은상이 사람들 사이를 오가며 귓속말을 한다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-5-은상-소문을 낸다"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-5-은상-소문을 낸다",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 5,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+              "scene_title": "저녁",
+              "actor": "은상",
+              "text": "은상이 사람들 사이를 오가며 귓속말을 한다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-10",
+                  "caption": "은상이 사람들 사이에서 귓속말을 한다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 216,
+          "kind": "fragment",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-5-민석-방송실에 간다"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-5-민석-방송실에 간다",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 5,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+              "scene_title": "저녁",
+              "actor": "민석",
+              "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-09",
+                  "caption": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 217,
+          "kind": "fragment",
+          "text": "어둑해진 방. 음식이 남은 쟁반 세 개가 보인다. 은상이 사람들 사이를 오가며 귓속말을 한다. 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-5"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-5",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 5,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+              "scene_title": "저녁",
+              "actor": null,
+              "text": "어둑해진 방. 음식이 남은 쟁반 세 개가 보인다. 은상이 사람들 사이를 오가며 귓속말을 한다. 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-04",
+                  "caption": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다."
+                },
+                {
+                  "image_id": "clue-10",
+                  "caption": "은상이 사람들 사이에서 귓속말을 한다."
+                },
+                {
+                  "image_id": "clue-09",
+                  "caption": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 218,
+          "kind": "fragment",
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-5-clue-04"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-5-clue-04",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 5,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+              "scene_title": "저녁",
+              "actor": null,
+              "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+              "source_kind": "image",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-04",
+                  "caption": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 219,
+          "kind": "fragment",
+          "text": "은상이 사람들 사이에서 귓속말을 한다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-5-clue-10"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-5-clue-10",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 5,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+              "scene_title": "저녁",
+              "actor": null,
+              "text": "은상이 사람들 사이에서 귓속말을 한다.",
+              "source_kind": "image",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-10",
+                  "caption": "은상이 사람들 사이에서 귓속말을 한다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 220,
+          "kind": "fragment",
+          "text": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-5-clue-09"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-5-clue-09",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 5,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+              "scene_title": "저녁",
+              "actor": null,
+              "text": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다.",
+              "source_kind": "image",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-09",
+                  "caption": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 221,
+          "kind": "fragment",
+          "text": "불이 꺼진다. 어둠 속에서 다들 숨소리를 죽인다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-6"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-6",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 6,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-6",
+              "scene_title": "소등 후",
+              "actor": null,
+              "text": "불이 꺼진다. 어둠 속에서 다들 숨소리를 죽인다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 222,
+          "kind": "fragment",
+          "text": "소등하겠습니다. 모두 자리에서 움직이지 않습니다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:broadcast-6"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:broadcast-6",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 6,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-6",
+              "scene_title": "소등 후",
+              "actor": null,
+              "text": "소등하겠습니다. 모두 자리에서 움직이지 않습니다.",
+              "source_kind": "statement",
+              "verification": "reported",
+              "illustrations": [],
+              "rule_id": null
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "status": 200,
+    "path": "/loops/6e82df73-0e1b-4f8a-b8e6-8018f8e5d619/observations",
+    "body": {
+      "observations": [
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-1-채연-배급을 남긴다",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+          "scene_title": "기상 — 7:12",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-01",
+              "caption": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-1",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+          "scene_title": "기상 — 7:12",
+          "actor": null,
+          "text": "스피커가 켜지고 배급 줄이 생긴다. 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-07",
+              "caption": "관리자의 방송 아래 네 사람이 배급을 기다린다."
+            },
+            {
+              "image_id": "clue-01",
+              "caption": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:broadcast-1",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+          "scene_title": "기상 — 7:12",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-1-clue-07",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+          "scene_title": "기상 — 7:12",
+          "actor": null,
+          "text": "관리자의 방송 아래 네 사람이 배급을 기다린다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-07",
+              "caption": "관리자의 방송 아래 네 사람이 배급을 기다린다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-1-clue-01",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+          "scene_title": "기상 — 7:12",
+          "actor": null,
+          "text": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-01",
+              "caption": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:fragment-0",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+          "scene_title": "기상 — 7:12",
+          "actor": null,
+          "text": "소독약 냄새.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-2-준-손목띠를 만진다",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+          "scene_title": "오전 — 자유 시간",
+          "actor": "준",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-11",
+              "caption": "준이 숫자가 적힌 띠를 들여다본다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-2-은상-소문을 낸다",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+          "scene_title": "오전 — 자유 시간",
+          "actor": "은상",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-10",
+              "caption": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-2",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+          "scene_title": "오전 — 자유 시간",
+          "actor": null,
+          "text": "할 일이 없는 시간. 채연이 담요를 쓰고 벽 쪽을 본다. 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\" 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-11",
+              "caption": "준이 숫자가 적힌 띠를 들여다본다."
+            },
+            {
+              "image_id": "clue-10",
+              "caption": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-2-clue-11",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+          "scene_title": "오전 — 자유 시간",
+          "actor": null,
+          "text": "준이 숫자가 적힌 띠를 들여다본다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-11",
+              "caption": "준이 숫자가 적힌 띠를 들여다본다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-2-clue-10",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+          "scene_title": "오전 — 자유 시간",
+          "actor": null,
+          "text": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-10",
+              "caption": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:fragment-2",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+          "scene_title": "오전 — 자유 시간",
+          "actor": null,
+          "text": "발 아래 콘크리트가 차다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-3-채연-배급을 남긴다",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-3",
+          "scene_title": "정오 — 배급",
+          "actor": "채연",
+          "text": "채연이 쟁반을 밀어낸다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-3-민석-기록한다",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-3",
+          "scene_title": "정오 — 배급",
+          "actor": "민석",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-08",
+              "caption": "민석이 배급 자리 옆에서 수첩에 기록한다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-3",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-3",
+          "scene_title": "정오 — 배급",
+          "actor": null,
+          "text": "정오 배급이 나온다. 채연이 쟁반을 밀어낸다. 민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-08",
+              "caption": "민석이 배급 자리 옆에서 수첩에 기록한다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-3-clue-08",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-3",
+          "scene_title": "정오 — 배급",
+          "actor": null,
+          "text": "민석이 배급 자리 옆에서 수첩에 기록한다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-08",
+              "caption": "민석이 배급 자리 옆에서 수첩에 기록한다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-4-채연-검진을 받는다",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-4",
+          "scene_title": "오후 — 검진",
+          "actor": "채연",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-12",
+              "caption": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-4",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-4",
+          "scene_title": "오후 — 검진",
+          "actor": null,
+          "text": "흰 옷 입은 사람들이 침상 사이를 지나간다. 종이에 적는 소리가 난다. 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-12",
+              "caption": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:broadcast-4",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-4",
+          "scene_title": "오후 — 검진",
+          "actor": null,
+          "text": "오후 검진이 있겠습니다. 각자 자리에서 대기합니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-4-clue-12",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-4",
+          "scene_title": "오후 — 검진",
+          "actor": null,
+          "text": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-12",
+              "caption": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-5-은상-소문을 낸다",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+          "scene_title": "저녁",
+          "actor": "은상",
+          "text": "은상이 사람들 사이를 오가며 귓속말을 한다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-10",
+              "caption": "은상이 사람들 사이에서 귓속말을 한다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-5-민석-방송실에 간다",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+          "scene_title": "저녁",
+          "actor": "민석",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-09",
+              "caption": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-5",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+          "scene_title": "저녁",
+          "actor": null,
+          "text": "어둑해진 방. 음식이 남은 쟁반 세 개가 보인다. 은상이 사람들 사이를 오가며 귓속말을 한다. 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-04",
+              "caption": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다."
+            },
+            {
+              "image_id": "clue-10",
+              "caption": "은상이 사람들 사이에서 귓속말을 한다."
+            },
+            {
+              "image_id": "clue-09",
+              "caption": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-5-clue-04",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+          "scene_title": "저녁",
+          "actor": null,
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-04",
+              "caption": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-5-clue-10",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+          "scene_title": "저녁",
+          "actor": null,
+          "text": "은상이 사람들 사이에서 귓속말을 한다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-10",
+              "caption": "은상이 사람들 사이에서 귓속말을 한다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-5-clue-09",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+          "scene_title": "저녁",
+          "actor": null,
+          "text": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-09",
+              "caption": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-6",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 6,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-6",
+          "scene_title": "소등 후",
+          "actor": null,
+          "text": "불이 꺼진다. 어둠 속에서 다들 숨소리를 죽인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:broadcast-6",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 6,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-6",
+          "scene_title": "소등 후",
+          "actor": null,
+          "text": "소등하겠습니다. 모두 자리에서 움직이지 않습니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ]
+    }
+  },
+  {
+    "status": 200,
+    "path": "/loops/6e82df73-0e1b-4f8a-b8e6-8018f8e5d619/night/previous",
+    "body": {
+      "previous_answer": null
+    }
+  },
+  {
+    "status": 200,
+    "path": "/loops/6e82df73-0e1b-4f8a-b8e6-8018f8e5d619/night/previous",
+    "body": {
+      "previous_answer": null
+    }
+  },
+  {
+    "status": 200,
+    "path": "/loops/6e82df73-0e1b-4f8a-b8e6-8018f8e5d619/notes",
+    "body": {
+      "notes": [
+        {
+          "id": 195,
+          "kind": "fragment",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-1-채연-배급을 남긴다"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-1-채연-배급을 남긴다",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 1,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+              "scene_title": "기상 — 7:12",
+              "actor": "채연",
+              "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-01",
+                  "caption": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 196,
+          "kind": "fragment",
+          "text": "스피커가 켜지고 배급 줄이 생긴다. 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-1"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-1",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 1,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+              "scene_title": "기상 — 7:12",
+              "actor": null,
+              "text": "스피커가 켜지고 배급 줄이 생긴다. 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-07",
+                  "caption": "관리자의 방송 아래 네 사람이 배급을 기다린다."
+                },
+                {
+                  "image_id": "clue-01",
+                  "caption": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 197,
+          "kind": "fragment",
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:broadcast-1"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:broadcast-1",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 1,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+              "scene_title": "기상 — 7:12",
+              "actor": null,
+              "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+              "source_kind": "statement",
+              "verification": "reported",
+              "illustrations": [],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 198,
+          "kind": "fragment",
+          "text": "관리자의 방송 아래 네 사람이 배급을 기다린다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-1-clue-07"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-1-clue-07",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 1,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+              "scene_title": "기상 — 7:12",
+              "actor": null,
+              "text": "관리자의 방송 아래 네 사람이 배급을 기다린다.",
+              "source_kind": "image",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-07",
+                  "caption": "관리자의 방송 아래 네 사람이 배급을 기다린다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 199,
+          "kind": "fragment",
+          "text": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-1-clue-01"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-1-clue-01",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 1,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+              "scene_title": "기상 — 7:12",
+              "actor": null,
+              "text": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다.",
+              "source_kind": "image",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-01",
+                  "caption": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 200,
+          "kind": "fragment",
+          "text": "소독약 냄새.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:fragment-0"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:fragment-0",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 1,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+              "scene_title": "기상 — 7:12",
+              "actor": null,
+              "text": "소독약 냄새.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 201,
+          "kind": "fragment",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-2-준-손목띠를 만진다"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-2-준-손목띠를 만진다",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 2,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+              "scene_title": "오전 — 자유 시간",
+              "actor": "준",
+              "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-11",
+                  "caption": "준이 숫자가 적힌 띠를 들여다본다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 202,
+          "kind": "fragment",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-2-은상-소문을 낸다"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-2-은상-소문을 낸다",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 2,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+              "scene_title": "오전 — 자유 시간",
+              "actor": "은상",
+              "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-10",
+                  "caption": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 203,
+          "kind": "fragment",
+          "text": "할 일이 없는 시간. 채연이 담요를 쓰고 벽 쪽을 본다. 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\" 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-2"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-2",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 2,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+              "scene_title": "오전 — 자유 시간",
+              "actor": null,
+              "text": "할 일이 없는 시간. 채연이 담요를 쓰고 벽 쪽을 본다. 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\" 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-11",
+                  "caption": "준이 숫자가 적힌 띠를 들여다본다."
+                },
+                {
+                  "image_id": "clue-10",
+                  "caption": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 204,
+          "kind": "fragment",
+          "text": "준이 숫자가 적힌 띠를 들여다본다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-2-clue-11"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-2-clue-11",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 2,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+              "scene_title": "오전 — 자유 시간",
+              "actor": null,
+              "text": "준이 숫자가 적힌 띠를 들여다본다.",
+              "source_kind": "image",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-11",
+                  "caption": "준이 숫자가 적힌 띠를 들여다본다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 205,
+          "kind": "fragment",
+          "text": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-2-clue-10"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-2-clue-10",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 2,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+              "scene_title": "오전 — 자유 시간",
+              "actor": null,
+              "text": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다.",
+              "source_kind": "image",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-10",
+                  "caption": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 206,
+          "kind": "fragment",
+          "text": "발 아래 콘크리트가 차다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:fragment-2"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:fragment-2",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 2,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+              "scene_title": "오전 — 자유 시간",
+              "actor": null,
+              "text": "발 아래 콘크리트가 차다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 207,
+          "kind": "fragment",
+          "text": "채연이 쟁반을 밀어낸다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-3-채연-배급을 남긴다"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-3-채연-배급을 남긴다",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 3,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-3",
+              "scene_title": "정오 — 배급",
+              "actor": "채연",
+              "text": "채연이 쟁반을 밀어낸다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 208,
+          "kind": "fragment",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-3-민석-기록한다"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-3-민석-기록한다",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 3,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-3",
+              "scene_title": "정오 — 배급",
+              "actor": "민석",
+              "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-08",
+                  "caption": "민석이 배급 자리 옆에서 수첩에 기록한다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 209,
+          "kind": "fragment",
+          "text": "정오 배급이 나온다. 채연이 쟁반을 밀어낸다. 민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-3"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-3",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 3,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-3",
+              "scene_title": "정오 — 배급",
+              "actor": null,
+              "text": "정오 배급이 나온다. 채연이 쟁반을 밀어낸다. 민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-08",
+                  "caption": "민석이 배급 자리 옆에서 수첩에 기록한다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 210,
+          "kind": "fragment",
+          "text": "민석이 배급 자리 옆에서 수첩에 기록한다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-3-clue-08"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-3-clue-08",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 3,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-3",
+              "scene_title": "정오 — 배급",
+              "actor": null,
+              "text": "민석이 배급 자리 옆에서 수첩에 기록한다.",
+              "source_kind": "image",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-08",
+                  "caption": "민석이 배급 자리 옆에서 수첩에 기록한다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 211,
+          "kind": "fragment",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-4-채연-검진을 받는다"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-4-채연-검진을 받는다",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 4,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-4",
+              "scene_title": "오후 — 검진",
+              "actor": "채연",
+              "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-12",
+                  "caption": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 212,
+          "kind": "fragment",
+          "text": "흰 옷 입은 사람들이 침상 사이를 지나간다. 종이에 적는 소리가 난다. 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-4"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-4",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 4,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-4",
+              "scene_title": "오후 — 검진",
+              "actor": null,
+              "text": "흰 옷 입은 사람들이 침상 사이를 지나간다. 종이에 적는 소리가 난다. 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-12",
+                  "caption": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 213,
+          "kind": "fragment",
+          "text": "오후 검진이 있겠습니다. 각자 자리에서 대기합니다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:broadcast-4"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:broadcast-4",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 4,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-4",
+              "scene_title": "오후 — 검진",
+              "actor": null,
+              "text": "오후 검진이 있겠습니다. 각자 자리에서 대기합니다.",
+              "source_kind": "statement",
+              "verification": "reported",
+              "illustrations": [],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 214,
+          "kind": "fragment",
+          "text": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-4-clue-12"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-4-clue-12",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 4,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-4",
+              "scene_title": "오후 — 검진",
+              "actor": null,
+              "text": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다.",
+              "source_kind": "image",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-12",
+                  "caption": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 215,
+          "kind": "fragment",
+          "text": "은상이 사람들 사이를 오가며 귓속말을 한다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-5-은상-소문을 낸다"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-5-은상-소문을 낸다",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 5,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+              "scene_title": "저녁",
+              "actor": "은상",
+              "text": "은상이 사람들 사이를 오가며 귓속말을 한다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-10",
+                  "caption": "은상이 사람들 사이에서 귓속말을 한다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 216,
+          "kind": "fragment",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-5-민석-방송실에 간다"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-5-민석-방송실에 간다",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 5,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+              "scene_title": "저녁",
+              "actor": "민석",
+              "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-09",
+                  "caption": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 217,
+          "kind": "fragment",
+          "text": "어둑해진 방. 음식이 남은 쟁반 세 개가 보인다. 은상이 사람들 사이를 오가며 귓속말을 한다. 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-5"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-5",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 5,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+              "scene_title": "저녁",
+              "actor": null,
+              "text": "어둑해진 방. 음식이 남은 쟁반 세 개가 보인다. 은상이 사람들 사이를 오가며 귓속말을 한다. 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-04",
+                  "caption": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다."
+                },
+                {
+                  "image_id": "clue-10",
+                  "caption": "은상이 사람들 사이에서 귓속말을 한다."
+                },
+                {
+                  "image_id": "clue-09",
+                  "caption": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 218,
+          "kind": "fragment",
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-5-clue-04"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-5-clue-04",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 5,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+              "scene_title": "저녁",
+              "actor": null,
+              "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+              "source_kind": "image",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-04",
+                  "caption": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 219,
+          "kind": "fragment",
+          "text": "은상이 사람들 사이에서 귓속말을 한다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-5-clue-10"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-5-clue-10",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 5,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+              "scene_title": "저녁",
+              "actor": null,
+              "text": "은상이 사람들 사이에서 귓속말을 한다.",
+              "source_kind": "image",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-10",
+                  "caption": "은상이 사람들 사이에서 귓속말을 한다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 220,
+          "kind": "fragment",
+          "text": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-5-clue-09"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-5-clue-09",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 5,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+              "scene_title": "저녁",
+              "actor": null,
+              "text": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다.",
+              "source_kind": "image",
+              "verification": "observed",
+              "illustrations": [
+                {
+                  "image_id": "clue-09",
+                  "caption": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다."
+                }
+              ],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 221,
+          "kind": "fragment",
+          "text": "불이 꺼진다. 어둠 속에서 다들 숨소리를 죽인다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-6"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-6",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 6,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-6",
+              "scene_title": "소등 후",
+              "actor": null,
+              "text": "불이 꺼진다. 어둠 속에서 다들 숨소리를 죽인다.",
+              "source_kind": "scene",
+              "verification": "observed",
+              "illustrations": [],
+              "rule_id": null
+            }
+          ]
+        },
+        {
+          "id": 222,
+          "kind": "fragment",
+          "text": "소등하겠습니다. 모두 자리에서 움직이지 않습니다.",
+          "loop_n": 1,
+          "observation_ids": [
+            "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:broadcast-6"
+          ],
+          "sources": [
+            {
+              "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:broadcast-6",
+              "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+              "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+              "loop_n": 1,
+              "beat": 6,
+              "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-6",
+              "scene_title": "소등 후",
+              "actor": null,
+              "text": "소등하겠습니다. 모두 자리에서 움직이지 않습니다.",
+              "source_kind": "statement",
+              "verification": "reported",
+              "illustrations": [],
+              "rule_id": null
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "status": 200,
+    "path": "/loops/6e82df73-0e1b-4f8a-b8e6-8018f8e5d619/observations",
+    "body": {
+      "observations": [
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-1-채연-배급을 남긴다",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+          "scene_title": "기상 — 7:12",
+          "actor": "채연",
+          "text": "채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-01",
+              "caption": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-1",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+          "scene_title": "기상 — 7:12",
+          "actor": null,
+          "text": "스피커가 켜지고 배급 줄이 생긴다. 채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-07",
+              "caption": "관리자의 방송 아래 네 사람이 배급을 기다린다."
+            },
+            {
+              "image_id": "clue-01",
+              "caption": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:broadcast-1",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+          "scene_title": "기상 — 7:12",
+          "actor": null,
+          "text": "관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-1-clue-07",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+          "scene_title": "기상 — 7:12",
+          "actor": null,
+          "text": "관리자의 방송 아래 네 사람이 배급을 기다린다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-07",
+              "caption": "관리자의 방송 아래 네 사람이 배급을 기다린다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-1-clue-01",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+          "scene_title": "기상 — 7:12",
+          "actor": null,
+          "text": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-01",
+              "caption": "음식이 남은 쟁반 하나가 비스듬히 놓여 있다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:fragment-0",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 1,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-1",
+          "scene_title": "기상 — 7:12",
+          "actor": null,
+          "text": "소독약 냄새.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-2-준-손목띠를 만진다",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+          "scene_title": "오전 — 자유 시간",
+          "actor": "준",
+          "text": "준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\"",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-11",
+              "caption": "준이 숫자가 적힌 띠를 들여다본다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-2-은상-소문을 낸다",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+          "scene_title": "오전 — 자유 시간",
+          "actor": "은상",
+          "text": "은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-10",
+              "caption": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-2",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+          "scene_title": "오전 — 자유 시간",
+          "actor": null,
+          "text": "할 일이 없는 시간. 채연이 담요를 쓰고 벽 쪽을 본다. 준이 손목띠를 불빛에 비춰 본다. \"이 숫자 뭔지 알아?\" 은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-11",
+              "caption": "준이 숫자가 적힌 띠를 들여다본다."
+            },
+            {
+              "image_id": "clue-10",
+              "caption": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-2-clue-11",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+          "scene_title": "오전 — 자유 시간",
+          "actor": null,
+          "text": "준이 숫자가 적힌 띠를 들여다본다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-11",
+              "caption": "준이 숫자가 적힌 띠를 들여다본다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-2-clue-10",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+          "scene_title": "오전 — 자유 시간",
+          "actor": null,
+          "text": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-10",
+              "caption": "은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:fragment-2",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 2,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-2",
+          "scene_title": "오전 — 자유 시간",
+          "actor": null,
+          "text": "발 아래 콘크리트가 차다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-3-채연-배급을 남긴다",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-3",
+          "scene_title": "정오 — 배급",
+          "actor": "채연",
+          "text": "채연이 쟁반을 밀어낸다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-3-민석-기록한다",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-3",
+          "scene_title": "정오 — 배급",
+          "actor": "민석",
+          "text": "민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-08",
+              "caption": "민석이 배급 자리 옆에서 수첩에 기록한다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-3",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-3",
+          "scene_title": "정오 — 배급",
+          "actor": null,
+          "text": "정오 배급이 나온다. 채연이 쟁반을 밀어낸다. 민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-08",
+              "caption": "민석이 배급 자리 옆에서 수첩에 기록한다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-3-clue-08",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 3,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-3",
+          "scene_title": "정오 — 배급",
+          "actor": null,
+          "text": "민석이 배급 자리 옆에서 수첩에 기록한다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-08",
+              "caption": "민석이 배급 자리 옆에서 수첩에 기록한다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-4-채연-검진을 받는다",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-4",
+          "scene_title": "오후 — 검진",
+          "actor": "채연",
+          "text": "채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-12",
+              "caption": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-4",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-4",
+          "scene_title": "오후 — 검진",
+          "actor": null,
+          "text": "흰 옷 입은 사람들이 침상 사이를 지나간다. 종이에 적는 소리가 난다. 채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-12",
+              "caption": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:broadcast-4",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-4",
+          "scene_title": "오후 — 검진",
+          "actor": null,
+          "text": "오후 검진이 있겠습니다. 각자 자리에서 대기합니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-4-clue-12",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 4,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-4",
+          "scene_title": "오후 — 검진",
+          "actor": null,
+          "text": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-12",
+              "caption": "검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-5-은상-소문을 낸다",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+          "scene_title": "저녁",
+          "actor": "은상",
+          "text": "은상이 사람들 사이를 오가며 귓속말을 한다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-10",
+              "caption": "은상이 사람들 사이에서 귓속말을 한다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:action-5-민석-방송실에 간다",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+          "scene_title": "저녁",
+          "actor": "민석",
+          "text": "민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-09",
+              "caption": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-5",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+          "scene_title": "저녁",
+          "actor": null,
+          "text": "어둑해진 방. 음식이 남은 쟁반 세 개가 보인다. 은상이 사람들 사이를 오가며 귓속말을 한다. 민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-04",
+              "caption": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다."
+            },
+            {
+              "image_id": "clue-10",
+              "caption": "은상이 사람들 사이에서 귓속말을 한다."
+            },
+            {
+              "image_id": "clue-09",
+              "caption": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-5-clue-04",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+          "scene_title": "저녁",
+          "actor": null,
+          "text": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-04",
+              "caption": "저녁에는 음식이 남은 쟁반이 세 개 놓여 있다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-5-clue-10",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+          "scene_title": "저녁",
+          "actor": null,
+          "text": "은상이 사람들 사이에서 귓속말을 한다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-10",
+              "caption": "은상이 사람들 사이에서 귓속말을 한다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:image-5-clue-09",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 5,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-5",
+          "scene_title": "저녁",
+          "actor": null,
+          "text": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다.",
+          "source_kind": "image",
+          "verification": "observed",
+          "illustrations": [
+            {
+              "image_id": "clue-09",
+              "caption": "민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다."
+            }
+          ],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:scene-6",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 6,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-6",
+          "scene_title": "소등 후",
+          "actor": null,
+          "text": "불이 꺼진다. 어둠 속에서 다들 숨소리를 죽인다.",
+          "source_kind": "scene",
+          "verification": "observed",
+          "illustrations": [],
+          "rule_id": null
+        },
+        {
+          "observation_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:broadcast-6",
+          "attempt_id": "84ed0510-10af-461a-a4cb-bde26ca4537c",
+          "loop_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619",
+          "loop_n": 1,
+          "beat": 6,
+          "scene_id": "6e82df73-0e1b-4f8a-b8e6-8018f8e5d619:beat-6",
+          "scene_title": "소등 후",
+          "actor": null,
+          "text": "소등하겠습니다. 모두 자리에서 움직이지 않습니다.",
+          "source_kind": "statement",
+          "verification": "reported",
+          "illustrations": [],
+          "rule_id": null
+        }
+      ]
+    }
+  }
+]
