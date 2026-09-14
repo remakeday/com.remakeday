@@ -563,6 +563,132 @@ def stage_concurrency(spec, base_url, timeout, rounds):
     return out
 
 
+# ── Stage 4 — loop ───────────────────────────────────────────────────
+
+LOOP_DB_URL = "postgresql+psycopg://pigfarm:pigfarm-dev@localhost:5435/pigfarm_test"
+LOOP_PORT = 8600
+LOOP_PLAYER_MODEL = NPC_MODEL  # 상주 NPC 재사용 — 제3 모델 로드로 인한 축출 회피
+
+
+def _loop_harness_stats(attempt_id):
+    """서버 쪽 하네스 이벤트를 DB에서 직접 센다.
+
+    /attempts/{id}/harness 인스펙터는 다섯 번째 밤 종료 후에만 열리므로(AccessDenied)
+    1회차 스모크에서는 쓸 수 없다. events 테이블 읽기 전용 SELECT만 한다."""
+    from sqlalchemy import create_engine, text
+    eng = create_engine(LOOP_DB_URL)
+    try:
+        with eng.connect() as conn:
+            rows = conn.execute(text(
+                "SELECT payload->>'role' AS role, count(*) AS calls, "
+                "sum(CASE WHEN (payload->>'fallback_used')::bool THEN 1 ELSE 0 END) AS fallbacks, "
+                "sum((payload->>'attempts')::int) AS attempts "
+                "FROM events WHERE session_id = :sid AND type = 'harness_event' "
+                "GROUP BY 1 ORDER BY 1"), {"sid": attempt_id}).mappings().all()
+    finally:
+        eng.dispose()
+    per_role = {r["role"]: {"calls": int(r["calls"]), "fallbacks": int(r["fallbacks"] or 0),
+                            "attempts": int(r["attempts"] or 0)} for r in rows}
+    return {
+        "model_calls": sum(v["calls"] for v in per_role.values()),
+        "model_attempts": sum(v["attempts"] for v in per_role.values()),
+        "fallbacks": sum(v["fallbacks"] for v in per_role.values()),
+        "per_role": per_role,
+    }
+
+
+def _wait_health(client, secs):
+    deadline = time.monotonic() + secs
+    last = None
+    while time.monotonic() < deadline:
+        try:
+            res = client.get("/health")
+            if res.status_code == 200:
+                return res.json()
+        except Exception as exc:  # noqa: BLE001
+            last = exc
+        time.sleep(1.0)
+    raise RuntimeError(f"서버 health 대기 초과: {last}")
+
+
+def stage_loop(spec, base_url, timeout, out_dir):
+    """Stage 4 — 루프 스모크 (§4.1). 후보별로 별도 환경 서버(scripts.loop_app,
+    포트 8600, pigfarm_test DB)를 띄우고 selfplay(성실)로 1회차(낮 발화→비트→밤 제출)를
+    완주시킨다. 판정은 점수가 아니라 크래시 0·폴백 폭주 없음·완주다."""
+    import os
+    import random
+    import subprocess
+
+    import run_selfplay as sp
+
+    player_llm = rc.make_llm(LOOP_PLAYER_MODEL, base_url)
+    print(f"\n### E7 Stage 4 — loop · 후보 {len(spec)} · persona=성실 · loops=1 "
+          f"· player={LOOP_PLAYER_MODEL} · db=pigfarm_test\n", flush=True)
+    cells = []
+    for model, _think in spec:
+        # 격리: 후보·NPC 외 상주 모델 언로드
+        for m in ps_snapshot(base_url):
+            if m["model"] not in (model, NPC_MODEL):
+                unload_model(base_url, m["model"])
+        row = {"model": model, "think": "off", "persona": "성실", "loops": 1}
+        env = dict(os.environ)
+        env.update({"DATABASE_URL": LOOP_DB_URL, "CORE_LLM_PROVIDER": "ollama",
+                    "CORE_LLM_MODEL": model, "LOOP_CORE_TIMEOUT": str(timeout)})
+        slug = model.replace(":", "_").replace("/", "_")
+        log_path = out_dir / f"stage4-server-{slug}.log"
+        print(f"  … {model} — 서버 기동 (:{LOOP_PORT}, 로그 {log_path.name})", flush=True)
+        log_f = log_path.open("w", encoding="utf-8")
+        proc = subprocess.Popen(
+            [sys.executable, "-m", "uvicorn", "scripts.loop_app:app",
+             "--port", str(LOOP_PORT)],
+            cwd=rc.BACKEND_ROOT, env=env, stdout=log_f, stderr=subprocess.STDOUT)
+        client = httpx.Client(base_url=f"http://localhost:{LOOP_PORT}", timeout=timeout * 3)
+        t0 = time.monotonic()
+        try:
+            health = _wait_health(client, 60)
+            row["health_core"] = health["models"]["core"]
+            if health["models"]["core"] != f"ollama:{model}":
+                raise RuntimeError(f"core 라벨 불일치: {health['models']['core']}")
+            result = sp.play_game(client, player_llm, "성실", max_loops=1,
+                                  rng=random.Random(42), verbose=True)
+            row["attempt_id"] = result["attempt_id"]
+            row["scores"] = result["scores"]
+            row["completed"] = len(result["scores"]) == 1
+            dbg = client.get("/loop-debug").json()
+            row["core_calls"] = dbg["core_calls"]
+            row["thinking_chars_total"] = dbg["thinking_chars_total"]
+            row["think_off_verified"] = dbg["thinking_chars_total"] == 0  # 게이트 C9
+            stats = _loop_harness_stats(result["attempt_id"])
+            row["fallbacks"] = stats["fallbacks"]
+            row["model_calls"] = stats["model_calls"]
+            row["model_attempts"] = stats["model_attempts"]
+            row["per_role"] = stats["per_role"]
+            row["pair_ps"] = ps_snapshot(base_url)
+            row["crash"] = False
+        except Exception as exc:  # noqa: BLE001
+            row["crash"] = True
+            row["error"] = f"{type(exc).__name__}: {exc}"
+            row.setdefault("completed", False)
+        finally:
+            row["secs"] = round(time.monotonic() - t0, 1)
+            row["server_alive_at_end"] = proc.poll() is None
+            proc.terminate()
+            try:
+                proc.wait(timeout=10)
+            except subprocess.TimeoutExpired:
+                proc.kill()
+            log_f.close()
+            client.close()
+        row["gate_pass"] = bool(row.get("completed")) and not row["crash"] \
+            and row.get("server_alive_at_end", False)
+        cells.append(row)
+        status = "완주" if row.get("completed") else "미완주"
+        print(f"  {model}: {status} · 점수 {row.get('scores')} · 폴백 {row.get('fallbacks')} "
+              f"· core 콜 {row.get('core_calls')} · thinking {row.get('thinking_chars_total')}자 "
+              f"· {row['secs']}s · gate_pass={row['gate_pass']}", flush=True)
+    return cells
+
+
 def stage_formal(cells_spec, base_url, timeout, n, roles):
     print(f"\n### E7 Stage 2 — formal · {len(cells_spec)}셀 × 역할 {sorted(roles)} × n={n}\n", flush=True)
     out = []
@@ -590,7 +716,7 @@ def stage_formal(cells_spec, base_url, timeout, n, roles):
 def main() -> None:
     parser = argparse.ArgumentParser(description="E7 Core 슬롯 모델 선정")
     parser.add_argument("--stage", default="protocol",
-                        choices=["protocol", "smoke", "formal", "concurrency"])
+                        choices=["protocol", "smoke", "formal", "concurrency", "loop"])
     parser.add_argument("--roles", default=None,
                         help="formal 역할 필터 (advisor,planner,manager,evaluator 콤마 목록 · 기본 전부). smoke는 advisor 고정")
     parser.add_argument("--timeout", type=float, default=120.0, help="콜당 타임아웃 초 (기본 120)")
@@ -611,6 +737,39 @@ def main() -> None:
     for m in local:
         res = httpx.post(f"{base_url.rstrip('/')}/api/show", json={"model": m}, timeout=10.0)
         caps[m] = res.json().get("capabilities", [])
+
+    if args.stage == "loop":
+        # Stage 3 통과 후보 (docs/model_evaluation.md 부록 A.9)
+        spec = [("gemma4:12b", False), ("gemma4:e4b", False)]
+        spec = [c for c in spec if c[0] in models]
+        rc.check_ollama(base_url, [NPC_MODEL])
+        out_dir = rc.PROJECT_ROOT / args.out_dir
+        out_dir.mkdir(parents=True, exist_ok=True)
+        cells = stage_loop(spec, base_url, args.timeout, out_dir)
+        stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
+        path = out_dir / f"stage4-loop-{stamp}.json"
+        path.write_text(json.dumps({
+            "experiment": "E7", "stage": "loop", "npc": NPC_MODEL,
+            "player_model": LOOP_PLAYER_MODEL, "persona": "성실", "loops": 1,
+            "db": "pigfarm_test", "port": LOOP_PORT,
+            "started_at": stamp, "host": "rtx5060ti-16g", "runtime": "ollama-cuda",
+            "cells": cells,
+        }, ensure_ascii=False, indent=2), encoding="utf-8")
+        for row in cells:
+            rc.append_metric(
+                "docs/metrics.yml", "core_selection", row["model"],
+                think="off", stage="loop", persona="성실", loops=1,
+                completed=row.get("completed"), crash=row["crash"],
+                fallbacks=row.get("fallbacks"), core_calls=row.get("core_calls"),
+                model_calls=row.get("model_calls"), model_attempts=row.get("model_attempts"),
+                score=(row.get("scores") or [None])[0],
+                thinking_chars_total=row.get("thinking_chars_total"),
+                secs=row.get("secs"), attempt_id=row.get("attempt_id"),
+                npc=NPC_MODEL, player_model=LOOP_PLAYER_MODEL, db="pigfarm_test",
+                gate_pass=row["gate_pass"],
+                host="rtx5060ti-16g", runtime="ollama-cuda", quant="Q4_K_M")
+        print(f"\n원문 → {path}\nmetrics → docs/metrics.yml")
+        return
 
     if args.stage == "concurrency":
         # Stage 2 통과 후보 (docs/model_evaluation.md 부록 A.7·A.8)
