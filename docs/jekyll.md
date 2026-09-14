@@ -16,6 +16,20 @@ HANDOFF 1번 과제를 이행했다. `evaluator_verdict` 자작 통제 3건을 �
 - Stage 3 예산 참고: `exaone3.5:7.8b` 상주 실측 4.83 GiB(문서 4.14보다 큼). 재계산해도 두 후보 모두 여유.
 - 한계: 기대 판정은 사전 등록했으나 단일 저자 확정. Gemini `-N` 셀 응답에 `thought_signature` 파트 잔존(기록만). §5.3 비열등 선언은 보류. Stage 3·4 미실행 — "대체 가능"이라고 쓰지 않는다.
 
+### 본진 승격 마무리 — 전체 테스트 검증 후 demo.pigfarm 심볼릭 링크 제거
+
+`com.remakeday` 새 세션에서 전체 검증을 통과시킨 뒤 하위 호환용 심볼릭 링크를 제거했다.
+
+- **검증** — backend pytest 386 passed(7.5초, `.venv/bin/python -m pytest`), import-linter 4계약 0위반, frontend `next build` 성공(TypeScript 검사 포함, 전 라우트 생성 정상).
+- **주의점 발견** — `.venv/bin/pytest`로 직접 실행하면 cwd가 sys.path에 안 들어가 수집 오류 31건이 난다. `python -m pytest` 방식이 정본이다(마이그레이션 문제 아님).
+- **정리** — `~/projects/demo.pigfarm` 심볼릭 링크 삭제(13바이트 링크만 제거, 실파일 무손실). 구 경로가 박힌 `__pycache__` 전체 삭제 후 386 재통과 확인. 활성 문서 2건(`HANDOFF.md` 재현 경로, `demo_guide.md` cd 경로)을 `com.remakeday`로 갱신.
+- **구 경로 전수 치환** — 사용자 지시로 과거 기록 포함 프로젝트 전체의 `projects/demo.pigfarm` 경로 참조를 `com.remakeday`로 일괄 수정(`tester2.md`, backend-tests.txt 2건, final-validation-summary.txt — 같은 파일들을 가리키므로 기록 무손실). 예외 3종은 의도적 유지: ① `docker-compose.yml`의 `name: demopigfarm`(테스터 데이터 볼륨 `demopigfarm_pigfarm-db-data` 식별자 — 바꾸면 DB가 분리됨), ② `/tmp/demo-pigfarm-*` 스냅샷·diff 아티팩트명(그 이름으로 실존하는 파일), ③ 옛 저장소 이름 자체를 서술하는 역사 문장(본 로그 및 9/1 마이그레이션 항목).
+- 남은 것: `git push --force origin main`(사용자 승인 대기), `./start_demo.sh` 서버 기동 확인.
+
+### 데브로그 자동화 — 23:45 일일 기록 + beyondbob 지킬 연동
+
+다른 프로젝트(masterless 23:50·beyondfacade 23:55)와 같은 패턴으로 `scripts/jekyll-devlog.sh`를 만들었다. 매일 23:45에 ① `claude -p`가 당일 커밋·수정 파일을 근거로 이 파일(`docs/jekyll.md`)의 오늘 섹션을 추가/갱신하고, ② 오늘 섹션만 추출해 front matter(title·author: chungsik·tags)를 붙여 `beyondbob.remakeday.com/_posts/YYYY-MM-DD-dev-log.md`로 변환 복사한다. 역할 분리 — com.remakeday는 개발만, beyondbob은 지킬만. 지킬 쪽 포스트는 사본이라 직접 수정 금지(다음 실행 때 덮어씀). 커밋/푸시는 자동화하지 않는다(사용자 직접). awk 섹션 추출·포스트 변환은 오늘 섹션(22줄)으로 검증했고, crontab 등록(`45 23 * * *`)은 사용자 실행으로 마무리.
+
 ## 2026-09-13 — Core 슬롯 모델 평가(E7) 착수와 Stage 0~2 실행
 
 게임의 LLM 자리 7개를 정리하는 데서 시작해, Core 슬롯에 어떤 모델을 쓸지 실측으로 정하는 실험을 설계하고 3단계까지 돌렸다. 평가 정본은 `docs/model_evaluation.md`에 새로 만들었고 수치는 전부 거기에 적립한다.

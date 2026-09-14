@@ -3,7 +3,7 @@
 ## 기동
 
 ```bash
-cd ~/projects/demo.pigfarm
+cd ~/projects/com.remakeday
 ./start_demo.sh        # DB(5435) + 백엔드(8500) + 프론트(3500)
 ```
 

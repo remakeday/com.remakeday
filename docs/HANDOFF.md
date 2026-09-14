@@ -97,7 +97,7 @@ gemma4:e4b-N  pair peak  7.89 GiB · GPU  9,520/16,311 MiB
 ## 재현 방법
 
 ```bash
-cd /home/kimchungsik/projects/demo.pigfarm/backend
+cd /home/kimchungsik/projects/com.remakeday/backend
 
 # 환경 확인
 curl -s http://localhost:11434/api/tags | python3 -m json.tool | grep '"name"'

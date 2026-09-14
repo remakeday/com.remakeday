@@ -17,7 +17,7 @@ core 기본 모델은 사용자가 선택한 `gemini-3-flash-preview`이며 NPC�
 
 ## 시작 전 접속 확인 (2026-09-09 17:28:59 KST)
 
-- 이 지시는 별도 PC가 아니라 기존 작업 PC(`kimchungsik`, `/home/kimchungsik/projects/demo.pigfarm`)에서 받았다. 기동해 둔 frontend·backend 프로세스가 그대로 살아 있어 같은 환경에서 확인했다.
+- 이 지시는 별도 PC가 아니라 기존 작업 PC(`kimchungsik`, `/home/kimchungsik/projects/com.remakeday`)에서 받았다. 기동해 둔 frontend·backend 프로세스가 그대로 살아 있어 같은 환경에서 확인했다.
 - 플레이 URL: `http://localhost:3500/play` — HTTP 200.
 - 그 URL이 사용하는 API base는 `frontend/.env.local`의 `NEXT_PUBLIC_API_BASE=http://127.0.0.1:8500`이며, 해당 backend `/health`는 `{"scenario":"a","harness":"on","models":{"npc":"ollama:exaone3.5:7.8b","core":"gemini:gemini-3-flash-preview","embedding":"gemini"},"db":"ok"}`였다. `Origin: http://localhost:3500` 요청에 CORS 허용 헤더가 돌아왔다.
 - backend 8500과 DB 5435는 `127.0.0.1`에만 바인딩돼 있다. **브라우저는 이 PC에서 열어야 한다.** 다른 기기에서 `http://<이 PC IP>:3500`으로 열면 화면은 떠도 API 호출이 실패한다.

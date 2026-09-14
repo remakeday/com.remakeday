@@ -3,7 +3,7 @@ Date: 2026-09-09
 
 Current Gemini/Ollama-adapter backend full suite
 - Working directory: backend
-- Command: env -i HOME=/home/kimchungsik PATH=/usr/bin:/bin LANG=C.UTF-8 PYTHONPATH=/home/kimchungsik/projects/demo.pigfarm/backend .venv/bin/python -m pytest -q
+- Command: env -i HOME=/home/kimchungsik PATH=/usr/bin:/bin LANG=C.UTF-8 PYTHONPATH=/home/kimchungsik/projects/com.remakeday/backend .venv/bin/python -m pytest -q
 - Unified execution session: 60744
 - Exit code: 0
 - Result: 327 passed, 3 warnings in 6.86s
