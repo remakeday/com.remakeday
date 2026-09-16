@@ -91,7 +91,7 @@ def play_game(client: httpx.Client, player_llm, persona: str, *, max_loops: int,
     res = client.post("/sessions", json={})
     if res.status_code == 401 and "rd_session" not in client.cookies:
         raise SystemExit(
-            "로그인 필수(GUARD_AUTH=on). --session-cookie 를 주거나 "
+            "로그인 필수(GUARD_AUTH=on). --dev-login 또는 --session-cookie 를 주거나 "
             "backend/.env 에 GUARD_AUTH=off 를 설정하라"
         )
     res.raise_for_status()
@@ -199,6 +199,8 @@ def main() -> None:
                         help="백엔드 서버 (기본 http://localhost:8500)")
     parser.add_argument("--session-cookie", dest="session_cookie", default=None,
                         help="rd_session 쿠키 값. GUARD_AUTH=on일 때 로그인 대신 사용")
+    parser.add_argument("--dev-login", dest="dev_login", action="store_true",
+                        help="backend/.env의 DEV_ACCOUNT_ID/PASSWORD로 POST /api/v1/auth/dev/login 해 쿠키를 얻는다")
     parser.add_argument("--ollama-url", dest="ollama_url", default=None,
                         help="ollama base url (기본 .env OLLAMA_BASE_URL)")
     parser.add_argument("--persona", choices=PERSONAS + ["all"], default="성실")
@@ -217,6 +219,13 @@ def main() -> None:
             f"[에러] 백엔드 서버가 응답하지 않는다: {args.server_url} ({exc})\n"
             "       backend에서 서버를 먼저 띄워라 (포트 8500)."
         ) from exc
+
+    if args.dev_login:
+        from core.matrix.grid_keymaker_secret_manager import get_settings
+        s = get_settings()
+        res = client.post("/api/v1/auth/dev/login", json={"id": s.dev_account_id, "password": s.dev_account_password})
+        if res.status_code != 200:
+            raise SystemExit(f"개발 로그인 실패 {res.status_code}: {res.text} — backend/.env DEV_LOGIN/DEV_ACCOUNT_* 확인")
 
     ollama_url = args.ollama_url or rc.ollama_base_url()
     rc.check_ollama(ollama_url, [args.model])

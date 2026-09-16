@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ENTRY_IMAGE } from "@/lib/imageMap";
 import { API_BASE } from "@/contracts/api";
+import DevLoginForm from "@/components/DevLoginForm";
 
 /** 진입 카피 — scenario_a adapter.entry_lines에서 첫 줄("세계가 이상하다.")을 뺀 두 줄. */
 const ENTRY_LINES = [
@@ -54,6 +55,7 @@ export default function Home() {
         >
           시작
         </Link>
+        {process.env.NEXT_PUBLIC_DEV_LOGIN === "on" && <DevLoginForm />}
       </div>
     </div>
   );
