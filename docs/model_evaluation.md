@@ -1392,13 +1392,20 @@ n=3: advisor 66콜·evaluator 42콜, 폴백 0, advisor p50 3,813ms. **PCA·극�
 |---|---|---|---:|---|---|
 | Core claude-sonnet-5 | 13.1, 16.0, 4.4, 8.8, 8.8 | doom | 350.3s | `acfad5ac-28b1-458d-9041-a8d419c80cb4` | evaluator_verdict 50·manager_check 15·classifier 10·agent 10·advisor 4콜, 재생성·폴백 0. **planner 5콜, 재생성 2+폴백 1**(스키마 위반: `plans[3].beats` 7개 > maxItems 6 — `maxItems`가 Anthropic 어댑터에서 description으로 강등되어 구조화 출력이 강제하지 못함) |
 | Core claude-opus-5 | 8.8, 0.0, 4.4, 8.8, 4.4 | doom | 295.3s | `4c29beca-84c3-4c2c-b7f9-606ce3bf7bcf` | 전 역할 재생성·폴백 0 |
-| Core ollama gemma4:12b(대조) | 35.0 × 5 | doom | 1526.0s(동시 gemma3 채점기 작업과 GPU 경합) | `87e9faf6-2230-49a3-9f1f-f2ab6036db68` | advisor 루프 재생성 3(non_verbatim_evidence), 그 외 0. 첫 시도는 서술 폴백이 `free_text` 2000자 상한을 넘겨 422로 죽어 수정 후 재실행(§5) |
+| Core ollama gemma4:12b(대조) | 35.0 × 5 | doom | 1526.0s(동시 gemma3 채점기 작업과 GPU 경합) | `87e9faf6-2230-49a3-9f1f-f2ab6036db68` | advisor 3회차 재생성 2(non_verbatim_evidence), 그 외 0. 첫 시도는 서술 폴백이 `free_text` 2000자 상한을 넘겨 422로 죽어 수정 후 재실행(§5) |
 
 Core gemma4 플레이어(Core gemma4, NPC kanana)로도 1판 실행: 8.8, 8.8, 8.8, 21.9, 17.5 / doom /
 323.6s / `e5b936ce-ee2d-4616-b1ee-86ffa4c301e2` / 전 역할 재생성·폴백 0. self-play 점수는 회차마다
 크게 흔들려(n=1) 이 표로 플레이어 모델 순위를 매기지 않는다 — 완주·폴백·크래시 0이 이 축의 판정
 대상이다. **완주·폴백 게이트는 Opus·gemma4 대조군 전부 통과, Sonnet은 planner에 한해 재생성 2·
 폴백 1로 "재생성 ≤ 로컬" 기준을 벗어난다**(원인은 §5의 어댑터 한계).
+
+**제출 조합 확인 (2026-09-17 0시대, 사용자 요청)** — Core `anthropic:claude-sonnet-5` + NPC `anthropic:claude-haiku-4-5`,
+플레이어 gemma4:12b(think off), persona 성실, 5회차 1판: **11.7, 11.7, 16.0, 24.8, 29.8 / doom / 261.5s** /
+`305d77a6-aae4-4cf0-9e6e-c3fcce5e20ac`. 하네스: evaluator_verdict 50·manager_check 15·classifier 10·agent 10·
+advisor 4콜 재생성·폴백 0, planner 5콜 중 5회차 **재생성 1·폴백 0**(같은 `beats` 7개 > 6 위반, 재생성으로 복구).
+NPC 발화 100건에서 메타 표현(유저·플레이어·AI·게임 등) 0건, 서버 로그 오류·거절 0. 크래시 0으로 완주 —
+제출 조합으로 이상 없음. 점수는 n=1이라 순위 근거로 쓰지 않는다.
 
 ### 3. NPC 의미 품질 — `run_npc_dialogue_check.py`(20케이스 × repeat 2 = 구조상 80평가턴)
 
@@ -1503,7 +1510,8 @@ $10 상한은 넘지 않은 것으로 판단하나 근거는 문자수 상한 �
   상한으로 NPC 후보에서 제외.
 - **권고(최종 결정은 사용자 몫)**: **Core `claude-sonnet-5`, NPC `claude-haiku-4-5`.** Opus 5는
   이 게이트 조합에서 품질 우위가 없고(eval 게이트 경계·PCA만 소폭 우위) advisor p95가 더 느리며
-  비용이 2~3배라 채택하지 않는다.
+  비용이 2~3배라 채택하지 않는다. **사용자 확정(2026-09-17)**: 이 조합으로 제출용 `.env`를 고정한다 —
+  조합 self-play 1판 이상 없음(§2 끝). 키는 제출 투입 전까지 `.env`에서 제거해 두고, 전환 절차는 `docs/HANDOFF.md` 맨 위.
 - **관찰 항목(운영 시 유의)**: advisor p95가 5~7s대에서 표본 간 크게 흔들린다(C11 경계) · planner
   `beats` maxItems가 Anthropic 구조화 출력에서 강제되지 않는다(§5, 후속 과제) · 3턴 망각(항목 3)은
   로컬·Anthropic 공통 약점 · Sonnet이 "유저가"라는 메타 표현을 답변에 누출한 사례 1건(§4) · Gemini
@@ -1535,6 +1543,7 @@ $10 상한은 넘지 않은 것으로 판단하나 근거는 문자수 상한 �
 | 2026-09-16 | **외부 API 전환 결정 기록.** 로컬 채택 구성(Core gemma4:12b-N·NPC kanana/gemma4)은 유효하며, 전환 사유는 해커톤 심사용 서빙 제약(GPU 1장 동시 접속 1명·홈서버 가용성·클라우드 GPU 비용)이다. 로컬 vs Anthropic 비교 프로토콜(같은 러너·같은 게이트·비열등 판정)을 문서 상단에 정의, 결과는 부록 A.19 예정. 키는 측정 당일만 투입. 비용 근거 `docs/apiscenario.md`. Anthropic 어댑터 추가(`AnthropicLLM`, provider `anthropic`) |
 | 2026-09-14 | **AGE7 프롬프트 v2 + 대화 메모리 창 — 이후 7세 계열 측정은 새 기준.** 사용자 확정 7세 정의("몰라로 끝내지 않는다 — 본 것·하고 싶은 말을 붙인다")를 정책 2·3·7에 반영하고 인물별 "직접 본 것"을 페르소나에 추가. 1차 문구는 망각을 0.8→0.0으로 붕괴시켜(4턴 전 사실 회상) 문구 정밀화 + **정책 ON 시 메모리 마지막 두 교환만 제공하는 구조 절단**으로 교정. kanana 재측정(n=5·judge 1표): [0.6·1.0·**1.0**·1.0·1.0] 4/5 통과·누설 0. 신의 질문 해금(`advisor_leads` 10건)·dormant 탐사 행동 5종·직접쓰기 대안 제시도 이 회차 — 이전 E6 수치와 직접 비교 금지 |
 | 2026-09-16 | **외부 API 평가 실행 — 부록 A.19.** Core PCA·극성·eval 게이트는 Sonnet 5·Opus 5 둘 다 통과(n=1·n=3), 지연 게이트는 Sonnet이 n=1↔n=3 사이 경계에서 뒤집히고 Opus는 미달. self-play 완주·폴백은 Opus·gemma4 대조군 0, Sonnet은 planner의 `maxItems` 미시행 1건. NPC 대화 의미 품질은 Haiku·Sonnet 둘 다 로컬 대비 비열등 이상. NPC 7세 정책은 채점기를 gemma4:12b(think off)로 통일해 재측정한 뒤 kanana·Haiku·Sonnet 전부 4/5 통과(1차 gemma3 채점기 결과는 VRAM 경합 잡음으로 판단). Gemini 무료 키는 하루 20요청 상한으로 NPC 후보에서 제외. **권고: Core `claude-sonnet-5` · NPC `claude-haiku-4-5`**(최종 결정은 사용자 몫). 어댑터 결함 2건 수정(Haiku temperature `extra_body` 전송, gemma4 채점기 think 기본값 off). 상단 "측정 결과" 열·`metrics.yml` 병행 기록 |
+| 2026-09-17 | **제출 조합 확정.** Core `claude-sonnet-5` + NPC `claude-haiku-4-5` 조합 self-play 5회차 1판 확인(11.7→29.8, 261.5s, 폴백 0, planner 재생성 1, 메타 누설 0) — A.19 §2 끝. 사용자 지시로 이 조합을 제출용 `.env` 구성으로 고정(키는 제출 투입 전까지 제거 유지, 절차는 `docs/HANDOFF.md`). A.19 §2 gemma4 대조군 advisor 재생성 수 정정(3→2) |
 
 ---
 

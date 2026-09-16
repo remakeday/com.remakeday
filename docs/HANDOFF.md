@@ -3,6 +3,28 @@
 > 이 문서 하나만 읽어도 이어서 작업할 수 있게 쓴다.
 > 이전 인계(테스터2 착수 시점)는 `HANDOFF-2026-09-09.md`에 보존했다.
 
+## 제출 모델 구성 — 확정 (2026-09-17)
+
+**Core `anthropic:claude-sonnet-5` + NPC `anthropic:claude-haiku-4-5`.** 근거는 `docs/model_evaluation.md` 부록 A.19(Core PCA 0.97·극성 O·eval 0.71, NPC 41문답 실패 0·p50 1.9s, 7세 정책 4/5). 이 조합으로 self-play 5회차 1판을 돌려 이상 없음을 확인했다: 11.7→11.7→16.0→24.8→29.8, 261.5s, 폴백 0, planner 재생성 1(복구), NPC 메타 누설 0, 오류 0(`305d77a6`).
+
+사용자 지시: 이 구성으로 `.env`를 고정한다. 단 **키는 지금 `.env`에서 제거해 두고**(과금 방지), 그 사이 개발·테스트는 로컬 ollama(Core gemma4:12b · NPC kanana1.5:8b, think off)로 한다. 제출(2026-09-20) 때 아래 순서로 전환한다.
+
+1. `backend/.env`(배포 서버의 `.env`도 동일)에서 아래 다섯 줄을 맞춘다 — 키 값은 문서에 적지 않는다.
+   ```
+   ANTHROPIC_API_KEY=<Anthropic 콘솔 키, sk-ant-로 시작>
+   CORE_LLM_PROVIDER=anthropic
+   CORE_LLM_MODEL=claude-sonnet-5
+   NPC_LLM_PROVIDER=anthropic
+   NPC_LLM_MODEL=claude-haiku-4-5
+   ```
+   `*_LLM_THINK`는 ollama 전용이라 남아 있어도 무시된다. `ANTHROPIC_EFFORT`는 기본 `low`.
+2. 백엔드 재기동(설정은 `get_settings()` lru_cache라 재기동해야 반영) → `curl localhost:8500/health`의 `models`가 `anthropic:claude-sonnet-5`/`anthropic:claude-haiku-4-5`인지 확인.
+3. 확인 1판: `cd backend && PYTHONPATH=. .venv/bin/python scripts/run_selfplay.py --dev-login --loops 5 --n 1 -v`(계정 하루 5판 한도에 포함). 크래시·폴백 0이면 끝.
+4. Anthropic 콘솔 지출 한도 설정 확인(판당 약 $0.8 추정: Core Sonnet ~$0.7 + NPC Haiku ~$0.1, `docs/apiscenario.md` §1.3b).
+5. 롤백은 provider 두 줄을 `ollama`, 모델을 `gemma4:12b`/`kanana1.5:8b-q4km`로 되돌리고 재기동.
+
+운영 관찰 항목(A.19 판정): advisor p95 5~7s 흔들림(C11 경계) · planner `beats` 상한 6이 Anthropic 구조화 출력에서 강제되지 않아 가끔 재생성(프롬프트 쪽 상한 명시나 후처리 자르기 검토) · 3턴 망각은 모든 NPC 모델 공통 약점.
+
 ## 현재 상태 — NPC 대화 개선
 
 NPC 정책 `npc-dialogue-2`를 적용했다. ‘7세’는 쉬운 말투의 기준으로 두고 강제 회피·3줄 망각을 제거했다. 인물별 성격·기본 지식과 실제 당일 경험을 분리했다. **사용자 지시로 장면당 캐릭터 1회 제한을 복구했다.** 다른 캐릭터에게는 말할 수 있고, 다음 장면에서 같은 캐릭터와 다시 대화할 수 있다. 하루 예산 8/7/6/5/4는 유지한다. 발화별 UUID와 루프 잠금으로 중복 요청·저장 실패 때 대화 예산과 기록이 어긋나지 않게 했다. 같은 성공 요청의 재전송은 제한에 걸리지 않고 저장된 답변을 반환한다.
