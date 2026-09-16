@@ -21,11 +21,13 @@ from apps.engine.app.use_cases.scene_execution import execute_scene, EXPLAIN_ACT
 from apps.engine.app.use_cases.game_support import (
     build_agent_messages,
     lost_names,
+    pick_fallback_line,
     record_harness,
     resolve_npc_code,
     system_msg,
     user_msg,
 )
+from apps.engine.app.use_cases.utterance_classifier import classify
 from apps.engine.app.use_cases.harness import (
     action_vocab_check,
     forbidden_word_check,
@@ -38,6 +40,7 @@ from apps.engine.domain.entities import loop_rules, npc_rules
 from apps.engine.domain.entities.npc_memory import add_memory, forget_memory, hidden_memory_ids, visible_memories
 from apps.engine.domain.entities.question_rules import is_question_action, question_matches
 from apps.engine.domain.entities.cookie_rules import ab_assign, paw_should_offer
+from apps.engine.domain.entities.utterance_rules import is_nonsense
 from apps.engine.domain.entities.rule_rules import (
     Rule,
     enforce_rules_on_plan,
@@ -257,11 +260,6 @@ class LoopInteractor:
                 if resolve_npc_code(bundle, event.target) != code or event.text != text:
                     raise GameStateError("같은 요청 번호에 다른 질문을 보낼 수 없다")
                 return event.response
-        try:
-            state = loop_rules.apply_utterance(self._loop_state(loop))
-        except loop_rules.DomainError as e:
-            raise GameStateError(str(e)) from e
-
         npc = self._loops.npc_state(loop_id, code) if code else None
         char = next((c for c in bundle.characters if c.code == code), None)
         if npc is None or char is None:
@@ -270,6 +268,22 @@ class LoopInteractor:
             raise GameStateError("대화할 수 없는 상대다")
         if npc.uttered_beat == loop.beat:
             raise GameStateError("이 장면에서는 이미 대화했다. 다른 인물을 고르거나 다음 장면으로 이동해 주세요.")
+
+        classification = None
+        gated = is_nonsense(text)
+        if not gated:
+            label, report = classify(self._core_llm, text)
+            record_harness(self._events, loop.attempt_id, report, loop_n=loop.loop_n, beat=loop.beat)
+            classification = label
+            gated = label == "nonsense"
+        if gated:
+            return self._gated_reply(loop, char, text, utterance_id, classification)
+        include_knowledge = classification != "chat"
+
+        try:
+            state = loop_rules.apply_utterance(self._loop_state(loop))
+        except loop_rules.DomainError as e:
+            raise GameStateError(str(e)) from e
 
         rule_rows = self._rules.list(loop.attempt_id)
         domain_rules = [self._to_domain_rule(r) for r in rule_rows]
@@ -285,6 +299,7 @@ class LoopInteractor:
             suspicion=npc.suspicion, trust=npc.trust, opposite=npc.opposite_mode,
             rules_text=npc_rule_text, memory=list(npc.memory or []),
             user_text=text, loop_n=loop.loop_n, age7_on=self._age7_on, damage_level=loop.damage_level,
+            include_knowledge=include_knowledge,
         )
         messages[0].content += f"\n현재 장면: {bundle.beats[loop.beat - 1].title}. 아직 하지 않은 행동을 지어내지 않는다."
         seen = public_observations(self._events, loop.attempt_id, through_loop=loop.loop_n)
@@ -362,7 +377,33 @@ class LoopInteractor:
         self._events.record(loop.attempt_id, ev.UtteranceEvent(
             loop_n=loop.loop_n, beat=loop.beat, target=char.name, text=text,
             reply=reply, budget_left=loop.budget_left, suspicion_delta=sd, trust_delta=td,
-            disclosure_level=0, utterance_id=utterance_id, response=response))
+            disclosure_level=0, utterance_id=utterance_id, response=response,
+            classification=classification, gated=False, budget_charged=True))
+        self._loops.save()
+        return response
+
+    def _gated_reply(self, loop, char, text, utterance_id, classification):
+        """무의미 입력 — 모델 호출 없이 인물 말투로 되묻는다. 같은 비트 첫 1회는 예산 면제."""
+        prior = [e for e in self._events.query(loop.attempt_id, type=ev.EventType.UTTERANCE, loop_n=loop.loop_n)
+                 if e.beat == loop.beat and e.gated]
+        charged = bool(prior)
+        if charged:
+            try:
+                state = loop_rules.apply_utterance(self._loop_state(loop))
+            except loop_rules.DomainError as e:
+                raise GameStateError(str(e)) from e
+            loop.budget_left = state.budget_left
+        reply = pick_fallback_line(char)
+        response = {
+            "utterance_id": utterance_id, "observations": [], "reply": reply,
+            "npc": {"code": char.code, "name": char.name, "mood": "calm", "uttered": False},
+            "budget_left": loop.budget_left, "beat": loop.beat, "tool_used": False, "gated": True,
+        }
+        self._events.record(loop.attempt_id, ev.UtteranceEvent(
+            loop_n=loop.loop_n, beat=loop.beat, target=char.name, text=text, reply=reply,
+            budget_left=loop.budget_left, suspicion_delta=0, trust_delta=0, disclosure_level=0,
+            utterance_id=utterance_id, response=response,
+            classification=classification, gated=True, budget_charged=charged))
         self._loops.save()
         return response
 

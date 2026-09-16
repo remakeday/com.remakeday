@@ -3,7 +3,6 @@
 import re
 
 _SYLLABLE_RE = re.compile(r"[가-힣]")
-_REPEAT_RE = re.compile(r"^(.)\1{2,}$")  # 같은 문자 3회 이상만으로 구성
 _REPEAT_SYLLABLE_RE = re.compile(r"^([가-힣])\1{2,}$")  # 같은 음절 3회 이상만
 
 

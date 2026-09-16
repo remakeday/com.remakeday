@@ -102,7 +102,7 @@ def test_harness_blocks_english_reply(db_session):
     ]
     inter, scenario, attempt, info = make_day(db_session, queue)
     npc = _first_npc(scenario)
-    res = inter.utter(info["loop_id"], npc.code, "What happened here?")
+    res = inter.utter(info["loop_id"], npc.code, "여기 무슨 일이야?")
     assert res["reply"] == "아무 일도 없었어."
 
 
@@ -125,7 +125,7 @@ def test_failed_model_response_preserves_budget_and_is_not_npc_ignorance(db_sess
     inter, scenario, attempt, info = make_day(db_session, [{"bad": 1}, {"bad": 2}, {"bad": 3}])
     npc = _first_npc(scenario)
     with pytest.raises(DialogueUnavailable):
-        inter.utter(info["loop_id"], npc.code, "?")
+        inter.utter(info["loop_id"], npc.code, "왜 그래?")
     assert LoopRepository(db_session).get(info["loop_id"]).budget_left == 8
 
 
@@ -235,3 +235,57 @@ def test_agent_messages_can_omit_knowledge_block():
     assert "[하루 시작 전부터 아는 것]" in with_k[0].content
     assert "[하루 시작 전부터 아는 것]" not in without[0].content
     assert "이송될 거라고 믿는다" not in without[0].content
+
+
+def _harness_events(db_session, attempt):
+    return [e for e in EventLogRepository(db_session).query(attempt.id) if e.type == "harness_event"]
+
+
+def test_nonsense_is_gated_without_model_call_and_first_is_free(db_session):
+    inter, scenario, attempt, info = make_day(db_session, [])
+    npc = _first_npc(scenario)
+    # 비트1 개시 시 시나리오A의 지나가는 말(ambient) 하네스와 무관 — 기준선을 잡는다
+    before = len(_harness_events(db_session, attempt))
+    res = inter.utter(info["loop_id"], npc.code, "ㅋㅋㅋㅋ")
+    assert res["gated"] is True
+    assert res["reply"] in npc.fallback_lines
+    assert res["budget_left"] == 8
+    assert res["npc"]["uttered"] is False
+    assert len(_harness_events(db_session, attempt)) == before
+
+
+def test_second_nonsense_in_same_beat_is_charged(db_session):
+    inter, scenario, attempt, info = make_day(db_session, [])
+    npc = _first_npc(scenario)
+    inter.utter(info["loop_id"], npc.code, "ㅋㅋㅋㅋ")
+    res = inter.utter(info["loop_id"], npc.code, "......")
+    assert res["budget_left"] == 7
+    # 지나가는 말(ambient) 발화는 플레이어 입력이 아니므로 제외
+    events = [e for e in EventLogRepository(db_session).query(attempt.id)
+              if e.type == "utterance" and e.text != "(지나가는 말)"]
+    assert [e.budget_charged for e in events] == [False, True]
+
+
+def test_classifier_nonsense_is_gated_and_chat_omits_knowledge(db_session):
+    # 큐: 분류기 nonsense → 즉답 / 분류기 chat + NPC 답 → 모델 호출은 지식 없이
+    inter, scenario, attempt, info = make_day(db_session, [_agent_reply("응, 안녕.")])
+    inter._core_llm = FakeLLM([{"label": "nonsense"}, {"label": "chat"}])
+    npc = _first_npc(scenario)
+    first = inter.utter(info["loop_id"], npc.code, "뭐라는거야ㅋ")
+    assert first["gated"] is True and first["budget_left"] == 8
+    second = inter.utter(info["loop_id"], npc.code, "안녕 좋은 아침")
+    assert second["reply"] == "응, 안녕."
+    agent_calls = [e for e in _harness_events(db_session, attempt) if e.role == "agent"]
+    assert agent_calls and "[하루 시작 전부터 아는 것]" not in agent_calls[-1].call_records[0]["messages"][0]["content"]
+
+
+def test_classifier_fallback_keeps_current_path(db_session):
+    inter, scenario, attempt, info = make_day(db_session, [_agent_reply("배 안 고파.")])
+    inter._core_llm = FakeLLM([])
+    npc = _first_npc(scenario)
+    res = inter.utter(info["loop_id"], npc.code, "왜 안어")
+    assert res["reply"] == "배 안 고파."
+    events = [e for e in EventLogRepository(db_session).query(attempt.id) if e.type == "utterance"]
+    assert events[-1].classification is None and events[-1].gated is False
+
+
