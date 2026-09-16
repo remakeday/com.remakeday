@@ -216,7 +216,7 @@ Settings 필드 5개 추가. 테스트 DB(`pigfarm_test`)는 conftest가 스키�
 - Test: `backend/tests/engine/test_guards.py`
 
 **Interfaces:**
-- `client_ip(request) -> str` — `X-Forwarded-For` 첫 값(있으면) 아니면 `request.client.host`
+- `client_ip(request) -> str` — `X-Forwarded-For` 첫 값(있으면) 아니면 `request.client.host` (09-17 대체: CF-Connecting-IP, guards.py 참조)
 - `require_user(request, use_case=Depends(get_auth_use_case)) -> SessionUserDTO` — `guard_auth == "off"`면 `SessionUserDTO(sub="dev", email="", name="dev")` 반환; 쿠키 `rd_session` 검증 실패 → `HTTPException(401, "로그인이 필요하다")`
 - `ip_bucket(name: str, per_minute_attr: str)` → 의존성 팩토리; 버킷은 모듈 전역 dict `{name: TokenBucket}`(용량 = 분당 한도, 리필 = 한도/60). 초과 → `HTTPException(429, detail={"detail": "요청이 너무 잦다", "retry_after": ceil(wait)})` + `Retry-After` 헤더
 - `GuardEvent(type="guard", layer: Literal["auth","user_daily","ip","daily_cap","length"], reason: str, ip_hash: str, user_sub: str | None)` — `session_id`는 판이 없을 수 있어 `uuid.UUID(int=0)` 고정 세션에 기록
@@ -261,6 +261,7 @@ def test_ip_bucket_429_with_retry_after(monkeypatch):
     assert r.status_code == 429 and r.json()["detail"]["retry_after"] >= 1 and "Retry-After" in r.headers
 
 
+# (09-17 대체: CF-Connecting-IP, guards.py 참조)
 def test_client_ip_prefers_forwarded_for():
     from starlette.requests import Request
     scope = {"type": "http", "headers": [(b"x-forwarded-for", b"203.0.113.9, 10.0.0.1")], "client": ("127.0.0.1", 1)}
@@ -293,6 +294,7 @@ def _settings():
     return get_settings()
 
 
+# (09-17 대체: CF-Connecting-IP, guards.py 참조)
 def client_ip(request: Request) -> str:
     forwarded = request.headers.get("x-forwarded-for")
     if forwarded:

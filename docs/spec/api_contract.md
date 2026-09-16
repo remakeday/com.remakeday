@@ -125,7 +125,7 @@ res: `{scenario, harness, models: {npc, core, embedding}, db}`
 
 ### 속도 제한 버킷 키
 
-로그인된 사용자는 `sub` 기준으로 버킷을 나눈다(`u:{sub}`) — IP 공유 여부와 무관하게 사용자별로 독립이다. `GUARD_AUTH=off`일 때만 클라이언트 IP(`ip:{ip}`)로 대체한다. 클라이언트 IP 자체는 `TRUST_PROXY=true`(`.env`, 기본 `false`)가 아니면 `X-Forwarded-For` 헤더를 무시하고 소켓 IP만 쓴다 — 신뢰하지 않는 프록시 앞에서 헤더 스푸핑으로 버킷을 우회하지 못하게 한다.
+로그인된 사용자는 `sub` 기준으로 버킷을 나눈다(`u:{sub}`) — IP 공유 여부와 무관하게 사용자별로 독립이다. `GUARD_AUTH=off`일 때만 클라이언트 IP(`ip:{ip}`)로 대체한다. 클라이언트 IP 자체는 `TRUST_PROXY=true`(`.env`, 기본 `false`)일 때만 `CF-Connecting-IP` 헤더를 쓰고, 그 외에는 `request.client`(uvicorn 기본 프록시 헤더 처리 결과)를 쓴다.
 
 ### GuardEvent (이벤트 로그)
 

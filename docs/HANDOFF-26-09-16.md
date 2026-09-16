@@ -77,7 +77,7 @@ F7 답변이 답변 같지 않았던 이유(테스터6 15문답): 판정 0회(�
 4. 2026-09-20 제출용 프로덕션 `.env`: Core `anthropic:claude-sonnet-5` · NPC `anthropic:claude-haiku-4-5` — 사용자 확정 후 전환.
 5. Gemini 무료 키는 NPC 후보에서 제외(하루 20요청 상한).
 6. F11 원숭이손은 아래 3번 그대로 미착수.
-7. 개발 로그인 배포 메모 — `TRUST_PROXY=true`일 때 `client_ip`가 `X-Forwarded-For` 맨 왼쪽을 신뢰한다. cloudflared 뒤에서는 `CF-Connecting-IP`를 쓸 것.
+7. 클라이언트 IP는 `TRUST_PROXY=true`일 때 `CF-Connecting-IP`만 신뢰하도록 수정됨(2026-09-17). 배포 시 cloudflared 뒤에서 `TRUST_PROXY=true`.
 
 ### 3. F11 원숭이손 — 계획 `docs/superpowers/plans/2026-09-16-f11-monkey-paw-wishes.md` (8 task, 미착수)
 

@@ -20,7 +20,7 @@
 
 부수: 발화·질문 텍스트 200자 상한(초과 422), 야간 초안 2000자·주장 8개(개당 500자)·규칙 커스텀 200자 상한, 요청 본문 크기 제한(Content-Length > 256KiB → 413), 기존 `request_id` 멱등성 유지.
 
-클라이언트 IP는 `X-Forwarded-For`를 신뢰할 리버스 프록시 뒤일 때만 쓴다 — `.env` `TRUST_PROXY=true`가 없으면 소켓 IP만 쓴다(헤더 스푸핑 방지).
+클라이언트 IP는 `.env` `TRUST_PROXY=true`일 때만 `CF-Connecting-IP` 헤더를 쓴다 — 그 외에는 `request.client`(uvicorn 기본 프록시 헤더 처리 결과)를 쓴다.
 
 ## 2. 응답 계약
 
@@ -36,7 +36,7 @@
 - `attempts.user_id`(nullable, `users.id` 참조하되 **FK 제약 없음** — 익명 구판(user_id NULL) 호환을 위해 의도적으로 뺐다) 추가 — 마이그레이션 1개. 기존 판은 null.
 - 한도·차단기 카운트는 DB 집계(캐시 없음). 하루 수백 판 규모에서 충분.
 - 이벤트 로그에 `guard_event`(층·사유·IP 해시·user_sub) 1종 추가 — 측정용, 원문 IP 저장 안 함. `layer`는 `auth`·`user_daily`·`daily_cap` 3종.
-- 속도 제한 버킷 키는 로그인된 사용자의 `sub`(형태: `u:{sub}`) — `GUARD_AUTH=off`일 때만 IP(`ip:{ip}`)로 대체한다. IP 자체는 `TRUST_PROXY=true`가 아니면 소켓 IP만 쓴다.
+- 속도 제한 버킷 키는 로그인된 사용자의 `sub`(형태: `u:{sub}`) — `GUARD_AUTH=off`일 때만 IP(`ip:{ip}`)로 대체한다. IP 자체는 `TRUST_PROXY=true`일 때만 `CF-Connecting-IP`를 쓰고, 그 외에는 `request.client`(uvicorn 기본 프록시 헤더 처리 결과)를 쓴다.
 
 ## 4. 테스트
 

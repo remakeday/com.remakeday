@@ -25,7 +25,7 @@ Core `anthropic:claude-sonnet-5` + NPC `anthropic:claude-haiku-4-5`, 플레이�
 
 ### 이월
 
-① 원격 push 여부(공개 저장소) ② 09-20 제출 때 `.env` 전환(`HANDOFF.md` 절차) ③ 임베딩 Gemini 무료 키 한도 확인 ④ planner `beats` 상한 강제(프롬프트 명시 또는 절단) ⑤ 어댑터 `response.usage` 기록으로 비용 실측 ⑥ Gemini 쿼터 리셋 후 80턴 재실행은 NPC 후보 제외로 불필요 ⑦ F11 원숭이손, 테스터7 F1·F2 ⑧ 배포 전 `TRUST_PROXY`·`CF-Connecting-IP` 점검
+① 원격 push 여부(공개 저장소) ② 09-20 제출 때 `.env` 전환(`HANDOFF.md` 절차) ③ 임베딩 Gemini 무료 키 한도 확인 ④ planner `beats` 상한 강제(프롬프트 명시 또는 절단) ⑤ 어댑터 `response.usage` 기록으로 비용 실측 ⑥ Gemini 쿼터 리셋 후 80턴 재실행은 NPC 후보 제외로 불필요 ⑦ F11 원숭이손, 테스터7 F1·F2 ⑧ 배포 전 cloudflared 뒤에서 `TRUST_PROXY=true` 설정 확인(09-17 `CF-Connecting-IP` 기준으로 수정 완료)
 
 ---
 
@@ -86,7 +86,7 @@ Anthropic 어댑터(`provider=anthropic`)를 붙였다. 리뷰가 하네스 스�
 - **Task 1 검토(sonnet)** — Important 1건: 계획 Step 6의 `api_contract.md` 기재 누락 → `34ce698`(20:39)
 - **Task 2 `48a70ac`(20:41)** — 랜딩 `DevLoginForm`(52줄, `NEXT_PUBLIC_DEV_LOGIN`), `run_selfplay --dev-login`, 헤드리스 `dev-login.cjs`. 실서버 실행에서 `getByRole('alert')`가 Next의 route announcer(`role=alert`)와 겹쳐 strict mode로 실패 → 선택자를 폼 안으로 한정(`816f052`) 뒤 PASS(틀린 비번 alert, 로그인 → `/play`, `POST /sessions` 200, `/auth/me`에서 dev 세션 확인)
 - **opus 최종 리뷰** — Critical 0, Important 2. I1: `DEV_LOGIN`을 끄거나 계정을 바꿔도 이미 발급된 dev 세션이 14일간 통과(`current_user`가 서명·만료만 확인) → `dev:` sub를 현재 설정 계정과 대조하도록 수정, 테스트 4개 + password 65자 422 테스트 1개, `.env.example`은 off(`d659be3`, 585 → **590 passed** 10.51초). I2: 저장소가 공개인데 계정 값이 계획·인계 문서·테스트에 적혀 있었다 → 사용자 결정으로 값은 `backend/.env`에만 두고 추적 파일에서 제거(`be42385`, grep 0건, 590 passed). 미푸시 히스토리에 남은 옛 값은 히스토리 재작성 대신 `.env` 비밀번호 교체로 무력화했다 — 옛 값이 알려져도 통하지 않으면 충분하고, 재작성은 되돌리기 어렵기 때문이다
-- **파킹한 Minor** — M1 off 상태에서도 본문 검증 422가 404보다 먼저 나옴(공개 저장소라 은닉 가치 낮음), M2 `TRUST_PROXY`를 켜면 `X-Forwarded-For` 맨 왼쪽을 믿어 로그인 속도 제한 우회 가능(지금은 off라 잠복 — 배포 체크 항목), M4 dev 계정이 하루 5판을 모든 용도가 공유(평가일엔 `USER_DAILY_ATTEMPTS` 로컬 상향), M5 합성 루트 주입 조건 테스트 없음
+- **파킹한 Minor** — M1 off 상태에서도 본문 검증 422가 404보다 먼저 나옴(공개 저장소라 은닉 가치 낮음), M2 클라이언트 IP 신뢰 헤더 처리(09-17 `CF-Connecting-IP` 기준으로 수정 완료), M4 dev 계정이 하루 5판을 모든 용도가 공유(평가일엔 `USER_DAILY_ATTEMPTS` 로컬 상향), M5 합성 루트 주입 조건 테스트 없음
 - **머지·재기동** — main ff → `be42385`, 백엔드 8500 재기동. 옛 비밀번호 401, 새 `.env` 계정으로 `dev-login.cjs` PASS. 이어서 테스트의 `.env` 폴백 경로(`../backend/.env` → `../../backend/.env`, `78b7cc8`)와 selfplay `--dev-login`이 Secure 쿠키를 http 요청에 못 싣던 문제(속성 없이 재설정, `33bebca`)를 고쳤다
 
 ### Anthropic·Gemini 모델 평가 (B등급, `feat/coherence-chain`)
@@ -162,7 +162,7 @@ Haiku는 두 번 다 게이트(4/5) 미달이지만 항목별 값이 크게 흔�
 ### 마무리 — 커밋 상태와 이월
 
 - **오늘 커밋 52건**(`c0231c7` 14:50 ~ `06e0906` 23:44), 그중 귀가 후 13건. main은 `be42385`(개발 로그인까지), `feat/coherence-chain`은 main보다 8커밋 앞선 상태로 미머지(`6a02a13`~`06e0906`, 평가 러너·어댑터). 미커밋은 테스터7 기록 폴더 하나 — *23:44 시점 기록. 이후 기록 커밋이 더해져 09-17 00:3x에 main으로 fast-forward 머지(아래 09-17 항목)*
-- **이월(미완, 23:44 시점)** — *①②④⑤는 자정 전후에 끝남(09-17 항목)* · ① 오늘 Anthropic·Gemini 평가 결과를 `model_evaluation.md` 부록·`metrics.yml`에 정본으로 기록 ② Sonnet age7, gemma4 통일 D(셀프플레이 결과 확인)·E(Anthropic NPC age7 재측정) ③ Gemini 쿼터 리셋 후 80턴 전체 재실행 ④ `feat/coherence-chain` 머지 여부 결정 ⑤ 평가를 마치면 Anthropic 키 제거(운용 규칙) ⑥ F11 원숭이손 소원, 테스터7 F1·F2 ⑦ 배포 전 `TRUST_PROXY` 버킷 키(M2) 점검 ⑧ 09-15 이월분(Google Console redirect URI 등록, NPC 의미 품질 목표, 블라인드 평가·새 참가자 5회차 실플레이, 세 NPC 목소리) — 오늘 진행 여부는 확인하지 않았다
+- **이월(미완, 23:44 시점)** — *①②④⑤는 자정 전후에 끝남(09-17 항목)* · ① 오늘 Anthropic·Gemini 평가 결과를 `model_evaluation.md` 부록·`metrics.yml`에 정본으로 기록 ② Sonnet age7, gemma4 통일 D(셀프플레이 결과 확인)·E(Anthropic NPC age7 재측정) ③ Gemini 쿼터 리셋 후 80턴 전체 재실행 ④ `feat/coherence-chain` 머지 여부 결정 ⑤ 평가를 마치면 Anthropic 키 제거(운용 규칙) ⑥ F11 원숭이손 소원, 테스터7 F1·F2 ⑦ 배포 전 `TRUST_PROXY` 버킷 키(M2, 09-17 `CF-Connecting-IP` 기준으로 수정 완료) 점검 ⑧ 09-15 이월분(Google Console redirect URI 등록, NPC 의미 품질 목표, 블라인드 평가·새 참가자 5회차 실플레이, 세 NPC 목소리) — 오늘 진행 여부는 확인하지 않았다
 
 ### 설계 결정 대기 6건 (오전 시점 기록 — 오후에 위와 같이 해소)
 

@@ -63,11 +63,30 @@ def test_ip_bucket_429_with_retry_after(monkeypatch):
     assert r.status_code == 429 and r.json()["detail"]["retry_after"] >= 1 and "Retry-After" in r.headers
 
 
-def test_client_ip_prefers_forwarded_for(monkeypatch):
+def test_client_ip_uses_cf_connecting_ip_when_trusted(monkeypatch):
+    from starlette.requests import Request
+    from core.matrix import grid_keymaker_secret_manager as cfg
+    monkeypatch.setattr(cfg.get_settings(), "trust_proxy", True)
+    scope = {"type": "http", "headers": [(b"cf-connecting-ip", b"203.0.113.9")], "client": ("127.0.0.1", 1)}
+    assert guards.client_ip(Request(scope)) == "203.0.113.9"
+
+
+def test_client_ip_ignores_spoofed_forwarded_for_when_trusted(monkeypatch):
     from starlette.requests import Request
     from core.matrix import grid_keymaker_secret_manager as cfg
     monkeypatch.setattr(cfg.get_settings(), "trust_proxy", True)
     scope = {"type": "http", "headers": [(b"x-forwarded-for", b"203.0.113.9, 10.0.0.1")], "client": ("127.0.0.1", 1)}
+    assert guards.client_ip(Request(scope)) == "127.0.0.1"
+
+
+def test_client_ip_prefers_cf_connecting_ip_over_forwarded_for(monkeypatch):
+    from starlette.requests import Request
+    from core.matrix import grid_keymaker_secret_manager as cfg
+    monkeypatch.setattr(cfg.get_settings(), "trust_proxy", True)
+    scope = {"type": "http", "headers": [
+        (b"x-forwarded-for", b"198.51.100.1, 10.0.0.1"),
+        (b"cf-connecting-ip", b"203.0.113.9"),
+    ], "client": ("127.0.0.1", 1)}
     assert guards.client_ip(Request(scope)) == "203.0.113.9"
 
 
@@ -75,8 +94,21 @@ def test_client_ip_ignores_forwarded_for_when_not_trusted(monkeypatch):
     from starlette.requests import Request
     from core.matrix import grid_keymaker_secret_manager as cfg
     monkeypatch.setattr(cfg.get_settings(), "trust_proxy", False)
-    scope = {"type": "http", "headers": [(b"x-forwarded-for", b"203.0.113.9, 10.0.0.1")], "client": ("127.0.0.1", 1)}
+    scope = {"type": "http", "headers": [
+        (b"x-forwarded-for", b"203.0.113.9, 10.0.0.1"),
+        (b"cf-connecting-ip", b"203.0.113.9"),
+    ], "client": ("127.0.0.1", 1)}
     assert guards.client_ip(Request(scope)) == "127.0.0.1"
+
+
+def test_client_ip_falls_back_when_cf_connecting_ip_is_invalid(monkeypatch):
+    from starlette.requests import Request
+    from core.matrix import grid_keymaker_secret_manager as cfg
+    monkeypatch.setattr(cfg.get_settings(), "trust_proxy", True)
+    scope = {"type": "http", "headers": [(b"cf-connecting-ip", b"   ")], "client": ("127.0.0.1", 1)}
+    assert guards.client_ip(Request(scope)) == "127.0.0.1"
+    scope2 = {"type": "http", "headers": [(b"cf-connecting-ip", b"not-an-ip")], "client": ("127.0.0.1", 1)}
+    assert guards.client_ip(Request(scope2)) == "127.0.0.1"
 
 
 def test_sessions_require_login(db_session, monkeypatch):

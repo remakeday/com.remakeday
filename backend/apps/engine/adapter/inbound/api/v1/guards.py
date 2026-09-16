@@ -1,6 +1,7 @@
 """과잉 사용 방지 의존성 — 로그인·IP 버킷·클라이언트 IP (설계: specs/2026-09-16-abuse-guard-design.md)."""
 
 import hashlib
+import ipaddress
 import math
 import time
 import uuid
@@ -28,9 +29,13 @@ def _settings():
 
 def client_ip(request: Request) -> str:
     if _settings().trust_proxy:
-        forwarded = request.headers.get("x-forwarded-for")
-        if forwarded:
-            return forwarded.split(",")[0].strip()
+        cf_ip = (request.headers.get("cf-connecting-ip") or "").strip()
+        if cf_ip:
+            try:
+                ipaddress.ip_address(cf_ip)
+                return cf_ip
+            except ValueError:
+                pass
     return request.client.host if request.client else "unknown"
 
 
