@@ -1,7 +1,7 @@
 """run_selfplay.py — LLM 에이전트가 HTTP로 실제 게임을 플레이한다 (작업지시서 §P6).
 
 페르소나 3종: 성실(파편 기반 서술) / 산탄총(아무 주장 8개) / 침묵(발화 0, 빈 서술).
-플레이어 행동(발화 1~3회, 밤 서술)은 gemma3:12b가 생성한다.
+플레이어 행동(발화 1~3회, 밤 서술)은 gemma4:12b(think off)가 생성한다.
 백엔드 서버가 8500에 떠 있어야 한다.
 
     .venv/bin/python scripts/run_selfplay.py --n 1 --loops 1 --persona 성실

@@ -1,6 +1,6 @@
 """run_age7_check.py — 7세 정책 체크 (모델정책 §11, 작업지시서 §P6).
 
-모델 × AGE7_POLICY on/off × 5항목 × N발화. 각 응답은 gemma3:12b가 PASS/FAIL 판정.
+모델 × AGE7_POLICY on/off × 5항목 × N발화. 각 응답은 gemma4:12b(think off)가 PASS/FAIL 판정.
 항목 4/5 이상이면 게이트 통과.
 
     .venv/bin/python scripts/run_age7_check.py --n 2 --policy on

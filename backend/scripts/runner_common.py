@@ -27,7 +27,7 @@ from apps.engine.app.ports.output.llm_port import MessageDTO  # noqa: E402
 from apps.engine.app.use_cases.harness import run_with_harness  # noqa: E402
 
 DEFAULT_NPC_MODEL = "exaone3.5:7.8b"
-DEFAULT_JUDGE_MODEL = "gemma3:12b"
+DEFAULT_JUDGE_MODEL = "gemma4:12b"
 DEFAULT_OUT = "docs/metrics.yml"  # 프로젝트 루트 기준 (= backend/../docs/metrics.yml)
 SELFPLAY_ATTEMPTS_LOG = BACKEND_ROOT / "scripts" / ".selfplay_attempts.log"
 
@@ -75,8 +75,10 @@ def check_ollama(base_url: str, models: list[str]) -> None:
             )
 
 
-def make_llm(model: str, base_url: str | None = None) -> OllamaLLM:
-    return OllamaLLM(base_url=base_url or ollama_base_url(), model=model)
+def make_llm(model: str, base_url: str | None = None, think: bool | None = False) -> OllamaLLM:
+    """think 기본값 off — gemma4:12b는 thinking 모델이라 켜두면 판정 1건에 30초+ 걸린다.
+    thinking 미지원 모델(exaone3.5, kanana1.5, gemma3)은 think 필드가 무시된다(무해)."""
+    return OllamaLLM(base_url=base_url or ollama_base_url(), model=model, think=think)
 
 
 def sys_msg(content: str) -> MessageDTO:
