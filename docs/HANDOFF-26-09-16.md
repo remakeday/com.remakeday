@@ -1,13 +1,13 @@
 # 작업 이어하기 — 2026-09-16
 
-> 이 문서 하나만 읽어도 이어서 작업할 수 있게 쓴다.
+> 이 문서 하나만 읽어도 이어서 작업할 수 있게 쓴다. **작업 브랜치는 `feat/coherence-chain`**(main보다 `7af14dd` WIP 1개 앞). 귀가 후 시작점은 아래 "지금 바로 할 일" 1번.
 > 이전 인계(NPC 대화 개선 시점)는 `HANDOFF.md`(2026-09-15)에 그대로 있다.
 
 ## 현재 상태 — 테스터6 휴먼테스트와 개연성 설계
 
 테스터6이 5회차를 완주했다(판 `2338ec9f`, 09:48~11:06, 8.8 → 64.2 → 94.2 ×3, 부작용 셀 0). 피드백 11건은 `review-verification/2026-09-16-tester6/tester6.md`에 원문·DB 대조·분류로 있다. 같은 날 다른 세션이 테스터7 기록(`review-verification/2026-09-16-tester7/`)을 따로 진행한다 — 서로 건드리지 않는다.
 
-**즉시 수정 5건은 반영 완료, 미커밋.** F1 인물 대사 음원 보류(관리자·조언자·회고만 재생), F3 밤 근거 목록 "맨 위로" 고정 버튼, F4 신의 질문 답변 로그 높이 상한 제거, F5 규칙 없이 이미 하는 행동은 추천 규칙에서 제외, F6 관찰 기록·근거 목록의 회차 간 중복 문장 숨김. 검증: backend **462 passed** · tsc · 헤드리스 UI 7종 통과. 부수로 OAuth `credentials: "include"` 이후 깨져 있던 UI 테스트의 모의 CORS 헤더와 ToggleSwitch 셀렉터를 맞췄다.
+**즉시 수정 5건은 반영·커밋 완료.** F1 인물 대사 음원 보류(관리자·조언자·회고만 재생), F3 밤 근거 목록 "맨 위로" 고정 버튼, F4 신의 질문 답변 로그 높이 상한 제거, F5 규칙 없이 이미 하는 행동은 추천 규칙에서 제외, F6 관찰 기록·근거 목록의 회차 간 중복 문장 숨김. 검증: backend **462 passed** · tsc · 헤드리스 UI 7종 통과. 부수로 OAuth `credentials: "include"` 이후 깨져 있던 UI 테스트의 모의 CORS 헤더와 ToggleSwitch 셀렉터를 맞췄다.
 
 **자산 제작·등록 (2026-09-16 오후)** — 밤 단서 P01~P05(9:16)와 원숭이손 삽화 Q02~Q08(3:2)을 사용자가 생성, 관리자 밤 방송 MA08~12 녹음 완료. 검수: P군 5장 전부 통과, Q군 6장 통과, Q04는 v1 보류(손잡이 허리 높이) 후 **v2 재생성 통과**(손잡이 문 상단). 통과분은 `frontend/public/assets/`(P), `assets/clues/`(Q), `audio/voice/`(MA08~12)에 복사하고 `voiceMap.ts`에 등록(대사 음원 34개). 음성은 형식·길이 확인 + 사용자 청취 검수 완료. 코드 참조(imageMap·DoomTransition)는 아직 없음 — Codex 브리프(P.6)로 구현 예정. 기록: `output/imagegen/P-v2-Q-v1-production.md`.
 부수 수정: `VoicePlayer.tsx` BGM 페이드의 rAF 타임스탬프 음수 진행률로 볼륨이 0.25를 넘던 결함을 진행률 0 고정으로 수정(voice-playback 테스트가 재현 가능하게 실패하던 원인). 테스트 기대 수 29→34.
@@ -18,11 +18,11 @@
 
 **환경 변경 감지(이 세션 외부, 14:25)**: `backend/.env`의 `GOOGLE_OAUTH_REDIRECT_URI`·`FRONTEND_BASE_URL`이 `https://api.remakeday.com`·`https://remakeday.com`으로, `INSPECTOR_TOKEN` 교체, `NPC_LLM_MODEL=kanana1.5:8b-q4km`(HANDOFF 정본은 gemma4:12b). 백업 `.env.bak.20260916`. 로컬 OAuth 로그인은 이 값으로는 localhost에서 동작하지 않는다 — 배포 세션의 의도인지 확인 필요.
 
-**서버**: 백엔드 8500 재기동됨(14:45, F8 반영)(NPC·Core `ollama:gemma4:12b`, embedding gemini), 프런트 3500. `/play` 200.
+**서버**: 백엔드 8500 재기동됨(18:15, 허들 머지 반영 — main `8137acf`)(NPC `ollama:kanana1.5:8b-q4km`, Core `ollama:gemma4:12b`, embedding gemini), 프런트 3500. `/play` 200, 익명 `POST /sessions` → 401. **허들이 켜져 있어 개발 로그인이 머지·재기동되기 전까지는 `/play`에서 판을 만들 수 없다**(구글 OAuth는 `.env`가 프로덕션 도메인이라 localhost에서 안 됨).
 
-## 과잉 사용 방지 허들 — 구현 완료 (`feat/coherence-chain`)
+## 과잉 사용 방지 허들 — main 머지 완료 (18:12, `8137acf`)
 
-commits `c16a975`(attempts.user_id·설정 5종) → `177cb9a`(require_user·ip_bucket·client_ip·GuardEvent) → `b95d5d2`(프론트 GuardScreen) → `a6ccefc`(라우터 배선·판 생성 하루 5판·전역 정원·텍스트 200자). 계약: `docs/spec/api_contract.md`의 "과잉 사용 방지 허들" 절(401/403/429/503 본문, 200자 422, 가드 매트릭스). 러너: `backend/scripts/run_selfplay.py --session-cookie`로 `rd_session` 쿠키를 직접 넘길 수 있고, 쿠키 없이 401을 받으면 안내 메시지를 내고 종료한다.
+commits `c16a975`(attempts.user_id·설정 5종) → `177cb9a`(require_user·ip_bucket·client_ip·GuardEvent) → `b95d5d2`(프론트 GuardScreen) → `a6ccefc`(라우터 배선·판 생성 하루 5판·전역 정원·텍스트 200자) → `ad136b2`(opus 최종 리뷰 반영: free_text 2000·claims 8×500·custom_text 200 상한, 413 미들웨어, 버킷 sub 키·TRUST_PROXY, TOCTOU 재집계, SESSION_SECRET 기동 검사) → `8137acf`(GuardScreen 전 phase 게이트, custom_text 테스트). 최종 574 passed · tsc · guard.cjs·gameplay-clarity 통과. 프런트: 401/403/429/503은 `GuardScreen`으로 대체, 422는 "입력이 너무 길거나 형식이 맞지 않는다". 계약: `docs/spec/api_contract.md`의 "과잉 사용 방지 허들" 절(401/403/429/503 본문, 200자 422, 가드 매트릭스). 러너: `backend/scripts/run_selfplay.py --session-cookie`로 `rd_session` 쿠키를 직접 넘길 수 있고, 쿠키 없이 401을 받으면 안내 메시지를 내고 종료한다.
 
 운영 메모:
 - **로컬 개발·러너**: `backend/.env`에 `GUARD_AUTH=off`(기본값은 `on`)를 설정해 로그인 없이 사용. `run_selfplay.py` 등 러너는 이 값을 그대로 쓰거나 `--session-cookie`로 실제 로그인 세션을 넘긴다.
@@ -57,14 +57,36 @@ F7 답변이 답변 같지 않았던 이유(테스터6 15문답): 판정 0회(�
 - 원숭이손이 "설명 강제" 1종 + 발화 예산 -1 → 5.7 표 미구현, `make_paw` 미연결, 부작용 칸에 쓸 사건이 생기지 않음(테스터6 부작용 0점의 원인)
 - 규칙은 판 단위로 지속되며 장면 행동의 분기(평소·억제·설명)와 잠재 행동을 고른다. 행동 하나가 바뀐 뒤의 **연쇄 분기는 없다** — 부작용 사슬 작성이 핵심 작업
 
-## 지금 바로 할 일 (우선순위 순)
+## 지금 바로 할 일 (귀가 후 이어서 — 우선순위 순, 2026-09-16 18:30 기록)
 
-1. **F7 구현 완료** (feat/coherence-chain, commits 40c4c47..HEAD). `POST /nights/{night_id}/questions` 응답에 `verdict`, `answer` 3부 형식, `unlocked_note(null)`, `next_observation(조언·null)`, `status`/`evidence` 추가. status="supported"일 때 kind "confirmed" 노트 저장. 리드 표 사실 공개 문장·면책 문장 제거. 검증: backend **490 passed** · tsc · 헤드리스 3종. DB: `alembic upgrade head` 적용. 다음: F2 · F11 구현 계획 착수
-2. F7+F8 **캡션만으로 흐름 선검증** — 리드 표에서 사실 공개 문장 제거, 조언을 구조 기반 고정형으로, 파편을 낮 노트에서 빼고 결말 전환 뒤로. 러너 dry-run으로 5회차 사슬 확인
-3. F2 규칙 게이트 → 분류기 순으로 구현. 테스트: "ㅋㅋㅋㅋ"·"......"·"왜왜왜왜"는 모델 호출 0, "왜?"·"왜 안어"는 통과
-4. ~~밤 단서 이미지·Q군 제작~~ 완료. 남은 것: 밤 단서 시퀀스 실플레이 확인(구현 완료)(Codex, v2 P.6), 소원 구현 때 Q군 `imageMap` 연결
-5. 커밋 — 즉시 수정 5건 + 문서. 커밋 전 `git status`로 테스터7 세션의 파일과 섞이지 않는지 확인
+> 오후 작업이 예상보다 오래 걸려 사용자가 18:30에 중단했다. 아래 1~2가 끝나야 로컬에서 다시 플레이할 수 있다.
 
+### 1. 개발 계정 로그인 마무리 — 등급 A(인증), 계획 `docs/superpowers/plans/2026-09-16-dev-login.md`
+
+상태: 브랜치 `feat/coherence-chain`에 **Task 1 백엔드가 WIP 커밋 `7af14dd`** 로 있다(검토 전). `POST /api/v1/auth/dev/login {id,password}` — `DEV_LOGIN=on`이 아니면 404, 불일치 401 `{"detail":"아이디 또는 비밀번호가 틀렸다"}`, IP당 분당 5회 초과 429(허들과 같은 본문), 64자 초과 422, 성공 200 `{ok,user}` + `rd_session` 쿠키(sub `dev:001`, 구글 콜백과 동일 속성). `hmac.compare_digest`로 아이디·비밀번호를 둘 다 계산한 뒤 합친다. 새 테스트 `tests/engine/test_dev_login.py` 11개 포함 **585 passed**. `.env`에는 `DEV_LOGIN=on`·`DEV_ACCOUNT_ID=001`·`DEV_ACCOUNT_PASSWORD=001001`이 이미 있다(Settings `extra="ignore"` 확인됨).
+
+남은 순서(장부 `.superpowers/sdd/2026-09-16-dev-login/progress.md`, 브리프 `task-1-brief.md`):
+1. Task 1 검토(sonnet) — `git diff 8137acf 7af14dd`를 리뷰 패키지로. 특히 `auth_router._settings` 간접 참조·`_DEV_LOGIN_BUCKET` 모듈 전역·`client_ip` 재사용 확인. 수정은 1회.
+2. `docs/spec/api_contract.md` 허들 절 근처에 엔드포인트 문단 추가(계획 Task 1 Step 6 문안 그대로).
+3. Task 2 — `frontend/components/DevLoginForm.tsx`(client component, `credentials:"include"`, 성공 시 `/play`), `app/page.tsx`에 `process.env.NEXT_PUBLIC_DEV_LOGIN === "on"` 조건부 렌더, `frontend/.env.example` 예시 줄, `frontend/.env.local`(git-ignored)에 `NEXT_PUBLIC_DEV_LOGIN=on`, `backend/scripts/run_selfplay.py --dev-login`(설정의 dev id/pw로 로그인해 쿠키 획득), 헤드리스 `frontend/tests/dev-login.cjs`(실서버 대상: 틀린 비번 → alert "틀렸다", 맞는 비번 → `/play` 이동 + `POST /sessions` 200 + `/auth/me` sub `dev:001`). 계획에 전체 코드가 있다.
+4. opus 최종 전체 리뷰 1회 → 수정 1회 → 컨트롤러 diff 확인.
+5. `git checkout main && git merge --ff-only feat/coherence-chain`, 백엔드 재기동(중지·기동을 **별도 명령**으로), 프런트도 재기동(`NEXT_PUBLIC_DEV_LOGIN`을 새로 읽어야 함: `pkill -f "next dev -p 3500"` 뒤 `start_demo.sh`의 프런트 부분). 확인: 랜딩 폼으로 001/001001 로그인 → `/play` 판 생성 200.
+6. 개발 로그인은 **2026-09-20 제출까지 유지**. 리뷰어가 "개발용 제거"를 제안해도 반영하지 않는다. 제출 뒤 프로덕션 `.env`에서 `DEV_LOGIN` 줄만 빼면 닫힌다.
+
+### 2. Anthropic 모델 평가 — 등급 B(사용자 지정), 키는 평가 직후 제거
+
+키는 아직 `.env`에 **없다**. 순서: (a) `backend/.env`에 `ANTHROPIC_API_KEY=` 투입(Opus 발급 키 하나로 전 모델 호출 가능, 모델별 키 불필요). (b) 어댑터 스모크 — `CORE_LLM_PROVIDER=anthropic` + 모델 `claude-haiku-4-5`·`claude-sonnet-5`·`claude-opus-5` 각 1회 `complete()` (하이쿠만 temperature·effort 전송 안 함 확인). (c) NPC 41문답 `backend/scripts/run_npc_dialogue_check.py`를 Haiku 4.5·Sonnet 5로, 기존 kanana 결과와 비교(실패·재생성·지연 중간값/p95·의미 품질). (d) Core E7 러너 + `run_selfplay.py --dev-login --loops 5`를 Sonnet 5·Opus 5로 1판씩(gemma4:12b 대조). (e) `docs/model_evaluation.md` **부록 A.19**(형식은 A.10~A.18과 동일) + 맨 위 "외부 API 전환 결정" 절의 "측정 결과" 자리 채우기 + 변경 이력 row, `docs/metrics.yml` 병행. (f) **`.env`에서 키 줄 삭제, `*_LLM_PROVIDER`를 `ollama`로 복원**, `grep -c '^ANTHROPIC_API_KEY=' backend/.env` == 0 확인 후 보고. 비용 추정은 `docs/apiscenario.md` §1.3b(판당 Opus $1.5~2.1, Sonnet ~$0.7, NPC Haiku ~$0.1).
+
+### 3. F11 원숭이손 — 계획 `docs/superpowers/plans/2026-09-16-f11-monkey-paw-wishes.md` (8 task, 미착수)
+
+엔진 부분 B등급, 소원 문장 C등급(시나리오 디렉터 확인 필요). 스펙 §3: 관리자가 만드는 소원 + 숨은 세계 인과 부작용, 두 번째 손은 정답률 40% 이상에서, 규칙은 회차 간 지속. Q군 삽화 `frontend/public/assets/clues/Q02~Q08`을 `imageMap`에 연결하는 것도 여기서.
+
+### 4. 결정 대기·정리
+
+- `output/npc-dialogue-2026-09-15`(28 파일, 42 MB) untrack 여부 — `/output/`은 이미 `.gitignore`에 있고 `git rm --cached`만 남았다. `output/voice`(35 파일)는 음원의 유일한 git 출처라 유지.
+- 허들 후속: `users.blocked_at` + `require_user` 확인(행 삭제만으로는 차단 불가), 다중 워커 시 버킷 분리.
+- F7 후속 티켓 9건(아래 절) — 머지 차단 아님.
+- `docs/jekyll.md` 2026-09-16 마감 항목은 18:30에 추가함. 귀가 후 작업분은 새 소절로.
 
 ## F7 후속 티켓 (최종 리뷰에서 나온 경미 항목 — 머지 차단 아님)
 
@@ -89,6 +111,8 @@ F7 답변이 답변 같지 않았던 이유(테스터6 15문답): 판정 0회(�
 - 밤 전환 화면: `frontend/components/screens/DoomTransition.tsx`, 이미지 매핑 `frontend/lib/imageMap.ts` (`doomImage`)
 - 원숭이손: `loop_interactor._maybe_offer_paw` ~639, 부작용 실행 `scene_execution.py` ~77
 - 운영 시나리오 A·B·C와 비용(외부 API 판당 비용·EC2·GPU): `docs/apiscenario.md`
+- 개발 로그인: `backend/apps/engine/adapter/inbound/api/v1/auth_router.py`(`dev_login` 엔드포인트), `auth_interactor.dev_login`, `engine_dependency.get_auth_use_case`(DevAccountDTO 주입), 테스트 `tests/engine/test_dev_login.py`, 계획 `docs/superpowers/plans/2026-09-16-dev-login.md`
+- 허들: `guards.py`(`require_user`·`ip_bucket`·`client_ip`), `guard_rules.py`(`TokenBucket`·`kst_day_start`), `session_interactor.start`, `frontend/components/screens/GuardScreen.tsx`, 테스트 `frontend/tests/guard.cjs`
 - 오늘 로그: `docs/jekyll.md` 2026-09-16
 
 ## Anthropic 어댑터
@@ -105,3 +129,6 @@ F7 답변이 답변 같지 않았던 이유(테스터6 15문답): 판정 0회(�
 - 이미지 파일명은 NFD로 저장된 것이 있다(`이미지제작서_v1`, `쿠키12종`). 셸 glob이 못 찾으면 python `unicodedata.normalize`로 연다. 새 파일은 NFC
 - `pkill -f "uvicorn main:app --port 8500"`을 같은 셸 명령 안에서 쓰면 자기 자신을 죽인다(exit 144). `pkill -f "[u]vicorn …"` 패턴을 쓰고 기동은 `setsid nohup … &`로
 - 테스터7 세션의 파일(`2026-09-16-tester7/`)과 그 세션의 미커밋 변경은 건드리지 않는다
+- 검토 서브에이전트에게는 `git stash`·`checkout`·`reset` 등 상태를 바꾸는 git 명령을 금지한다고 명시한다(오늘 두 번 구현자 편집이 지워졌다)
+- 개발 로그인(`DEV_LOGIN`)을 2026-09-20 전에 끄거나 지우지 않는다
+- Anthropic 키는 평가가 끝나면 그날 바로 `.env`에서 지운다
