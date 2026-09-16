@@ -80,7 +80,7 @@ req: `{text: string}` → res: `{verdict: string, answer: string, detail: string
 - `verdict`: "맞다." / "아니다." / "그건 알 수 없다." / "왜인지는 내가 말할 수 없다. 그 전에 일어난 일은 말할 수 있다."(왜/이유/어떻게 질문만)
 - `answer`: 한다체 문장. 첫 문장은 verdict 또는 그 요지. 최대 3문장
 - `unlocked_note`: 항상 null (호환성 유지)
-- `next_observation`: 세계 구조 기반 조언 한 줄(「…」·내일 {인물}에게 물어보기/규칙) 또는 null
+- `next_observation`: 세계 구조 기반 조언 한 줄 — 항상 "네 기록의 「{닻 관찰 문장}」." 으로 시작하고 뒤에 "내일 {인물}에게 … 물어봐라." 또는 "{인물}: {행동} 규칙을 걸어 봐라."가 붙는다. 닻(플레이어 공개 관찰)이 없으면 null
 - status="supported"일 때 kind "confirmed" 노트 저장(source_key `confirmed-{observation_id}`). 다음 밤 근거 목록에 확인 그룹으로 표시
 
 ### GET /nights/{night_id}/options
