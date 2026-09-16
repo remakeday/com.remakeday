@@ -67,6 +67,13 @@ const deferred = () => {
         const mode = await hold(utteranceArrived, { request });
         if (mode === 'service-failure') return fulfill(route, { detail: '잠시 답을 받지 못했다.' }, 503);
         if (mode === 'conflict') return fulfill(route, { detail: '이 질문 요청이 다른 내용으로 이미 처리됐다.' }, 409);
+        if (mode === 'gated') {
+          const npc = npcs.find(npc => npc.code === request.target);
+          return fulfill(route, {
+            utterance_id: request.request_id, reply: '무슨 말인지 모르겠다는 얼굴이다.',
+            npc: { ...npc }, budget_left: budget, beat, tool_used: false, gated: true, observations: [],
+          });
+        }
         const id = request.request_id ?? `legacy-${requests.length}`;
         if (!accepted.has(id)) {
           budget--;
@@ -131,6 +138,15 @@ const deferred = () => {
       assert.equal(await send.isDisabled(), true, 'pending question locks duplicate sends');
       assert.equal(await page.getByRole('button', { name: /^(다음 장면|…)$/, exact: true }).isDisabled(), true, 'pending mutation locks scene movement');
     };
+    await page.getByText('오늘 남은 대화 8회', { exact: true }).waitFor();
+    const gatedQuestion = await beginQuestion('ㅁㄴㅇㄹ 의미 없는 입력');
+    await assertPendingLocks();
+    gatedQuestion.release('gated');
+    await page.getByText('무슨 말인지 모르겠다는 얼굴이다.', { exact: true }).waitFor();
+    await page.getByText('오늘 남은 대화 8회', { exact: true }).waitFor();
+    assert.equal(await input.isEnabled(), true, 'gated reply does not lock the NPC for this scene');
+    assert.equal(await minseok.getAttribute('aria-label'), '민석 · 대화 가능', 'gated reply keeps the NPC from being marked scene-complete');
+
     const question1 = await beginQuestion('왜 쟁반을 살폈어?');
     await assertPendingLocks();
     question1.release('success');
@@ -274,7 +290,7 @@ const deferred = () => {
     assert.equal(await page.getByRole('button', { name: '단서 기록 열기', exact: true }).isEnabled(), true);
     assert.equal(advanceCalls, 5, 'only the explicit advances moved the scene');
     assert.deepEqual(errors, []);
-    console.log(JSON.stringify({ checks: ['one successful question per NPC per scene', 'another NPC remains available', 'next scene unlocks', 'pending and failed NPC refresh locks', '8 → 7 → 6 budget', 'separate observations', 'selection retained', 'no auto advance', '503 and lost-response retry ID', 'one accepted chat entry per request', 'terminal rejection correction', 'pending mutation locks', 'legacy response IDs', 'zero budget'], requests: requests.length }, null, 2));
+    console.log(JSON.stringify({ checks: ['gated reply keeps budget and NPC unlocked', 'one successful question per NPC per scene', 'another NPC remains available', 'next scene unlocks', 'pending and failed NPC refresh locks', '8 → 7 → 6 budget', 'separate observations', 'selection retained', 'no auto advance', '503 and lost-response retry ID', 'one accepted chat entry per request', 'terminal rejection correction', 'pending mutation locks', 'legacy response IDs', 'zero budget'], requests: requests.length }, null, 2));
   } finally {
     for (const gate of gates) gate.resolve();
     await browser.close();

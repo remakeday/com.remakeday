@@ -133,6 +133,8 @@ export interface UtteranceRes {
   beat: number;
   tool_used: boolean;
   observations: Observation[];
+  /** 무의미한 입력이라 인물의 반응이 아닌 대체 문장을 돌려줬을 때만 true. */
+  gated?: boolean;
 }
 
 export interface BeatNextRes {

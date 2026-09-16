@@ -16,8 +16,9 @@ res: `{loop_id: string, loop_n: number, morning_text: string, damage_level: 0|1|
 
 ### POST /loops/{loop_id}/utterances
 req: `{target: string(code), text: string, request_id?: string(UUID)}`
-res: `{utterance_id: string(UUID), reply: string, npc: {code: string, name: string, mood: "calm"|"uneasy"|"wary", uttered: boolean}, budget_left: number, beat: number, tool_used: boolean, observations: Observation[]}`
+res: `{utterance_id: string(UUID), reply: string, npc: {code: string, name: string, mood: "calm"|"uneasy"|"wary", uttered: boolean}, budget_left: number, beat: number, tool_used: boolean, observations: Observation[], gated?: boolean}`
 - 한 장면에서 NPC마다 성공한 대화는 1회만 가능하다. `uttered=true`인 NPC에게 새로운 질문을 보내면 409이며 예산은 줄지 않는다. 다른 NPC는 대화 가능하고, 다음 장면에서 다시 말을 걸 수 있다. 성공한 질문마다 예산 1회를 쓰며 장면은 이동하지 않는다.
+- `gated=true`: 무의미한 입력이라 판단해 인물의 실제 반응 대신 대체 문장(`reply`)을 돌려준 응답. `npc.uttered`는 항상 `false`라 이 비트의 재발화 잠금이 걸리지 않는다. `observations`는 빈 배열이다. 예산은 같은 비트의 첫 무의미 입력에서는 차감되지 않고, 두 번째부터 차감된다(`budget_left` 반영). `gated` 필드가 없으면 구버전 응답이거나 정상 발화로 취급한다.
 - 같은 회차의 같은 `request_id`/대상/질문은 장면당 1회 제한과 무관하게 저장된 성공 응답을 반환하고 추가로 차감하지 않는다. 다른 질문에 ID를 재사용하면 409. ID 생략 요청은 각각 새 발화다.
 - 예산 소진·대화할 수 없는 상대·낮 종료는 409. 모델 응답 실패는 503이며 예산·대화 기억·노트가 변경되지 않는다. 네트워크 오류 후에도 같은 질문과 ID로 재전송한다.
 - 발화·예산·관찰·노트를 한 트랜잭션으로 저장한다. 발언별 관찰 ID는 서로 다르며 응답의 관찰 ID로 노트와 연결한다.
