@@ -49,7 +49,14 @@ class AuthInteractor:
     def current_user(self, session_token: str | None) -> SessionUserDTO | None:
         if not session_token:
             return None
-        return self._tokens.verify(session_token)
+        user = self._tokens.verify(session_token)
+        if user is None:
+            return None
+        if user.sub.startswith("dev:"):
+            dev = self._dev_account
+            if dev is None or user.sub != f"dev:{dev.account_id}":
+                return None
+        return user
 
     def dev_login(self, account_id: str, password: str) -> LoginResultDTO | None:
         dev = self._dev_account

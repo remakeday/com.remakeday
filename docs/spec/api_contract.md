@@ -157,7 +157,7 @@ res: `{scenario, harness, models: {npc, core, embedding}, db}`
 
 ### POST /api/v1/auth/dev/login (개발 계정, 2026-09-20까지)
 
-`POST /api/v1/auth/dev/login` `{id, password}` — `DEV_LOGIN=on`일 때만 열린다(아니면 404). 성공 200 `{ok, user}` + `rd_session` 쿠키(구글 로그인과 동일, sub `dev:{id}`). 실패 401 `{"detail":"아이디 또는 비밀번호가 틀렸다"}`, IP당 분당 5회 초과 429(허들 429와 같은 본문), 64자 초과 422. 2026-09-20 제출 뒤 `.env`에서 `DEV_LOGIN`을 빼면 닫힌다.
+`POST /api/v1/auth/dev/login` `{id, password}` — `DEV_LOGIN=on`일 때만 열린다(아니면 404). 성공 200 `{ok, user}` + `rd_session` 쿠키(구글 로그인과 동일, sub `dev:{id}`). 실패 401 `{"detail":"아이디 또는 비밀번호가 틀렸다"}`, IP당 분당 5회 초과 429(허들 429와 같은 본문), 64자 초과 422. 2026-09-20 제출 뒤 `.env`에서 `DEV_LOGIN`을 빼면 닫힌다(이미 발급된 dev 세션도 함께 무효).
 
 ## 타입
 CellScores = `{cause: number, motive: number, side_effect: number, identity: number}`

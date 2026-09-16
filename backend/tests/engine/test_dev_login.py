@@ -44,6 +44,34 @@ def test_dev_login_disabled_without_account():
     assert _interactor(dev=None).dev_login("001", "001001") is None
 
 
+def test_current_user_accepts_dev_token_when_dev_account_configured():
+    it = _interactor()
+    result = it.dev_login("001", "001001")
+    assert it.current_user(result.session_token) == result.user
+
+
+def test_current_user_rejects_dev_token_when_dev_account_not_configured():
+    issuer = _interactor()
+    result = issuer.dev_login("001", "001001")
+    reader = _interactor(dev=None)
+    assert reader.current_user(result.session_token) is None
+
+
+def test_current_user_rejects_dev_token_when_account_id_changed():
+    issuer = _interactor()
+    result = issuer.dev_login("001", "001001")
+    reader = _interactor(dev=DevAccountDTO(account_id="002", password="001001"))
+    assert reader.current_user(result.session_token) is None
+
+
+def test_current_user_accepts_google_sub_when_no_dev_account_configured():
+    tokens = SessionTokenSigner("s")
+    google_user = SessionUserDTO(sub="google:12345", email="a@b.com", name="a")
+    token = tokens.issue(google_user, 3600)
+    it = AuthInteractor(oauth=None, users=_Users(), tokens=tokens, dev_account=None)
+    assert it.current_user(token) == google_user
+
+
 def _client(monkeypatch, dev_login="on", per_minute=5):
     from main import app
     from apps.engine.dependencies.engine_dependency import get_auth_use_case
@@ -95,6 +123,11 @@ def test_endpoint_sets_cookie_and_me_returns_dev_user(client):
 
 def test_endpoint_422_on_long_input(client):
     res = client.post("/api/v1/auth/dev/login", json={"id": "a" * 65, "password": "001001"})
+    assert res.status_code == 422
+
+
+def test_endpoint_422_on_long_password(client):
+    res = client.post("/api/v1/auth/dev/login", json={"id": "001", "password": "a" * 65})
     assert res.status_code == 422
 
 
