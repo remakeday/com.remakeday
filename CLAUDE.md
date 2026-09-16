@@ -15,6 +15,18 @@ Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-s
 - `/play` creates a game session on load and does not restore an in-progress game after reload. Do not reload or navigate back to `/play` to recover from a slow response. Wait for the current action and inspect its result in the same tab.
 - Close only the test pages/processes created by the task when finished, including on failure (`try/finally`). Never close the user's browser or unrelated tabs.
 
+## 검토 강도 등급 (Review Intensity Tiers)
+
+작업의 중요도에 따라 검토 절차를 세 등급으로 나눈다. 계획을 실행할 때 장부(ledger) 첫 줄에 등급을 적고 그 등급의 절차만 돈다. 사용자가 "이 기능은 가볍게/무겁게"라고 지정하면 그 지정이 우선한다. 리뷰어가 Critical을 내면 자동으로 한 등급 올린다. 하향은 사용자 지시로만.
+
+| 등급 | 대상 | 절차 |
+|---|---|---|
+| **A 무거움** | 비용·보안·인증·결제·데이터 손실 가능(과잉 사용 허들, 외부 API 어댑터, DB 마이그레이션, 채점 로직, 배포·환경 설정) | task마다 구현+검토(sonnet), 최종 전체 리뷰(opus), 수정 1회 + 범위 재검토 |
+| **B 보통** | 게임 로직·UI 동작 변경(신의 질문, 무의미 입력, 원숭이손 엔진 등) | task 검토는 sonnet/haiku, 순수 함수·문서·설정 task는 개별 검토 생략, 최종 전체 리뷰 sonnet 1회, 수정 1회, 재검토는 컨트롤러의 diff 확인으로 대체 |
+| **C 가벼움** | 시나리오 문장·문서·자산 등록·테스트 정리·평가 러너 실행 | 구현 후 컨트롤러가 diff와 테스트 결과만 확인, 전체 리뷰 생략(원하면 haiku 1회) |
+
+기본 배정 예: 개발 계정 로그인 = A(인증). 원숭이손 엔진 = B, 소원 문장 작성 = C. Anthropic 평가 러너 실행 = C.
+
 ## 1. Think Before Coding
 
 **Don't assume. Don't hide confusion. Surface tradeoffs.**

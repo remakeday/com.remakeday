@@ -21,6 +21,18 @@ Behavioral guidelines for Codex to reduce common coding mistakes. Apply these al
 - `/play` creates a game session on load and does not restore an in-progress game after reload. Do not reload or navigate back to `/play` to recover from a slow response. Wait for the current action and inspect its result in the same tab.
 - Close only the test pages/processes created by the task when finished, including on failure (`try/finally`). Never close the user's browser or unrelated tabs.
 
+## Review Intensity Tiers
+
+Scale the review process to the importance of the work. Write the tier on the first line of the plan ledger and run only that tier's procedure. An explicit user instruction ("do this one lightly/heavily") overrides the default. A Critical finding from a reviewer raises the tier by one automatically; lowering requires a user instruction.
+
+| Tier | Scope | Procedure |
+|---|---|---|
+| **A Heavy** | Cost, security, auth, payments, data loss (abuse guard, external API adapters, DB migrations, scoring logic, deployment/env config) | Implementer + reviewer per task (sonnet), final whole-branch review (opus), one fix wave + scoped re-review |
+| **B Normal** | Game logic and UI behavior changes (god questions, nonsense input, monkey-paw engine) | Per-task review with sonnet/haiku; skip per-task review for pure-function, docs and config tasks; one final whole-branch review (sonnet); one fix wave; re-review replaced by the controller's diff check |
+| **C Light** | Scenario text, docs, asset registration, test cleanup, evaluation runner runs | Controller checks the diff and test output after implementation; no whole-branch review (optional single haiku pass) |
+
+Default assignments: dev-account login = A (auth). Monkey-paw engine = B, wish text authoring = C. Anthropic evaluation runner runs = C.
+
 ## 1. Think Before Coding
 
 **Don't assume silently. Surface meaningful uncertainty and tradeoffs.**
