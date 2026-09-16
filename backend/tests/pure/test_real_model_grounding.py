@@ -65,7 +65,7 @@ def test_exact_gemma_missing_detail_keeps_partial_trays_and_unknown_owners():
     assert len(model.calls) == 1
     assert result["status"] == "unknown"
     assert [o["text"] for o in result["evidence"]] == [FOOD[1][1]]  # Excluded actor is not relevant partial proof.
-    assert "주인" in result["detail"] and "확인되지" in result["detail"]
+    assert "확인된 기록" in result["detail"] and FOOD[1][1] in result["detail"]
     assert not [e for e in events.rows if e.type == "harness_event"][0].fallback_used
 
 
@@ -89,7 +89,7 @@ def test_report_instruction_is_partial_not_completed_report_or_known_recipient()
     result, _, _ = question(model_assessment('supported', evidence_ids=['approach']),
                             "민석은 누구에게 보고하는거야?", records)
     assert result["status"] == "unknown"
-    assert "수신자" in result["detail"] and "보고 완료" in result["detail"]
+    assert "확인된 기록" in result["detail"] and "방송실 문 앞" in result["detail"]
 
 
 def test_meta_question_explains_real_capabilities_without_using_model():
@@ -104,7 +104,7 @@ def test_term_mention_does_not_confirm_a_definition_or_relationship(text):
     result, _, _ = question(model_assessment('supported', evidence_ids=['term']), text,
                             [("term", "준이 '귀표'라고 말했다.", "준", "scene")])
     assert result["status"] == "unknown"
-    assert "정의" in result["detail"]
+    assert "확인된 기록" in result["detail"] and "귀표" in result["detail"]
 
 
 @pytest.mark.parametrize(("text", "fact", "actor", "kind"), [

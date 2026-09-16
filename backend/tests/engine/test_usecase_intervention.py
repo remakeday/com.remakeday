@@ -55,42 +55,11 @@ def make_intervention(db_session, core_queue, cause_chain=None, rules=None, acti
     return interactor, attempt, night
 
 
-def make_lead(key="k1", loop_n=1, cues=("배급",), text="배급 포대는 트럭에서 내려온다.",
-              direction="내일 배급 자리를 지켜봐라."):
+def make_lead(key="k1", loop_n=1, cues=("배급",), anchor_cues=("배급",), target="채연",
+              ask="배급이 어디서 오는지", rule_action=None):
     from apps.engine.app.dtos.scenario_dto import AdvisorLeadDTO
-    return AdvisorLeadDTO(key=key, loop_n=loop_n, cues=list(cues), text=text, direction=direction)
-
-
-def test_question_unlocks_lead_note_and_direction_even_on_fallback(db_session):
-    lead = make_lead()
-    inter, attempt, night = make_intervention(db_session, [], advisor_leads=[lead])
-    res = inter.ask(night.id, "배급이 왜 이래?")
-    assert res["unlocked_note"] == lead.text
-    assert lead.text in res["answer"]
-    assert res["next_observation"] == lead.direction
-    notes = NoteRepository(db_session).list(attempt.id)
-    assert any(n.source_key == "advisor-lead-k1" and n.text == lead.text for n in notes)
-
-
-def test_same_lead_is_not_unlocked_twice(db_session):
-    lead = make_lead()
-    inter, attempt, night = make_intervention(db_session, [], advisor_leads=[lead])
-    first = inter.ask(night.id, "배급이 왜 이래?")
-    second = inter.ask(night.id, "배급 얘기 또 물을게")
-    assert first["unlocked_note"] == lead.text
-    assert second["unlocked_note"] is None
-    notes = [n for n in NoteRepository(db_session).list(attempt.id)
-             if n.source_key.startswith("advisor-lead-")]
-    assert len(notes) == 1
-
-
-def test_future_loop_lead_stays_locked(db_session):
-    lead = make_lead(key="late", loop_n=3)
-    inter, attempt, night = make_intervention(db_session, [], advisor_leads=[lead])
-    res = inter.ask(night.id, "배급이 왜 이래?")
-    assert res["unlocked_note"] is None
-    assert not [n for n in NoteRepository(db_session).list(attempt.id)
-                if n.source_key.startswith("advisor-lead-")]
+    return AdvisorLeadDTO(key=key, loop_n=loop_n, cues=list(cues), anchor_cues=list(anchor_cues),
+                          target=target, ask=ask, rule_action=rule_action)
 
 
 # The old chain-confirmation/forced-three-options/nearest-action assertions were
@@ -123,7 +92,7 @@ def test_question_rejects_fabricated_evidence_id_and_falls_back(db_session):
     answer = inter.ask(night.id, "채연이 뭐 했어?")
     assert answer["status"] == "unknown"
     assert [o["text"] for o in answer["evidence"]] == [_FACT]  # Preserve public known facts after invalid IDs.
-    assert answer["next_observation"]
+    assert answer["next_observation"] is None  # No advisor lead is anchored here; advice is the only hint now.
 
 
 def test_question_uses_public_observation_when_chain_is_missing(db_session):
@@ -161,9 +130,10 @@ def publish_scene_action(inter, night, action, rule_id=None):
     from apps.engine.app.use_cases.public_observations import disclose
     from apps.engine.app.dtos.scenario_dto import BeatDTO
     loop = inter._loops.get(night.loop_id)
-    return disclose(inter._events, loop, BeatDTO(n=1, title="아침", narration=_FACT),
-                    key=f"action-1-채연-{action}", text=_FACT, actor="채연",
+    observation = disclose(inter._events, loop, BeatDTO(n=1, title="아침", narration=_FACT),
+                    key=f"action-1-채연-{action}", text=f"채연이 {action}.", actor="채연",
                     source_kind="rule_result" if rule_id else "scene", rule_id=rule_id)
+    return observation.observation_id
 
 
 def _ration_templates():
@@ -250,3 +220,64 @@ def test_recipient_question_retains_broadcast_instruction_as_partial_evidence(db
     answer = inter.ask(night.id, "민석은 누구에게 보고하는거야?")
     assert answer["status"] == "unknown"
     assert answer["evidence_ids"] == [observation.observation_id]
+
+
+def test_advice_is_anchored_to_player_record_and_not_a_hidden_fact(db_session):
+    lead = make_lead(anchor_cues=("배급",), target="준", ask="배급이 어디서 오는지")
+    inter, attempt, night = make_intervention(db_session, [], advisor_leads=[lead])
+    publish_scene_action(inter, night, "배급을 남긴다")
+    res = inter.ask(night.id, "배급이 왜 이래?")
+    assert res["unlocked_note"] is None
+    assert "한 가지 더" not in res["answer"]
+    assert res["next_observation"].startswith("네 기록의 「")
+    assert res["next_observation"].endswith("내일 준에게 배급이 어디서 오는지 물어봐라.")
+    assert res["answer"].startswith("왜인지는 내가 말할 수 없다.")
+    notes = NoteRepository(db_session).list(attempt.id)
+    assert any(n.source_key == "advisor-lead-k1" for n in notes)
+
+
+def test_advice_is_skipped_without_anchor(db_session):
+    lead = make_lead(anchor_cues=("거울",))
+    inter, attempt, night = make_intervention(db_session, [], advisor_leads=[lead])
+    res = inter.ask(night.id, "배급이 왜 이래?")
+    assert res["next_observation"] is None or "네 기록의" not in res["next_observation"]
+    assert not any(n.source_key.startswith("advisor-lead-") for n in NoteRepository(db_session).list(attempt.id))
+
+
+def test_same_lead_is_not_advised_twice(db_session):
+    lead = make_lead()
+    inter, attempt, night = make_intervention(db_session, [], advisor_leads=[lead])
+    publish_scene_action(inter, night, "배급을 남긴다")
+    first = inter.ask(night.id, "배급이 왜 이래?")
+    second = inter.ask(night.id, "배급 얘기 또 물을게")
+    assert "네 기록의" in first["next_observation"]
+    assert second["next_observation"] is None or "네 기록의" not in second["next_observation"]
+
+
+def test_future_loop_lead_stays_locked(db_session):
+    lead = make_lead(loop_n=3)
+    inter, attempt, night = make_intervention(db_session, [], advisor_leads=[lead])
+    publish_scene_action(inter, night, "배급을 남긴다")
+    res = inter.ask(night.id, "배급이 왜 이래?")
+    assert res["next_observation"] is None or "네 기록의" not in res["next_observation"]
+
+
+def test_fact_question_gets_verdict_prefix(db_session):
+    inter, attempt, night = make_intervention(db_session, [
+        {"question_kind": "proposition", "answer": "채연은 쟁반을 반쯤 남기고 옆으로 밀었다.",
+         "evidence": []}])
+    publish_scene_action(inter, night, "배급을 남긴다")
+    res = inter.ask(night.id, "채연이 오늘 배급을 남겼어?")
+    assert res["answer"].split(" ", 1)[0] in {"맞다.", "그건", "아니다."}
+    assert res["verdict"] in {"맞다.", "아니다.", "그건 알 수 없다."}
+
+
+def test_polite_register_triggers_regeneration(db_session):
+    polite = {"question_kind": "proposition", "answer": "채연은 쟁반을 남겼습니다.", "evidence": []}
+    plain = {"question_kind": "proposition", "answer": "채연은 쟁반을 남겼다.", "evidence": []}
+    inter, attempt, night = make_intervention(db_session, [polite, plain])
+    publish_scene_action(inter, night, "배급을 남긴다")
+    res = inter.ask(night.id, "채연이 오늘 배급을 남겼어?")
+    assert "습니다" not in res["answer"]
+    reports = [e for e in EventLogRepository(db_session).query(attempt.id) if e.type == "harness_event"]
+    assert reports[-1].attempts == 2

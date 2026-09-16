@@ -15,7 +15,7 @@ def test_explicit_relation_drives_status_in_both_question_polarities(text, claim
     result, model, _ = question(model_assessment(relation, claim=claim, evidence_ids=["checkup"]), text,
                                 [("checkup", "검진 결과는 공개되지 않았다.", None, "scene")])
     assert result["status"] == relation
-    assert result["answer"] == ("맞다" if relation == "supported" else "틀리다")
+    assert result["answer"] == ("맞다. 맞다" if relation == "supported" else "아니다. 틀리다")
     assert {"question_kind", "evidence", "answer"} == set(model.calls[0][1]["required"])
     assert "claim" not in model.calls[0][1]["properties"]
 
@@ -44,9 +44,7 @@ def test_valid_tray_evidence_is_not_expanded_to_excluded_actor_or_general_ration
     result, _, _ = question(model_assessment('unknown', evidence_ids=['public-7']),
                             "채연 말고 밥을 남긴 사람은 누구야?", records)
     assert [o["text"] for o in result["evidence"]] == [FOOD[1][1]]
-    assert "채연에게" not in result["next_observation"]
-    assert "방금" not in result["next_observation"]
-    assert result["evidence"][0]["scene_title"] in result["next_observation"]
+    assert result["next_observation"] is None  # No advisor lead is configured here.
 
 
 def test_truck_identity_never_adds_unrelated_transfer_record():
@@ -64,7 +62,7 @@ def test_valid_but_unrelated_truck_id_is_removed_from_band_relationship_evidence
                             "손목띠와 귀표는 무슨 관계야?", records)
     assert len(result["evidence"]) == 2
     assert "트럭" not in result["detail"]
-    assert "준에게" in result["next_observation"]
+    assert result["next_observation"] is None  # No advisor lead is configured here.
 
 
 def test_empty_unknown_recovers_only_narrow_public_partial_evidence():

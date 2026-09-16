@@ -15,6 +15,10 @@ from apps.engine.app.dtos.llm_output_dto import (
     AdvisorOptionsOutput,
 )
 from apps.engine.app.use_cases import prompts
+from apps.engine.app.use_cases.advisor_advice import (
+    advice_sentence, find_anchor, is_why_question, polite_register_check,
+    unbacked_confirmation_check, verdict_prefix,
+)
 from apps.engine.app.use_cases.public_observations import public_observations
 from apps.engine.app.use_cases.scene_execution import INFORMATION_ACTIONS, EXPLAIN_ACTION, SOURCE_ACTION
 from apps.engine.app.use_cases.game_support import record_harness, system_msg
@@ -165,16 +169,6 @@ def advisor_context(text, observations, names, *, history_text=""):
     return selected
 
 
-def question_limit(text):
-    if any(word in text for word in ("밥", "배급", "쟁반")) and any(word in text for word in ("누구", "사람", "말고")):
-        return "남은 쟁반의 주인과 다른 사람의 식사량은 이 기록만으로 확인되지 않았다."
-    if "보고" in text:
-        return "보고하라는 지시나 방송실 접근만으로 보고 완료와 수신자는 확인되지 않았다."
-    if any(word in text for word in ("귀표", "손목띠")):
-        return "말에 등장한 용어의 정의와 두 표시의 관계는 이 기록만으로 확인되지 않았다."
-    return "질문한 관계나 이유는 이 기록만으로 확인되지 않았다."
-
-
 def unresolved_question(text, evidence):
     """A citation does not itself establish the relationship a question requests."""
     original = "\n".join(o.text for o in evidence)
@@ -264,7 +258,9 @@ class InterventionInteractor:
                 f"행위자: {o.actor or '명시되지 않음'}) {o.text}" for o in relevant)
             conversation = "\n".join(f"질문: {e.question}\n답변: {e.answer}" for e in history)
             task = (
-                "플레이어의 추리를 돕는 대화 상대다. 원래 질문에 자연스럽고 짧게 2~3문장으로 직접 답하라. "
+                "플레이어의 추리를 돕는 목소리다. 짧은 한다체로 최대 3문장. 합니다체·습니다체는 쓰지 않는다. "
+                "첫 문장은 판정이 아니라 근거다 — 판정은 시스템이 앞에 붙인다. "
+                "플레이어가 이미 본 기록을 그대로 되풀이하지 말고, 기록 둘을 잇는 관계나 질문이 놓친 사실 하나를 말하라. "
                 "공개된 세계 설명의 기본 규칙은 설명할 수 있다. 조건 질문은 조건이 성립할 때의 규칙을 설명하되, "
                 "그 조건이 실제로 일어났다고 단정하지 마라. 예: 아프면 어떻게 돼?에는 알려진 이송 규칙을 설명한다. "
                 "관찰과 규칙을 연결한 추론은 가능성임을 분명히 하라. 이유를 모르면 확인된 상황을 먼저 설명하고 "
@@ -301,8 +297,9 @@ class InterventionInteractor:
                 return None
 
             out, report = run_with_harness(self._llm, [system_msg(task)], AdvisorReplyOutput,
-                role="advisor_answer", fact_checks=[grounding, _no_raw_record_check], harness_on=True,
-                temperature=0, retry_feedback=True)
+                role="advisor_answer",
+                fact_checks=[grounding, _no_raw_record_check, polite_register_check, unbacked_confirmation_check],
+                harness_on=True, temperature=0, retry_feedback=True)
             record_harness(self._events, loop.attempt_id, report, loop_n=loop.loop_n, beat=None)
             if out:
                 answer = out.answer.strip()
@@ -329,33 +326,24 @@ class InterventionInteractor:
             if evidence:
                 detail = "확인된 기록:\n" + "\n".join(
                     f"{o.loop_n}회차 · {'전언' if o.verification == 'reported' else '관찰'}: {o.text}" for o in evidence)
-                detail += "\n" + question_limit(text)
+        why = is_why_question(text)
+        verdict = verdict_prefix(status, why)
+        answer = f"{verdict} {answer}".strip()
+        # 조언 — 세계 구조에서만, 플레이어 기록에 닻이 있을 때만 (기획서 5.6)
         next_observation = None
-        if status == "unknown":
-            source = next((o for o in reversed(evidence) if o.actor in self._target_names), None)
-            if source:
-                next_observation = (f"다음 낮에 {source.actor}에게 {source.loop_n}회차 「{source.scene_title}」에서 "
-                                    "공개된 행동이나 말에 관해 물어볼 수 있다.")
-            elif evidence:
-                source = evidence[-1]
-                next_observation = f"원본 노트에서 {source.loop_n}회차 「{source.scene_title}」의 기록을 다시 확인할 수 있다."
-            else:
-                next_observation = "이미 공개된 장면의 노트를 확인하고 다음 낮의 행동을 관찰할 수 있다."
-        elif meta:
-            next_observation = "원본 노트를 확인하거나 규칙 선택에서 다음 날 관찰할 행동을 고를 수 있다."
-        # 질문 보상 — 미공개 관찰 1개 해금 (결정론: LLM 실패·unknown이어도 보장, 노트로 적립)
         unlocked_note = None
         if self._advisor_leads:
             used = {n.source_key.removeprefix("advisor-lead-")
                     for n in self._notes.list(loop.attempt_id)
                     if n.source_key.startswith("advisor-lead-")}
             lead = select_lead(text, self._advisor_leads, used, loop.loop_n)
-            if lead:
-                unlocked_note = lead.text
-                answer = f"{answer}\n한 가지 더 — {lead.text}"
-                self._notes.upsert(loop.attempt_id, kind="fragment", text=lead.text,
+            anchor = find_anchor(lead, observations) if lead else None
+            if lead and anchor:
+                next_observation = advice_sentence(lead, anchor)
+                self._notes.upsert(loop.attempt_id, kind="fragment", text=next_observation,
                                    loop_n=loop.loop_n, source_key=f"advisor-lead-{lead.key}")
-                next_observation = lead.direction
+        if next_observation is None and meta:
+            next_observation = "원본 노트를 확인하거나 규칙 선택에서 다음 날 관찰할 행동을 고를 수 있다."
         night.questions_left -= 1
         night.questions = list(night.questions or []) + [text]
         self._nights.save()
@@ -364,8 +352,8 @@ class InterventionInteractor:
             loop_n=loop.loop_n, q_index=3-night.questions_left, question=text, answer=answer,
             hit_cause_chain=bool(evidence), confirmed_note_id=None, detail=detail,
             status=status, evidence_ids=ids, next_observation=next_observation,
-            unlocked_note=unlocked_note))
-        return {"answer": answer, "detail": detail, "remaining": night.questions_left,
+            unlocked_note=None))
+        return {"answer": answer, "verdict": verdict, "detail": detail, "remaining": night.questions_left,
                 "status": status, "evidence_ids": ids, "evidence": [o.model_dump() for o in evidence],
                 "next_observation": next_observation, "unlocked_note": unlocked_note}
 

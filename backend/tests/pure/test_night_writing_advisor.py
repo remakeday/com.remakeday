@@ -2,6 +2,7 @@
 from types import SimpleNamespace as NS
 from uuid import uuid4
 
+from apps.engine.app.use_cases.advisor_advice import WHY_PREFIX
 from apps.engine.app.use_cases.night_interactor import NightInteractor
 from apps.engine.app.use_cases.intervention_interactor import InterventionInteractor, advisor_context
 from apps.engine.app.use_cases.public_observations import disclose
@@ -61,7 +62,7 @@ def advisor(records=0):
 def test_conditional_question_gets_natural_answer_in_one_call_with_only_public_context():
     inter, night, model, bundle, answer = advisor()
     result = inter.ask(night.id, "채연이 아프면 어떻게 돼?")
-    assert result["answer"] == answer
+    assert result["answer"] == f"{WHY_PREFIX} {answer}"
     assert len(model.calls) == 1 and result["remaining"] == 2
     context = model.calls[0][0][0].content
     assert bundle.surface_summary in context and "채연이 아프면 어떻게 돼?" in context
