@@ -139,6 +139,10 @@ const NIGHT_IMAGES = { P01: '/assets/P01.png', P02: '/assets/P02.png', P03: '/as
         report.checks.push(`night ${n}: ${clue.voice_id}, ${clue.image_ids.length} band image(s), caption stays`);
         if (n < 5) {
           await page.getByRole('button', { name: '규칙을 고른다', exact: true }).waitFor();
+          if (n === 1) {
+            await page.getByText('이 목소리는 오늘 일어난 일만 안다. 무엇을 했는지 물어라.', { exact: true }).waitFor();
+            assert.equal(await page.getByText('새 단서 — 노트에 적혔다').count(), 0);
+          }
           if (n === 1) await page.waitForFunction(() => window.voiceStarts.includes('AD01.mp3'));
           if (n === 3) assert.ok(await page.evaluate(() => window.voiceEnds.includes('MA06.mp3')), 'closure transition lets the full recording finish');
           if (n > 1) assert.equal(await page.evaluate(() => window.voiceStarts.filter(id => id === 'AD01.mp3').length), 1, 'advisor introduction plays only on the first visit');

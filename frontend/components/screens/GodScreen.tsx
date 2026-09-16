@@ -13,11 +13,11 @@ import { VOICE_CLIPS } from "@/lib/voiceMap";
 interface QA {
   question: string;
   answer: GodAnswer;
+  verdict: string;
   detail: string | null;
   status: QuestionStatus;
   evidence: Observation[];
   nextObservation: string | null;
-  unlockedNote: string | null;
 }
 
 const STATUS_LABEL: Record<QuestionStatus, string> = {
@@ -130,7 +130,7 @@ export function GodScreen({
       (res) => {
         setQas((prev) => [
           ...prev,
-          { question: text, answer: res.answer, detail: res.detail, status: res.status, evidence: res.evidence ?? [], nextObservation: res.next_observation, unlockedNote: res.unlocked_note },
+          { question: text, answer: res.answer, verdict: res.verdict, detail: res.detail, status: res.status, evidence: res.evidence ?? [], nextObservation: res.next_observation },
         ]);
         setRemaining(res.remaining);
       },
@@ -207,13 +207,10 @@ export function GodScreen({
           {qas.map((qa, i) => (
             <div key={i} className="fade-in flex flex-col gap-1">
               <p className="text-lg opacity-60">— {qa.question}</p>
-              <p className="text-lg">{qa.answer}</p>
-              {qa.unlockedNote && (
-                <div className="fade-in border border-orange/70 px-3 py-2">
-                  <p className="text-xs tracking-widest text-orange">새 단서 — 노트에 적혔다</p>
-                  <p className="mt-1 text-lg">{qa.unlockedNote}</p>
-                </div>
-              )}
+              <p className="text-lg">
+                <span className="text-orange">{qa.verdict}</span>{" "}
+                {qa.answer.startsWith(qa.verdict) ? qa.answer.slice(qa.verdict.length).trim() : qa.answer}
+              </p>
               {qa.nextObservation && (
                 <p className="border-l-2 border-orange pl-3 text-base opacity-80">{qa.nextObservation}</p>
               )}
@@ -236,6 +233,8 @@ export function GodScreen({
           <>
             {remaining > 0 ? (
               <div className="flex flex-wrap items-center gap-2">
+                <p className="w-full text-base opacity-80">이 목소리는 오늘 일어난 일만 안다. 무엇을 했는지 물어라.</p>
+                <p className="w-full text-sm tracking-wide opacity-60">맞다 · 아니다 · 그런 일은 없었다 · 그건 알 수 없다</p>
                 <span className="w-full text-base opacity-70">
                   남은 질문 {remaining}
                 </span>

@@ -109,14 +109,14 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
       else if (path === '/nights/night-2/questions') {
         questionCalls++;
         body = questionCalls === 1 ? {
-          answer: '아직 트럭이 도착한 장면은 보지 못했어. 다음 이송 방송이나 출입구를 살펴봐.', detail: '현재 기록에는 트럭의 도착 여부가 없다.', remaining: 2,
+          answer: '아직 트럭이 도착한 장면은 보지 못했어. 다음 이송 방송이나 출입구를 살펴봐.', verdict: '맞다.', detail: '현재 기록에는 트럭의 도착 여부가 없다.', remaining: 2,
           status: 'unknown', evidence_ids: [], evidence: [], next_observation: '다음 이송 방송과 출입구를 확인한다.',
-          unlocked_note: '트럭은 실어 갈 뿐, 싣고 온 적이 없다.',
+          unlocked_note: null,
         } : questionCalls === 2 ? {
-          answer: '기록은 이렇다', detail: '은상이 그렇게 말했다는 사실만 기록됐다.', remaining: 1,
+          answer: '기록은 이렇다', verdict: '맞다.', detail: '은상이 그렇게 말했다는 사실만 기록됐다.', remaining: 1,
           status: 'supported', evidence_ids: ['obs-statement'], evidence: [observations[3]], next_observation: null,
         } : {
-          answer: '틀리다', detail: '기록된 이동 시각과 질문의 시각이 다르다.', remaining: 0,
+          answer: '틀리다', verdict: '맞다.', detail: '기록된 이동 시각과 질문의 시각이 다르다.', remaining: 0,
           status: 'contradicted', evidence_ids: ['obs-current'], evidence: [observations[2]], next_observation: null,
         };
       }
@@ -273,15 +273,16 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
     await page.getByText('트럭 소리.', { exact: true }).waitFor();
     await page.getByRole('button', { name: '계속', exact: true }).click();
 
+    await page.getByText('이 목소리는 오늘 일어난 일만 안다. 무엇을 했는지 물어라.', { exact: true }).waitFor();
+    assert.equal(await page.getByText('새 단서 — 노트에 적혔다').count(), 0);
+
     const questionInput = page.locator('input[placeholder^="예:"]');
     assert.match(await questionInput.getAttribute('placeholder'), /확인 화면에서 고친 최종 가설/, 'question example uses confirmed final claim');
     await questionInput.fill('트럭이 왔어?');
     await page.getByRole('button', { name: '묻는다', exact: true }).click();
-    await page.getByText('아직 트럭이 도착한 장면은 보지 못했어. 다음 이송 방송이나 출입구를 살펴봐.', { exact: true }).waitFor();
+    await page.getByText('아직 트럭이 도착한 장면은 보지 못했어. 다음 이송 방송이나 출입구를 살펴봐.', { exact: false }).waitFor();
     assert.equal(await page.getByText('아직 확인되지 않았다', { exact: true }).isVisible(), false);
-    await page.getByText('새 단서 — 노트에 적혔다', { exact: true }).waitFor();
-    await page.getByText('트럭은 실어 갈 뿐, 싣고 온 적이 없다.', { exact: true }).waitFor();
-    await page.getByText('아직 트럭이 도착한 장면은 보지 못했어. 다음 이송 방송이나 출입구를 살펴봐.', { exact: true })
+    await page.getByText('아직 트럭이 도착한 장면은 보지 못했어. 다음 이송 방송이나 출입구를 살펴봐.', { exact: false })
       .evaluate(element => Promise.all(element.parentElement.getAnimations().map(animation => animation.finished)));
     await page.screenshot({ path: `${out}/god-reply-mobile.png`, fullPage: true });
     await page.locator('summary').nth(0).click();
@@ -289,13 +290,13 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
     await page.getByText('다음 이송 방송과 출입구를 확인한다.').waitFor();
     await page.locator('input[placeholder^="예:"]').fill('은상이 트럭이 온다고 말했어?');
     await page.getByRole('button', { name: '묻는다', exact: true }).click();
-    await page.getByText('기록은 이렇다', { exact: true }).waitFor();
+    await page.getByText('기록은 이렇다', { exact: false }).waitFor();
     await page.locator('summary').nth(1).click();
     await page.getByText('근거와 일치한다', { exact: true }).waitFor();
     await page.getByText('발언을 들음', { exact: true }).waitFor();
     await page.locator('input[placeholder^="예:"]').fill('준이 첫 장면에 있었어?');
     await page.getByRole('button', { name: '묻는다', exact: true }).click();
-    await page.getByText('틀리다', { exact: true }).waitFor();
+    await page.getByText('틀리다', { exact: false }).waitFor();
     await page.locator('summary').nth(2).click();
     await page.getByText('기록과 모순된다', { exact: true }).waitFor();
     await page.getByRole('button', { name: '규칙을 고른다', exact: true }).click();

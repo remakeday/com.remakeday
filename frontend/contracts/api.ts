@@ -249,6 +249,8 @@ export interface GodQuestionReq {
 }
 export interface GodQuestionRes {
   answer: GodAnswer;
+  /** 판정 접두 — 맞다. / 아니다. / 그건 알 수 없다. / 왜인지는 내가 말할 수 없다. 그 전에 일어난 일은 말할 수 있다. */
+  verdict: string;
   detail: string | null;
   remaining: number;
   status: QuestionStatus;
