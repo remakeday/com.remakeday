@@ -91,7 +91,7 @@ class NoteOrm(Base):
     kind: Mapped[str] = mapped_column(String(20))  # fragment|confirmed|rule_observation
     text: Mapped[str] = mapped_column(Text)
     loop_n: Mapped[int] = mapped_column(Integer)
-    source_key: Mapped[str] = mapped_column(String(64))
+    source_key: Mapped[str] = mapped_column(String(255))
 
 
 class RuleOrm(Base):

@@ -246,7 +246,7 @@ class InterventionInteractor:
                    if e.type == "intervention_question"][-2:]
         relevant = advisor_context(text, observations, self._target_names,
                                    history_text=" ".join(e.question for e in history))
-        answer, detail, status, evidence = "그건 알 수 없다", None, "unknown", []
+        answer, detail, status, evidence = "", None, "unknown", []
         meta = "너에게" in text and any(word in text for word in ("물어", "질문"))
         if meta:
             answer = "이곳의 규칙이나 오늘 본 일에 관해 물어봐. 그 일이 무엇을 뜻할지 함께 짚어볼 수 있어."
@@ -326,9 +326,13 @@ class InterventionInteractor:
             if evidence:
                 detail = "확인된 기록:\n" + "\n".join(
                     f"{o.loop_n}회차 · {'전언' if o.verification == 'reported' else '관찰'}: {o.text}" for o in evidence)
-        why = is_why_question(text)
+        why = is_why_question(text) and not meta
         verdict = verdict_prefix(status, why)
         answer = f"{verdict} {answer}".strip()
+        if self._notes is not None and status == "supported" and evidence:
+            head = evidence[0]
+            self._notes.upsert(loop.attempt_id, kind="confirmed", text=head.text,
+                               loop_n=loop.loop_n, source_key=f"confirmed-{head.observation_id}")
         # 조언 — 세계 구조에서만, 플레이어 기록에 닻이 있을 때만 (기획서 5.6)
         next_observation = None
         unlocked_note = None

@@ -82,7 +82,8 @@ def test_open_question_cites_original_observation_without_promoting_a_new_fact(d
     answer = inter.ask(night.id, "채연은 무슨 행동을 했어?")
     assert answer["detail"] == _FACT
     assert answer["evidence_ids"] == [observation.observation_id]
-    assert not NoteRepository(db_session).list(attempt.id)  # Never add an unrelated confirmed note.
+    notes = NoteRepository(db_session).list(attempt.id)
+    assert [n.source_key for n in notes] == [f"confirmed-{observation.observation_id}"]  # Task 5: supported → confirmed note.
 
 
 def test_question_rejects_fabricated_evidence_id_and_falls_back(db_session):
@@ -281,3 +282,30 @@ def test_polite_register_triggers_regeneration(db_session):
     assert "습니다" not in res["answer"]
     reports = [e for e in EventLogRepository(db_session).query(attempt.id) if e.type == "harness_event"]
     assert reports[-1].attempts == 2
+
+
+def test_supported_fact_is_saved_as_confirmed_note(db_session):
+    inter, attempt, night = make_intervention(db_session, [])
+    obs_id = publish_scene_action(inter, night, "배급을 남긴다")
+    from apps.engine.app.use_cases.public_observations import public_observations
+    observation = next(o for o in public_observations(EventLogRepository(db_session), attempt.id)
+                       if o.observation_id == obs_id)
+    inter._llm = FakeLLM([
+        {"question_kind": "proposition", "answer": "채연은 쟁반을 남겼다.",
+         "evidence": [{"id": obs_id, "quote": observation.text, "relation": "supported"}]}])
+    res = inter.ask(night.id, "채연이 오늘 배급을 남겼어?")
+    assert res["status"] == "supported"
+    notes = NoteRepository(db_session).list(attempt.id)
+    assert any(n.kind == "confirmed" and n.source_key == f"confirmed-{obs_id}" for n in notes)
+
+
+def test_question_without_public_record_has_plain_unknown_fallback(db_session):
+    inter, attempt, night = make_intervention(db_session, [])
+    res = inter.ask(night.id, "누가 밥을 남겼어?")
+    assert res["answer"] == "그건 알 수 없다."
+
+
+def test_meta_question_with_why_cue_still_gets_supported_verdict(db_session):
+    inter, attempt, night = make_intervention(db_session, [])
+    res = inter.ask(night.id, "왜 너에게 질문해야 해?")
+    assert res["answer"].startswith("맞다.")

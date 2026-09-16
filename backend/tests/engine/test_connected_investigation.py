@@ -124,7 +124,7 @@ def test_unseen_model_chain_is_not_public_question_evidence(db_session):
     from tests.engine.test_usecase_intervention import make_intervention
     inter, attempt, night = make_intervention(db_session, [{"answer": "맞다", "detail": "숨은 결론"}])
     answer = inter.ask(night.id, "숨은 정체가 뭐야?")
-    assert answer["answer"] == "그건 알 수 없다. 그건 알 수 없다"
+    assert answer["answer"] == "그건 알 수 없다."
     assert answer["evidence_ids"] == []
 
 
