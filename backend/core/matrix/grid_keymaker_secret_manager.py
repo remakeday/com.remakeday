@@ -40,6 +40,7 @@ class Settings(BaseSettings):
     gemini_requests_per_minute: int = Field(default=10, gt=0)
     anthropic_api_key: str = ""
     anthropic_effort: str = "low"
+    anthropic_max_tokens: int = 8192
 
     # Google OAuth 로그인 — .env의 GOOGLE_OAUTH_* / SESSION_SECRET / FRONTEND_BASE_URL
     google_oauth_client_id: str = ""
