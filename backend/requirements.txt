@@ -11,6 +11,7 @@ pgvector==0.5.0
 # External API
 httpx==0.28.1
 google-genai==1.29.0
+anthropic==1.6.0
 
 # Config
 python-dotenv==1.2.2

@@ -7,6 +7,7 @@ from functools import lru_cache
 
 from apps.engine.adapter.outbound.embedding.fake_embedding import FakeEmbedding
 from apps.engine.adapter.outbound.embedding.gemini_embedding import GeminiEmbedding
+from apps.engine.adapter.outbound.llm.anthropic_llm import AnthropicLLM
 from apps.engine.adapter.outbound.llm.fake_llm import FakeLLM
 from apps.engine.adapter.outbound.llm.gemini_llm import GeminiLLM
 from apps.engine.adapter.outbound.llm.ollama_llm import OllamaLLM
@@ -34,6 +35,10 @@ def build_llm(provider: str, model: str, base_url: str, think: str = "default") 
         settings = get_settings()
         return GeminiLLM(api_key=settings.gemini_api_key, model=model,
                          requests_per_minute=settings.gemini_requests_per_minute)
+    if provider == "anthropic":
+        settings = get_settings()
+        return AnthropicLLM(api_key=settings.anthropic_api_key, model=model,
+                            effort=settings.anthropic_effort)
     raise ValueError(f"알 수 없는 LLM provider: {provider}")
 
 

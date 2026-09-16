@@ -53,6 +53,19 @@ F7 답변이 답변 같지 않았던 이유(테스터6 15문답): 판정 0회(�
 4. ~~밤 단서 이미지·Q군 제작~~ 완료. 남은 것: 밤 단서 시퀀스 실플레이 확인(구현 완료)(Codex, v2 P.6), 소원 구현 때 Q군 `imageMap` 연결
 5. 커밋 — 즉시 수정 5건 + 문서. 커밋 전 `git status`로 테스터7 세션의 파일과 섞이지 않는지 확인
 
+
+## F7 후속 티켓 (최종 리뷰에서 나온 경미 항목 — 머지 차단 아님)
+
+- `door-handle` 리드가 `loop_n=5`인데 5회차 밤에는 신의 질문이 없어 도달 불가 → 4로 내리거나 삭제
+- `test_scenario_leads.py`가 ask 리드의 target에 "어떤" 지식이 있는지만 확인 — ask 주제와 관련된 지식 id 매칭으로 강화. `test_fact_question_gets_verdict_prefix`는 기대 판정을 고정
+- `ask()`의 `self._notes is not None` 가드가 confirmed 저장에만 있음 — 리드 노트 경로도 동일하게, 또는 NullNotesRepository
+- 하네스 폴백 답 "지금은 답변을 정리하지 못했어…"가 해체 — 한다체로
+- `find_anchor`가 관리자 방송(statement)도 닻으로 잡음 — observed로 제한 검토
+- 여정 힌트가 종료된 판에서 "내일 …" — 문구 조정; 힌트가 잠긴 칸과 무관하게 순환 배정(기존)
+- `adapter.py` 리드 표 위 주석이 옛 동작("해금") 설명 — 갱신
+- 데드코드: `advisor_answer_messages`, `prompts.ADVISOR_ANSWER_SYSTEM`, `AdvisorAnswerOutput`(5종 리터럴) — 별도 정리 티켓
+- `is_why_question` 부분 문자열 오탐(이유식·왜곡) — 실제 발화에서 드물어 보류
+
 ## 파일 지도
 
 - 테스터6 기록: `docs/review-verification/2026-09-16-tester6/tester6.md`
@@ -65,6 +78,10 @@ F7 답변이 답변 같지 않았던 이유(테스터6 15문답): 판정 0회(�
 - 원숭이손: `loop_interactor._maybe_offer_paw` ~639, 부작용 실행 `scene_execution.py` ~77
 - 운영 시나리오 A·B·C와 비용(외부 API 판당 비용·EC2·GPU): `docs/apiscenario.md`
 - 오늘 로그: `docs/jekyll.md` 2026-09-16
+
+## Anthropic 어댑터
+
+- provider 값 `anthropic` (`.env`의 `CORE_LLM_PROVIDER`/`NPC_LLM_PROVIDER`), 모델 예시 `claude-sonnet-5`·`claude-opus-5`·`claude-haiku-4-5`(하이쿠는 `output_config.effort` 미전송). effort는 `ANTHROPIC_EFFORT`(기본 `low`)로 설정, 키는 `backend/.env`의 `ANTHROPIC_API_KEY`. 스모크: 이 세션의 `.env`에 키가 없어 **미실행**(`grep -c '^ANTHROPIC_API_KEY=.\+' backend/.env` == 0).
 
 ## 하지 말 것
 
