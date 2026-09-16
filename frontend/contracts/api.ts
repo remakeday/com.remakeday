@@ -431,11 +431,17 @@ export const API_BASE =
 export class ApiError extends Error {
   readonly status: number;
   readonly detail: string;
-  constructor(status: number, detail: string) {
+  /** 과잉 사용 방지 허들 응답의 code (예: daily_attempt_limit, daily_cap) */
+  readonly code?: string;
+  /** 429 응답의 재시도 대기 초 */
+  readonly retryAfter?: number;
+  constructor(status: number, detail: string, code?: string, retryAfter?: number) {
     super(`[${status}] ${detail}`);
     this.name = "ApiError";
     this.status = status;
     this.detail = detail;
+    this.code = code;
+    this.retryAfter = retryAfter;
   }
 }
 
@@ -457,13 +463,28 @@ async function request<T>(
   }
   if (!res.ok) {
     let detail = res.statusText || "요청 실패";
+    let code: string | undefined;
+    let retryAfter: number | undefined;
     try {
-      const data = (await res.json()) as { detail?: string };
+      const data = (await res.json()) as {
+        detail?: string | { detail?: string; retry_after?: number };
+        code?: string;
+      };
       if (typeof data.detail === "string") detail = data.detail;
+      else if (data.detail && typeof data.detail === "object") {
+        if (typeof data.detail.detail === "string") detail = data.detail.detail;
+        if (typeof data.detail.retry_after === "number") retryAfter = data.detail.retry_after;
+      }
+      if (typeof data.code === "string") code = data.code;
     } catch {
       // 본문이 JSON이 아니면 statusText 유지
     }
-    throw new ApiError(res.status, detail);
+    if (retryAfter === undefined) {
+      const header = res.headers.get("Retry-After");
+      const parsed = header !== null ? Number(header) : NaN;
+      if (!Number.isNaN(parsed)) retryAfter = parsed;
+    }
+    throw new ApiError(res.status, detail, code, retryAfter);
   }
   return (await res.json()) as T;
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { api } from "@/contracts/api";
+import { api, ApiError } from "@/contracts/api";
 import type {
   CreateSessionRes,
   StartLoopRes,
@@ -12,6 +12,7 @@ import { audioEnabled, setAudioEnabled } from "@/lib/audioSettings";
 import { ToggleSwitch } from "@/components/ToggleSwitch";
 import { ErrorToast } from "@/components/ErrorToast";
 import { EntryScreen } from "@/components/screens/EntryScreen";
+import { GuardScreen, type GuardKind } from "@/components/screens/GuardScreen";
 import { MorningScreen } from "@/components/screens/MorningScreen";
 import { DayScreen, type DialoguePair } from "@/components/screens/DayScreen";
 import { NightScreen } from "@/components/screens/NightScreen";
@@ -40,6 +41,15 @@ type Phase =
   | "god"
   | "clear";
 
+/** sessionAction.failure를 만든 ApiError가 401/403/503/429 허들이면 해당 화면 종류로 매핑 */
+function guardKindFor(error: ApiError): GuardKind | null {
+  if (error.status === 401) return "login";
+  if (error.status === 403 && error.code === "daily_attempt_limit") return "daily_limit";
+  if (error.status === 503 && error.code === "daily_cap") return "daily_cap";
+  if (error.status === 429) return "rate";
+  return null;
+}
+
 export default function PlayPage() {
   const [phase, setPhase] = useState<Phase>("entry");
   const [attempt, setAttempt] = useState<CreateSessionRes | null>(null);
@@ -50,6 +60,8 @@ export default function PlayPage() {
   } | null>(null);
   const [dayLog, setDayLog] = useState<DialoguePair[]>([]);
   const [submitResult, setSubmitResult] = useState<SubmitRes | null>(null);
+  const [guard, setGuard] = useState<{ kind: GuardKind; retryAfter?: number } | null>(null);
+  const lastSessionError = useRef<ApiError | null>(null);
   const bgmRef = useRef<HTMLAudioElement>(null);
   const bgmButtonRef = useRef<HTMLButtonElement>(null);
   const bgmAutoStart = useRef(true);
@@ -109,7 +121,21 @@ export default function PlayPage() {
   useEffect(() => {
     if (booted.current) return;
     booted.current = true;
-    void sessionAction.run(() => api.createSession({}), setAttempt);
+    void sessionAction.run(
+      () =>
+        api.createSession({}).catch((e: unknown) => {
+          lastSessionError.current = e instanceof ApiError ? e : null;
+          throw e;
+        }),
+      setAttempt,
+      () => {
+        const error = lastSessionError.current;
+        const kind = error ? guardKindFor(error) : null;
+        if (!kind) return false;
+        setGuard({ kind, retryAfter: error?.retryAfter });
+        return true; // 실패 배너 억제 — GuardScreen이 대신 보인다
+      },
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -168,7 +194,9 @@ export default function PlayPage() {
         <VoiceToggle />
         <ToggleSwitch label="BGM" on={bgmPlaying} onClick={toggleBgm} buttonRef={bgmButtonRef} />
       </div>
-      {phase === "entry" && (
+      {guard && <GuardScreen kind={guard.kind} retryAfter={guard.retryAfter} />}
+
+      {phase === "entry" && !guard && (
         <EntryScreen
           lines={attempt?.entry_lines ?? null}
           priorCells={attempt?.prior_cell_results ?? null}
