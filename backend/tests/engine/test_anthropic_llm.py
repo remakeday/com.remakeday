@@ -106,11 +106,12 @@ def test_temperature_absent_for_haiku_model_when_not_given(fake_client):
     assert "temperature" not in sent_kwargs(create)
 
 
-def test_thinking_disabled_for_non_haiku_model(fake_client):
+def test_thinking_absent_for_non_haiku_model(fake_client):
+    """thinking은 보내지 않는다 — adaptive 기본을 두고 effort로만 깊이를 제어한다."""
     client, create = fake_client
     adapter(fake_client, model="claude-sonnet-5").complete(
         [MessageDTO(role="user", content="질문")], {})
-    assert sent_kwargs(create)["thinking"] == {"type": "disabled"}
+    assert "thinking" not in sent_kwargs(create)
 
 
 def test_thinking_absent_for_haiku_model(fake_client):

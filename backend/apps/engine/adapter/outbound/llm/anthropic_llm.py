@@ -1,6 +1,7 @@
 """Anthropic 어댑터 — Messages API, structured output(output_config.format).
 
-JSON 파싱 실패·refusal·max_tokens 절단은 LLMParseError로 — 하네스가 재생성으로 처리한다.
+JSON 파싱 실패는 LLMParseError(하네스 재생성). refusal·max_tokens 절단 등 재시도해도
+같은 결과인 stop_reason은 LLMRefusalError(하네스가 재생성 없이 즉시 폴백).
 """
 
 import copy
@@ -21,6 +22,8 @@ _UNSUPPORTED_SCHEMA_KEYWORDS = frozenset({
 })
 
 # 재시도해도 같은 응답이 나오는 stop_reason — 하네스 재생성 대상이 아니다.
+# model_context_window_exceeded는 현재 문서화된 값이 아니다 — 향후 나올 수 있는
+# stop_reason에 대한 대비이며, 실제로 나오지 않아도 무해하다.
 _NON_RETRYABLE_STOP_REASONS = frozenset({
     "refusal", "max_tokens", "model_context_window_exceeded",
 })
@@ -97,8 +100,9 @@ class AnthropicLLM:
             kwargs["system"] = system
         if output_config:
             kwargs["output_config"] = output_config
-        if not is_haiku:
-            kwargs["thinking"] = {"type": "disabled"}
+        # thinking 파라미터는 보내지 않는다 — Opus 5류에서 disabled는 두 가지 실패 모드가
+        # 있다(도구 호출이 visible text로 새거나 <thinking> 태그 누출); adaptive 기본을 그대로
+        # 두고 output_config.effort로만 깊이를 제어한다.
         if is_haiku and temperature is not None:
             kwargs["temperature"] = temperature
 
