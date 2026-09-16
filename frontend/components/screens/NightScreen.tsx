@@ -40,7 +40,11 @@ export function NightScreen({
   const galleryReturnFocus = useRef<HTMLElement | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const [scrolledDown, setScrolledDown] = useState(false);
-  const shownNotes = notes === null ? null : dedupeByText(notes);
+  // kind별로 따로 중복 제거한다 — 확인 노트가 같은 문장의 낮 파편 노트에 가려 사라지면 안 된다(테스터7 F7)
+  const notesByKind = notes === null ? null : KIND_ORDER.map((kind) => ({
+    kind,
+    items: dedupeByText(notes.filter((n) => n.kind === kind)),
+  }));
 
   const notesAction = useApiAction();
   const draftAction = useApiAction();
@@ -178,9 +182,8 @@ export function NightScreen({
               {notesAction.failure ? "노트를 불러오지 못했습니다" : "…"}
             </p>
           )}
-          {shownNotes !== null &&
-            KIND_ORDER.map((kind) => {
-              const group = shownNotes.filter((n) => n.kind === kind);
+          {notesByKind !== null &&
+            notesByKind.map(({ kind, items: group }) => {
               if (group.length === 0) return null;
               return (
                 <div key={kind}>
@@ -214,7 +217,7 @@ export function NightScreen({
                 </div>
               );
             })}
-          {shownNotes !== null && shownNotes.length === 0 && (
+          {notesByKind !== null && notesByKind.every(({ items }) => items.length === 0) && (
             <p className="text-center text-lg opacity-40">
               적어둔 것이 없다.
             </p>

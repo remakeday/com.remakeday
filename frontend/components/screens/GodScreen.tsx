@@ -234,7 +234,7 @@ export function GodScreen({
             {remaining > 0 ? (
               <div className="flex flex-wrap items-center gap-2">
                 <p className="w-full text-base opacity-80">이 목소리는 오늘 일어난 일만 안다. 무엇을 했는지 물어라.</p>
-                <p className="w-full text-sm tracking-wide opacity-60">맞다 · 아니다 · 그런 일은 없었다 · 그건 알 수 없다</p>
+                <p className="w-full text-sm tracking-wide opacity-60">맞다 · 아니다 · 그건 알 수 없다</p>
                 <span className="w-full text-base opacity-70">
                   남은 질문 {remaining}
                 </span>

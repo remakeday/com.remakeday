@@ -4,7 +4,7 @@ from types import SimpleNamespace as NS
 from apps.engine.app.dtos.scenario_dto import AdvisorLeadDTO
 from apps.engine.app.use_cases.advisor_advice import (
     is_why_question, verdict_prefix, polite_register_check, unbacked_confirmation_check,
-    find_anchor, advice_sentence,
+    find_anchor, advice_sentence, strip_leading_verdict,
 )
 
 
@@ -21,6 +21,13 @@ def test_verdict_prefix_by_status():
     assert verdict_prefix("unknown", False) == "그건 알 수 없다."
     assert verdict_prefix("unknown", True) == "왜인지는 내가 말할 수 없다. 그 전에 일어난 일은 말할 수 있다."
     assert verdict_prefix("supported", True) == "왜인지는 내가 말할 수 없다. 그 전에 일어난 일은 말할 수 있다."
+
+
+def test_strip_leading_verdict_removes_only_the_leading_verdict_word():
+    assert strip_leading_verdict("맞다. 기록은 이렇다") == "기록은 이렇다"
+    assert strip_leading_verdict("아니다 틀리다") == "틀리다"
+    assert strip_leading_verdict("그건 알 수 없다, 확인되지 않았다") == "확인되지 않았다"
+    assert strip_leading_verdict("채연이 배급을 남겼다") == "채연이 배급을 남겼다"
 
 
 def test_polite_register_is_rejected():

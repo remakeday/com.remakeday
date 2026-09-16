@@ -88,7 +88,7 @@ class NoteOrm(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     attempt_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("attempts.id"))
-    kind: Mapped[str] = mapped_column(String(20))  # fragment|confirmed|rule_observation
+    kind: Mapped[str] = mapped_column(String(20))  # fragment|confirmed|rule_observation|advice
     text: Mapped[str] = mapped_column(Text)
     loop_n: Mapped[int] = mapped_column(Integer)
     source_key: Mapped[str] = mapped_column(String(255))

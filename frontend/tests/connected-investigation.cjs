@@ -83,6 +83,8 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
         { id: 1, kind: 'fragment', text: '민석이 남은 쟁반을 기록했다.', loop_n: 1, observation_ids: ['obs-earlier'], sources: [observations[0]] },
         { id: 2, kind: 'confirmed', text: '관리자 방송 뒤에 배급 줄이 움직였다.', loop_n: 2, observation_ids: ['obs-middle'], sources: [observations[1]] },
         { id: 3, kind: 'fragment', text: '준이 소매 끝의 번호가 있는 띠를 살폈다.', loop_n: 3, observation_ids: ['obs-current'], sources: [observations[2]] },
+        // 낮의 파편 노트와 같은 문장의 확인 노트 — kind별로 따로 중복 제거되어야 확인 그룹에서도 보인다(F7)
+        { id: 4, kind: 'confirmed', text: '민석이 남은 쟁반을 기록했다.', loop_n: 2, observation_ids: ['obs-middle'], sources: [observations[1]] },
       ] };
       else if (path === '/loops/loop-3/night/previous') {
         previousCalls++;
@@ -221,7 +223,10 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
     assert.equal(await page.getByRole('button', { name: /민석이 남은 쟁반을 기록했다/ }).count(), 0);
     await page.screenshot({ path: `${out}/night-writing-mobile.png`, fullPage: true });
     await page.getByRole('button', { name: /관찰 기록에서 근거 고르기/ }).click();
-    const oldEvidence = page.getByRole('button', { name: /민석이 남은 쟁반을 기록했다/ });
+    const trayNoteButtons = page.getByRole('button', { name: /민석이 남은 쟁반을 기록했다/ });
+    await trayNoteButtons.first().waitFor();
+    assert.equal(await trayNoteButtons.count(), 2, 'confirmed note stays visible next to its duplicate-text fragment note (per-kind dedupe)');
+    const oldEvidence = trayNoteButtons.first();
     await oldEvidence.click();
     await oldEvidence.click();
     await page.getByRole('button', { name: /준이 소매 끝의 번호가 있는 띠를 살폈다/ }).click();

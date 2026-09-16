@@ -257,7 +257,7 @@ export interface GodQuestionRes {
   evidence_ids: string[];
   evidence: Observation[];
   next_observation: string | null;
-  /** 질문 보상 — 이번 답으로 해금돼 노트에 적힌 미공개 관찰 (결정론 보장) */
+  /** 항상 null — 리드 사실 공개는 제거됨(F7). 호환용 필드 */
   unlocked_note: string | null;
 }
 

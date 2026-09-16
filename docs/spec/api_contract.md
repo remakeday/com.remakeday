@@ -78,6 +78,7 @@ res: `{total: number, passed: boolean, loop_n: number, world_outcome: "truck"|"q
 ### POST /nights/{night_id}/questions
 req: `{text: string}` → res: `{verdict: string, answer: string, detail: string|null, remaining: number, status: "supported"|"contradicted"|"unknown", evidence_ids: string[], evidence: Observation[], unlocked_note: null, next_observation: string|null}`
 - `verdict`: "맞다." / "아니다." / "그건 알 수 없다." / "왜인지는 내가 말할 수 없다. 그 전에 일어난 일은 말할 수 있다."(왜/이유/어떻게 질문만)
+- 판정은 3종으로 축소 — "그런 일은 없었다"는 기록 부재와 미발생을 혼동시킨다는 테스터1 소견(docs/review-verification/2026-09-09-first-play/tester1-findings.md)에 따라 제외.
 - `answer`: 한다체 문장. 첫 문장은 verdict 또는 그 요지. 최대 3문장
 - `unlocked_note`: 항상 null (호환성 유지)
 - `next_observation`: 세계 구조 기반 조언 한 줄 — 항상 "네 기록의 「{닻 관찰 문장}」." 으로 시작하고 뒤에 "내일 {인물}에게 … 물어봐라." 또는 "{인물}: {행동} 규칙을 걸어 봐라."가 붙는다. 닻(플레이어 공개 관찰)이 없으면 null

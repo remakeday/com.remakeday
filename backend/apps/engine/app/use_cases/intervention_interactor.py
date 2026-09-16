@@ -17,7 +17,7 @@ from apps.engine.app.dtos.llm_output_dto import (
 from apps.engine.app.use_cases import prompts
 from apps.engine.app.use_cases.advisor_advice import (
     advice_sentence, find_anchor, is_why_question, polite_register_check,
-    unbacked_confirmation_check, verdict_prefix,
+    strip_leading_verdict, unbacked_confirmation_check, verdict_prefix,
 )
 from apps.engine.app.use_cases.public_observations import public_observations
 from apps.engine.app.use_cases.scene_execution import INFORMATION_ACTIONS, EXPLAIN_ACTION, SOURCE_ACTION
@@ -328,14 +328,13 @@ class InterventionInteractor:
                     f"{o.loop_n}회차 · {'전언' if o.verification == 'reported' else '관찰'}: {o.text}" for o in evidence)
         why = is_why_question(text) and not meta
         verdict = verdict_prefix(status, why)
-        answer = f"{verdict} {answer}".strip()
+        answer = f"{verdict} {strip_leading_verdict(answer)}".strip()
         if self._notes is not None and status == "supported" and evidence:
             head = evidence[0]
             self._notes.upsert(loop.attempt_id, kind="confirmed", text=head.text,
                                loop_n=loop.loop_n, source_key=f"confirmed-{head.observation_id}")
         # 조언 — 세계 구조에서만, 플레이어 기록에 닻이 있을 때만 (기획서 5.6)
         next_observation = None
-        unlocked_note = None
         if self._advisor_leads:
             used = {n.source_key.removeprefix("advisor-lead-")
                     for n in self._notes.list(loop.attempt_id)
@@ -344,7 +343,7 @@ class InterventionInteractor:
             anchor = find_anchor(lead, observations) if lead else None
             if lead and anchor:
                 next_observation = advice_sentence(lead, anchor)
-                self._notes.upsert(loop.attempt_id, kind="fragment", text=next_observation,
+                self._notes.upsert(loop.attempt_id, kind="advice", text=next_observation,
                                    loop_n=loop.loop_n, source_key=f"advisor-lead-{lead.key}")
         if next_observation is None and meta:
             next_observation = "원본 노트를 확인하거나 규칙 선택에서 다음 날 관찰할 행동을 고를 수 있다."
@@ -359,7 +358,7 @@ class InterventionInteractor:
             unlocked_note=None))
         return {"answer": answer, "verdict": verdict, "detail": detail, "remaining": night.questions_left,
                 "status": status, "evidence_ids": ids, "evidence": [o.model_dump() for o in evidence],
-                "next_observation": next_observation, "unlocked_note": unlocked_note}
+                "next_observation": next_observation, "unlocked_note": None}
 
     def options(self, night_id: uuid.UUID) -> dict:
         night, loop = self._night_loop(night_id)

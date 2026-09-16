@@ -8,6 +8,12 @@ _CONFIRM_RE = re.compile(r"확인(했|됐|되었|하였)")
 
 WHY_PREFIX = "왜인지는 내가 말할 수 없다. 그 전에 일어난 일은 말할 수 있다."
 _VERDICT = {"supported": "맞다.", "contradicted": "아니다.", "unknown": "그건 알 수 없다."}
+_LEADING_VERDICT_RE = re.compile(r"^(맞다|아니다|틀리다|그건 알 수 없다|그런 일은 없었다)[.!,]?\s*")
+
+
+def strip_leading_verdict(text: str) -> str:
+    """모델 답변 선두의 판정어를 제거 — 시스템이 앞에 붙이는 verdict와 중복되지 않게."""
+    return _LEADING_VERDICT_RE.sub("", text, count=1)
 
 
 def is_why_question(text: str) -> bool:

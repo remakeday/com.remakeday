@@ -234,7 +234,7 @@ def test_advice_is_anchored_to_player_record_and_not_a_hidden_fact(db_session):
     assert res["next_observation"].endswith("내일 준에게 배급이 어디서 오는지 물어봐라.")
     assert res["answer"].startswith("왜인지는 내가 말할 수 없다.")
     notes = NoteRepository(db_session).list(attempt.id)
-    assert any(n.source_key == "advisor-lead-k1" for n in notes)
+    assert any(n.source_key == "advisor-lead-k1" and n.kind == "advice" for n in notes)
 
 
 def test_advice_is_skipped_without_anchor(db_session):
