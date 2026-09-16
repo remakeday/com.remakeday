@@ -14,31 +14,36 @@
 |---|---|---|---|
 | 1 계정 게이트 | 판 생성·발화·질문·밤 제출 API는 로그인 세션 필수. 익명은 랜딩만 | Google OAuth 쿠키(`SessionTokenPort`) | `game_router` 의존성 |
 | 2 사용자 한도 | 하루 판 생성 **5회**. 판 안 상한은 기존 규칙 | `attempts.user_id` 기준, KST 자정 리셋 | `AttemptRepository` + 판 생성 유스케이스 |
-| 3 IP·전역 속도 제한 | IP당 분당 판 생성 5회, 발화·질문 30회 | 프로세스 내 토큰 버킷 미들웨어; 배포 시 Cloudflare Rate Limiting 규칙 병행 | FastAPI 미들웨어 |
+| 3 IP·전역 속도 제한 | 분당 판 생성 5회, 발화·질문 30회 — 로그인된 사용자는 `sub` 기준 버킷, `GUARD_AUTH=off`일 때만 IP로 대체 | 프로세스 내 토큰 버킷 미들웨어; 배포 시 Cloudflare Rate Limiting 규칙 병행 | FastAPI 미들웨어 |
 | 4 전역 일일 차단기 | 하루 판 생성 수가 설정값(기본 200)을 넘으면 새 판 거부 "오늘 정원 마감". 진행 중 판은 계속 | `attempts.created_at` 집계, `.env` `DAILY_ATTEMPT_CAP` | 판 생성 유스케이스 |
 | + 지갑 하드 리밋 | Anthropic 콘솔 월 지출 한도 | 콘솔 설정(코드 밖) | 운영 |
 
-부수: 발화·질문 텍스트 200자 상한(초과 400), 요청 본문 크기 제한, 기존 `request_id` 멱등성 유지.
+부수: 발화·질문 텍스트 200자 상한(초과 422), 야간 초안 2000자·주장 8개(개당 500자)·규칙 커스텀 200자 상한, 요청 본문 크기 제한(Content-Length > 256KiB → 413), 기존 `request_id` 멱등성 유지.
+
+클라이언트 IP는 `X-Forwarded-For`를 신뢰할 리버스 프록시 뒤일 때만 쓴다 — `.env` `TRUST_PROXY=true`가 없으면 소켓 IP만 쓴다(헤더 스푸핑 방지).
 
 ## 2. 응답 계약
 
 - 401: 로그인 필요(프런트는 랜딩의 로그인 버튼으로 안내)
-- 429 + `{"detail": "...", "retry_after": n}`: IP 속도 제한
+- 429 + `{"detail": {"detail": "...", "retry_after": n}}` (`Retry-After` 헤더 병행): 속도 제한 — `detail`이 중첩 객체다, 최상위 문자열이 아니다
 - 403 + `{"code": "daily_attempt_limit"}`: 사용자 하루 5판 초과 → 프런트 "오늘은 여기까지. 내일 다시" 화면
 - 503 + `{"code": "daily_cap"}`: 전역 정원 마감 → "오늘 정원이 마감됐다" 화면
+- 413 + `{"detail": "요청이 너무 크다"}`: 요청 본문이 256KiB를 넘음(Content-Length 헤더 기준, 본문 파싱 전 미들웨어에서 거부)
+- 422: 텍스트 상한 초과(FastAPI 검증 오류, `detail`이 배열)
 
 ## 3. 데이터
 
-- `attempts.user_id`(nullable FK → users.id) 추가 — 마이그레이션 1개. 기존 판은 null.
+- `attempts.user_id`(nullable, `users.id` 참조하되 **FK 제약 없음** — 익명 구판(user_id NULL) 호환을 위해 의도적으로 뺐다) 추가 — 마이그레이션 1개. 기존 판은 null.
 - 한도·차단기 카운트는 DB 집계(캐시 없음). 하루 수백 판 규모에서 충분.
-- 이벤트 로그에 `guard_event`(층·사유·IP 해시·user_id) 1종 추가 — 측정용, 원문 IP 저장 안 함.
+- 이벤트 로그에 `guard_event`(층·사유·IP 해시·user_sub) 1종 추가 — 측정용, 원문 IP 저장 안 함. `layer`는 `auth`·`user_daily`·`daily_cap` 3종.
+- 속도 제한 버킷 키는 로그인된 사용자의 `sub`(형태: `u:{sub}`) — `GUARD_AUTH=off`일 때만 IP(`ip:{ip}`)로 대체한다. IP 자체는 `TRUST_PROXY=true`가 아니면 소켓 IP만 쓴다.
 
 ## 4. 테스트
 
 - 로그인 없이 판 생성/발화 → 401. 로그인 후 5판 → 6번째 403. 자정 넘김(시간 주입) 후 리셋.
-- IP 버킷: 분당 6번째 판 생성 → 429, `retry_after` 양수. 발화 31번째 → 429.
+- 버킷: 분당 6번째 판 생성 → 429, `retry_after` 양수. 발화 31번째 → 429.
 - 전역 차단기: `DAILY_ATTEMPT_CAP=2`에서 3번째 → 503; 진행 중 판의 발화는 통과.
-- 텍스트 201자 → 400.
+- 텍스트 201자 → 422. 야간 초안 2001자·주장 9개·주장 501자 → 422. 본문 256KiB 초과 → 413.
 - 헤드리스: 랜딩 → 로그인 없이 시작 버튼 → 401 안내; 한도 초과 화면 표시.
 
 ## 5. 제외

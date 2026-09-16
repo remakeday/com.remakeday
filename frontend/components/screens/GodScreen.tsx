@@ -242,6 +242,7 @@ export function GodScreen({
                   aria-label="밤의 질문"
                   ref={questionRef}
                   type="text"
+                  maxLength={200}
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
                   onKeyDown={(e) => {

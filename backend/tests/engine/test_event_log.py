@@ -115,7 +115,7 @@ SAMPLES: dict[EventType, e.EventBase] = {
         attempts=3, fallback_used=True,
     ),
     EventType.GUARD: e.GuardEvent(
-        layer="ip", reason="요청이 너무 잦다", ip_hash="abc123def456", user_sub=None
+        layer="auth", reason="no_session", ip_hash="abc123def456", user_sub=None
     ),
 }
 

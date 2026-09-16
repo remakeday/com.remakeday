@@ -17,3 +17,4 @@ def logged_in(request):
         yield
     finally:
         app.dependency_overrides.pop(guards.require_user, None)
+        guards._BUCKETS.clear()

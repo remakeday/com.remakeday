@@ -467,10 +467,11 @@ async function request<T>(
     let retryAfter: number | undefined;
     try {
       const data = (await res.json()) as {
-        detail?: string | { detail?: string; retry_after?: number };
+        detail?: string | { detail?: string; retry_after?: number } | unknown[];
         code?: string;
       };
       if (typeof data.detail === "string") detail = data.detail;
+      else if (Array.isArray(data.detail)) detail = "입력이 너무 길거나 형식이 맞지 않는다";
       else if (data.detail && typeof data.detail === "object") {
         if (typeof data.detail.detail === "string") detail = data.detail.detail;
         if (typeof data.detail.retry_after === "number") retryAfter = data.detail.retry_after;

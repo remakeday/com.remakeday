@@ -622,6 +622,7 @@ export function DayScreen({
             aria-label="인물에게 질문"
             aria-describedby={dayDone ? undefined : "conversation-hint"}
             type="text"
+            maxLength={200}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {

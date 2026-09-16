@@ -55,6 +55,10 @@ class AttemptRepository:
         stmt = select(func.count()).select_from(AttemptOrm).where(AttemptOrm.created_at >= start)
         return self._s.scalar(stmt)
 
+    def delete(self, attempt: AttemptOrm) -> None:
+        self._s.delete(attempt)
+        save_game_changes(self._s)
+
     def save(self) -> None:
         save_game_changes(self._s)
 

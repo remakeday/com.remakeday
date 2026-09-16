@@ -116,15 +116,24 @@ res: `{scenario, harness, models: {npc, core, embedding}, db}`
 
 - **401** — 로그인 필요. 요구 라우트에 `rd_session` 쿠키가 없거나 무효. 본문 `{"detail": "로그인이 필요하다"}`.
 - **403** `{"code": "daily_attempt_limit", "detail": "오늘은 여기까지. 내일 다시 시작할 수 있다."}` — 이 사용자의 오늘 판 생성 수가 `USER_DAILY_ATTEMPTS`(기본 5)에 도달. `POST /sessions`에서만 발생.
-- **429** `{"detail": {"detail": "요청이 너무 잦다", "retry_after": number}}`, 헤더 `Retry-After: {retry_after}` — IP 버킷 초과(`IP_SESSIONS_PER_MINUTE`/`IP_ACTIONS_PER_MINUTE`, 기본 5/30 분당).
+- **429** `{"detail": {"detail": "요청이 너무 잦다", "retry_after": number}}`, 헤더 `Retry-After: {retry_after}` — 속도 제한 버킷 초과(`IP_SESSIONS_PER_MINUTE`/`IP_ACTIONS_PER_MINUTE`, 기본 5/30 분당).
 - **503** `{"code": "daily_cap", "detail": "오늘 정원이 마감됐다."}` — 오늘 전역 판 생성 수가 `DAILY_ATTEMPT_CAP`(기본 200)에 도달. `POST /sessions`에서만 발생.
-- **422** — `POST /loops/{loop_id}/utterances`의 `text`, `POST /nights/{night_id}/questions`의 `text`는 200자 초과 시 FastAPI 기본 검증 에러.
+- **413** `{"detail": "요청이 너무 크다"}` — 요청 본문이 262144바이트(256KiB)를 넘음. `Content-Length` 헤더만 보고 본문을 읽기 전에 거부한다(ASGI 미들웨어, `main.py`). `Content-Length`가 없는 요청은 통과시킨다.
+- **422** — 텍스트 상한 초과 시 FastAPI 기본 검증 에러(`detail`이 배열). 상한: `POST /loops/{loop_id}/utterances`·`POST /nights/{night_id}/questions`의 `text` 200자, `POST /loops/{loop_id}/night/draft`의 `free_text` 2000자, `PATCH /nights/{night_id}/claims`의 `claims` 배열 8개·각 500자, `POST /nights/{night_id}/rule`·`/rule/preview`의 `custom_text` 200자.
 
-`attempts.user_id`: 판을 만든 사용자 id(로그인 사용자의 sub, `GUARD_AUTH=off`일 때는 `"dev"`). 하루 판 수·전역 정원 집계의 기준.
+`attempts.user_id`: 판을 만든 사용자 id(로그인 사용자의 sub, `GUARD_AUTH=off`일 때는 `"dev"`). 하루 판 수·전역 정원 집계의 기준. **FK 제약 없음** — 익명 구판(이 컬럼이 `null`인 기존 판) 호환을 위해 의도적으로 걸지 않았다.
+
+### 속도 제한 버킷 키
+
+로그인된 사용자는 `sub` 기준으로 버킷을 나눈다(`u:{sub}`) — IP 공유 여부와 무관하게 사용자별로 독립이다. `GUARD_AUTH=off`일 때만 클라이언트 IP(`ip:{ip}`)로 대체한다. 클라이언트 IP 자체는 `TRUST_PROXY=true`(`.env`, 기본 `false`)가 아니면 `X-Forwarded-For` 헤더를 무시하고 소켓 IP만 쓴다 — 신뢰하지 않는 프록시 앞에서 헤더 스푸핑으로 버킷을 우회하지 못하게 한다.
+
+### GuardEvent (이벤트 로그)
+
+허들에 걸릴 때마다 `type: "guard"` 이벤트를 기록한다 — `{layer, reason, ip_hash, user_sub}`. `layer`는 `"auth"`(401)·`"user_daily"`(403)·`"daily_cap"`(503) 3종이다. `ip_hash`는 원문 IP의 SHA-256 앞 12자다. **이 이벤트는 인스펙터(`GET /attempts/{attempt_id}/inspector`)에 노출되지 않는다** — 측정·운영 로그 전용이며, `events` 테이블에는 남지만 세션 소유 attempt와 연결되지 않는 경우가 많다(판 생성 전에 걸리는 401·403·503은 임의 uuid를 session_id로 쓴다).
 
 ### 라우트별 가드 매트릭스
 
-| 라우트 | 로그인(`require_user`) | IP 버킷 |
+| 라우트 | 로그인(`require_user`) | 속도 제한 버킷 |
 |---|---|---|
 | `POST /sessions` | 필요 | `ip_sessions_per_minute` |
 | `POST /sessions/{attempt_id}/loops` | 필요 | — |
@@ -144,7 +153,7 @@ res: `{scenario, harness, models: {npc, core, embedding}, db}`
 | `POST /nights/{night_id}/rule/preview` | 필요 | — |
 | `GET /attempts/{attempt_id}/journey` \| `/harness` \| `/inspector` | 불필요 | — |
 
-읽기 전용 GET 라우트는 로그인·IP 버킷 모두 걸지 않는다. 나머지 쓰기 라우트는 전부 로그인을 요구하며, 판 생성(`/sessions`)과 발화·신의 질문(`utterances`, `questions`)만 별도 IP 버킷을 추가로 건다.
+읽기 전용 GET 라우트는 로그인·속도 제한 버킷 모두 걸지 않는다. 나머지 쓰기 라우트는 전부 로그인을 요구하며, 판 생성(`/sessions`)과 발화·신의 질문(`utterances`, `questions`)만 별도 버킷을 추가로 건다. 이름은 "IP 버킷"에서 유래했지만 실제 키는 위 "속도 제한 버킷 키" 절을 따른다.
 
 ## 타입
 CellScores = `{cause: number, motive: number, side_effect: number, identity: number}`

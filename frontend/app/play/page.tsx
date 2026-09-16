@@ -50,6 +50,34 @@ function guardKindFor(error: ApiError): GuardKind | null {
   return null;
 }
 
+/** createSession 호출 하나를 감싸 401/403/503/429 허들을 GuardScreen으로 돌린다 (진입·재시작 공용). */
+function runCreateSession(
+  run: (
+    fn: () => Promise<CreateSessionRes>,
+    onOk: (value: CreateSessionRes) => void,
+    onFail?: (status: number) => boolean,
+  ) => Promise<boolean>,
+  call: () => Promise<CreateSessionRes>,
+  onOk: (value: CreateSessionRes) => void,
+  setGuard: (guard: { kind: GuardKind; retryAfter?: number }) => void,
+) {
+  let captured: ApiError | null = null;
+  return run(
+    () =>
+      call().catch((e: unknown) => {
+        captured = e instanceof ApiError ? e : null;
+        throw e;
+      }),
+    onOk,
+    () => {
+      const kind = captured ? guardKindFor(captured) : null;
+      if (!kind) return false;
+      setGuard({ kind, retryAfter: captured?.retryAfter });
+      return true; // 실패 배너 억제 — GuardScreen이 대신 보인다
+    },
+  );
+}
+
 export default function PlayPage() {
   const [phase, setPhase] = useState<Phase>("entry");
   const [attempt, setAttempt] = useState<CreateSessionRes | null>(null);
@@ -61,7 +89,6 @@ export default function PlayPage() {
   const [dayLog, setDayLog] = useState<DialoguePair[]>([]);
   const [submitResult, setSubmitResult] = useState<SubmitRes | null>(null);
   const [guard, setGuard] = useState<{ kind: GuardKind; retryAfter?: number } | null>(null);
-  const lastSessionError = useRef<ApiError | null>(null);
   const bgmRef = useRef<HTMLAudioElement>(null);
   const bgmButtonRef = useRef<HTMLButtonElement>(null);
   const bgmAutoStart = useRef(true);
@@ -121,21 +148,7 @@ export default function PlayPage() {
   useEffect(() => {
     if (booted.current) return;
     booted.current = true;
-    void sessionAction.run(
-      () =>
-        api.createSession({}).catch((e: unknown) => {
-          lastSessionError.current = e instanceof ApiError ? e : null;
-          throw e;
-        }),
-      setAttempt,
-      () => {
-        const error = lastSessionError.current;
-        const kind = error ? guardKindFor(error) : null;
-        if (!kind) return false;
-        setGuard({ kind, retryAfter: error?.retryAfter });
-        return true; // 실패 배너 억제 — GuardScreen이 대신 보인다
-      },
-    );
+    void runCreateSession(sessionAction.run, () => api.createSession({}), setAttempt, setGuard);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -166,7 +179,8 @@ export default function PlayPage() {
 
   const retry = () => {
     if (!attempt || retryAction.busy) return;
-    void retryAction.run(
+    void runCreateSession(
+      retryAction.run,
       () => api.createSession({ prior_attempt_id: attempt.attempt_id }),
       (res) => {
         setAttempt(res);
@@ -175,6 +189,7 @@ export default function PlayPage() {
         setSubmitResult(null);
         setPhase("entry");
       },
+      setGuard,
     );
   };
 

@@ -253,7 +253,7 @@ class RulePreviewEvent(EventBase):
 
 class GuardEvent(EventBase):
     type: Literal[EventType.GUARD] = EventType.GUARD
-    layer: Literal["auth", "user_daily", "ip", "daily_cap", "length"]
+    layer: Literal["auth", "user_daily", "daily_cap"]
     reason: str
     ip_hash: str
     user_sub: str | None

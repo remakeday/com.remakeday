@@ -26,8 +26,11 @@ commits `c16a975`(attempts.user_id·설정 5종) → `177cb9a`(require_user·ip_
 
 운영 메모:
 - **로컬 개발·러너**: `backend/.env`에 `GUARD_AUTH=off`(기본값은 `on`)를 설정해 로그인 없이 사용. `run_selfplay.py` 등 러너는 이 값을 그대로 쓰거나 `--session-cookie`로 실제 로그인 세션을 넘긴다.
-- **프로덕션**: `GUARD_AUTH=on` 유지 + Cloudflare 레이트 리밋(엔진 앞단) + Anthropic 콘솔 지출 한도로 이중 방어. IP 버킷(`IP_SESSIONS_PER_MINUTE`/`IP_ACTIONS_PER_MINUTE`)과 하루 한도(`USER_DAILY_ATTEMPTS`/`DAILY_ATTEMPT_CAP`)는 애플리케이션 레벨 방어선이며 Cloudflare가 앞단 방어선이다.
-- alembic head는 `fbec9419f894`(`attempts_user_id`) — 개발 DB에는 세션 주인이 이미 적용함. 새 환경에서는 `alembic upgrade head` 필요.
+- **프로덕션**: `GUARD_AUTH=on` 유지 + Cloudflare 레이트 리밋(엔진 앞단) + Anthropic 콘솔 지출 한도로 이중 방어. 속도 제한 버킷(`IP_SESSIONS_PER_MINUTE`/`IP_ACTIONS_PER_MINUTE`)과 하루 한도(`USER_DAILY_ATTEMPTS`/`DAILY_ATTEMPT_CAP`)는 애플리케이션 레벨 방어선이며 Cloudflare가 앞단 방어선이다.
+- **속도 제한 버킷은 프로세스 메모리에 산다** — uvicorn을 여러 워커로 띄우면 워커마다 별도 버킷이라 실제 한도가 워커 수만큼 늘어난다. 단일 워커로 운영하거나, 버킷 대신 Cloudflare 레이트 리밋을 사실상의 권위로 삼는다.
+- **`SESSION_SECRET`는 프로덕션에서 반드시 설정해야 한다** — `GUARD_AUTH=on`인데 기본값(`dev-session-secret-change-me`)이면 `main.py`의 lifespan이 기동 시점에 `RuntimeError`를 낸다(의도된 실패 — 기본 시크릿으로 세션을 서명하지 않게 막는다).
+- `users` 행을 지우는 것만으로는 그 사용자를 막지 못한다 — `attempts.user_id`가 FK 없이 sub 매칭이라 재로그인하면 새 `users` 행이 생겨 계속 판을 만들 수 있다(후속 과제: `users.blocked_at` 컬럼 + `require_user`에서 확인).
+- alembic head는 `fbec9419f894`(`attempts_user_id`) — 개발 DB에는 세션 주인이 이미 적용함. 새 환경에서는 배포마다 `alembic upgrade head` 필요.
 
 ## 설계 방향 — 기획서 v8.1 원설계로 복귀 (브레인스토밍 대조 결과, 2026-09-16 오후)
 

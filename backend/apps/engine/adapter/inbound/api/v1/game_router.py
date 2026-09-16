@@ -1,12 +1,13 @@
 """게임 API — 계약: docs/spec/api_contract.md."""
 
 import uuid
+from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, StringConstraints
 
-from apps.engine.adapter.inbound.api.v1.guards import ip_bucket, require_user
+from apps.engine.adapter.inbound.api.v1.guards import client_ip, ip_bucket, ip_hash, require_user
 from apps.engine.app.use_cases.intervention_interactor import (
     GameStateError as InterventionError,
 )
@@ -66,12 +67,12 @@ class PawReq(BaseModel):
 
 class DraftReq(BaseModel):
     tapped_note_ids: list[int] = []
-    free_text: str = ""
+    free_text: str = Field("", max_length=2000)
     inherited_note_ids: list[int] = []
 
 
 class ClaimsReq(BaseModel):
-    claims: list[str]
+    claims: list[Annotated[str, StringConstraints(max_length=500)]] = Field(max_length=8)
 
 
 class QuestionReq(BaseModel):
@@ -80,18 +81,18 @@ class QuestionReq(BaseModel):
 
 class RuleReq(BaseModel):
     choice: str  # "1"|"2"|"3"|"custom"
-    custom_text: str | None = None
+    custom_text: str | None = Field(None, max_length=200)
     preview_id: str | None = None
 
 
 class RulePreviewReq(BaseModel):
-    custom_text: str
+    custom_text: str = Field(max_length=200)
 
 
 @router.post("/sessions", dependencies=[Depends(ip_bucket("sessions", "ip_sessions_per_minute"))])
-def create_session(req: SessionReq, user=Depends(require_user), uc=Depends(get_session_interactor)):
+def create_session(req: SessionReq, request: Request, user=Depends(require_user), uc=Depends(get_session_interactor)):
     prior = uuid.UUID(req.prior_attempt_id) if req.prior_attempt_id else None
-    return _run(uc.start, prior, user)
+    return _run(uc.start, prior, user, ip_hash(client_ip(request)))
 
 
 @router.post("/sessions/{attempt_id}/loops")
