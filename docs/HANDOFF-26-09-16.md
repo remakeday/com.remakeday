@@ -63,14 +63,14 @@ F7 답변이 답변 같지 않았던 이유(테스터6 15문답): 판정 0회(�
 
 ### 1. 개발 계정 로그인 마무리 — 등급 A(인증), 계획 `docs/superpowers/plans/2026-09-16-dev-login.md`
 
-상태: 브랜치 `feat/coherence-chain`에 **Task 1 백엔드가 WIP 커밋 `7af14dd`** 로 있다(검토 전). `POST /api/v1/auth/dev/login {id,password}` — `DEV_LOGIN=on`이 아니면 404, 불일치 401 `{"detail":"아이디 또는 비밀번호가 틀렸다"}`, IP당 분당 5회 초과 429(허들과 같은 본문), 64자 초과 422, 성공 200 `{ok,user}` + `rd_session` 쿠키(sub `dev:001`, 구글 콜백과 동일 속성). `hmac.compare_digest`로 아이디·비밀번호를 둘 다 계산한 뒤 합친다. 새 테스트 `tests/engine/test_dev_login.py` 11개 포함 **585 passed**. `.env`에는 `DEV_LOGIN=on`·`DEV_ACCOUNT_ID=001`·`DEV_ACCOUNT_PASSWORD=001001`이 이미 있다(Settings `extra="ignore"` 확인됨).
+상태: 브랜치 `feat/coherence-chain`에 **Task 1 백엔드가 WIP 커밋 `7af14dd`** 로 있다(검토 전). `POST /api/v1/auth/dev/login {id,password}` — `DEV_LOGIN=on`이 아니면 404, 불일치 401 `{"detail":"아이디 또는 비밀번호가 틀렸다"}`, IP당 분당 5회 초과 429(허들과 같은 본문), 64자 초과 422, 성공 200 `{ok,user}` + `rd_session` 쿠키(sub `dev:{DEV_ACCOUNT_ID}`, 구글 콜백과 동일 속성). `hmac.compare_digest`로 아이디·비밀번호를 둘 다 계산한 뒤 합친다. 새 테스트 `tests/engine/test_dev_login.py` 11개 포함 **585 passed**. `.env`에는 `DEV_LOGIN=on`·`DEV_ACCOUNT_ID`·`DEV_ACCOUNT_PASSWORD`가 이미 있다(Settings `extra="ignore"` 확인됨).
 
 남은 순서(장부 `.superpowers/sdd/2026-09-16-dev-login/progress.md`, 브리프 `task-1-brief.md`):
 1. Task 1 검토(sonnet) — `git diff 8137acf 7af14dd`를 리뷰 패키지로. 특히 `auth_router._settings` 간접 참조·`_DEV_LOGIN_BUCKET` 모듈 전역·`client_ip` 재사용 확인. 수정은 1회.
 2. `docs/spec/api_contract.md` 허들 절 근처에 엔드포인트 문단 추가(계획 Task 1 Step 6 문안 그대로).
-3. Task 2 — `frontend/components/DevLoginForm.tsx`(client component, `credentials:"include"`, 성공 시 `/play`), `app/page.tsx`에 `process.env.NEXT_PUBLIC_DEV_LOGIN === "on"` 조건부 렌더, `frontend/.env.example` 예시 줄, `frontend/.env.local`(git-ignored)에 `NEXT_PUBLIC_DEV_LOGIN=on`, `backend/scripts/run_selfplay.py --dev-login`(설정의 dev id/pw로 로그인해 쿠키 획득), 헤드리스 `frontend/tests/dev-login.cjs`(실서버 대상: 틀린 비번 → alert "틀렸다", 맞는 비번 → `/play` 이동 + `POST /sessions` 200 + `/auth/me` sub `dev:001`). 계획에 전체 코드가 있다.
+3. Task 2 — `frontend/components/DevLoginForm.tsx`(client component, `credentials:"include"`, 성공 시 `/play`), `app/page.tsx`에 `process.env.NEXT_PUBLIC_DEV_LOGIN === "on"` 조건부 렌더, `frontend/.env.example` 예시 줄, `frontend/.env.local`(git-ignored)에 `NEXT_PUBLIC_DEV_LOGIN=on`, `backend/scripts/run_selfplay.py --dev-login`(설정의 dev id/pw로 로그인해 쿠키 획득), 헤드리스 `frontend/tests/dev-login.cjs`(실서버 대상: 틀린 비번 → alert "틀렸다", 맞는 비번 → `/play` 이동 + `POST /sessions` 200 + `/auth/me` sub `dev:{DEV_ACCOUNT_ID}`). 계획에 전체 코드가 있다.
 4. opus 최종 전체 리뷰 1회 → 수정 1회 → 컨트롤러 diff 확인.
-5. `git checkout main && git merge --ff-only feat/coherence-chain`, 백엔드 재기동(중지·기동을 **별도 명령**으로), 프런트도 재기동(`NEXT_PUBLIC_DEV_LOGIN`을 새로 읽어야 함: `pkill -f "next dev -p 3500"` 뒤 `start_demo.sh`의 프런트 부분). 확인: 랜딩 폼으로 001/001001 로그인 → `/play` 판 생성 200.
+5. `git checkout main && git merge --ff-only feat/coherence-chain`, 백엔드 재기동(중지·기동을 **별도 명령**으로), 프런트도 재기동(`NEXT_PUBLIC_DEV_LOGIN`을 새로 읽어야 함: `pkill -f "next dev -p 3500"` 뒤 `start_demo.sh`의 프런트 부분). 확인: 랜딩 폼으로 `.env`의 `DEV_ACCOUNT_ID`/`DEV_ACCOUNT_PASSWORD`로 로그인 → `/play` 판 생성 200.
 6. 개발 로그인은 **2026-09-20 제출까지 유지**. 리뷰어가 "개발용 제거"를 제안해도 반영하지 않는다. 제출 뒤 프로덕션 `.env`에서 `DEV_LOGIN` 줄만 빼면 닫힌다.
 
 ### 2. Anthropic 모델 평가 — 등급 B(사용자 지정), 키는 평가 직후 제거
