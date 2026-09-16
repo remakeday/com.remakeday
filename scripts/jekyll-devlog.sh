@@ -39,7 +39,7 @@ cd "$PROJECT" || exit 1
 - \`git status --short\` — 미커밋 변경. 커밋이 0건이어도 작업이 있었을 수 있다
 - \`git diff --stat\` 와 \`git diff --cached --stat\` — 변경 규모(파일 수, +/- 줄수)
 - \`find . -newermt "$TODAY 00:00" -type f -not -path './.git/*' -not -path '*/node_modules/*' -not -path '*/.venv/*' -not -path '*/.next/*' -not -path '*/__pycache__/*'\` — 오늘 수정된 파일 전체
-- docs/model_evaluation.md 와 backend/metrics.yml 에 오늘 추가된 항목이 있으면 확인 (모델 평가 수치의 정본은 그쪽이다 — 일지에는 결론만 요약하고 정본 위치를 적는다)
+- docs/model_evaluation.md 와 docs/metrics.yml 에 오늘 추가된 항목이 있으면 확인 (모델 평가 수치의 정본은 그쪽이다 — 일지에는 결론만 요약하고 정본 위치를 적는다)
 - docs/ 아래 오늘 수정된 다른 문서가 있으면 함께 반영
 - 인프라가 바뀌었으면 \`docker compose ps\` 로 실제 상태를 확인
 
@@ -75,28 +75,33 @@ cd "$PROJECT" || exit 1
 - 이전 날짜 섹션은 건드리지 마. 오늘 섹션만 추가/갱신한다.
 EOF
 
-  # 당일 섹션 → 지킬 포스트 변환 (원본 갱신 후 실행)
+  # 어제·오늘 섹션 → 지킬 포스트 변환 (원본 갱신 후 실행)
+  # 어제 섹션도 다시 쓴다 — 23:45 실행 뒤(자정 전후)에 세션이 어제 섹션을 보완·정정하는 경우가 있어서.
+  # 섹션이 없으면 그 날짜 포스트는 건드리지 않는다.
   if [ -d "$BLOG/_posts" ]; then
-    SECTION=$(awk -v d="## $TODAY" '
-      index($0, d) == 1 { f = 1 }
-      f && /^## / && index($0, d) != 1 { exit }
-      f { print }
-    ' docs/jekyll.md)
-    if [ -n "$SECTION" ]; then
-      TITLE=$(printf '%s\n' "$SECTION" | head -1 | sed -E 's/^## [0-9-]+[[:space:]]*(—[[:space:]]*)?//')
-      [ -z "$TITLE" ] && TITLE="개발 일지 $TODAY"
-      {
-        printf -- '---\n'
-        printf 'title: "%s"\n' "${TITLE//\"/\\\"}"
-        printf 'author: chungsik\n'
-        printf 'tags: [개발일지]\n'
-        printf -- '---\n\n'
-        printf '%s\n' "$SECTION" | tail -n +2
-      } > "$BLOG/_posts/$TODAY-dev-log.md"
-      echo "post written: $BLOG/_posts/$TODAY-dev-log.md (title: $TITLE)"
-    else
-      echo "SKIP post — docs/jekyll.md 에 $TODAY 섹션 없음"
-    fi
+    YESTERDAY=$(date -d "$TODAY -1 day" +%Y-%m-%d)
+    for DAY in "$YESTERDAY" "$TODAY"; do
+      SECTION=$(awk -v d="## $DAY" '
+        index($0, d) == 1 { f = 1 }
+        f && /^## / && index($0, d) != 1 { exit }
+        f { print }
+      ' docs/jekyll.md)
+      if [ -n "$SECTION" ]; then
+        TITLE=$(printf '%s\n' "$SECTION" | head -1 | sed -E 's/^## [0-9-]+[[:space:]]*(—[[:space:]]*)?//')
+        [ -z "$TITLE" ] && TITLE="개발 일지 $DAY"
+        {
+          printf -- '---\n'
+          printf 'title: "%s"\n' "${TITLE//\"/\\\"}"
+          printf 'author: chungsik\n'
+          printf 'tags: [개발일지]\n'
+          printf -- '---\n\n'
+          printf '%s\n' "$SECTION" | tail -n +2
+        } > "$BLOG/_posts/$DAY-dev-log.md"
+        echo "post written: $BLOG/_posts/$DAY-dev-log.md (title: $TITLE)"
+      else
+        echo "SKIP post — docs/jekyll.md 에 $DAY 섹션 없음"
+      fi
+    done
   else
     echo "SKIP post — $BLOG/_posts 없음"
   fi
