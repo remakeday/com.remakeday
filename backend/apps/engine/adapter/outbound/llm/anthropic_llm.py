@@ -103,8 +103,10 @@ class AnthropicLLM:
         # thinking 파라미터는 보내지 않는다 — Opus 5류에서 disabled는 두 가지 실패 모드가
         # 있다(도구 호출이 visible text로 새거나 <thinking> 태그 누출); adaptive 기본을 그대로
         # 두고 output_config.effort로만 깊이를 제어한다.
+        # SDK 1.6부터 messages.create()에 top-level temperature 인자가 없다(TypeError) —
+        # API는 하이쿠에 한해 여전히 temperature를 받으므로 extra_body로 우회해 전달한다.
         if is_haiku and temperature is not None:
-            kwargs["temperature"] = temperature
+            kwargs["extra_body"] = {"temperature": temperature}
 
         response = self._client.messages.create(**kwargs)
 

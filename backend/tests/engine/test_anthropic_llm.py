@@ -1,6 +1,6 @@
 """Anthropic adapter boundary contracts; no network, real credentials."""
 from types import SimpleNamespace as NS
-from unittest.mock import Mock
+from unittest.mock import create_autospec
 
 import pytest
 
@@ -15,9 +15,19 @@ def response(text='{"ok": true}', stop_reason="end_turn"):
     return NS(stop_reason=stop_reason, content=[text_block(text)])
 
 
+def _sdk_messages_create_signature(
+    *, model, max_tokens, messages, system=None, output_config=None, extra_body=None,
+):
+    """anthropic 1.6.0 Messages.create()의 실제 키워드 시그니처 — top-level temperature 없음.
+
+    create_autospec로 이 시그니처를 강제해, 어댑터가 SDK에 없는 인자(temperature)를
+    top-level로 보내면 실제 SDK처럼 TypeError가 나도록 한다.
+    """
+
+
 @pytest.fixture
 def fake_client():
-    create = Mock(return_value=response())
+    create = create_autospec(_sdk_messages_create_signature, return_value=response())
     client = NS(messages=NS(create=create))
     return client, create
 
@@ -89,21 +99,28 @@ def test_temperature_is_never_sent_for_non_haiku_model(fake_client):
     client, create = fake_client
     adapter(fake_client, model="claude-sonnet-5").complete(
         [MessageDTO(role="user", content="질문")], {}, temperature=0.5)
-    assert "temperature" not in sent_kwargs(create)
+    kwargs = sent_kwargs(create)
+    assert "temperature" not in kwargs
+    assert "extra_body" not in kwargs
 
 
-def test_temperature_sent_for_haiku_model(fake_client):
+def test_temperature_sent_for_haiku_model_via_extra_body(fake_client):
+    """SDK 1.6은 top-level temperature 인자를 없앴다 — 하이쿠는 extra_body로 우회 전달한다."""
     client, create = fake_client
     adapter(fake_client, model="claude-haiku-4-5").complete(
         [MessageDTO(role="user", content="질문")], {}, temperature=0.5)
-    assert sent_kwargs(create)["temperature"] == 0.5
+    kwargs = sent_kwargs(create)
+    assert "temperature" not in kwargs
+    assert kwargs["extra_body"] == {"temperature": 0.5}
 
 
 def test_temperature_absent_for_haiku_model_when_not_given(fake_client):
     client, create = fake_client
     adapter(fake_client, model="claude-haiku-4-5").complete(
         [MessageDTO(role="user", content="질문")], {})
-    assert "temperature" not in sent_kwargs(create)
+    kwargs = sent_kwargs(create)
+    assert "temperature" not in kwargs
+    assert "extra_body" not in kwargs
 
 
 def test_thinking_absent_for_non_haiku_model(fake_client):
