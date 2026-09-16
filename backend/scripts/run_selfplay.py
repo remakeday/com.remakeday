@@ -89,6 +89,11 @@ def play_game(client: httpx.Client, player_llm, persona: str, *, max_loops: int,
               rng: random.Random, verbose: bool) -> dict:
     t0 = time.monotonic()
     res = client.post("/sessions", json={})
+    if res.status_code == 401 and "rd_session" not in client.cookies:
+        raise SystemExit(
+            "로그인 필수(GUARD_AUTH=on). --session-cookie 를 주거나 "
+            "backend/.env 에 GUARD_AUTH=off 를 설정하라"
+        )
     res.raise_for_status()
     attempt_id = res.json()["attempt_id"]
 
@@ -192,6 +197,8 @@ def main() -> None:
                         help="metrics 파일 (프로젝트 루트 기준, 기본 docs/metrics.yml)")
     parser.add_argument("--base-url", dest="server_url", default="http://localhost:8500",
                         help="백엔드 서버 (기본 http://localhost:8500)")
+    parser.add_argument("--session-cookie", dest="session_cookie", default=None,
+                        help="rd_session 쿠키 값. GUARD_AUTH=on일 때 로그인 대신 사용")
     parser.add_argument("--ollama-url", dest="ollama_url", default=None,
                         help="ollama base url (기본 .env OLLAMA_BASE_URL)")
     parser.add_argument("--persona", choices=PERSONAS + ["all"], default="성실")
@@ -200,7 +207,8 @@ def main() -> None:
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args()
 
-    client = httpx.Client(base_url=args.server_url.rstrip("/"), timeout=300.0)
+    cookies = {"rd_session": args.session_cookie} if args.session_cookie else None
+    client = httpx.Client(base_url=args.server_url.rstrip("/"), timeout=300.0, cookies=cookies)
     try:
         health = client.get("/health")
         health.raise_for_status()

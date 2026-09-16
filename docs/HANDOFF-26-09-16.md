@@ -20,6 +20,15 @@
 
 **서버**: 백엔드 8500 재기동됨(14:45, F8 반영)(NPC·Core `ollama:gemma4:12b`, embedding gemini), 프런트 3500. `/play` 200.
 
+## 과잉 사용 방지 허들 — 구현 완료 (`feat/coherence-chain`)
+
+commits `c16a975`(attempts.user_id·설정 5종) → `177cb9a`(require_user·ip_bucket·client_ip·GuardEvent) → `b95d5d2`(프론트 GuardScreen) → `a6ccefc`(라우터 배선·판 생성 하루 5판·전역 정원·텍스트 200자). 계약: `docs/spec/api_contract.md`의 "과잉 사용 방지 허들" 절(401/403/429/503 본문, 200자 422, 가드 매트릭스). 러너: `backend/scripts/run_selfplay.py --session-cookie`로 `rd_session` 쿠키를 직접 넘길 수 있고, 쿠키 없이 401을 받으면 안내 메시지를 내고 종료한다.
+
+운영 메모:
+- **로컬 개발·러너**: `backend/.env`에 `GUARD_AUTH=off`(기본값은 `on`)를 설정해 로그인 없이 사용. `run_selfplay.py` 등 러너는 이 값을 그대로 쓰거나 `--session-cookie`로 실제 로그인 세션을 넘긴다.
+- **프로덕션**: `GUARD_AUTH=on` 유지 + Cloudflare 레이트 리밋(엔진 앞단) + Anthropic 콘솔 지출 한도로 이중 방어. IP 버킷(`IP_SESSIONS_PER_MINUTE`/`IP_ACTIONS_PER_MINUTE`)과 하루 한도(`USER_DAILY_ATTEMPTS`/`DAILY_ATTEMPT_CAP`)는 애플리케이션 레벨 방어선이며 Cloudflare가 앞단 방어선이다.
+- alembic head는 `fbec9419f894`(`attempts_user_id`) — 개발 DB에는 세션 주인이 이미 적용함. 새 환경에서는 `alembic upgrade head` 필요.
+
 ## 설계 방향 — 기획서 v8.1 원설계로 복귀 (브레인스토밍 대조 결과, 2026-09-16 오후)
 
 브레인스토밍 중간안(조언자 계시·원숭이손 UI 이상화·관리자 노출 서사)은 기획서 5.5·5.6·5.7·A.3과 대조해 폐기했다. 남긴 것만 적는다.

@@ -110,6 +110,42 @@ res: `{events: [...], patches: [...], paw_rules: [...], scoring: [...]}`
 ### GET /health
 res: `{scenario, harness, models: {npc, core, embedding}, db}`
 
+## 과잉 사용 방지 허들 (2026-09-16)
+
+`GUARD_AUTH`가 `off`가 아니면(기본 `on`) 로그인 쿠키(`rd_session`)를 요구한다. 로컬 개발·러너는 `backend/.env`에 `GUARD_AUTH=off`를 설정해 우회한다.
+
+- **401** — 로그인 필요. 요구 라우트에 `rd_session` 쿠키가 없거나 무효. 본문 `{"detail": "로그인이 필요하다"}`.
+- **403** `{"code": "daily_attempt_limit", "detail": "오늘은 여기까지. 내일 다시 시작할 수 있다."}` — 이 사용자의 오늘 판 생성 수가 `USER_DAILY_ATTEMPTS`(기본 5)에 도달. `POST /sessions`에서만 발생.
+- **429** `{"detail": {"detail": "요청이 너무 잦다", "retry_after": number}}`, 헤더 `Retry-After: {retry_after}` — IP 버킷 초과(`IP_SESSIONS_PER_MINUTE`/`IP_ACTIONS_PER_MINUTE`, 기본 5/30 분당).
+- **503** `{"code": "daily_cap", "detail": "오늘 정원이 마감됐다."}` — 오늘 전역 판 생성 수가 `DAILY_ATTEMPT_CAP`(기본 200)에 도달. `POST /sessions`에서만 발생.
+- **422** — `POST /loops/{loop_id}/utterances`의 `text`, `POST /nights/{night_id}/questions`의 `text`는 200자 초과 시 FastAPI 기본 검증 에러.
+
+`attempts.user_id`: 판을 만든 사용자 id(로그인 사용자의 sub, `GUARD_AUTH=off`일 때는 `"dev"`). 하루 판 수·전역 정원 집계의 기준.
+
+### 라우트별 가드 매트릭스
+
+| 라우트 | 로그인(`require_user`) | IP 버킷 |
+|---|---|---|
+| `POST /sessions` | 필요 | `ip_sessions_per_minute` |
+| `POST /sessions/{attempt_id}/loops` | 필요 | — |
+| `POST /loops/{loop_id}/utterances` | 필요 | `ip_actions_per_minute` |
+| `POST /loops/{loop_id}/beats/next` | 필요 | — |
+| `POST /loops/{loop_id}/paw/respond` | 필요 | — |
+| `GET /loops/{loop_id}/notes` | 불필요 | — |
+| `GET /loops/{loop_id}/observations` | 불필요 | — |
+| `GET /loops/{loop_id}/night/previous` | 불필요 | — |
+| `GET /loops/{loop_id}/npcs` | 불필요 | — |
+| `POST /loops/{loop_id}/night/draft` | 필요 | — |
+| `PATCH /nights/{night_id}/claims` | 필요 | — |
+| `POST /nights/{night_id}/submit` | 필요 | — |
+| `POST /nights/{night_id}/questions` | 필요 | `ip_actions_per_minute` |
+| `GET /nights/{night_id}/options` | 불필요 | — |
+| `POST /nights/{night_id}/rule` | 필요 | — |
+| `POST /nights/{night_id}/rule/preview` | 필요 | — |
+| `GET /attempts/{attempt_id}/journey` \| `/harness` \| `/inspector` | 불필요 | — |
+
+읽기 전용 GET 라우트는 로그인·IP 버킷 모두 걸지 않는다. 나머지 쓰기 라우트는 전부 로그인을 요구하며, 판 생성(`/sessions`)과 발화·신의 질문(`utterances`, `questions`)만 별도 IP 버킷을 추가로 건다.
+
 ## 타입
 CellScores = `{cause: number, motive: number, side_effect: number, identity: number}`
 
