@@ -132,6 +132,8 @@ async function testRestartGuard(browser) {
   await page.getByRole('button', { name: '이 세계의 바깥으로', exact: true }).click();
   await page.getByRole('button', { name: '다시 시작', exact: true }).click();
   await page.getByText('오늘은 여기까지', { exact: false }).waitFor();
+  // GuardScreen이 유일한 화면이어야 한다 — ClearScreen의 재시작 버튼이 뒤에 남아있으면 안 된다.
+  assert.equal(await page.getByRole('button', { name: '다시 시작', exact: true }).count(), 0, 'GuardScreen이 뜨면 ClearScreen의 재시작 버튼은 사라져야 한다');
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'guard-restart.png') });
   await page.close();
   return errors;

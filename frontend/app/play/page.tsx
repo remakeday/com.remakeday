@@ -220,7 +220,7 @@ export default function PlayPage() {
         />
       )}
 
-      {phase === "morning" && loop && (
+      {phase === "morning" && loop && !guard && (
         <MorningScreen
           morningText={loop.morning_text}
           aftermath={loop.aftermath ?? null}
@@ -232,7 +232,7 @@ export default function PlayPage() {
         />
       )}
 
-      {phase === "day" && loop && (
+      {phase === "day" && loop && !guard && (
         <DayScreen
           key={loop.loop_id}
           loopId={loop.loop_id}
@@ -253,7 +253,7 @@ export default function PlayPage() {
         />
       )}
 
-      {phase === "night" && loop && (
+      {phase === "night" && loop && !guard && (
         <NightScreen
           loopId={loop.loop_id}
           onDrafted={(nightId, claims) => {
@@ -263,7 +263,7 @@ export default function PlayPage() {
         />
       )}
 
-      {phase === "confirm" && night && (
+      {phase === "confirm" && night && !guard && (
         <ConfirmScreen
           nightId={night.nightId}
           initialClaims={night.claims}
@@ -276,11 +276,11 @@ export default function PlayPage() {
         />
       )}
 
-      {phase === "score" && submitResult && (
+      {phase === "score" && submitResult && !guard && (
         <ScoreScreen result={submitResult} onContinue={afterScore} />
       )}
 
-      {phase === "doom_transition" && submitResult && (
+      {phase === "doom_transition" && submitResult && !guard && (
         <DoomTransition
           outcome={submitResult.world_outcome}
           clue={submitResult.night_clue ?? null}
@@ -288,7 +288,7 @@ export default function PlayPage() {
         />
       )}
 
-      {phase === "god" && night && submitResult && (
+      {phase === "god" && night && submitResult && !guard && (
         <GodScreen
           nightId={night.nightId}
           firstVisit={loop?.loop_n === 1}
@@ -298,7 +298,7 @@ export default function PlayPage() {
         />
       )}
 
-      {phase === "clear" && submitResult && attempt && (
+      {phase === "clear" && submitResult && attempt && !guard && (
         <ClearScreen
           attemptId={attempt.attempt_id}
           result={submitResult}

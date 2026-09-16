@@ -143,6 +143,20 @@ def test_claim_length_limit(db_session, logged_in):
         assert r.status_code == 422
 
 
+def test_rule_custom_text_length_limit(db_session, logged_in):
+    from main import app
+    with TestClient(app) as c:
+        r = c.post(f"/nights/{uuid.uuid4()}/rule", json={"choice": "custom", "custom_text": "가" * 201})
+        assert r.status_code == 422
+
+
+def test_rule_preview_custom_text_length_limit(db_session, logged_in):
+    from main import app
+    with TestClient(app) as c:
+        r = c.post(f"/nights/{uuid.uuid4()}/rule/preview", json={"custom_text": "가" * 201})
+        assert r.status_code == 422
+
+
 def test_require_user_401_records_guard_event(db_session, monkeypatch):
     from main import app
     from core.matrix import grid_keymaker_secret_manager as cfg
