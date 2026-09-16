@@ -63,6 +63,7 @@ F7 답변이 답변 같지 않았던 이유(테스터6 15문답): 판정 0회(�
 - NPC 발화 경로: `backend/apps/engine/app/use_cases/loop_interactor.py` (`_utter` ~238), 프롬프트 조립 `game_support.build_agent_messages`
 - 밤 전환 화면: `frontend/components/screens/DoomTransition.tsx`, 이미지 매핑 `frontend/lib/imageMap.ts` (`doomImage`)
 - 원숭이손: `loop_interactor._maybe_offer_paw` ~639, 부작용 실행 `scene_execution.py` ~77
+- 운영 시나리오 A·B·C와 비용(외부 API 판당 비용·EC2·GPU): `docs/apiscenario.md`
 - 오늘 로그: `docs/jekyll.md` 2026-09-16
 
 ## 하지 말 것
