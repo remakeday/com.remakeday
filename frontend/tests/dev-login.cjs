@@ -12,8 +12,9 @@ const assert = require('node:assert/strict');
     await page.getByLabel('개발 계정 아이디').fill('001');
     await page.getByLabel('개발 계정 비밀번호').fill('wrong');
     await page.getByRole('button', { name: '개발 로그인' }).click();
-    await page.getByRole('alert').waitFor();
-    assert.match(await page.getByRole('alert').textContent(), /틀렸다/);
+    const alert = page.locator('form').getByRole('alert');
+    await alert.waitFor();
+    assert.match(await alert.textContent(), /틀렸다/);
 
     await page.getByLabel('개발 계정 비밀번호').fill('001001');
     const sessionRes = page.waitForResponse(r => r.url().endsWith('/sessions') && r.request().method() === 'POST');
