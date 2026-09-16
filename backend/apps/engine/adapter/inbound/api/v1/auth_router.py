@@ -7,13 +7,20 @@
 
 from __future__ import annotations
 
+import math
+import time
+from dataclasses import asdict
+
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse, RedirectResponse
+from pydantic import BaseModel, Field
 
+from apps.engine.adapter.inbound.api.v1.guards import client_ip
 from apps.engine.app.dtos.auth_dto import SessionUserDTO
 from apps.engine.app.ports.input.auth_use_case import AuthUseCase
 from apps.engine.app.use_cases.auth_interactor import SESSION_TTL_SECONDS
 from apps.engine.dependencies.engine_dependency import get_auth_use_case
+from apps.engine.domain.entities.guard_rules import TokenBucket
 from core.matrix.grid_keymaker_secret_manager import get_settings
 
 router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
@@ -22,10 +29,23 @@ SESSION_COOKIE = "rd_session"
 STATE_COOKIE = "rd_oauth_state"
 _STATE_TTL_SECONDS = 600
 
+_settings = get_settings  # 테스트에서 monkeypatch 하기 위한 간접 참조
+_DEV_LOGIN_BUCKET: dict[str, TokenBucket] = {}
+
+
+class DevLoginReq(BaseModel):
+    id: str = Field(max_length=64)
+    password: str = Field(max_length=64)
+
 
 def _cookie_secure() -> bool:
     # 로컬 http(localhost)에서는 Secure 쿠키가 전송되지 않으므로 https일 때만 켠다.
-    return get_settings().frontend_base_url.startswith("https://")
+    return _settings().frontend_base_url.startswith("https://")
+
+
+def _dev_login_bucket() -> TokenBucket:
+    per_minute = max(1, _settings().dev_login_per_minute)
+    return _DEV_LOGIN_BUCKET.setdefault("dev_login", TokenBucket(capacity=per_minute, refill_per_sec=per_minute / 60.0))
 
 
 @router.get("/google/start")
@@ -52,7 +72,7 @@ def google_callback(
     error: str | None = None,
     use_case: AuthUseCase = Depends(get_auth_use_case),
 ) -> RedirectResponse:
-    frontend = get_settings().frontend_base_url.rstrip("/")
+    frontend = _settings().frontend_base_url.rstrip("/")
     if error or not code:
         return RedirectResponse(f"{frontend}/?login=error", status_code=307)
 
@@ -77,6 +97,24 @@ def google_callback(
         secure=_cookie_secure(),
         path="/",
     )
+    return response
+
+
+@router.post("/dev/login")
+def dev_login(req: DevLoginReq, request: Request, use_case: AuthUseCase = Depends(get_auth_use_case)) -> JSONResponse:
+    if _settings().dev_login != "on":
+        raise HTTPException(status_code=404, detail="Not Found")
+    ok, wait = _dev_login_bucket().take(f"ip:{client_ip(request)}", now=time.monotonic())
+    if not ok:
+        retry = max(1, math.ceil(wait))
+        raise HTTPException(status_code=429, detail={"detail": "요청이 너무 잦다", "retry_after": retry},
+                            headers={"Retry-After": str(retry)})
+    result = use_case.dev_login(req.id, req.password)
+    if result is None:
+        raise HTTPException(status_code=401, detail="아이디 또는 비밀번호가 틀렸다")
+    response = JSONResponse({"ok": True, "user": asdict(result.user)})
+    response.set_cookie(SESSION_COOKIE, result.session_token, max_age=SESSION_TTL_SECONDS,
+                        httponly=True, samesite="lax", secure=_cookie_secure(), path="/")
     return response
 
 

@@ -57,6 +57,10 @@ class Settings(BaseSettings):
     daily_attempt_cap: int = 200
     ip_sessions_per_minute: int = 5
     ip_actions_per_minute: int = 30
+    dev_login: str = "off"  # "on"이면 POST /api/v1/auth/dev/login 개방 — 2026-09-20 제출 뒤 .env에서 제거
+    dev_account_id: str = ""
+    dev_account_password: str = ""
+    dev_login_per_minute: int = 5
 
 
 @lru_cache(maxsize=1)

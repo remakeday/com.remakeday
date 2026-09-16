@@ -39,3 +39,11 @@ class LoginResultDTO:
 
     session_token: str
     user: SessionUserDTO
+
+
+@dataclass(frozen=True)
+class DevAccountDTO:
+    """`.env`의 개발 계정 — DEV_LOGIN=on 일 때만 주입된다(2026-09-20 제출 전까지 사용)."""
+
+    account_id: str
+    password: str

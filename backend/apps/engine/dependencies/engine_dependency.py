@@ -24,6 +24,7 @@ from apps.engine.adapter.outbound.oauth.google_oauth_client import GoogleOAuthCl
 from apps.engine.adapter.outbound.repositories.scene_transaction import SceneTransaction
 from apps.engine.adapter.outbound.repositories.user_repository import UserRepository
 from apps.engine.adapter.outbound.security.session_token_signer import SessionTokenSigner
+from apps.engine.app.dtos.auth_dto import DevAccountDTO
 from apps.engine.app.dtos.health_dto import HealthDTO, HealthModelsDTO
 from apps.engine.app.ports.input.auth_use_case import AuthUseCase
 from apps.engine.app.ports.input.event_log_use_case import EventLogUseCase
@@ -150,6 +151,9 @@ def get_inspector(session: Session = Depends(get_session)):
 
 def get_auth_use_case(session: Session = Depends(get_session)) -> AuthUseCase:
     s = get_settings()
+    dev = None
+    if s.dev_login == "on" and s.dev_account_id and s.dev_account_password:
+        dev = DevAccountDTO(account_id=s.dev_account_id, password=s.dev_account_password)
     return AuthInteractor(
         oauth=GoogleOAuthClient(
             client_id=s.google_oauth_client_id,
@@ -158,6 +162,7 @@ def get_auth_use_case(session: Session = Depends(get_session)) -> AuthUseCase:
         ),
         users=UserRepository(session),
         tokens=SessionTokenSigner(s.session_secret),
+        dev_account=dev,
     )
 
 

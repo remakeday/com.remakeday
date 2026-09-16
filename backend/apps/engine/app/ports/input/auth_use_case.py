@@ -19,3 +19,7 @@ class AuthUseCase(Protocol):
     def current_user(self, session_token: str | None) -> SessionUserDTO | None:
         """세션 토큰에서 현재 사용자를 복원한다. 없거나 무효면 None."""
         ...
+
+    def dev_login(self, account_id: str, password: str) -> LoginResultDTO | None:
+        """개발 계정으로 로그인한다. 개발 계정이 없거나 불일치면 None."""
+        ...
