@@ -251,6 +251,14 @@ class RulePreviewEvent(EventBase):
     preview: dict
 
 
+class GuardEvent(EventBase):
+    type: Literal[EventType.GUARD] = EventType.GUARD
+    layer: Literal["auth", "user_daily", "ip", "daily_cap", "length"]
+    reason: str
+    ip_hash: str
+    user_sub: str | None
+
+
 GameEvent = Annotated[
     Union[
         SessionStartEvent,
@@ -274,6 +282,7 @@ GameEvent = Annotated[
         ObservationEvent,
         RuleExecutionEvent,
         RulePreviewEvent,
+        GuardEvent,
     ],
     Field(discriminator="type"),
 ]

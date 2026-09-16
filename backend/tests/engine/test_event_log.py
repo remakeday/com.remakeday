@@ -114,13 +114,16 @@ SAMPLES: dict[EventType, e.EventBase] = {
         loop_n=1, beat=2, role="agent", violations=["forbidden_word: x"],
         attempts=3, fallback_used=True,
     ),
+    EventType.GUARD: e.GuardEvent(
+        layer="ip", reason="요청이 너무 잦다", ip_hash="abc123def456", user_sub=None
+    ),
 }
 
 
 def test_all_event_types_have_samples():
-    # 부록 C 17종 + 모델정책 §9 harness_event = 18
+    # 부록 C 17종 + 모델정책 §9 harness_event + 과잉 사용 방지 guard = 22
     assert set(SAMPLES) == set(EventType)
-    assert len(SAMPLES) == 21
+    assert len(SAMPLES) == 22
 
 
 @pytest.mark.parametrize("event_type", list(EventType))

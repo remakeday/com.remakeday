@@ -26,3 +26,4 @@ class EventType(StrEnum):
     OBSERVATION = "observation"
     RULE_EXECUTION = "rule_execution"
     RULE_PREVIEW = "rule_preview"
+    GUARD = "guard"
