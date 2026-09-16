@@ -88,7 +88,7 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
         previousCalls++;
         if (previousCalls === 1) {
           await new Promise(resolve => setTimeout(resolve, 300));
-          return route.fulfill({ status: 503, json: { detail: '이전 초안을 잠시 불러오지 못했다.' }, headers: { 'access-control-allow-origin': '*' } });
+          return route.fulfill({ status: 503, json: { detail: '이전 초안을 잠시 불러오지 못했다.' }, headers: { 'access-control-allow-origin': 'http://localhost:3500', 'access-control-allow-credentials': 'true' } });
         }
         body = { previous_answer: {
           loop_n: 2, free_text: previousWriting, claims: ['처음 주장'], tapped_note_ids: [1, 2],
@@ -104,12 +104,14 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
         total: 48, passed: false, loop_n: 2, world_outcome: 'truck', is_final: false, closed_by: null,
         cells: null, cookie: null, intervention_available: true, ending_lines: null,
         cell_feedback: '관찰과 보고의 연결을 더 확인할 수 있다.', wrong_claim_count: 0,
+        night_clue: { loop_n: 2, caption: '트럭 소리.', image_ids: ['P02', 'clue-05'], voice_id: 'MA09', broadcast: '정리 작업이 있겠습니다. 비어 있는 자리는 아침에 정돈됩니다.', outcome_line: null },
       };
       else if (path === '/nights/night-2/questions') {
         questionCalls++;
         body = questionCalls === 1 ? {
           answer: '아직 트럭이 도착한 장면은 보지 못했어. 다음 이송 방송이나 출입구를 살펴봐.', detail: '현재 기록에는 트럭의 도착 여부가 없다.', remaining: 2,
           status: 'unknown', evidence_ids: [], evidence: [], next_observation: '다음 이송 방송과 출입구를 확인한다.',
+          unlocked_note: '트럭은 실어 갈 뿐, 싣고 온 적이 없다.',
         } : questionCalls === 2 ? {
           answer: '기록은 이렇다', detail: '은상이 그렇게 말했다는 사실만 기록됐다.', remaining: 1,
           status: 'supported', evidence_ids: ['obs-statement'], evidence: [observations[3]], next_observation: null,
@@ -159,7 +161,7 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
       };
       else { report.errors.push(`Unmocked API: ${path}`); return route.abort(); }
       if (path === '/loops/loop-3/night/previous') await new Promise(resolve => setTimeout(resolve, 900));
-      await route.fulfill({ json: body, headers: { 'access-control-allow-origin': '*' } });
+      await route.fulfill({ json: body, headers: { 'access-control-allow-origin': 'http://localhost:3500', 'access-control-allow-credentials': 'true' } });
     });
 
     await page.goto('http://localhost:3500/play');
@@ -230,6 +232,8 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
     for (const filename of ['clue-08-minseok-tray-record-v1.png', 'clue-11-jun-band-observation-v1.png']) {
       const image = gallery.locator(`img[src$="${filename}"]`).first();
       await image.waitFor({ state: 'visible' });
+      // 4MB 삽화는 '보임'과 디코딩 완료 사이에 틈이 있다 — 로드 완료를 기다린 뒤 원본 크기를 검사한다.
+      await image.evaluate(element => element.complete && element.naturalWidth > 0 ? undefined : new Promise((resolve, reject) => { element.addEventListener('load', resolve, { once: true }); element.addEventListener('error', () => reject(new Error(`image failed: ${element.src}`)), { once: true }); }));
       assert.equal(await image.evaluate(element => element.complete && element.naturalWidth === 1536 && element.naturalHeight === 1024), true, `${filename} opens at its valid source dimensions`);
       const bounds = await image.boundingBox();
       assert.ok(bounds.x >= 0 && bounds.x + bounds.width <= 390, `${filename} stays readable inside 390px gallery`);
@@ -265,6 +269,9 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
     await page.getByText('확인 화면에서 고친 최종 가설', { exact: true }).waitFor();
     await page.getByRole('button', { name: '맞아, 제출한다', exact: true }).click();
     await page.getByRole('button', { name: '계속', exact: true }).click();
+    // 밤 단서 시퀀스 — 문장이 남은 뒤 탭해서 신의개입으로 (자동 진행 없음)
+    await page.getByText('트럭 소리.', { exact: true }).waitFor();
+    await page.getByRole('button', { name: '계속', exact: true }).click();
 
     const questionInput = page.locator('input[placeholder^="예:"]');
     assert.match(await questionInput.getAttribute('placeholder'), /확인 화면에서 고친 최종 가설/, 'question example uses confirmed final claim');
@@ -272,6 +279,8 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
     await page.getByRole('button', { name: '묻는다', exact: true }).click();
     await page.getByText('아직 트럭이 도착한 장면은 보지 못했어. 다음 이송 방송이나 출입구를 살펴봐.', { exact: true }).waitFor();
     assert.equal(await page.getByText('아직 확인되지 않았다', { exact: true }).isVisible(), false);
+    await page.getByText('새 단서 — 노트에 적혔다', { exact: true }).waitFor();
+    await page.getByText('트럭은 실어 갈 뿐, 싣고 온 적이 없다.', { exact: true }).waitFor();
     await page.getByText('아직 트럭이 도착한 장면은 보지 못했어. 다음 이송 방송이나 출입구를 살펴봐.', { exact: true })
       .evaluate(element => Promise.all(element.parentElement.getAnimations().map(animation => animation.finished)));
     await page.screenshot({ path: `${out}/god-reply-mobile.png`, fullPage: true });
@@ -314,6 +323,19 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
     await retro.route('**/*', async route => {
       const url = new URL(route.request().url());
       if (url.port !== '8500') return route.continue();
+      if (url.pathname === '/attempts/connected/journey') {
+        return route.fulfill({ json: {
+          loops: [
+            { loop_n: 3, total: 40, passed: false, new_confirmed: [{ code: 'cause-1', my_claim: '은상이 소문을 부풀렸다.' }], unlocked_notes: [] },
+            { loop_n: 5, total: 60, passed: true, new_confirmed: [], unlocked_notes: ['트럭은 실어 갈 뿐이다.'] },
+          ],
+          final: { cells: { cause: 100, motive: 0, side_effect: 0, identity: 0 }, closed_by: 'doom', truth_reveal: [
+            { code: 'cause-1', cell: 'cause', verdict: 'confirmed', my_claim: '은상이 소문을 부풀렸다.', truth: '소문은 부풀려져 퍼졌다.' },
+            { code: 'identity-1', cell: 'identity', verdict: 'none', my_claim: null, truth: null },
+          ] },
+          unresolved: [{ cell: 'identity', hint: '내일 준에게 트럭 소리를 물어봐.' }],
+        }, headers: { 'access-control-allow-origin': 'http://localhost:3500', 'access-control-allow-credentials': 'true' } });
+      }
       if (url.pathname !== '/attempts/connected/harness') return route.abort();
       const body = {
         rules: [],
@@ -325,11 +347,17 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
         harness_summary: { total_events: 20, harness_interventions: 1, fallbacks: 1, paw_accepted: 0, recommended_rules: 0, custom_rules: 1, rule_conflicts: 0, questions_asked: 2, rule_success_rate: 1, tool_side_effects: [], model_calls: 8, model_attempts: 9, model_call_coverage: 'complete_logged_calls' },
         measurement_version: 'connected-v1',
       };
-      await route.fulfill({ json: body, headers: { 'access-control-allow-origin': '*' } });
+      await route.fulfill({ json: body, headers: { 'access-control-allow-origin': 'http://localhost:3500', 'access-control-allow-credentials': 'true' } });
     });
     await retro.goto('http://localhost:3500/harness/connected');
-    await retro.getByRole('heading', { name: '당신의 실험 기록' }).waitFor();
-    for (const text of ['의도', '해석', '기회', '실제 행동', '검사 결과', '지킴', '평가할 수 없음', '이야기 이해', '시스템 동작 품질', 'N/A']) {
+    await retro.getByRole('heading', { name: '너의 추리는 이렇게 걸어왔다.' }).waitFor();
+    await retro.getByText('이 밤, 하나가 확정됐다 — 은상이 소문을 부풀렸다.', { exact: false }).waitFor();
+    await retro.getByText('신이 연 단서 — 트럭은 실어 갈 뿐이다.', { exact: false }).waitFor();
+    await retro.getByText('소문은 부풀려져 퍼졌다.', { exact: false }).waitFor();
+    assert.equal(await retro.getByText('이들은 동물이다', { exact: false }).count(), 0, 'locked truth stays hidden');
+    await retro.getByText('아직 비어 있는 자리', { exact: true }).waitFor();
+    await retro.getByText('개발 데이터 — 규칙·검사·모델 동작이 궁금하다면', { exact: false }).click();
+    for (const text of ['의도', '해석', '기회', '실제 행동', '검사 결과', '지킴', '평가할 수 없음', '시스템 동작 품질', 'N/A']) {
       await retro.getByText(text, { exact: false }).first().waitFor();
     }
     await retro.getByText('모델 호출 8회 · 시도 9회 · 개입 1회 · 대체 1회', { exact: true }).waitFor();

@@ -19,10 +19,11 @@ def execute_scene(event_log, loop, bundle, rules):
     executed = {(e.rule_id, e.beat) for e in event_log.query(loop.attempt_id, loop_n=loop.loop_n)
                 if e.type == "rule_execution"}
     shared_costs = {}
+    absent = [c.name for c in bundle.characters if c.lost and loop.damage_level >= 3]
     for opportunity in bundle.scene_actions:
         if opportunity.beat != beat.n:
             continue
-        if loop.damage_level >= 3 and any(c.name == opportunity.actor and c.lost for c in bundle.characters):
+        if opportunity.actor in absent or any(name in opportunity.narration for name in absent):
             continue
         applicable = [r for r in rules if r.target == opportunity.actor
                       and (r.when_beat is None or r.when_beat == beat.n)
@@ -30,6 +31,9 @@ def execute_scene(event_log, loop, bundle, rules):
                            or (r.action == SOURCE_ACTION and opportunity.known_source is not None))]
         base_rules = [r for r in applicable if r.action == opportunity.action]
         winner = base_rules[-1] if base_rules else None
+        if opportunity.dormant and not (winner is not None and winner.effect == "enforce"):
+            # 잠재 기회 — enforce 규칙이 걸린 날에만 세계에 나타난다. 그 외에는 흔적도 없다.
+            continue
         suppressed = winner is not None and winner.effect == "suppress"
         actual = None if suppressed else opportunity.action
         text = opportunity.suppressed_narration if suppressed else opportunity.narration

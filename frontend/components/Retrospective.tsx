@@ -1,7 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { api, ApiError, type HarnessRes, type Metric, type RuleOpportunity } from "@/contracts/api";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  api,
+  ApiError,
+  type HarnessRes,
+  type JourneyRes,
+  type Metric,
+  type RuleOpportunity,
+} from "@/contracts/api";
+import { TruthRevealCards } from "@/components/TruthRevealCards";
+import { useVoice, VoiceReplay } from "@/components/VoicePlayer";
+import { VOICE_CLIPS } from "@/lib/voiceMap";
 
 const SOURCE_LABEL = { monkey_paw: "원숭이손", user_choice: "추천 규칙", user_custom: "직접 쓴 규칙" };
 const RESULT_LABEL: Record<RuleOpportunity["result"], string> = {
@@ -18,6 +28,7 @@ const METRIC_LABEL: Record<string, string> = {
   custom_semantics: "직접 규칙 의미 보존",
   checker_accuracy: "검사 정확성",
 };
+const CELL_LABEL: Record<string, string> = { cause: "원인", motive: "동기", identity: "정체" };
 
 function MetricRow({ name, metric }: { name: string; metric: Metric }) {
   const unavailable = metric.value === null || metric.denominator === 0;
@@ -49,86 +60,166 @@ function OpportunityCard({ opportunity }: { opportunity: RuleOpportunity }) {
   );
 }
 
+/** 개발 데이터 — 접힘 안에서만. 유저 회고의 본문은 여정이다. */
+function DevDetails({ data }: { data: HarnessRes }) {
+  const s = data.harness_summary;
+  const experiments = data.experiments ?? [];
+  const metrics = data.metrics ? Object.entries(data.metrics) : [];
+  const countOrRecordMissing = (value: number | null | undefined) => value === null || value === undefined ? "기록 없음" : `${value}회`;
+  return (
+    <div className="mt-4 space-y-8">
+      <section className="space-y-4">
+        <h3 className="text-base">실험 기록 — 규칙이 실제로 걸렸는가</h3>
+        <p>{VOICE_CLIPS.EN03.text}</p>
+        <VoiceReplay speaker="회고" text={VOICE_CLIPS.EN03.text} />
+        {experiments.length === 0 ? <p className="opacity-60">실행 기회까지 연결된 규칙 기록이 없다.</p> : experiments.map((experiment) => (
+          <article key={experiment.rule_id} className="border border-paper/25 p-4">
+            <dl className="grid grid-cols-[4rem_1fr] gap-x-2 gap-y-2">
+              <dt className="text-xs opacity-55">의도</dt><dd>{experiment.intent ?? "기록 없음"}</dd>
+              <dt className="text-xs opacity-55">해석</dt><dd>{experiment.interpretation}</dd>
+            </dl>
+            <ol className="mt-2 space-y-2">{experiment.opportunities.map((item, i) => <OpportunityCard key={`${experiment.rule_id}-${i}`} opportunity={item} />)}</ol>
+            {experiment.opportunities.length === 0 && <p className="mt-2 opacity-60">행동 기회가 없어 결과는 N/A다.</p>}
+          </article>
+        ))}
+      </section>
+      <section className="space-y-3">
+        <h3 className="text-base">시스템 동작 품질</h3>
+        <p>모델 호출 {countOrRecordMissing(s.model_calls)} · 시도 {countOrRecordMissing(s.model_attempts)} · 개입 {s.harness_interventions}회 · 대체 {s.fallbacks}회</p>
+        <p className="text-xs opacity-60">측정 범위 · {s.model_call_coverage === "complete_logged_calls" ? "현재 로그 전체" : "이전 기록 일부 또는 측정 불가"} · 버전 {data.measurement_version ?? "기록 없음"}</p>
+        {metrics.length > 0 ? <ul className="grid gap-2 sm:grid-cols-2">{metrics.map(([name, metric]) => <MetricRow key={name} name={name} metric={metric} />)}</ul> : <p className="opacity-60">세부 지표는 기록 없음.</p>}
+      </section>
+      <section className="space-y-3">
+        <h3 className="text-base">원숭이손 · 변경의 대가</h3>
+        <p>수락 {s.paw_accepted}회 · 연결되지 않은 부작용 기록 {s.tool_side_effects.length}건</p>
+        <ul className="space-y-2">{s.tool_side_effects.map((item, i) => <li key={i}>{item.loop_n}회차 · 장면 {item.beat}: {item.text}</li>)}</ul>
+      </section>
+      <section className="space-y-3">
+        <h3 className="text-base">등록한 규칙</h3>
+        <p>질문 {s.questions_asked}회 · 추천 {s.recommended_rules}개 · 직접 작성 {s.custom_rules}개 · 충돌 {s.rule_conflicts}개</p>
+        <ul className="space-y-3">{data.rules.map((rule) => (
+          <li key={rule.rule_id} className="border border-paper/30 p-4">
+            <p className="text-xs opacity-60">{rule.created_loop}회차 · {SOURCE_LABEL[rule.source]}</p>
+            <p>{rule.target}: {rule.action} {rule.effect === "suppress" ? "금지" : "강제"}</p>
+            {rule.hidden_side_effect && <p className="mt-2">설계된 대가: {rule.hidden_side_effect}</p>}
+          </li>
+        ))}</ul>
+      </section>
+    </div>
+  );
+}
+
 export function Retrospective({ attemptId }: { attemptId: string }) {
-  const [data, setData] = useState<HarnessRes | null>(null);
+  const { play: playVoice, stop: stopVoice } = useVoice();
+  const devIntroductionPlayed = useRef(false);
+  const [journey, setJourney] = useState<JourneyRes | null>(null);
+  const [harness, setHarness] = useState<HarnessRes | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
   const load = useCallback(async () => {
     setBusy(true);
     setError(null);
-    try { setData(await api.getHarness(attemptId)); }
-    catch (e) { setError(e instanceof ApiError ? e.detail : "회고를 불러오지 못했습니다."); }
-    finally { setBusy(false); }
+    try {
+      setJourney(await api.getJourney(attemptId));
+      // 개발 데이터는 보조 — 실패해도 여정은 보여준다
+      try { setHarness(await api.getHarness(attemptId)); } catch { /* 접힘 섹션만 비운다 */ }
+    } catch (e) {
+      setError(e instanceof ApiError ? e.detail : "기록을 불러오지 못했습니다.");
+    } finally {
+      setBusy(false);
+    }
   }, [attemptId]);
   useEffect(() => { void load(); }, [load]);
+  const ready = journey !== null;
+  useEffect(() => {
+    if (ready) playVoice(["EN01"]);
+    return stopVoice;
+  }, [ready, playVoice, stopVoice]);
 
-  if (!data) return (
+  if (!journey) return (
     <div className="space-y-4 text-center" role="status">
       <p>{busy ? "다섯 번의 기록을 펼치는 중…" : error}</p>
       {!busy && <button type="button" onClick={() => void load()} className="underline">다시 불러오기</button>}
     </div>
   );
 
-  const s = data.harness_summary;
-  const experiments = data.experiments ?? [];
-  const metrics = data.metrics ? Object.entries(data.metrics) : [];
-  const countOrRecordMissing = (value: number | null | undefined) => value === null || value === undefined ? "기록 없음" : `${value}회`;
-
   return (
     <article className="w-full space-y-8 text-sm leading-relaxed">
-      <header className="space-y-4">
-        <p className="text-xs tracking-widest opacity-60">개발 회고 · 다섯 번의 하루 이후</p>
-        <h1 className="text-2xl">당신은 이 세계의 규칙을 고치고 있었다.</h1>
-        <p>원숭이손은 한 변경의 이득과 대가를, 신의개입은 관찰에서 출발해 행동 규칙을 설계하고 검사하는 과정을 담고 있었다.</p>
+      <header className="space-y-3">
+        <p className="text-xs tracking-widest opacity-60">다섯 번의 하루 이후</p>
+        <h1 className="text-2xl">너의 추리는 이렇게 걸어왔다.</h1>
+        <p>{VOICE_CLIPS.EN01.text}</p>
+        <VoiceReplay speaker="회고" text={VOICE_CLIPS.EN01.text} />
       </header>
 
-      <section className="space-y-4 border-t border-paper/30 pt-5">
-        <h2 className="text-lg">당신의 실험 기록</h2>
-        {experiments.length === 0 ? <p className="opacity-60">실행 기회까지 연결된 규칙 기록이 없다.</p> : experiments.map((experiment, index) => (
-          <article key={experiment.rule_id} className={index === 0 ? "border border-orange/70 p-4" : "border border-paper/25 p-4"}>
-            {index === 0 && <p className="mb-3 text-xs tracking-widest text-orange">가장 먼저 연결된 실험</p>}
-            <dl className="grid grid-cols-[4rem_1fr] gap-x-2 gap-y-2">
-              <dt className="text-xs opacity-55">의도</dt><dd>{experiment.intent ?? "기록 없음"}</dd>
-              <dt className="text-xs opacity-55">해석</dt><dd>{experiment.interpretation}</dd>
-            </dl>
-            <p className="mt-4 text-xs opacity-55">기회 → 실제 행동 → 검사 결과 → 발생한 결과</p>
-            <ol className="mt-2 space-y-2">{experiment.opportunities.map((item, i) => <OpportunityCard key={`${experiment.rule_id}-${i}`} opportunity={item} />)}</ol>
-            {experiment.opportunities.length === 0 && <p className="mt-2 opacity-60">행동 기회가 없어 결과는 N/A다.</p>}
-          </article>
-        ))}
+      <section className="space-y-3 border-t border-paper/30 pt-5">
+        <h2 className="text-lg">하루하루의 기록</h2>
+        <ol className="space-y-3">
+          {journey.loops.map((loop) => (
+            <li key={loop.loop_n} className="border border-paper/25 p-4">
+              <div className="flex items-baseline justify-between gap-3">
+                <p className="font-semibold">{loop.loop_n}번째 밤</p>
+                <p className="text-xs opacity-60">이해도 {Math.round(loop.total)}%</p>
+              </div>
+              {loop.new_confirmed.length > 0 && (
+                <ul className="mt-2 space-y-1">
+                  {loop.new_confirmed.map((c) => (
+                    <li key={c.code} className="text-orange">이 밤, 하나가 확정됐다 — {c.my_claim ?? c.code}</li>
+                  ))}
+                </ul>
+              )}
+              {loop.unlocked_notes.length > 0 && (
+                <ul className="mt-2 space-y-1">
+                  {loop.unlocked_notes.map((text, i) => (
+                    <li key={i} className="opacity-80">신이 연 단서 — {text}</li>
+                  ))}
+                </ul>
+              )}
+              {loop.new_confirmed.length === 0 && loop.unlocked_notes.length === 0 && (
+                <p className="mt-2 opacity-60">확정된 것 없이 지나간 밤.</p>
+              )}
+            </li>
+          ))}
+        </ol>
       </section>
 
-      <section className="space-y-3 border-t border-paper/30 pt-5">
-        <h2 className="text-lg">이야기 이해</h2>
-        <p>마지막 화면의 이해도는 원인·동기·정체에 대한 답안을 평가한 값이다. 아래 시스템 지표와 합산하지 않는다.</p>
-      </section>
+      {journey.final && (
+        <section className="space-y-3 border-t border-paper/30 pt-5">
+          <h2 className="text-lg">진실과 내 기록</h2>
+          <p className="text-xs opacity-60">맞춘 만큼만 열린다. 나머지는 다음 도전의 몫이다.</p>
+          <TruthRevealCards reveal={journey.final.truth_reveal} light />
+        </section>
+      )}
 
-      <section className="space-y-3 border-t border-paper/30 pt-5">
-        <h2 className="text-lg">시스템 동작 품질</h2>
-        <p>모델 호출 {countOrRecordMissing(s.model_calls)} · 시도 {countOrRecordMissing(s.model_attempts)} · 개입 {s.harness_interventions}회 · 대체 {s.fallbacks}회</p>
-        <p className="text-xs opacity-60">측정 범위 · {s.model_call_coverage === "complete_logged_calls" ? "현재 로그 전체" : "이전 기록 일부 또는 측정 불가"} · 버전 {data.measurement_version ?? "기록 없음"}</p>
-        <p className="text-xs opacity-60">개입은 검사 위반이나 대체가 있었던 호출만 센다. 시도 횟수나 규칙 성공 횟수와 같지 않다.</p>
-        {metrics.length > 0 ? <ul className="grid gap-2 sm:grid-cols-2">{metrics.map(([name, metric]) => <MetricRow key={name} name={name} metric={metric} />)}</ul> : <p className="opacity-60">세부 지표는 기록 없음.</p>}
-      </section>
+      {journey.unresolved.length > 0 && (
+        <section className="space-y-3 border-t border-paper/30 pt-5">
+          <h2 className="text-lg">아직 비어 있는 자리</h2>
+          <ul className="space-y-2">
+            {journey.unresolved.map((u) => (
+              <li key={u.cell} className="border border-paper/25 p-3">
+                <p className="text-xs opacity-60">{CELL_LABEL[u.cell] ?? u.cell} · ?</p>
+                <p className="mt-1">{u.hint}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
-      <section className="space-y-3 border-t border-paper/30 pt-5">
-        <h2 className="text-lg">원숭이손 · 변경의 대가</h2>
-        <p>원숭이손 수락 {s.paw_accepted}회 · 연결되지 않은 도구 부작용 기록 {s.tool_side_effects.length}건</p>
-        <ul className="space-y-2">{s.tool_side_effects.map((item, i) => <li key={i}>{item.loop_n}회차 · 장면 {item.beat}: {item.text}</li>)}</ul>
-        <p className="text-xs opacity-60">다른 조건과 비교하지 않은 기록을 원숭이손의 인과적 효과로 부르지 않는다.</p>
-      </section>
-
-      <section className="space-y-3 border-t border-paper/30 pt-5">
-        <h2 className="text-lg">등록한 규칙</h2>
-        <p>질문 {s.questions_asked}회 · 추천 {s.recommended_rules}개 · 직접 작성 {s.custom_rules}개 · 충돌 {s.rule_conflicts}개</p>
-        <ul className="space-y-3">{data.rules.map((rule) => (
-          <li key={rule.rule_id} className="border border-paper/30 p-4">
-            <p className="text-xs opacity-60">{rule.created_loop}회차 · {SOURCE_LABEL[rule.source]}</p>
-            <p>{rule.target}: {rule.action} {rule.effect === "suppress" ? "금지" : "강제"}</p>
-            {rule.hidden_side_effect && <p className="mt-2">설계된 대가: {rule.hidden_side_effect} <span className="text-xs opacity-60">(실제 발생 여부는 위 기회 기록에서 확인)</span></p>}
-          </li>
-        ))}</ul>
-      </section>
+      {harness && (
+        <details className="border-t border-paper/30 pt-5"
+          onToggle={(event) => {
+            if (event.currentTarget.open && !devIntroductionPlayed.current) {
+              devIntroductionPlayed.current = true;
+              playVoice(["EN02"]);
+            } else if (!event.currentTarget.open) stopVoice();
+          }}>
+          <summary className="cursor-pointer text-base opacity-60">개발 데이터 — 규칙·검사·모델 동작이 궁금하다면</summary>
+          <p className="mt-4">{VOICE_CLIPS.EN02.text}</p>
+          <VoiceReplay speaker="회고" text={VOICE_CLIPS.EN02.text} />
+          <DevDetails data={harness} />
+        </details>
+      )}
     </article>
   );
 }

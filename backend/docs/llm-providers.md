@@ -8,7 +8,7 @@ NPC와 core는 같은 `LLMPort.complete()` 계약을 사용하며 각각의 prov
 
 ```dotenv
 NPC_LLM_PROVIDER=ollama
-NPC_LLM_MODEL=exaone3.5:7.8b
+NPC_LLM_MODEL=kanana1.5:8b-q4km
 CORE_LLM_PROVIDER=gemini
 CORE_LLM_MODEL=gemini-3-flash-preview
 GEMINI_REQUESTS_PER_MINUTE=10

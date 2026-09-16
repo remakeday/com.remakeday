@@ -6,11 +6,15 @@
 """
 
 from apps.engine.app.dtos.scenario_dto import (
+    ActionAccountDTO,
+    AdvisorLeadDTO,
     BeatDTO,
     CharacterDTO,
     CookieTextDTO,
     FragmentDTO,
     IllustrationDTO,
+    KnowledgeDTO,
+    NightClueDTO,
     QuestionReplyActionDTO,
     QuestionReplyDTO,
     ScenarioBundleDTO,
@@ -29,16 +33,6 @@ _FIRST_MORNING = (
     '"배 안 고파." 민석이 그걸 본다. 아무 말도 안 한다.\n'
     '은상이 옆에 와서 앉는다. "충식이 어제 이송됐대. 걔 괜찮았잖아?"\n'
     '준이 손목띠를 만지작거린다. "이거 숫자 뭔지 알아?"'
-)
-
-_NPC_TONE = (
-    "말은 짧다. 한 번에 하나만 이해한다. "
-    '3턴 전 일은 모른다 — 물으면 "그랬어?"라고 한다. '
-    "병·검진·트럭 얘기가 나오면 화제를 바꾼다. "
-    '"사람"은 자기들을 부르는 말이다 — "우리 사람이잖아". '
-    "서로 이름을 부르고, 손목띠 번호는 부르지 않는다. "
-    '문장이 짧고, 접속사가 없고, "몰라"와 "진짜?"가 잦다. '
-    "어른 말투(회의·확인·조건)는 나오지 않는다."
 )
 
 
@@ -64,28 +58,51 @@ def build() -> StaticScenario:
                 name="채연",
                 role="핵심",
                 persona=(
-                    "감염 초기. 열이 나고 밥을 못 먹는다. 말하면 이송된다고 믿어서 숨긴다. "
-                    "그 믿음은 사실이다. 목표: 들키지 않기. "
-                    "아침 배급을 반쯤 남기고 옆으로 민다. " + _NPC_TONE + " "
-                    "음식·검진 얘기가 나오면 짧게 끊고 딴 얘기를 한다."
+                    "정이 많고 친구의 추위나 불편함을 먼저 챙긴다. 자신은 괜찮은 척한다. "
+                    "친구들과 남고 싶지만 몸이 불편한 걸 들키면 이송될까 두렵다. "
+                    "도움을 받고 싶어도 자기 몸 이야기를 꺼내기 어렵다. "
+                    "편안하면 다정하게 말한다. 몸을 캐물으면 짧게 방어하다가 감각이나 두려움이 조금 드러난다. "
+                    "다른 이야기는 편하게 나누고, 상대의 질문에 맞게 답한다."
                 ),
-                goal="들키지 않기",
-                relations="자기 몫을 옆 사람에게 민다. 민석의 시선을 피한다.",
-                fallback_lines=["…아니야.", "배 안 고파.", "졸려."],
+                goal="아픈 티를 숨기고 친구들과 여기 남아 있기",
+                relations="민석이 자신을 살피면 부담스럽다. 다른 친구들에게는 기대고 싶다.",
+                knowledge=[
+                    KnowledgeDTO(id="chaeyeon-body", kind="body", text="몸에 열이 나고 밥이 잘 안 넘어간다."),
+                    KnowledgeDTO(id="chaeyeon-transfer-fear", kind="belief", text="아프다고 말하면 다른 구역으로 이송될 거라고 믿는다."),
+                    KnowledgeDTO(id="chaeyeon-before-start-cough", kind="observed", text="충식이 실려 가기 전날 밤 기침하는 것을 봤다."),
+                    KnowledgeDTO(id="chaeyeon-before-start-checkup", kind="observed", text="이전 검진에서 담당자는 이마만 짚고 지나갔다."),
+                    KnowledgeDTO(id="chaeyeon-before-start-truck", kind="observed", text="그동안 트럭 소리는 소등 뒤에만 들렸다."),
+                    KnowledgeDTO(id="chaeyeon-before-start-ration", kind="observed", text="이전에 배급을 남겨도 다음 날 몫이 줄지 않았다."),
+                ],
+                dialogue_examples=[
+                    "여기 같이 앉아도 돼?\n응. 옆에 와. 같이 있자.",
+                    "나랑 얘기하기 싫어?\n싫은 건 아니야. 내 몸 얘기는 조금 겁나서 그래.",
+                ],
+                fallback_lines=["잠깐만. 무슨 말인지 다시 말해 줘.", "잘 못 들었어. 한 번만 더 말해 줘."],
             ),
             CharacterDTO(
                 code="minseok",
                 name="민석",
                 role="핵심",
                 persona=(
-                    "관리자 규정을 지킨다. 이상한 사람을 보면 방송실에 알린다. 악의는 없다. "
-                    "목표: 규정 지키기, 이상자 신고. "
-                    "누가 배급을 남기는지 보고, 병·검진·트럭 얘기가 나오면 기록한다. " + _NPC_TONE + " "
-                    "규정·순서·기록 얘기가 나오면 잘 안다는 듯 술술 말한다."
+                    "성실하고 맡은 일을 잘하고 싶다. 규정을 따르면 모두에게 도움이 된다고 믿는다. "
+                    "이상한 것을 놓치거나 자신이 틀릴까 걱정한다. 누군가를 괴롭히려는 마음은 없다. "
+                    "순서와 기록, 들은 방송을 또박또박 설명한다. 도움이 되면 뿌듯해한다. "
+                    "편안하면 아는 이유까지 말하고, 압박받으면 기억하는 규정을 되짚거나 다시 살펴보려 한다."
                 ),
                 goal="규정 지키기, 이상자 신고",
-                relations="채연을 지켜본다. 관리자 방송을 믿는다.",
-                fallback_lines=["그거 하면 안 돼.", "몰라.", "방송 들었어?"],
+                relations="채연의 변화가 걱정되어 살피려 한다. 관리자 방송을 믿고 친구들에게도 도움이 되고 싶다.",
+                knowledge=[
+                    KnowledgeDTO(id="minseok-report-rule", kind="heard", source="관리자", text="이상한 점은 방송실에 알리라는 방송을 들었다."),
+                    KnowledgeDTO(id="minseok-band-rule", kind="heard", source="관리자", text="손목띠를 빼면 안 된다고 들었다."),
+                    KnowledgeDTO(id="minseok-before-start-broadcast", kind="observed", text="그동안 방송은 하루에 세 번 나왔다."),
+                    KnowledgeDTO(id="minseok-before-start-door", kind="observed", text="이전에 가 봤을 때 방송실 문은 늘 잠겨 있었다. 문 앞에서는 안에서 웅웅 소리가 났다."),
+                ],
+                dialogue_examples=[
+                    "뭘 할 때 제일 뿌듯해?\n내가 도와줘서 잘됐을 때. 빠뜨린 것도 없으면 더 좋고.",
+                    "틀렸다고 하면 화나?\n조금 속상해. 그래도 내가 놓친 게 있으면 알려 줘.",
+                ],
+                fallback_lines=["어느 걸 물은 거야? 다시 말해 줘.", "잠깐, 잘 못 들었어. 한 번 더 말해 줘."],
                 question_replies=[
                     QuestionReplyDTO(
                         action="보고를 물으면 자신이 한 일을 자세히 설명한다",
@@ -129,33 +146,51 @@ def build() -> StaticScenario:
                 name="은상",
                 role="핵심",
                 persona=(
-                    "불안하다. 들은 것을 부풀려 옮긴다. 소문의 출처. "
-                    "목표: 불안 해소 — 말하기. " + _NPC_TONE + " "
-                    "남 얘기는 신나서 하는데 자기 얘기를 물으면 화제를 돌린다."
+                    "붙임성이 좋고 반응이 빠르다. 먼저 말을 걸며 누군가 자기 얘기를 들어주길 바란다. "
+                    "혼자 남거나 남에게 생긴 일이 자기에게도 생길까 두렵다. "
+                    "들은 이야기의 사실과 출처는 그대로 두고, 자기 걱정과 추측을 덧붙인다. 추측은 걱정하는 말로 드러낸다. "
+                    "편안하면 자기 불안도 털어놓는다. 압박받으면 말이 빨라지고 상대에게 안심시켜 달라고 한다."
                 ),
-                goal="불안 해소 — 말하기",
-                relations=(
-                    "들은 것을 누구에게든 옮긴다. 채연 얘기를 제일 자주 한다. "
-                    "채연이 요즘 이상하다는 얘기를 하고 다닌다."
-                ),
-                fallback_lines=["진짜? 진짜야?", "무서워.", "그 얘기 들었어?"],
+                goal="누군가와 이야기하고 함께 있으면서 안심하기",
+                relations="친구들의 반응을 보고 안심하려 한다. 채연이 걱정되고, 준에게는 곁에 있어 달라고 말하기 편하다.",
+                knowledge=[
+                    KnowledgeDTO(id="eunsang-before-start-rumor", kind="heard", source="준", text="충식이 아팠다는 얘기를 준에게 들었다. 준은 충식이 기침하는 것과 실려 가는 것을 봤다고 했다. 왜 데려갔는지는 듣지 못했다."),
+                    KnowledgeDTO(id="eunsang-before-start-wheels", kind="observed", text="이전 밤에 복도에서 바퀴 구르는 소리를 들었다."),
+                    KnowledgeDTO(id="eunsang-before-start-blanket", kind="observed", text="채연은 요즘 담요를 벗지 않는다."),
+                    KnowledgeDTO(id="eunsang-before-start-checkup", kind="observed", text="그동안 본 흰 옷 입은 사람들은 서로 말을 하지 않았다."),
+                ],
+                dialogue_examples=[
+                    "좀 조용히 있고 싶어.\n응. 말 안 걸게. 그래도 옆에는 있어도 돼?",
+                    "늘 걱정이 많아?\n응. 나 혼자 남을까 봐 자꾸 걱정돼.",
+                ],
+                fallback_lines=["응? 다시 말해 줘. 듣고 있어.", "잠깐, 잘 못 들었어. 한 번만 더 말해 줘."],
             ),
             CharacterDTO(
                 code="jun",
                 name="준",
                 role="주변",
                 persona=(
-                    "편하게 말한다. 유저의 정보원이자 이름이 빌려지는 자리. "
-                    '유일하게 "손목에 왜 번호가 있지?" 같은 말을 한다. '
-                    "목표: 궁금한 거 묻기. " + _NPC_TONE + " "
-                    "숫자·글자·표시 얘기에는 눈을 반짝이며 아는 걸 다 말한다."
+                    "친근하고 호기심이 많다. 숫자와 물건, 작은 차이를 살피는 걸 좋아한다. "
+                    "혼자 답을 내리기보다 친구와 함께 알아보고 싶다. "
+                    "익숙한 사람이 없어졌는데 이유를 모르는 상황이 꺼림칙하다. "
+                    "물은 것에 먼저 답하고 관련이 있을 때 함께 보자고 한다. "
+                    "편안하면 발견을 나누고, 불안하면 맞지 않는 부분을 다시 묻거나 친구 곁에 있으려 한다."
                 ),
-                goal="궁금한 거 묻기",
-                relations=(
-                    "유저와 편하게 말한다. 충식이 이송된 걸 궁금해한다. "
-                    "손목띠 숫자를 자꾸 들여다본다."
-                ),
-                fallback_lines=["…뭐?", "몰라.", "이 숫자 뭔지 알아?"],
+                goal="궁금한 것을 친구와 함께 알아보기",
+                relations="상대와 편하게 이야기하고 발견을 나누고 싶다. 은상이 불안해하면 이야기를 들어준다.",
+                knowledge=[
+                    KnowledgeDTO(id="jun-before-start-band", kind="observed", text="손목띠 숫자 밑에 작은 글자가 하나 더 있는 것을 봤다. 무슨 뜻인지는 모른다."),
+                    KnowledgeDTO(id="jun-before-start-ration", kind="observed", text="배급 포대가 트럭에서 내려오는 것을 봤다."),
+                    KnowledgeDTO(id="jun-before-start-handle", kind="observed", text="문손잡이는 손이 닿지 않는 높이에 있다."),
+                    KnowledgeDTO(id="jun-before-start-cough", kind="observed", text="충식이 이송되기 전 기침하는 것을 직접 봤다. 아파 보였다."),
+                    KnowledgeDTO(id="jun-before-start-transfer", kind="observed", text="어제 충식이 실려 가는 것을 봤다. 왜 데려갔는지는 모른다. 다음 날 아침 충식 자리는 깨끗하게 비어 있었다."),
+                    KnowledgeDTO(id="jun-before-start-told-eunsang", kind="observed", text="오늘이 시작되기 전에 은상에게 충식에 대해 내가 본 일을 말해 주었다."),
+                ],
+                dialogue_examples=[
+                    "같이 살펴볼까?\n좋아. 네가 눈여겨본 것도 알려 줘.",
+                    "친구가 모른다고 하면 어때?\n나도 모르는 게 많아. 같이 보면 하나쯤 알 수도 있잖아.",
+                ],
+                fallback_lines=["어느 거 말이야? 한 번 더 말해 줘.", "응? 잘 못 들었어. 다시 말해 줘."],
             ),
             CharacterDTO(
                 code="chungsik",
@@ -181,11 +216,11 @@ def build() -> StaticScenario:
         ],
         beats=[
             BeatDTO(n=1, title="기상 — 7:12", narration="스피커가 켜지고 배급 줄이 생긴다.",
-                    broadcast="관리자입니다. 배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다."),
+                    broadcast="배급을 시작합니다. 식사 후에는 각자 자리에서 대기해 주십시오.\n배급은 정해진 순서대로 받습니다. 오후에는 검진합니다. 이상한 점은 방송실로 알립니다."),
             BeatDTO(n=2, title="오전 — 자유 시간", narration="할 일이 없는 시간. 채연이 담요를 쓰고 벽 쪽을 본다."),
             BeatDTO(n=3, title="정오 — 배급", narration="정오 배급이 나온다."),
             BeatDTO(n=4, title="오후 — 검진", narration="흰 옷 입은 사람들이 침상 사이를 지나간다. 종이에 적는 소리가 난다.",
-                    broadcast="오후 검진이 있겠습니다. 각자 자리에서 대기합니다."),
+                    broadcast="오후 검진을 시작합니다. 상태가 좋지 않은 분은 별도 구역으로 이송합니다."),
             BeatDTO(n=5, title="저녁", narration="어둑해진 방. 음식이 남은 쟁반 세 개가 보인다.",
                     illustrations=[IllustrationDTO(image_id="clue-04", caption="저녁에는 음식이 남은 쟁반이 세 개 놓여 있다.")]),
             BeatDTO(n=6, title="소등 후", narration="불이 꺼진다. 어둠 속에서 다들 숨소리를 죽인다.",
@@ -193,47 +228,73 @@ def build() -> StaticScenario:
         ],
         first_morning_illustrations=[IllustrationDTO(image_id="clue-07", caption="관리자의 방송 아래 네 사람이 배급을 기다린다.")],
         scene_actions=[
-            SceneActionDTO(beat=1, actor="채연", action="배급을 남긴다",
+            SceneActionDTO(beat=1, actor="채연", action="배급을 남긴다", witnesses=["준", "민석"],
                 narration="채연이 자기 몫을 반쯤 남기고 슬그머니 옆으로 민다.",
                 explanation="반쯤 남겼어. 배가 안 고파서 옆에 뒀어.",
                 suppressed_narration="채연은 오늘 쟁반을 옆으로 밀지 않는다. 먹은 양은 확인하지 못했다.",
                 illustrations=[IllustrationDTO(image_id="clue-01", caption="음식이 남은 쟁반 하나가 비스듬히 놓여 있다.")]),
-            SceneActionDTO(beat=2, actor="준", action="손목띠를 만진다",
+            SceneActionDTO(beat=2, actor="준", action="손목띠를 만진다", witnesses=["민석"],
                 narration="준이 손목띠를 불빛에 비춰 본다.",
                 explanation="불빛에 비춰 봤어. 숫자가 써 있잖아. 뭔지 궁금해서.",
                 suppressed_narration="준은 손목띠를 건드리지 않고 앉아 있다.",
                 illustrations=[IllustrationDTO(image_id="clue-11", caption="준이 숫자가 적힌 띠를 들여다본다.")]),
-            SceneActionDTO(beat=2, actor="은상", action="소문을 낸다",
+            SceneActionDTO(beat=2, actor="은상", action="소문을 낸다", witnesses=["준"],
                 narration="은상이 이 사람 저 사람 옆에 옮겨 앉으며 속닥인다.",
                 explanation="얘기 좀 했어. 혼자 있으면 무서워서.",
+                experience_accounts=[ActionAccountDTO(text="준에게 들은 아픈 친구 얘기를 했어. 나도 그런 일이 생길까 봐 무섭다고 했어.")],
                 suppressed_narration="은상은 옆 사람에게 소문을 옮기지 않는다.",
-                known_source="소문의 출처는 직접 확인하지 못했어. 들은 말이야.",
+                known_source="준에게 들었어. 나는 직접 본 게 아니야.",
                 illustrations=[IllustrationDTO(image_id="clue-10", caption="은상이 사람들 사이에서 말을 건넨다. 내용이 참인지는 알 수 없다.")]),
-            SceneActionDTO(beat=3, actor="채연", action="배급을 남긴다",
+            SceneActionDTO(beat=3, actor="채연", action="배급을 남긴다", witnesses=["민석"],
                 explanation="쟁반 밀었어. 지금은 안 먹고 싶어.",
                 narration="채연이 쟁반을 밀어낸다.", suppressed_narration="채연은 쟁반을 밀어내지 않는다."),
-            SceneActionDTO(beat=3, actor="민석", action="기록한다",
+            SceneActionDTO(beat=3, actor="민석", action="기록한다", witnesses=["채연"],
                 narration="민석이 배급 자리를 보고 수첩에 뭔가 적는다.",
                 explanation="배급 자리 보고 적었어. 잊으면 안 되잖아.",
+                experience_accounts=[ActionAccountDTO(
+                    required_actions=[QuestionReplyActionDTO(beat=3, actor="채연", action="배급을 남긴다")],
+                    text="채연이가 남긴 배급을 보고 이름과 남은 몫을 수첩에 적었어. 잊으면 안 되니까.")],
                 suppressed_narration="민석은 배급 자리를 보지만 수첩에는 적지 않는다.",
                 illustration_participants=["민석", "채연"],
                 illustrations=[IllustrationDTO(image_id="clue-08", caption="민석이 배급 자리 옆에서 수첩에 기록한다.")]),
-            SceneActionDTO(beat=4, actor="채연", action="검진을 받는다",
+            SceneActionDTO(beat=4, actor="채연", action="검진을 받는다", witnesses=["은상"],
                 narration="채연은 담요를 끌어올린 채 자기 차례를 기다린다. 담당자가 이마를 짚고 지나간다. 결과는 공개되지 않았다.",
                 explanation="기다렸어. 이마 짚고 가던데. 이제 쉬면 안 돼?",
                 suppressed_narration="채연은 검진을 받지 않았다. 몸 상태는 확인되지 않았다.",
                 illustrations=[IllustrationDTO(image_id="clue-12", caption="검진 담당자가 침상 사이를 지나가고, 채연은 담요를 두른 채 자기 차례를 기다린다.")]),
-            SceneActionDTO(beat=5, actor="은상", action="소문을 낸다",
+            SceneActionDTO(beat=5, actor="은상", action="소문을 낸다", witnesses=["민석"],
                 narration="은상이 사람들 사이를 오가며 귓속말을 한다.",
                 explanation="옆에 가서 작게 얘기했어. 혼자 있기 싫어.",
+                experience_accounts=[ActionAccountDTO(text="준에게 들은 아픈 친구 얘기를 작게 했어. 나도 혼자 남을까 봐 걱정된다고 했어.")],
                 suppressed_narration="은상은 저녁에도 소문을 옮기지 않는다.",
-                known_source="소문의 출처는 직접 확인하지 못했어. 들은 말이야.",
+                known_source="준에게 들었어. 나는 직접 본 게 아니야.",
                 illustrations=[IllustrationDTO(image_id="clue-10", caption="은상이 사람들 사이에서 귓속말을 한다.")]),
-            SceneActionDTO(beat=5, actor="민석", action="방송실에 간다",
+            SceneActionDTO(beat=5, actor="민석", action="방송실에 간다", witnesses=["은상"],
                 narration="민석이 방송실 문 앞까지 갔다가 돌아온다. 안에서 무슨 말을 했는지는 듣지 못했다.",
                 explanation="방송실 문 앞까지 갔다 왔어. 이상한 건 알리랬잖아.",
                 suppressed_narration="민석은 방송실 문 쪽으로 가지 않았다.",
                 illustrations=[IllustrationDTO(image_id="clue-09", caption="민석이 방송실 문 앞에 다가선다. 보고 완료 여부는 보이지 않는다.")]),
+            # ── 잠재 기회 (dormant) — 규칙을 걸어야만 일어나는 탐사 행동 ──
+            SceneActionDTO(beat=2, actor="준", action="가진 것을 보여준다", witnesses=["민석"], dormant=True,
+                narration="준이 손목띠를 벗지 않은 채 불빛에 대고 옆 사람 눈앞에 내민다. 숫자 밑에 작은 글자가 하나 더 있다.",
+                explanation="보여줬어. 숫자 밑에 뭐가 더 써 있잖아.",
+                suppressed_narration="준은 손목띠를 아무에게도 보여주지 않는다."),
+            SceneActionDTO(beat=3, actor="민석", action="가진 것을 보여준다", witnesses=["채연"], dormant=True,
+                narration="민석이 수첩을 펼쳐 보여준다. 날짜와 이름, 남은 쟁반 수가 줄지어 적혀 있다.",
+                explanation="수첩을 펼쳐서 적은 거 보여줬어. 날짜와 이름, 남은 쟁반 수가 적혀 있어. 잊으면 안 되니까 적는 거야.",
+                suppressed_narration="민석은 수첩을 보여주지 않는다."),
+            SceneActionDTO(beat=2, actor="은상", action="들은 것을 그대로 전한다", witnesses=["준"], dormant=True,
+                narration='은상이 자기 걱정은 빼고 들은 그대로 말한다. "충식이 아팠대. 준이 기침하는 거랑 실려 가는 걸 봤대. 왜 데려갔는지는 모른대."',
+                explanation="준에게 들은 대로 말했어. 충식이 아파 보였고 실려 갔대. 왜 데려갔는지는 나도 몰라.",
+                suppressed_narration="은상은 들은 말을 옮기지 않는다."),
+            SceneActionDTO(beat=5, actor="은상", action="따라간다", witnesses=["민석"], dormant=True,
+                narration="은상이 민석 뒤를 따라 방송실 앞까지 간다. 문틈으로 낮고 고른 기계 소리가 새어 나온다.",
+                explanation="따라가 봤어. 문 앞에서 웅웅 소리가 났어.",
+                suppressed_narration="은상은 아무도 따라가지 않는다."),
+            SceneActionDTO(beat=6, actor="준", action="밤에 깨어 있는다", witnesses=[], dormant=True,
+                narration="준이 소등 뒤에도 눈을 뜨고 있다. 복도 끝에서 바퀴 구르는 소리와 무거운 문이 여닫히는 소리가 난다.",
+                explanation="안 잤어. 밖에서 뭐가 굴러가는 소리 났어.",
+                suppressed_narration="준은 소등하자마자 잠든다."),
         ],
         scene_dialogues=[
             SceneDialogueDTO(beat=1,
@@ -262,7 +323,7 @@ def build() -> StaticScenario:
                 required_actions=[SceneDialogueActionDTO(actor="채연", action="검진을 받는다")],
                 lines=[
                     SceneDialogueLineDTO(code="eunsang", text="채연아, 뭐래?"),
-                    SceneDialogueLineDTO(code="chaeyeon", text="몰라. 이제 자고 싶어."),
+                    SceneDialogueLineDTO(code="chaeyeon", text="이마 짚고 그냥 갔어. 이제 좀 쉬고 싶어."),
                     SceneDialogueLineDTO(code="eunsang", text="…나도 무서운데."),
                 ]),
             SceneDialogueDTO(beat=5,
@@ -276,7 +337,7 @@ def build() -> StaticScenario:
             SceneDialogueDTO(beat=6, lines=[
                 SceneDialogueLineDTO(code="eunsang", text="준아, 자?"),
                 SceneDialogueLineDTO(code="jun", text="아직. 왜?"),
-                SceneDialogueLineDTO(code="eunsang", text="그냥. 좀 더 깨어 있어."),
+                SceneDialogueLineDTO(code="eunsang", text="혼자 깨어 있으면 무서워. 조금만 같이 있어 줘."),
             ]),
         ],
         truth_claims=[
@@ -435,25 +496,79 @@ def build() -> StaticScenario:
             "문을 긁는다",
             "기록한다",
             "손목띠를 만진다",
+            # 탐사형 (잠재 기회 — 규칙을 걸어야 일어난다)
+            "가진 것을 보여준다",
+            "따라간다",
+            "밤에 깨어 있는다",
+            "들은 것을 그대로 전한다",
         ],
-        # 부록 A.3 감각 파편 — 회차 시작 시 노트 적립 (회차당 2~4개)
+        # 신의 질문 해금 리드 — 미공개지만 스포일러가 아닌 관찰 + 다음 행동 힌트.
+        # 질문 1회마다 1개가 결정론으로 해금되어 노트에 적립된다 (숨은 진실 직접 노출 금지).
+        advisor_leads=[
+            AdvisorLeadDTO(key="ration-truck", loop_n=1, cues=["배급", "밥", "쟁반", "포대"],
+                text="배급 포대는 늘 같은 트럭에서 내려온다. 포대 수는 사람 수보다 넉넉하다.",
+                direction="내일 배급 때 채연의 쟁반이 어디로 가는지 지켜봐라."),
+            AdvisorLeadDTO(key="checkup-paper", loop_n=1, cues=["검진", "아프", "열", "담당"],
+                text="검진 담당자는 이마만 짚고, 적은 종이는 방송실 쪽으로 가져간다.",
+                direction="내일 검진이 끝난 뒤 민석에게 무엇을 적었는지 물어봐라."),
+            AdvisorLeadDTO(key="broadcast-door", loop_n=1, cues=["방송", "관리자", "보고"],
+                text="방송실 문은 안쪽에서만 열린다. 들어가는 사람을 본 사람이 없다.",
+                direction="저녁에 민석이 방송실 앞에서 무엇을 하는지 지켜봐라."),
+            AdvisorLeadDTO(key="truck-night", loop_n=2, cues=["트럭", "이송", "충식", "돌아오"],
+                text="트럭은 언제나 소등 뒤에 온다. 실려 간 사람의 자리는 다음 날 아침 정리되어 있다.",
+                direction="누군가를 소등 뒤에 깨어 있게 해 보라."),
+            AdvisorLeadDTO(key="band-number", loop_n=2, cues=["손목띠", "숫자", "번호", "귀표"],
+                text="손목띠 숫자는 나이 순서도 자리 순서도 아니다.",
+                direction="준에게 손목띠에 있는 것을 보여 달라고 해 보라."),
+            AdvisorLeadDTO(key="rumor-half", loop_n=3, cues=["소문", "은상", "속닥", "들었"],
+                text="은상은 들은 이야기에 자기 걱정을 덧붙인다. 걱정이 모두 실제로 벌어진 일은 아니다.",
+                direction="은상이 들은 것을 그대로 전하게 해 보라."),
+            AdvisorLeadDTO(key="blanket-quiet", loop_n=3, cues=["담요", "채연", "검진"],
+                text="담요를 두른 채 검진을 받아도 담당자는 아무 말 하지 않았다.",
+                direction="채연에게 검진에서 무슨 말을 들었는지 물어봐라."),
+            AdvisorLeadDTO(key="sack-letters", loop_n=4, cues=["글자", "포대", "바깥", "트럭"],
+                text="배급 포대의 글자는 사람이 먹는 것의 이름 같지 않다.",
+                direction="포대의 글자와 트럭 옆면의 글자를 견주어 보라."),
+            AdvisorLeadDTO(key="no-mirror", loop_n=4, cues=["거울", "얼굴", "모습"],
+                text="이 방엔 거울도, 얼굴이 비치는 유리도 하나도 없다.",
+                direction="서로의 모습을 어떻게 알고 있는지 준에게 물어봐라."),
+            AdvisorLeadDTO(key="door-handle", loop_n=5, cues=["문", "손잡이", "밖", "나가"],
+                text="문손잡이는 모두의 머리 위에 있다. 열려는 사람을 본 적이 없다.",
+                direction="마지막 밤, 네가 아는 것들을 하나의 이야기로 이어 보라."),
+        ],
+        # 부록 A.3 감각 파편 — 회차 시작 시 노트 적립.
+        # 고아 감각 파편(소독약·콘크리트·거울·포대 글자·손)은 밤 단서(night_clues)로 옮겼다 — 밤단서 v2 P.1.
         fragments=[
             # 1회차 — 감각. 확신 불가
-            FragmentDTO(loop_n=1, text="소독약 냄새."),
             FragmentDTO(loop_n=1, beat=6, world_outcome="truck", text="트럭 소리."),
-            FragmentDTO(loop_n=1, beat=2, text="발 아래 콘크리트가 차다."),
             # 2~3회차 — 정황. 노트로 대조 가능
             # 행동 파편은 scene_actions의 실제 실행 기록으로 적립한다.
             FragmentDTO(loop_n=3, beat=2, source_kind="statement", text="충식은 어제 이송됐다."),
-            FragmentDTO(loop_n=3, beat=2, source_kind="statement", text='준: "이 숫자 뭔지 알아?"'),
+            FragmentDTO(loop_n=3, beat=2, actor="준", witnesses=["민석"], source_kind="statement", text='준: "이 숫자 뭔지 알아?"'),
             # 3~4회차 — 단어. 이상함을 눈치채는 시점
-            FragmentDTO(loop_n=3, beat=2, source_kind="statement", text='"귀표"라는 단어를 준이 쓴다.'),
-            FragmentDTO(loop_n=4, beat=3, text="배급 포대에 글자가 있다."),
-            FragmentDTO(loop_n=4, text="거울이 없다."),
+            FragmentDTO(loop_n=3, beat=2, actor="준", witnesses=["민석"], source_kind="statement", text='"귀표"라는 단어를 준이 쓴다.'),
             # 4~5회차 — 결정적. 그러나 확인할 상대가 없다
             FragmentDTO(loop_n=4, beat=6, world_outcome="truck", text='트럭 옆면 "○○축산".'),
-            FragmentDTO(loop_n=5, beat=6, text="손이 없어서 문을 못 연다는 것을 문득 안다."),
             FragmentDTO(loop_n=5, text="7시 13분."),
+        ],
+        # 밤단서 v2 P.1 — 밤 결말 전환: 관리자 밤 방송(출처) → 치지직 그림(흔적) → 캡션(잔류).
+        # 방송은 시설 안내만 하고 진실을 말하지 않는다. 트럭 결말 밤의 추가 한 줄은 위 world_outcome 파편이 붙는다.
+        night_clues=[
+            NightClueDTO(loop_n=1, image_ids=["P01"], voice_id="MA08",
+                         broadcast="소독을 실시합니다. 바닥에서 떨어져 자리에 오르십시오.",
+                         caption="소독약 냄새. 발 아래 콘크리트가 차다."),
+            NightClueDTO(loop_n=2, image_ids=["P02", "clue-05"], voice_id="MA09",
+                         broadcast="정리 작업이 있겠습니다. 비어 있는 자리는 아침에 정돈됩니다.",
+                         caption="트럭 소리."),
+            NightClueDTO(loop_n=3, image_ids=["P03"], voice_id="MA10",
+                         broadcast="외관 확인은 담당자가 합니다. 각자 확인할 필요 없습니다.",
+                         caption="거울이 없다."),
+            NightClueDTO(loop_n=4, image_ids=["P04"], voice_id="MA11",
+                         broadcast="배급 물자가 도착했습니다. 포대의 표기는 관리 용도입니다. 읽을 필요 없습니다.",
+                         caption="배급 포대에 글자가 있다."),
+            NightClueDTO(loop_n=5, image_ids=["P05"], voice_id="MA12",
+                         broadcast="출입문은 관리자가 개방합니다. 문에 손대지 마십시오.",
+                         caption="손이 없어서 문을 못 연다는 것을 문득 안다."),
         ],
         # §4.1 진입 화면 3줄 (1회차에만 한 번)
         entry_lines=[
@@ -466,6 +581,12 @@ def build() -> StaticScenario:
             "감염의 시작은 채연이었다. 이송될까 두려워 아픈 징후를 숨겼고, 공동생활에는 감염이 번질 위험이 있었다.",
             "관리자는 농장주였다. 옆 축사로의 확산을 막기 위한 이송·폐쇄·살처분은 이 세계를 통제하는 정책이었다.",
         ],
+        # 결말은 이해한 만큼만 열린다 — 셀 ≥80에서 해당 줄 공개, 나머지는 "?"로 남는다
+        ending_lines_by_cell={
+            "identity": ["우리가 대피소라고 믿었던 곳은 양돈장이었다. 우리는 사람이 아니라 돼지였다."],
+            "cause": ["감염의 시작은 채연이었다. 이송될까 두려워 아픈 징후를 숨겼고, 공동생활에는 감염이 번질 위험이 있었다."],
+            "motive": ["관리자는 농장주였다. 옆 축사로의 확산을 막기 위한 이송·폐쇄·살처분은 이 세계를 통제하는 정책이었다."],
+        },
         ending_outcomes={
             "truck": ["이번 마지막 밤에는 트럭이 왔다. 구역이 폐쇄된 것으로 확인되지는 않았다.",
                       "다섯 번의 하루에서 본 행동과 아직 알지 못한 이유를 돌아본다."],
@@ -483,8 +604,7 @@ def build() -> StaticScenario:
             3: "관리자 방송이 끝나고 배급이 나온다. 자리가 하나 빈 것 같은데, 아무도 말하지 않는다.",
         },
         prompt_fragments={
-            # 부록 A.4 대사 톤 (하위 모델 프롬프트 방향)
-            "npc": _NPC_TONE,
+            "npc": "서로 손목띠 번호 대신 이름으로 부른다.",
             # 조언자는 로그만 안다. 답은 사실만 (§4.1). 스토리보드·정답 주장 없음
             "advisor": (
                 "로그만 읽는다. 로그에 있는 사실만으로 답한다. "

@@ -8,6 +8,8 @@ import type {
   SubmitRes,
 } from "@/contracts/api";
 import { useApiAction } from "@/lib/useApiAction";
+import { audioEnabled, setAudioEnabled } from "@/lib/audioSettings";
+import { ToggleSwitch } from "@/components/ToggleSwitch";
 import { ErrorToast } from "@/components/ErrorToast";
 import { EntryScreen } from "@/components/screens/EntryScreen";
 import { MorningScreen } from "@/components/screens/MorningScreen";
@@ -18,6 +20,7 @@ import { ScoreScreen } from "@/components/screens/ScoreScreen";
 import { DoomTransition } from "@/components/screens/DoomTransition";
 import { GodScreen } from "@/components/screens/GodScreen";
 import { ClearScreen } from "@/components/screens/ClearScreen";
+import { VoicePlayer, VoiceToggle } from "@/components/VoicePlayer";
 
 /**
  * 한 판 = 상태 머신. /play 한 라우트 안에서 phase 전환.
@@ -47,10 +50,59 @@ export default function PlayPage() {
   } | null>(null);
   const [dayLog, setDayLog] = useState<DialoguePair[]>([]);
   const [submitResult, setSubmitResult] = useState<SubmitRes | null>(null);
+  const bgmRef = useRef<HTMLAudioElement>(null);
+  const bgmButtonRef = useRef<HTMLButtonElement>(null);
+  const bgmAutoStart = useRef(true);
+  const [bgmPlaying, setBgmPlaying] = useState(false);
 
   const sessionAction = useApiAction();
   const loopAction = useApiAction();
   const retryAction = useApiAction();
+
+  useEffect(() => {
+    const audio = bgmRef.current;
+    if (!audio) return;
+    // 랜딩 환경설정에서 BGM을 껐다면 자동재생하지 않는다.
+    bgmAutoStart.current = audioEnabled("bgm");
+    audio.volume = 0.25;
+    const stopListening = () => {
+      document.removeEventListener("click", onInteraction);
+      document.removeEventListener("keydown", onInteraction);
+    };
+    const tryPlayback = () => {
+      if (!bgmAutoStart.current) return;
+      void audio.play().then(stopListening).catch(() => {});
+    };
+    const onInteraction = (event: Event) => {
+      // 켜기·끄기 버튼의 선택을 자동재생 재시도로 뒤집지 않는다.
+      if (bgmButtonRef.current?.contains(event.target as Node)) return;
+      tryPlayback();
+    };
+    document.addEventListener("click", onInteraction);
+    document.addEventListener("keydown", onInteraction);
+    // 진입 즉시 시도하고, 브라우저가 막으면 첫 사용자 조작에서 재시도한다.
+    tryPlayback();
+    return () => {
+      stopListening();
+      audio.pause();
+    };
+  }, []);
+
+  const playBgm = () => {
+    const audio = bgmRef.current;
+    if (!audio) return;
+    // 재생 제한·음원 로딩 실패가 게임 진행을 막지 않게 한다.
+    void audio.play().catch(() => {});
+  };
+
+  const toggleBgm = () => {
+    const audio = bgmRef.current;
+    if (!audio) return;
+    bgmAutoStart.current = false;
+    setAudioEnabled("bgm", audio.paused);
+    if (audio.paused) playBgm();
+    else audio.pause();
+  };
 
   // 진입 시 세션 생성 — entry_lines는 이 응답에서 온다
   const booted = useRef(false);
@@ -102,6 +154,20 @@ export default function PlayPage() {
 
   return (
     <main className="game-reading">
+      <VoicePlayer bgmRef={bgmRef}>
+      <audio
+        ref={bgmRef}
+        src="/audio/game-bgm.mp3"
+        loop
+        preload="none"
+        onPlay={() => setBgmPlaying(true)}
+        onPause={() => setBgmPlaying(false)}
+        onError={() => setBgmPlaying(false)}
+      />
+      <div className="fixed top-2 right-3 z-50 flex items-center gap-5">
+        <VoiceToggle />
+        <ToggleSwitch label="BGM" on={bgmPlaying} onClick={toggleBgm} buttonRef={bgmButtonRef} />
+      </div>
       {phase === "entry" && (
         <EntryScreen
           lines={attempt?.entry_lines ?? null}
@@ -174,6 +240,7 @@ export default function PlayPage() {
       {phase === "doom_transition" && submitResult && (
         <DoomTransition
           outcome={submitResult.world_outcome}
+          clue={submitResult.night_clue ?? null}
           onDone={afterDoom}
         />
       )}
@@ -181,6 +248,7 @@ export default function PlayPage() {
       {phase === "god" && night && submitResult && (
         <GodScreen
           nightId={night.nightId}
+          firstVisit={loop?.loop_n === 1}
           total={submitResult.total}
           hypothesis={night.claims[0] ?? ""}
           onRuleApplied={startLoop}
@@ -206,6 +274,7 @@ export default function PlayPage() {
           retryAction.clearFailure();
         }}
       />
+      </VoicePlayer>
     </main>
   );
 }

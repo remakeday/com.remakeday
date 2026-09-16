@@ -28,6 +28,9 @@ class Memory:
     def npc_states(self, _id):
         return []
 
+    def previous_submitted(self, _attempt_id, _loop_n):
+        return None
+
     def record(self, _id, event):
         self.recorded.append(event)
 

@@ -6,6 +6,7 @@ from sqlalchemy import engine_from_config, pool
 import apps.engine.adapter.outbound.orms.event_log_orm  # noqa: F401
 import apps.engine.adapter.outbound.orms.game_state_orm  # noqa: F401
 import apps.engine.adapter.outbound.orms.scenario_seed_orm  # noqa: F401
+import apps.engine.adapter.outbound.orms.user_orm  # noqa: F401
 from core.matrix.grid_keymaker_secret_manager import get_settings
 from core.matrix.grid_oracle_database_manager import Base
 

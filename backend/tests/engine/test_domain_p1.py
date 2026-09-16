@@ -69,8 +69,8 @@ def test_carry_over_5_percent_trust():
     assert g2 == npc_rules.NpcGauge(suspicion=0, trust=3, opposite_mode=False)
 
 
-def test_memory_keeps_3_turns():
+def test_memory_retains_the_days_conversation():
     m = npc_rules.NpcMemory()
     for i in range(5):
         m = npc_rules.remember(m, f"t{i}")
-    assert m.turns == ("t2", "t3", "t4")
+    assert m.turns == ("t0", "t1", "t2", "t3", "t4")

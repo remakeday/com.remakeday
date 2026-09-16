@@ -127,7 +127,10 @@ def lost_character_check(lost_names: list[str], *, fields: list[str]) -> FactChe
 import re
 
 # "X야/X이야/X예요"(명명), "X가 그랬/말했"(전언) — 사람을 지목하는 어법의 후보 토큰
-_NAMING_RE = re.compile(r"([가-힣]{2,3})(?:이?야[.!?\s]|예요|이에요|[이가]\s*(?:그랬|말했|했다던))")
+_NAMING_RE = re.compile(
+    r"(?:사람은|이름은|이름이|친구는|친구 이름은)\s*([가-힣]{2,3})(?:이?야|예요|이에요)"
+    r"|(?<![가-힣])([가-힣]{2,3})[이가]\s*(?:그랬|말했|했다던)"
+)
 # 명명 어법에 자주 붙는 비인명 어휘 — 오탐 방지
 _NOT_NAMES = {
     "차량", "번호", "알려", "뜻이",
@@ -145,15 +148,12 @@ def unknown_person_check(known_names: list[str], *, fields: list[str]) -> FactCh
     def check(output: BaseModel) -> str | None:
         for f in fields:
             text = str(getattr(output, f, None) or "")
-            for cand in _NAMING_RE.findall(text):
-                stem = cand[:-1] if cand.endswith("이") and len(cand) > 2 else cand
+            for groups in _NAMING_RE.findall(text):
+                cand = next(c for c in groups if c)
+                stem = cand[:-1] if cand.endswith("이") and cand[:-1] in known_names else cand
                 if cand in _NOT_NAMES or stem in _NOT_NAMES:
                     continue
-                if any(
-                    c in name or name in c
-                    for name in known_names
-                    for c in (cand, stem)
-                ):
+                if cand in known_names or stem in known_names:
                     continue
                 return f"unknown_person: '{stem}' in {f}"
         return None

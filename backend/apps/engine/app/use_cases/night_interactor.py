@@ -36,6 +36,15 @@ def source_claims(free_text: str, tapped_notes: list[str]) -> list[str]:
     return claims
 
 
+def judge_candidates(claims: list[str]) -> list[str]:
+    """채점 후보 — 칸을 다시 문장 단위로 푼다.
+
+    8칸 UI 계약(마지막 칸에 초과분을 모은다)은 그대로 두고, 채점기에는 문장을
+    개별 후보로 준다. 덩어리 칸이 매칭을 가리던 결함(A.8) 해소."""
+    return list(dict.fromkeys(
+        s.strip() for c in claims for s in re.split(r"(?<=[.!?])\s+|\n+", c) if s.strip()))
+
+
 # 원인 체인의 사실 원천 — 세계에서 실제 일어난 일만.
 # ANSWER_*(유저 주장·채점)·INTERVENTION_*·세션 메타를 넣으면 유저 문장이 "기록"으로 반사된다.
 _CHAIN_EVENT_TYPES = frozenset({
@@ -148,7 +157,14 @@ class NightInteractor:
         truth = [t for t in self._scenario.truth_claims() if t.cell != "side_effect"
                  and (not t.world_outcomes or world in t.world_outcomes)]
 
-        per_truth, wrong = self._judge(loop, truth, [], night.claims)
+        candidates = judge_candidates(night.claims)
+        per_truth, wrong = self._judge(loop, truth, [], candidates)
+        previous = self._nights.previous_submitted(loop.attempt_id, loop.loop_n)
+        if previous is not None:
+            per_truth = scoring_rules.apply_ratchet(
+                per_truth, previous[0].per_truth_claim or [], candidates)
+            matched = {i["matched_user_claim"] for i in per_truth if i["matched_user_claim"]}
+            wrong = [c for c in candidates if c not in matched]
         verdicts_by_cell: dict[str, list[str]] = {c: [] for c in CELLS}
         for item in per_truth:
             verdicts_by_cell[item["cell"]].append(item["verdict"])
@@ -167,6 +183,7 @@ class NightInteractor:
             per_truth_claim=[ev.TruthClaimVerdict(
                 id=i["id"], verdict=i["verdict"],
                 matched_user_claim=i["matched_user_claim"], cited_chunks=i["cited"],
+                ratcheted=i.get("ratcheted", False),
             ) for i in per_truth],
             cell_scores=ev.CellScores(**cell_scores), total=total, passed=passed,
         ))
@@ -183,6 +200,7 @@ class NightInteractor:
         world = scoring_rules.world_outcome(anomaly, loop.rumor_index)
         loop.world_outcome = world
         self._make_cause_chain(loop)
+        night_clue = self._disclose_night_clue(loop)
         self._record_death(loop, world)
         cookie = None
         closed = None
@@ -213,10 +231,23 @@ class NightInteractor:
             "world_outcome": world, "is_final": is_final,
             "closed_by": closed, "cells": cell_scores if is_final else None,
             "cookie": cookie, "intervention_available": intervention,
-            "ending_lines": (list(self._scenario.bundle().ending_lines)
-                             + list(self._scenario.bundle().ending_outcomes.get(world, []))) if is_final else None,
+            "ending_lines": self._ending_lines(cell_scores, world) if is_final else None,
+            "truth_reveal": scoring_rules.truth_reveal(truth, per_truth) if is_final else None,
             "cell_feedback": feedback, "wrong_claim_count": len(wrong),
+            "night_clue": night_clue,
         }
+
+    def _ending_lines(self, cell_scores: dict, world: str) -> list[str]:
+        """결말은 이해한 만큼만 — 셀 ≥ REVEAL_THRESHOLD의 줄만 연다. 매핑 없는 시나리오는 구 거동."""
+        bundle = self._scenario.bundle()
+        by_cell = getattr(bundle, "ending_lines_by_cell", None) or {}
+        if by_cell:
+            lines = [line for cell, cell_lines in by_cell.items()
+                     if cell_scores.get(cell, 0.0) >= scoring_rules.REVEAL_THRESHOLD
+                     for line in cell_lines]
+        else:
+            lines = list(bundle.ending_lines)
+        return lines + list(bundle.ending_outcomes.get(world, []))
 
     # ── 내부 ──────────────────────────────────────────────────
 
@@ -291,6 +322,29 @@ class NightInteractor:
                 o = disclose(self._events, loop, self._scenario.beats()[-1], key=f"outcome-fragment-{index}", text=fragment.text)
                 self._notes.upsert(loop.attempt_id, kind="fragment", text=o.text,
                                    loop_n=loop.loop_n, source_key=o.observation_id)
+
+    def _disclose_night_clue(self, loop) -> dict | None:
+        """밤 단서(밤단서 v2 P.1) — 캡션은 「N회차 · 소등 후」 관찰, 방송은 전언(statement)으로 저장한다.
+
+        둘 다 노트에 적혀 다음 밤의 근거로 탭할 수 있다. 트럭 결말 밤에는 위에서 공개한 결말 파편이 한 줄 더 붙는다."""
+        bundle = self._scenario.bundle()
+        clue = next((c for c in getattr(bundle, "night_clues", None) or [] if c.loop_n == loop.loop_n), None)
+        if clue is None:
+            return None
+        lights_out = self._scenario.beats()[-1]
+        for key, text, kind in (("night-clue", clue.caption, "scene"),
+                                ("night-broadcast", clue.broadcast, "statement")):
+            o = disclose(self._events, loop, lights_out, key=key, text=text, source_kind=kind)
+            self._notes.upsert(loop.attempt_id, kind="fragment", text=o.text,
+                               loop_n=loop.loop_n, source_key=o.observation_id)
+        outcome_lines = [f.text for f in bundle.fragments
+                         if f.world_outcome is not None and f.loop_n == loop.loop_n
+                         and f.world_outcome == loop.world_outcome]
+        return {
+            "loop_n": clue.loop_n, "caption": clue.caption, "image_ids": list(clue.image_ids),
+            "voice_id": clue.voice_id, "broadcast": clue.broadcast,
+            "outcome_line": " ".join(outcome_lines) or None,
+        }
 
     def _record_death(self, loop, world: str) -> None:
         low = min(CELLS, key=lambda c: (loop.score or 0))

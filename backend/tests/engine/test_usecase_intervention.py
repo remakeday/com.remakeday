@@ -23,7 +23,8 @@ from apps.engine.app.use_cases.intervention_interactor import (
 _FACT = "채연이 자기 몫을 반쯤 남기고 옆으로 민다."
 
 
-def make_intervention(db_session, core_queue, cause_chain=None, rules=None, action_vocab=None):
+def make_intervention(db_session, core_queue, cause_chain=None, rules=None, action_vocab=None,
+                      advisor_leads=None):
     attempt = AttemptRepository(db_session).create(None)
     loop = LoopOrm(
         attempt_id=attempt.id, loop_n=1, budget_left=0,
@@ -49,8 +50,47 @@ def make_intervention(db_session, core_queue, cause_chain=None, rules=None, acti
         core_llm=FakeLLM(core_queue),
         action_vocab=action_vocab or ["말 걸기"], target_names=["채연"],
         harness_on=True, rule_cls=RuleOrm,
+        advisor_leads=advisor_leads or [],
     )
     return interactor, attempt, night
+
+
+def make_lead(key="k1", loop_n=1, cues=("배급",), text="배급 포대는 트럭에서 내려온다.",
+              direction="내일 배급 자리를 지켜봐라."):
+    from apps.engine.app.dtos.scenario_dto import AdvisorLeadDTO
+    return AdvisorLeadDTO(key=key, loop_n=loop_n, cues=list(cues), text=text, direction=direction)
+
+
+def test_question_unlocks_lead_note_and_direction_even_on_fallback(db_session):
+    lead = make_lead()
+    inter, attempt, night = make_intervention(db_session, [], advisor_leads=[lead])
+    res = inter.ask(night.id, "배급이 왜 이래?")
+    assert res["unlocked_note"] == lead.text
+    assert lead.text in res["answer"]
+    assert res["next_observation"] == lead.direction
+    notes = NoteRepository(db_session).list(attempt.id)
+    assert any(n.source_key == "advisor-lead-k1" and n.text == lead.text for n in notes)
+
+
+def test_same_lead_is_not_unlocked_twice(db_session):
+    lead = make_lead()
+    inter, attempt, night = make_intervention(db_session, [], advisor_leads=[lead])
+    first = inter.ask(night.id, "배급이 왜 이래?")
+    second = inter.ask(night.id, "배급 얘기 또 물을게")
+    assert first["unlocked_note"] == lead.text
+    assert second["unlocked_note"] is None
+    notes = [n for n in NoteRepository(db_session).list(attempt.id)
+             if n.source_key.startswith("advisor-lead-")]
+    assert len(notes) == 1
+
+
+def test_future_loop_lead_stays_locked(db_session):
+    lead = make_lead(key="late", loop_n=3)
+    inter, attempt, night = make_intervention(db_session, [], advisor_leads=[lead])
+    res = inter.ask(night.id, "배급이 왜 이래?")
+    assert res["unlocked_note"] is None
+    assert not [n for n in NoteRepository(db_session).list(attempt.id)
+                if n.source_key.startswith("advisor-lead-")]
 
 
 # The old chain-confirmation/forced-three-options/nearest-action assertions were
@@ -115,6 +155,37 @@ def test_contextual_option_retains_action_reason_and_original_evidence(db_sessio
     assert len(options) == 1
     assert options[0]["evidence_ids"] == [observation.observation_id]
     assert _FACT in options[0]["reason"]
+
+
+def publish_scene_action(inter, night, action, rule_id=None):
+    from apps.engine.app.use_cases.public_observations import disclose
+    from apps.engine.app.dtos.scenario_dto import BeatDTO
+    loop = inter._loops.get(night.loop_id)
+    return disclose(inter._events, loop, BeatDTO(n=1, title="아침", narration=_FACT),
+                    key=f"action-1-채연-{action}", text=_FACT, actor="채연",
+                    source_kind="rule_result" if rule_id else "scene", rule_id=rule_id)
+
+
+def _ration_templates():
+    return [{"target": "채연", "action": action, "effect": "enforce", "when_beat": 1,
+             "label": f"채연: {action}"} for action in ("알고 있는 관찰을 설명한다", "배급을 남긴다")]
+
+
+def test_options_skip_action_the_actor_already_performs_without_a_rule(db_session):
+    inter, _, night = make_intervention(db_session, [])
+    publish_scene_action(inter, night, "배급을 남긴다")
+    inter._templates = _ration_templates()
+    labels = [o["label"] for o in inter.options(night.id)["options"]]
+    assert "채연: 배급을 남긴다" not in labels
+    assert "채연: 알고 있는 관찰을 설명한다" in labels
+
+
+def test_options_keep_action_observed_only_under_a_rule(db_session):
+    inter, _, night = make_intervention(db_session, [])
+    publish_scene_action(inter, night, "배급을 남긴다", rule_id="R1")
+    inter._templates = _ration_templates()
+    labels = [o["label"] for o in inter.options(night.id)["options"]]
+    assert "채연: 배급을 남긴다" in labels
 
 
 def test_exact_action_only_preserves_polarity_and_rejects_unknown_recipient(db_session):

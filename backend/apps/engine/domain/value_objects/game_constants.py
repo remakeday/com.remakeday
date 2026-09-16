@@ -11,7 +11,6 @@ DELTA_CAP = 10  # LLM 제안값 클램프 (±)
 ASK_BUDGET_PER_LOOP = 2  # NPC 탐문 예산
 MANAGER_BUDGET_PER_LOOP = 2  # 관리자 보정 예산
 MANAGER_CHECK_BEATS = (2, 4, 6)  # 관리자 점검이 도는 비트 (매 비트 → 축소)
-NPC_MEMORY_TURNS = 3  # 3턴 망각
 
 MISMATCH_SPEAKER_SUSPICION = 12  # 거짓 출처 발각 시 발화 NPC의 대유저 의심
 ASK_TARGET_SUSPICION = 6  # ask_npc 대상 의심 상승

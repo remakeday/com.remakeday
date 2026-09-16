@@ -72,24 +72,9 @@ export function EntryScreen({
         className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-40"
       />
       <div className="relative z-10 flex flex-col items-center gap-6 px-8 text-center">
-        {lines === null ? (
-          <p className="text-lg opacity-40">…</p>
-        ) : (
-          lines.map((line, i) => (
-            <p
-              key={i}
-              className="entry-line text-lg leading-relaxed sm:text-xl"
-              style={{ animationDelay: `${i * 1.4}s` }}
-            >
-              {line}
-            </p>
-          ))
-        )}
+        {/* entry_lines는 랜딩이 보여준다 — 여기서는 반복하지 않는다. */}
         {priorCells && (
-          <div
-            className="entry-line mt-4 w-full max-w-xs"
-            style={{ animationDelay: `${(lines?.length ?? 3) * 1.4}s` }}
-          >
+          <div className="entry-line mt-4 w-full max-w-xs" style={{ animationDelay: "0.6s" }}>
             <p className="mb-2 text-base opacity-60">지난 판의 기록</p>
             <CellResults cells={priorCells} light />
           </div>

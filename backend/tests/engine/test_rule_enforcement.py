@@ -160,7 +160,7 @@ def test_narration_unchanged_without_matching_rule(db_session):
 # ── ④ 프롬프트 순서 — 규칙이 페르소나보다 앞 ──
 
 
-def test_agent_prompt_puts_rules_before_persona():
+def test_agent_context_retains_active_rule_and_persona():
     bundle = build_a().bundle()
     char = next(c for c in bundle.characters if c.playable)
     sys = build_agent_messages(
@@ -169,8 +169,8 @@ def test_agent_prompt_puts_rules_before_persona():
         suspicion=0, trust=50, opposite=False, memory=[],
         user_text="안녕", loop_n=1, age7_on=True,
     )[0].content
-    assert sys.index("[오늘의 규칙]") < sys.index("[너에 대해]")
-    assert "오늘의 법" in sys
+    assert "[R1] 채연은(는) 하루 종일에 배급을 남긴다 — 반드시 하지 않는다" in sys
+    assert char.persona in sys
 
 
 def test_authored_dialogue_uses_executed_scene_without_a_model_call(db_session):

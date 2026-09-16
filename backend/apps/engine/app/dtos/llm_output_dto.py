@@ -1,8 +1,16 @@
 """역할별 LLM 출력 스키마 (모델정책 v1 §3~8) — 하네스 검사 2번의 기준."""
 
-from typing import Literal
+from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, create_model
+from pydantic import AfterValidator, BaseModel, ConfigDict, Field, create_model
+
+
+def _bare_evidence_id(value: str) -> str:
+    # Presentation brackets are not part of the identifier; membership is checked separately.
+    return value[1:-1] if value.startswith("[") and value.endswith("]") else value
+
+
+EvidenceId = Annotated[str, AfterValidator(_bare_evidence_id)]
 
 
 class StrictModel(BaseModel):
@@ -13,10 +21,12 @@ class ToolCallSpec(StrictModel):
     name: Literal["ask_npc"]
     target: str
     question: str
+    statement_id: str | None = None  # Optional source of the attributed statement.
 
 
 class AgentOutput(StrictModel):
-    reply: str
+    reply: str = Field(min_length=1)
+    evidence_ids: list[EvidenceId] = Field(default_factory=list)
     suspicion_delta: int = Field(ge=-10, le=10)
     trust_delta: int = Field(ge=-10, le=10)
     tool_call: ToolCallSpec | None = None
@@ -47,8 +57,9 @@ def ambient_selection_output(candidate_count: int) -> type[StrictModel]:
 
 
 class AskNpcOutput(StrictModel):
-    answer: str
-    said_it: bool  # 인용된 말을 실제로 했는가 — 불일치 발각의 근거
+    answer: str = Field(min_length=1)
+    said_it: bool | None = None  # Current recollection, not proof that the speech occurred.
+    evidence_ids: list[EvidenceId] = Field(default_factory=list)
 
 
 class PlanBeat(StrictModel):

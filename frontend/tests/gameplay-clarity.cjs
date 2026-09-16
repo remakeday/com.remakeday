@@ -4,17 +4,29 @@ const { chromium } = require('playwright');
 const assert = require('node:assert/strict');
 
 (async () => {
-  const browser = await chromium.launch({ executablePath: '/usr/bin/google-chrome', headless: true });
+  const browser = await chromium.launch({ executablePath: '/usr/bin/google-chrome', headless: true, args: ['--autoplay-policy=document-user-activation-required'] });
   const errors = [];
   try {
     for (const [width, height] of [[390, 844], [1440, 900], [1564, 800]]) {
       const page = await browser.newPage({ viewport: { width, height }, reducedMotion: 'reduce' });
       page.on('pageerror', error => errors.push(error.message));
+      // Observe the real play promise without changing browser playback behavior.
+      await page.addInitScript(() => {
+        const play = HTMLMediaElement.prototype.play;
+        window.initialBgmPlayback = new Promise(resolve => {
+          HTMLMediaElement.prototype.play = function () {
+            const result = play.call(this);
+            result.then(() => resolve('playing'), error => resolve(error.name));
+            return result;
+          };
+        });
+      });
       let beat = 1, budget = 8, uttered = false, loopCalls = 0, talkCalls = 0;
       const observation = { observation_id: 'scene-2', loop_n: 1, beat: 2, scene_title: '복도', source_kind: 'scene', text: '담요 아래 손목띠가 남아 있다.', illustrations: [] };
       const npc = () => ({ code: 'minseok', name: '민석', mood: 'calm', uttered });
       await page.route('**/*', async route => {
         const url = new URL(route.request().url());
+        if (width === 390 && url.pathname === '/audio/game-bgm.mp3') return route.abort('failed');
         if (url.port !== '8500') return route.continue();
         const path = url.pathname;
         let body;
@@ -25,7 +37,7 @@ const assert = require('node:assert/strict');
         } else if (path.endsWith('/npcs')) body = { npcs: [npc(), ...[['chaeyeon', '채연'], ['eunsang', '은상'], ['jun', '준']].map(([code, name]) => ({ code, name, mood: 'calm', uttered: false }))] };
         else if (path.endsWith('/utterances')) {
           talkCalls++; budget--; uttered = true;
-          body = { npc: npc(), reply: '오늘 아침 보고는 아직 하지 않았어.', budget_left: budget, beat };
+          body = { utterance_id: route.request().postDataJSON().request_id, npc: npc(), reply: '오늘 아침 보고는 아직 하지 않았어.', budget_left: budget, beat, tool_used: false, observations: [] };
         } else if (path.endsWith('/beats/next')) {
           beat++; uttered = false;
           body = { beat, beat_title: '복도', narration: '문이 열린다.', broadcast: null, day_done: false, illustrations: [], observations: [observation], budget_left: budget,
@@ -34,21 +46,47 @@ const assert = require('node:assert/strict');
         } else if (path.endsWith('/paw/respond')) body = { applied: false, rule_label: null };
         else if (path.endsWith('/observations')) body = { observations: [observation] };
         else { errors.push(`Unexpected API ${path}`); return route.abort(); }
-        return route.fulfill({ json: body, headers: { 'access-control-allow-origin': '*' } });
+        return route.fulfill({ json: body, headers: { 'access-control-allow-origin': 'http://localhost:3500', 'access-control-allow-credentials': 'true' } });
       });
       await page.goto('http://localhost:3500/play');
+      // Playwright evaluate/locator calls grant user activation; read through CDP first.
+      const cdp = await page.context().newCDPSession(page);
+      const initialPlayback = await cdp.send('Runtime.evaluate', {
+        expression: 'Promise.race([window.initialBgmPlayback, new Promise(resolve => setTimeout(() => resolve("no autoplay attempt"), 10000))])',
+        awaitPromise: true, returnByValue: true, userGesture: false,
+      });
+      assert.equal(initialPlayback.result.value, 'NotAllowedError', 'browser rejects the entry autoplay attempt before any user gesture');
+      await cdp.detach();
       await page.getByRole('heading', { name: '플레이 안내' }).waitFor();
       assert.equal(await page.locator('details').getAttribute('open'), null, 'initial details start collapsed');
-      assert.ok((await page.locator('main').innerText()).includes('오늘 대화 8회'));
-      assert.equal((await page.locator('main').innerText()).includes('8 / 7 / 6 / 5 / 4회'), false, 'full schedule stays behind disclosure');
-      await page.getByText('자세한 규칙', { exact: true }).click();
-      for (const rule of ['5일', '6장면', '8 / 7 / 6 / 5 / 4회', '인물마다 한 장면에 1회', '충전되지 않는다', '처음 네 번의 밤', '3회']) {
-        assert.ok((await page.locator('main').innerText()).includes(rule), `initial guide explains ${rule}`);
+      assert.ok((await page.locator('main.game-reading').innerText()).includes('오늘 대화 8회'));
+      assert.equal((await page.locator('main.game-reading').innerText()).includes('8 / 7 / 6 / 5 / 4회'), false, 'full schedule stays behind disclosure');
+      assert.equal(await page.locator('audio[src="/audio/game-bgm.mp3"]').evaluate(audio => audio.paused), true, 'browser can block audible autoplay');
+      if (width === 1564) {
+        await page.keyboard.press('Tab');
+        await page.waitForFunction(() => document.querySelector('audio[src="/audio/game-bgm.mp3"]').currentTime > 0.2);
+        assert.equal(loopCalls, 0, 'first key starts BGM before a game loop');
       }
-      assert.ok((await page.locator('main').innerText()).includes('특별한 규칙의 대가'));
+      await page.getByText('자세한 규칙', { exact: true }).click();
+      if (width === 1440) {
+        await page.waitForFunction(() => document.querySelector('audio[src="/audio/game-bgm.mp3"]').currentTime > 0.2);
+        assert.equal(loopCalls, 0, 'first click starts BGM before a game loop');
+        await page.getByRole('switch', { name: 'BGM 끄기', exact: true }).click();
+      }
+      for (const rule of ['5일', '6장면', '8 / 7 / 6 / 5 / 4회', '인물마다 한 번', '충전되지 않는다', '처음 네 번의 밤', '3회']) {
+        assert.ok((await page.locator('main.game-reading').innerText()).includes(rule), `initial guide explains ${rule}`);
+      }
+      assert.ok((await page.locator('main.game-reading').innerText()).includes('특별한 규칙의 대가'));
       await page.getByText('자세한 규칙', { exact: true }).click();
       assert.equal(loopCalls, 0, 'guide appears before starting gameplay');
       await page.getByRole('button', { name: '시작', exact: true }).click();
+      if (width === 1440) {
+        assert.equal(await page.locator('audio[src="/audio/game-bgm.mp3"]').evaluate(audio => audio.paused), true, 'starting the game respects an earlier music-off choice');
+      }
+      if (width === 390) {
+        await page.waitForFunction(() => Boolean(document.querySelector('audio[src="/audio/game-bgm.mp3"]')?.error));
+        await page.getByRole('switch', { name: 'BGM 켜기', exact: true }).waitFor();
+      }
       await page.getByText('오늘 남은 대화 8회', { exact: true }).waitFor();
       const morning = page.getByRole('button', { name: '계속', exact: true });
       const morningBounds = await morning.boundingBox();
@@ -79,8 +117,8 @@ const assert = require('node:assert/strict');
       await page.getByRole('button', { name: '말한다', exact: true }).click();
       const reply = page.getByText('오늘 아침 보고는 아직 하지 않았어.', { exact: true });
       await reply.waitFor();
-      assert.equal(await input.isDisabled(), true);
-      await page.getByRole('button', { name: '민석 · 이 장면 대화 완료' }).waitFor();
+      assert.equal(await input.isDisabled(), true, 'a successful question completes this NPC for the scene');
+      assert.equal(await page.getByRole('button', { name: '민석 · 이 장면 대화 완료' }).getAttribute('aria-pressed'), 'true');
       const styles = await reply.evaluate(el => {
         const css = getComputedStyle(el);
         const ancestors = [];

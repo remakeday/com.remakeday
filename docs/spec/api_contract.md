@@ -1,6 +1,6 @@
 # API 계약 v1 (MVP) — backend 8500 / frontend 3500
 
-모든 응답은 JSON. 에러는 `{detail: string}` + 4xx. 잘못된 상태 전이는 409.
+모든 응답은 JSON. 에러는 `{detail: string}` + 4xx/5xx. 잘못된 상태 전이는 409.
 
 ## 세션·회차 (P1)
 
@@ -15,9 +15,12 @@ res: `{loop_id: string, loop_n: number, morning_text: string, damage_level: 0|1|
 - `Illustration`: `{image_id: string, caption: string}`. 시나리오가 지정한 현재 비트의 관찰 이미지 목록. `image_id`는 프론트의 허용된 이미지 매핑 키이며 URL·LLM 출력이 아니다. 이미지 없는 비트는 빈 배열. 프론트는 필드가 없는 구버전 응답과 알 수 없는 ID에 기존 비트 배경을 사용한다.
 
 ### POST /loops/{loop_id}/utterances
-req: `{target: string(code), text: string}`
-res: `{reply: string, npc: {code: string, name: string, mood: "calm"|"uneasy"|"wary"}, budget_left: number, beat: number, tool_used: boolean}`
-- 예산 소진 409
+req: `{target: string(code), text: string, request_id?: string(UUID)}`
+res: `{utterance_id: string(UUID), reply: string, npc: {code: string, name: string, mood: "calm"|"uneasy"|"wary", uttered: boolean}, budget_left: number, beat: number, tool_used: boolean, observations: Observation[]}`
+- 한 장면에서 NPC마다 성공한 대화는 1회만 가능하다. `uttered=true`인 NPC에게 새로운 질문을 보내면 409이며 예산은 줄지 않는다. 다른 NPC는 대화 가능하고, 다음 장면에서 다시 말을 걸 수 있다. 성공한 질문마다 예산 1회를 쓰며 장면은 이동하지 않는다.
+- 같은 회차의 같은 `request_id`/대상/질문은 장면당 1회 제한과 무관하게 저장된 성공 응답을 반환하고 추가로 차감하지 않는다. 다른 질문에 ID를 재사용하면 409. ID 생략 요청은 각각 새 발화다.
+- 예산 소진·대화할 수 없는 상대·낮 종료는 409. 모델 응답 실패는 503이며 예산·대화 기억·노트가 변경되지 않는다. 네트워크 오류 후에도 같은 질문과 ID로 재전송한다.
+- 발화·예산·관찰·노트를 한 트랜잭션으로 저장한다. 발언별 관찰 ID는 서로 다르며 응답의 관찰 ID로 노트와 연결한다.
 
 ### POST /loops/{loop_id}/beats/next
 res: `{beat: number, beat_title: string, narration: string, broadcast: string|null, illustrations: Illustration[], paw_offer: {offer_id: string, rule_label: string, shown_reason: string|null}|null, day_done: boolean,
@@ -25,7 +28,7 @@ res: `{beat: number, beat_title: string, narration: string, broadcast: string|nu
       note_found: {id: number, kind: string, text: string}|null}`
 - day_done=true면 이후 발화·비트 넘기기 409, 밤으로
 - `illustrations`: 현재 비트만 전달하며 낮 종료 시 빈 배열. 장면 넘겨 보기는 발화 예산·비트 진행에 영향을 주지 않는다. 폐쇄 이미지는 이 목록에 넣지 않고 밤의 `world_outcome=closure`에서만 표시한다.
-- `ambient`: 현재 공개된 관찰/전언 원문을 두 인물이 짚는 대화. 모델은 서버 후보 ID만 선택하며 새 사실을 작성하지 않는다. 연결 후보가 없거나 명시적으로 생략하면 null (발화 예산 무관).
+- `ambient`: 실제 발생한 행동과 참여 인물 조건을 충족한 시나리오의 작성 대화. 참여자 기억에 발언별로 저장한다. 조건을 충족하지 못하면 null (발화 예산 무관).
 - `note_found`: 이 비트에서 새로 발견된 감각 파편 (노트에 적힌 직후)
 
 ### POST /loops/{loop_id}/paw/respond
@@ -55,8 +58,11 @@ res: `{total: number, passed: boolean, loop_n: number, world_outcome: "truck"|"q
       is_final: boolean, closed_by: "clear"|"doom"|"understood"|"understood_all"|null,
       cells: CellScores|null, cookie: {text: string, cell: string, level: 1|2|3}|null,
       intervention_available: boolean,
-      ending_lines: string[]|null, cell_feedback: string|null, wrong_claim_count: number}`
+      ending_lines: string[]|null, cell_feedback: string|null, wrong_claim_count: number,
+      night_clue: {loop_n: number, caption: string, image_ids: string[], voice_id: string,
+                   broadcast: string, outcome_line: string|null}|null}`
 - `total`: 상황 70점(원인35 + 동기35) + 정체30점. 부작용은 채점하지 않는다.
+- `night_clue`: 밤 단서 시퀀스(밤단서 v2 P.1) — 결말 전환에서 관리자 밤 방송(`voice_id` MA08~12, 대본 `broadcast`) → 치지직 띠 안 `image_ids`(1~2장) → 바탕 위에 남는 `caption` 순서로 재생한다. 트럭 결말 밤에는 `outcome_line`(기존 트럭 파편)이 캡션 뒤에 한 줄 더 붙는다. 서버는 제출 시 `caption`을 「N회차 · 소등 후」 관찰(scene), `broadcast`를 전언(statement)으로 저장해 다음 밤의 근거로 탭할 수 있게 한다. 회차 표가 없는 시나리오는 null.
 - `cell_feedback`: 매일 밤 — 칸별 점수는 숨긴 채 정성 문장만 ("원인은 조금 잡혔다. 동기는 비어 있다." 톤. 잡혔다≥80% / 조금 잡혔다>0 / 비어 있다=0). 부작용 피드백 없음.
 - `wrong_claim_count`: 세계와 닿지 않은 주장 수 (감점 없음, 정보만)
 - 1~4회차 → 점수 무관 is_final=false, intervention_available=true (신의개입으로)

@@ -1,0 +1,53 @@
+[
+  {
+    "case": "core-8",
+    "repetition": 1,
+    "question": "준이 같이 깨어 있어 주면 뭐가 달라?",
+    "rejected_output": {
+      "reply": "준이 같이 깨어 있으면, 혼자 남는 느낌이 덜할 것 같아서 그래. 무서울 때 옆에 누가 있으면 좀 안심돼.",
+      "suspicion_delta": 0,
+      "trust_delta": 0,
+      "evidence_ids": [
+        "[5201d471-870e-44f9-82c7-cce46fcc6e3a:ambient-6-2]"
+      ]
+    },
+    "violations": [
+      "evidence_ids: 제공된 지식·기억 ID만 사용할 수 있다"
+    ],
+    "final_reply": "모른다고 해."
+  },
+  {
+    "case": "core-7",
+    "repetition": 2,
+    "question": "방송실에서 은상 얘기를 했어, 아니면 문 앞까지만 간 거야?",
+    "rejected_output": {
+      "reply": "문 앞까지만 갔어. 이상한 거 있으면 알리라 그래서 간 건데, 안에서 웅웅 소리가 나서 더 들어가진 않았어.",
+      "suspicion_delta": 0,
+      "trust_delta": 0,
+      "evidence_ids": [
+        "d16bc83b-9729-4189-9c01-9525293323c4:action-5-민석-broadcast실에 간다"
+      ]
+    },
+    "violations": [
+      "evidence_ids: 제공된 지식·기억 ID만 사용할 수 있다"
+    ],
+    "final_reply": "문 앞까지만 갔어."
+  },
+  {
+    "case": "core-8",
+    "repetition": 2,
+    "question": "준이 같이 깨어 있어 주면 뭐가 달라?",
+    "rejected_output": {
+      "reply": "그냥 혼자 있는 게 무서워서 그래. 준 옆에 있으면 덜 불안해. 혹시 다른 사람도 깨어 있는지 궁금하기도 해.",
+      "suspicion_delta": 0,
+      "trust_delta": 0,
+      "evidence_ids": [
+        "[0e00d2f4-592f-4969-bf39-6e8c22dda961:ambient-6-2]"
+      ]
+    },
+    "violations": [
+      "evidence_ids: 제공된 지식·기억 ID만 사용할 수 있다"
+    ],
+    "final_reply": "모른다고 해."
+  }
+]

@@ -12,6 +12,19 @@ from apps.engine.domain.value_objects.game_constants import (
 _VERDICT_VALUE = {"confirmed": 1.0, "partial": 0.5, "none": 0.0}
 
 
+REVEAL_THRESHOLD = 80.0  # 이 이해도(셀 기준)부터 결말에서 그 셀의 진실 줄이 열린다
+
+
+def truth_reveal(truth_claims, per_truth: list[dict]) -> list[dict]:
+    """스포일러 필터 — confirmed 명제만 진실 전문을 연다. partial·none은 서버가 잠근다."""
+    by_code = {t.code: t for t in truth_claims}
+    return [{
+        "code": item["id"], "cell": by_code[item["id"]].cell,
+        "verdict": item["verdict"], "my_claim": item.get("matched_user_claim"),
+        "truth": by_code[item["id"]].text if item["verdict"] == "confirmed" else None,
+    } for item in per_truth if item["id"] in by_code]
+
+
 def cell_score(verdicts: list[str]) -> float:
     """칸 점수(%) — 확인 비율. 80% 이상 만점, 미만 비례."""
     if not verdicts:
@@ -83,3 +96,38 @@ def closed_by(total: float, *, identity_word_confirmed: bool) -> str:
     if total >= PASS_THRESHOLD:
         return "clear"
     return "doom"
+
+
+_VERDICT_RANK = {"none": 0, "partial": 1, "confirmed": 2}
+
+_EDGE_PUNCT = ".!?…,\"'"
+
+
+def _normalize_claim(text: str) -> str:
+    return " ".join(text.split()).strip(_EDGE_PUNCT + " ")
+
+
+def apply_ratchet(per_truth: list[dict], prev_per_truth: list[dict],
+                  user_claims: list[str]) -> list[dict]:
+    """단조 잠금 — 유저가 문장을 바꾸지 않았으면 판정은 나빠지지 않는다.
+
+    직전 밤 같은 명제의 matched_user_claim 문장이 이번 후보에도 그대로 있으면
+    직전 verdict 미만으로 내리지 않는다(confirmed→partial/none, partial→none 차단).
+    상향은 그대로 둔다. 적용된 항목은 "ratcheted": True로 표시한다.
+    """
+    if not prev_per_truth:
+        return per_truth
+    prev_by_id = {p.get("id"): p for p in prev_per_truth}
+    current = {_normalize_claim(c) for c in user_claims}
+    out = []
+    for item in per_truth:
+        prev = prev_by_id.get(item.get("id"))
+        if prev:
+            prev_match = prev.get("matched_user_claim")
+            downgraded = (_VERDICT_RANK.get(item.get("verdict"), 0)
+                          < _VERDICT_RANK.get(prev.get("verdict"), 0))
+            if prev_match and downgraded and _normalize_claim(prev_match) in current:
+                item = {**item, "verdict": prev["verdict"],
+                        "matched_user_claim": prev_match, "ratcheted": True}
+        out.append(item)
+    return out

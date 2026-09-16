@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { SubmitRes } from "@/contracts/api";
 import { CellResults } from "@/components/CellResults";
 import { Retrospective } from "@/components/Retrospective";
+import { TruthRevealCards } from "@/components/TruthRevealCards";
 import { clearImage } from "@/lib/imageMap";
 
 /** 다섯 번째 밤: 점수와 무관하게 이야기 결말 → 개발 회고. */
@@ -27,6 +28,7 @@ export function ClearScreen({
             <h1 className="text-center text-xl">다섯 번째 밤, 마지막 기록</h1>
             <p className="text-center text-4xl font-semibold">최종 이해도 {Math.round(result.total)}%</p>
             {result.cells && <CellResults cells={result.cells} light />}
+            {result.truth_reveal && <TruthRevealCards reveal={result.truth_reveal} light />}
             <div className="space-y-4 text-sm leading-loose">
               {(result.ending_lines ?? []).map((line, i) => <p key={i}>{line}</p>)}
             </div>

@@ -3,6 +3,8 @@
 시나리오 고유 명사는 값(value)으로만 흐른다. 코드·식별자·주석에 쓰지 않는다.
 """
 
+from typing import Literal
+
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -23,6 +25,16 @@ class QuestionReplyDTO(BaseModel):
     reply: str
 
 
+class KnowledgeDTO(BaseModel):
+    """An authored starting experience; never an event from a previous loop."""
+    model_config = ConfigDict(extra="forbid")
+
+    id: str
+    kind: Literal["observed", "heard", "belief", "body"]
+    text: str
+    source: str | None = None
+
+
 class CharacterDTO(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
@@ -32,6 +44,8 @@ class CharacterDTO(BaseModel):
     persona: str = ""  # 프롬프트용 인물 설정 조각
     goal: str = ""  # 오늘의 목표 한 줄
     relations: str = ""  # 관계 요약 한 줄
+    knowledge: list[KnowledgeDTO] = Field(default_factory=list)
+    dialogue_examples: list[str] = Field(default_factory=list)
     fallback_lines: list[str] = Field(default_factory=list)  # 하네스 폴백 대사 3줄
     question_replies: list[QuestionReplyDTO] = Field(default_factory=list)
     initial_suspicion: int = 0
@@ -96,8 +110,30 @@ class FragmentDTO(BaseModel):
     text: str
     beat: int = Field(default=1, ge=1, le=6)
     actor: str | None = None
+    witnesses: list[str] = Field(default_factory=list)
     source_kind: str = "scene"
     world_outcome: str | None = None
+
+
+class NightClueDTO(BaseModel):
+    """밤 단서 — 결말 전환에서 관리자 밤 방송이 흘리는 그날의 고아 단서 (밤단서 v2 P.1).
+
+    캡션은 「소등 후」 관찰로, 방송 대본은 전언(statement)으로 밤 시작 때 저장한다."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    loop_n: int = Field(ge=1, le=5)
+    caption: str  # 띠가 꺼진 뒤 바탕 위에 남는 문장
+    image_ids: list[str] = Field(min_length=1, max_length=2)  # 치지직 띠 안 이미지 (프론트 이미지 맵 ID)
+    voice_id: str  # 관리자 밤 방송 음원 ID
+    broadcast: str  # 방송 대본 (음원과 같은 발화)
+
+
+class ActionAccountDTO(BaseModel):
+    """What the actor knows about this action under actual preceding events."""
+    model_config = ConfigDict(extra="forbid")
+    required_actions: list[QuestionReplyActionDTO] = Field(default_factory=list)
+    text: str
 
 
 class SceneActionDTO(BaseModel):
@@ -111,7 +147,22 @@ class SceneActionDTO(BaseModel):
     illustrations: list[IllustrationDTO] = Field(default_factory=list)
     known_source: str | None = None
     explanation: str = ""  # Authored first-person account of this action, not an inferred outcome.
+    experience_accounts: list[ActionAccountDTO] = Field(default_factory=list)
+    witnesses: list[str] = Field(default_factory=list)  # Display names of actual witnesses.
     illustration_participants: list[str] = Field(default_factory=list)
+    dormant: bool = False  # True면 기본 하루에는 일어나지 않고, enforce 규칙이 걸린 날에만 일어난다
+
+
+class AdvisorLeadDTO(BaseModel):
+    """신의 질문이 해금하는 미공개 관찰 — 스포일러가 아닌 계단. 질문 보상은 결정론으로 보장한다."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    key: str  # 해금 dedup 식별자 (노트 source_key로 쓰인다)
+    loop_n: int = Field(ge=1, le=5)  # 이 회차부터 해금 가능
+    cues: list[str] = Field(default_factory=list)  # 질문 매칭 키워드
+    text: str  # 해금되는 관찰 문구 (세계 안 문장)
+    direction: str  # 다음 행동 힌트 1문장
 
 
 class SceneDialogueActionDTO(BaseModel):
@@ -153,11 +204,15 @@ class ScenarioBundleDTO(BaseModel):
     utterance_bans: list[UtteranceBanDTO] = Field(default_factory=list)
     action_vocab: list[str] = Field(default_factory=list)  # Planner·규칙 행동 어휘
     fragments: list[FragmentDTO] = Field(default_factory=list)
+    night_clues: list[NightClueDTO] = Field(default_factory=list)  # 회차당 1행 — 밤 결말 전환의 단서
     scene_actions: list[SceneActionDTO] = Field(default_factory=list)
+    advisor_leads: list[AdvisorLeadDTO] = Field(default_factory=list)
     scene_dialogues: list[SceneDialogueDTO] = Field(default_factory=list)
     first_morning_illustrations: list[IllustrationDTO] = Field(default_factory=list)
     entry_lines: list[str] = Field(default_factory=list)  # 진입 화면 3줄
     ending_lines: list[str] = Field(default_factory=list)  # 5회차 제출 완료 후에만 공개
+    # 셀 이해(≥80)를 얻은 진실만 결말에서 공개 — 비면 ending_lines 전체 공개(구 거동)
+    ending_lines_by_cell: dict[str, list[str]] = Field(default_factory=dict)
     ending_outcomes: dict[str, list[str]] = Field(default_factory=dict)
     morning_lines: dict[int, str] = Field(default_factory=dict)  # damage_level → 둘째 문장
     prompt_fragments: dict[str, str] = Field(default_factory=dict)  # role -> fragment

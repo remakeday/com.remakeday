@@ -1,4 +1,4 @@
-"""P1 유스케이스 — Agent·하네스 ablation·ask_npc·3턴 창 (FakeLLM 큐로 제어)."""
+"""Day dialogue, harness, tool knowledge and same-day memory."""
 
 import pytest
 
@@ -120,11 +120,13 @@ def test_harness_blocks_system_term_checkpoint(db_session):
     assert res["reply"] == "괜찮은 대답."
 
 
-def test_harness_fallback_line_after_3_failures(db_session):
+def test_failed_model_response_preserves_budget_and_is_not_npc_ignorance(db_session):
+    from apps.engine.app.use_cases.loop_interactor import DialogueUnavailable
     inter, scenario, attempt, info = make_day(db_session, [{"bad": 1}, {"bad": 2}, {"bad": 3}])
     npc = _first_npc(scenario)
-    res = inter.utter(info["loop_id"], npc.code, "?")
-    assert res["reply"] in npc.fallback_lines or res["reply"] == "…뭐?"
+    with pytest.raises(DialogueUnavailable):
+        inter.utter(info["loop_id"], npc.code, "?")
+    assert LoopRepository(db_session).get(info["loop_id"]).budget_left == 8
 
 
 def test_suspicion_threshold_marks_opposite_and_prompt(db_session):
@@ -144,7 +146,7 @@ def test_suspicion_threshold_marks_opposite_and_prompt(db_session):
     assert "반대로 한다" in last_system
 
 
-def test_ask_npc_mismatch_raises_both_suspicions(db_session):
+def test_unverified_recollection_is_not_proof_of_misattribution(db_session):
     scenario = build_a()
     chars = [c for c in scenario.bundle().characters if c.playable]
     a, b = chars[0], chars[1]
@@ -159,11 +161,11 @@ def test_ask_npc_mismatch_raises_both_suspicions(db_session):
     repo = LoopRepository(db_session)
     asker = repo.npc_state(info["loop_id"], a.code)
     target = repo.npc_state(info["loop_id"], b.code)
-    assert asker.suspicion >= 12 + 3  # 불일치 발각 +12
+    assert asker.suspicion == 3  # No cited speech establishes a mismatch.
     assert target.suspicion >= 6  # 대상 의심 +6
 
 
-def test_memory_window_is_3_turns(db_session):
+def test_today_memory_survives_later_scene_dialogue(db_session):
     queue = []
     for i in range(4):
         queue += [_agent_reply(f"응{i}")]
@@ -173,23 +175,27 @@ def test_memory_window_is_3_turns(db_session):
         inter.utter(info["loop_id"], npc.code, f"말{i}")
         inter.advance_beat(info["loop_id"])  # 비트당 1회 — 다음 발화 전 넘긴다
     last_system = inter._npc_llm.calls[-1][0][0].content
-    assert "말0" not in last_system  # 4턴 전은 잊는다
-    assert "이제 자고 싶어" in last_system  # The latest scene exchange uses the same memory window.
+    assert "말0" in last_system
+    assert "검진" in last_system  # Current experience and earlier dialogue both remain.
 
 
-def test_same_npc_once_per_beat(db_session):
+def test_same_npc_is_locked_until_next_beat_without_spending_budget(db_session):
     from apps.engine.app.use_cases.loop_interactor import GameStateError
 
     queue = [_agent_reply("응"), _agent_reply("응2")]
     inter, scenario, attempt, info = make_day(db_session, queue)
     chars = [c for c in scenario.bundle().characters if c.playable]
     inter.utter(info["loop_id"], chars[0].code, "말")
-    with pytest.raises(GameStateError):
+    with pytest.raises(GameStateError, match="이 장면에서는 이미 대화했다"):
         inter.utter(info["loop_id"], chars[0].code, "또 말")
-    # 같은 비트라도 다른 NPC는 된다 — 거절된 발화는 큐도 예산도 안 쓴다
-    res = inter.utter(info["loop_id"], chars[1].code, "너는?")
+    assert LoopRepository(db_session).get(info["loop_id"]).budget_left == 7
+    assert len(inter._npc_llm.calls) == 1
+
+    # 한 인물의 대화 완료가 다른 인물까지 잠그지는 않는다.
+    res = inter.utter(info["loop_id"], chars[1].code, "너는 어때?")
     assert res["reply"] == "응2"
     assert res["budget_left"] == 6
+    assert res["beat"] == 1
 
 
 def test_same_npc_allowed_after_beat_advance(db_session):

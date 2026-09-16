@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { api } from "@/contracts/api";
 import type { Note, NoteKind, Observation, PreviousAnswer } from "@/contracts/api";
 import { NIGHT_IMAGE } from "@/lib/imageMap";
+import { dedupeByText } from "@/lib/dedupeByText";
 import { useApiAction } from "@/lib/useApiAction";
 import { ErrorToast } from "@/components/ErrorToast";
 import { EvidenceGallery } from "@/components/EvidenceGallery";
@@ -37,6 +38,9 @@ export function NightScreen({
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [previousReady, setPreviousReady] = useState(false);
   const galleryReturnFocus = useRef<HTMLElement | null>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const [scrolledDown, setScrolledDown] = useState(false);
+  const shownNotes = notes === null ? null : dedupeByText(notes);
 
   const notesAction = useApiAction();
   const draftAction = useApiAction();
@@ -61,6 +65,28 @@ export function NightScreen({
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loopId]);
+
+  // 기록 목록이 길어지면 제출 버튼이 위로 밀린다 — 300px 넘게 내려갔을 때만 맨 위로 버튼을 보인다
+  useEffect(() => {
+    if (!notesOpen) {
+      setScrolledDown(false);
+      return;
+    }
+    const root = rootRef.current;
+    const onScroll = () => setScrolledDown((root?.scrollTop ?? 0) + window.scrollY > 300);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    root?.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      root?.removeEventListener("scroll", onScroll);
+    };
+  }, [notesOpen]);
+
+  const scrollToTop = () => {
+    rootRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const toggle = (id: number) => {
     setTapped((prev) => {
@@ -88,7 +114,7 @@ export function NightScreen({
     previousReady && !draftAction.busy && (tapped.size > 0 || freeText.trim().length > 0);
 
   return (
-    <div className="relative flex min-h-dvh w-full flex-col items-center overflow-y-auto bg-void px-4 py-10 text-paper">
+    <div ref={rootRef} className="relative flex min-h-dvh w-full flex-col items-center overflow-y-auto bg-void px-4 py-10 text-paper">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={NIGHT_IMAGE}
@@ -152,9 +178,9 @@ export function NightScreen({
               {notesAction.failure ? "노트를 불러오지 못했습니다" : "…"}
             </p>
           )}
-          {notes !== null &&
+          {shownNotes !== null &&
             KIND_ORDER.map((kind) => {
-              const group = notes.filter((n) => n.kind === kind);
+              const group = shownNotes.filter((n) => n.kind === kind);
               if (group.length === 0) return null;
               return (
                 <div key={kind}>
@@ -188,7 +214,7 @@ export function NightScreen({
                 </div>
               );
             })}
-          {notes !== null && notes.length === 0 && (
+          {shownNotes !== null && shownNotes.length === 0 && (
             <p className="text-center text-lg opacity-40">
               적어둔 것이 없다.
             </p>
@@ -206,6 +232,17 @@ export function NightScreen({
           근거 그림 모아보기
         </button>
       </div>
+
+      {notesOpen && scrolledDown && (
+        <button
+          type="button"
+          onClick={scrollToTop}
+          aria-label="맨 위로"
+          className="fixed right-4 bottom-6 z-40 border border-paper/40 bg-void px-4 py-2 text-base hover:border-paper"
+        >
+          맨 위로
+        </button>
+      )}
 
       <ErrorToast
         failure={draftAction.failure ?? notesAction.failure ?? previousAction.failure ?? observationsAction.failure}

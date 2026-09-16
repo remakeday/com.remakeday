@@ -12,16 +12,29 @@ import {
   PAW_IMAGE,
 } from "@/lib/imageMap";
 import { useApiAction } from "@/lib/useApiAction";
+import { dedupeByText } from "@/lib/dedupeByText";
 import { ErrorToast } from "@/components/ErrorToast";
 import { TypingIndicator } from "@/components/TypingIndicator";
 import { GameplayGuide } from "@/components/GameplayGuide";
 import { ObservationCard } from "@/components/ObservationCard";
+import { useVoice, VoiceReplay } from "@/components/VoicePlayer";
+import { voiceForLine, voicesForLines } from "@/lib/voiceMap";
+import type { VoiceId } from "@/lib/voiceMap";
 
 interface ChatEntry {
   id: number;
   role: "user" | "npc" | "ambient" | "narration" | "broadcast" | "system";
   text: string;
   speaker?: string;
+  delivery?: "pending" | "sent" | "failed";
+}
+
+interface PendingUtterance {
+  loopId: string;
+  target: string;
+  text: string;
+  requestId: string;
+  entryId: number;
 }
 
 /** 낮의 문답 한 쌍 — 밤 채점 대기 회상용 */
@@ -77,15 +90,19 @@ export function DayScreen({
   initialBudget: number;
   onDayDone: (dialogue: DialoguePair[]) => void;
 }) {
+  const { play: playVoice, stop: stopVoice } = useVoice();
+  const ambientVoices = useRef<VoiceId[]>(voicesForLines(initialAmbient?.lines ?? []));
   const [beat, setBeat] = useState(initialBeat);
   const [beatTitle, setBeatTitle] = useState(initialBeatTitle);
   const [illustrations, setIllustrations] = useState(initialIllustrations);
   const [illustrationIndex, setIllustrationIndex] = useState(0);
   const [observations, setObservations] = useState(initialObservations);
+  const shownObservations = dedupeByText(observations, (item) => `${item.actor ?? ""}\n${item.text}`);
   const [notebookOpen, setNotebookOpen] = useState(false);
   const [openObservation, setOpenObservation] = useState<Observation | null>(null);
   const [budgetLeft, setBudgetLeft] = useState(initialBudget);
   const [npcs, setNpcs] = useState<Npc[]>([]);
+  const [npcsBeat, setNpcsBeat] = useState<number | null>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const [log, setLog] = useState<ChatEntry[]>(() => {
     const first: ChatEntry[] = [
@@ -102,6 +119,7 @@ export function DayScreen({
   );
   const [dayDone, setDayDone] = useState(false);
   const [waitingReply, setWaitingReply] = useState(false);
+  const [pendingUtterance, setPendingUtterance] = useState<PendingUtterance | null>(null);
   const [beatWaitIdx, setBeatWaitIdx] = useState(0);
   const [hasAsked, setHasAsked] = useState(false);
 
@@ -117,16 +135,35 @@ export function DayScreen({
   const notebookReturnFocus = useRef<HTMLElement | null>(null);
   const sourceDetailReturnFocus = useRef<HTMLElement | null>(null);
   const sourceDetailOpen = useRef(false);
+  const mutationInFlight = useRef(false);
+  const acceptedUtterances = useRef(new Set<string>());
+  const npcRefreshId = useRef(0);
+  const pawChoice = useRef(false);
 
   const pushLog = useCallback((entry: Omit<ChatEntry, "id">) => {
     setLog((prev) => [...prev, { ...entry, id: nextId() }]);
   }, []);
 
-  const refreshNpcs = useCallback(() => {
+  const voicePopup = popups[0];
+  useEffect(() => {
+    if (voicePopup?.kind === "broadcast") {
+      const clips = voicesForLines(voicePopup.text.split("\n").map((text) => ({ name: "관리자", text })));
+      playVoice(clips);
+    } else if (!voicePopup && ambientVoices.current.length > 0) {
+      playVoice(ambientVoices.current);
+    }
+  }, [beat, voicePopup, playVoice]);
+
+  useEffect(() => () => stopVoice(), [stopVoice]);
+
+  const refreshNpcs = useCallback((forBeat: number) => {
+    const refreshId = ++npcRefreshId.current;
     void npcAction.run(
       () => api.getNpcs(loopId),
       (res) => {
+        if (refreshId !== npcRefreshId.current) return;
         setNpcs(res.npcs);
+        setNpcsBeat(forBeat);
         setSelected((cur) => {
           if (cur && res.npcs.some((n) => n.code === cur)) return cur;
           return res.npcs[0]?.code ?? null;
@@ -138,8 +175,8 @@ export function DayScreen({
   }, [loopId]);
 
   useEffect(() => {
-    refreshNpcs();
-  }, [refreshNpcs]);
+    refreshNpcs(initialBeat);
+  }, [initialBeat, refreshNpcs]);
 
   useEffect(() => {
     logRef.current?.scrollTo({ top: logRef.current.scrollHeight });
@@ -156,9 +193,11 @@ export function DayScreen({
     return () => clearInterval(timer);
   }, [beatAction.busy]);
 
-  const selectedUttered =
-    npcs.find((n) => n.code === selected)?.uttered ?? false;
   const currentPopup = popups[0] ?? null;
+  const npcsReady = npcsBeat === beat;
+  const selectedUttered = npcs.find((n) => n.code === selected)?.uttered ?? false;
+  const mutationBusy = waitingReply || beatAction.busy || pawAction.busy;
+  const questionUnresolved = pendingUtterance !== null;
   const illustration = illustrations[illustrationIndex];
   const illustrationSrc = illustration ? clueImage(illustration.image_id) : null;
 
@@ -203,42 +242,71 @@ export function DayScreen({
     );
   };
 
-  const send = () => {
-    const text = input.trim();
-    if (!text || !selected || waitingReply || dayDone) return;
-    if (currentPopup !== null) return; // 방송/원숭이손 팝업 중엔 조용히 씹지 않는다
-    if (budgetLeft <= 0 || selectedUttered) return;
-    setInput("");
-    pushLog({ role: "user", text });
+  const clearMutationFailures = () => {
+    utterance.clearFailure();
+    beatAction.clearFailure();
+    pawAction.clearFailure();
+  };
+
+  const submitUtterance = (question: PendingUtterance) => {
+    if (mutationInFlight.current) return;
+    mutationInFlight.current = true;
+    clearMutationFailures();
     setWaitingReply(true);
+    setLog((previous) => previous.map((entry) => entry.id === question.entryId ? { ...entry, delivery: "pending" } : entry));
     void utterance.run(
-      () => api.sendUtterance(loopId, { target: selected, text }),
+      () => api.sendUtterance(question.loopId, { target: question.target, text: question.text, request_id: question.requestId }),
       (res) => {
-        setWaitingReply(false);
+        setPendingUtterance(null);
+        const utteranceId = res.utterance_id ?? question.requestId;
+        if (acceptedUtterances.current.has(utteranceId)) return;
+        acceptedUtterances.current.add(utteranceId);
         setHasAsked(true);
+        setLog((previous) => previous.map((entry) => entry.id === question.entryId ? { ...entry, delivery: "sent" } : entry));
         pushLog({ role: "npc", text: res.reply, speaker: res.npc.name });
+        const clip = voiceForLine(res.npc.name, res.reply);
+        if (clip) playVoice([clip]);
         setBudgetLeft(res.budget_left);
         setBeat(res.beat);
         setNpcs((prev) =>
           prev.map((n) => (n.code === res.npc.code ? res.npc : n)),
         );
+        setObservations((previous) => {
+          const byId = new Map(previous.map((item) => [item.observation_id, item]));
+          for (const item of res.observations ?? []) byId.set(item.observation_id, item);
+          return [...byId.values()];
+        });
       },
       (status) => {
-        setWaitingReply(false);
-        if (status === 409) {
-          pushLog({
-            role: "system",
-            text: "오늘은 더 말할 수 없다.",
-          });
-          return true;
+        setLog((previous) => previous.map((entry) => entry.id === question.entryId ? { ...entry, delivery: "failed" } : entry));
+        if (status >= 400 && status < 500) {
+          setPendingUtterance(null);
+          setInput(question.text);
         }
         return false;
       },
-    );
+    ).finally(() => {
+      mutationInFlight.current = false;
+      setWaitingReply(false);
+    });
+  };
+
+  const send = () => {
+    const text = input.trim();
+    if (!text || !selected || mutationInFlight.current || questionUnresolved || dayDone) return;
+    if (currentPopup !== null || budgetLeft <= 0 || !npcsReady || selectedUttered) return;
+    const question = { loopId, target: selected, text, requestId: crypto.randomUUID(), entryId: nextId() };
+    setInput("");
+    setPendingUtterance(question);
+    setLog((previous) => [...previous, { id: question.entryId, role: "user", text, delivery: "pending" }]);
+    submitUtterance(question);
   };
 
   const advanceBeat = () => {
-    if (dayDone || beatAction.busy || waitingReply) return;
+    if (dayDone || mutationInFlight.current || questionUnresolved || currentPopup !== null) return;
+    mutationInFlight.current = true;
+    stopVoice();
+    clearMutationFailures();
     void beatAction.run(
       () => api.nextBeat(loopId),
       (res) => {
@@ -255,6 +323,7 @@ export function DayScreen({
         pushLog({ role: "narration", text: res.narration });
         // 백엔드가 새 필드를 아직 안 줄 수 있다 — undefined 안전 접근
         const ambient = res.ambient ?? null;
+        ambientVoices.current = voicesForLines(ambient?.lines ?? []);
         for (const line of ambient?.lines ?? []) {
           pushLog({ role: "ambient", text: line.text, speaker: line.name });
         }
@@ -271,12 +340,16 @@ export function DayScreen({
         if (res.paw_offer) newPopups.push({ kind: "paw", offer: res.paw_offer });
         if (newPopups.length > 0) setPopups((p) => [...p, ...newPopups]);
         if (res.day_done) setDayDone(true);
-        refreshNpcs();
+        refreshNpcs(res.beat);
       },
-    );
+    ).finally(() => { mutationInFlight.current = false; });
   };
 
   const respondPaw = (offer: PawOffer, accept: boolean) => {
+    if (mutationInFlight.current || questionUnresolved) return;
+    mutationInFlight.current = true;
+    pawChoice.current = accept;
+    clearMutationFailures();
     void pawAction.run(
       () => api.respondPaw(loopId, { offer_id: offer.offer_id, accept }),
       (res) => {
@@ -290,7 +363,7 @@ export function DayScreen({
         }
         setPopups((p) => p.slice(1));
       },
-    );
+    ).finally(() => { mutationInFlight.current = false; });
   };
 
   const canNight = dayDone && popups.length === 0;
@@ -301,7 +374,7 @@ export function DayScreen({
       className="relative flex h-full min-h-[44rem] w-full flex-col bg-paper text-ink"
     >
       <details inert={notebookOpen ? true : undefined} aria-hidden={notebookOpen ? true : undefined} className="relative z-20 shrink-0 border-b border-ink/20 px-4 py-1">
-        <summary className="cursor-pointer text-base">플레이 안내</summary>
+        <summary className="w-fit cursor-pointer text-base">플레이 안내</summary>
         <div className="absolute top-full right-0 left-0 max-h-[65dvh] overflow-y-auto border-b border-ink/30 bg-paper p-5 shadow-lg">
           <GameplayGuide />
         </div>
@@ -330,7 +403,7 @@ export function DayScreen({
             aria-label="단서 기록 열기"
             aria-haspopup="dialog"
           >
-            단서 기록 열기 <span>{observations.length}건</span><span aria-hidden="true">→</span>
+            단서 기록 열기 <span>{shownObservations.length}건</span><span aria-hidden="true">→</span>
           </button>
 
         </div>
@@ -375,13 +448,15 @@ export function DayScreen({
         {npcs.map((n) => {
           const portrait = npcImage(n.code, n.mood);
           const active = selected === n.code;
+          const status = dayDone ? "하루 종료" : budgetLeft <= 0 ? "오늘 대화 소진" : !npcsReady ? "인물 확인 중" : n.uttered ? "이 장면 대화 완료" : "대화 가능";
           return (
             <button
               key={n.code}
               type="button"
               onClick={() => setSelected(n.code)}
+              disabled={mutationBusy || questionUnresolved || currentPopup !== null}
               aria-pressed={active}
-              aria-label={`${n.name} · ${n.uttered ? "이 장면 대화 완료" : "대화 가능"}`}
+              aria-label={`${n.name} · ${status}`}
               className={`flex w-24 shrink-0 flex-col items-center gap-1 border p-1 text-base sm:w-24 ${
                 active
                   ? "border-ink bg-ink text-paper"
@@ -398,10 +473,10 @@ export function DayScreen({
               ) : (
                 <span className="min-h-0 w-full flex-1 bg-ink/20" />
               )}
-              <span className={`shrink-0 ${n.uttered ? "opacity-50" : ""}`}>
+              <span className="shrink-0">
                 {n.name}
               </span>
-              <span className="text-base">{n.uttered ? "대화 완료" : "대화 가능"}</span>
+              <span className="text-base">{status}</span>
             </button>
           );
         })}
@@ -441,16 +516,18 @@ export function DayScreen({
                   <p className="border border-dashed border-ink/30 px-3 py-2 text-base leading-relaxed whitespace-pre-line">
                     {e.text}
                   </p>
+                  <VoiceReplay speaker={e.speaker} text={e.text} />
                 </div>
               );
             if (e.role === "broadcast")
               return (
-                <p
+                <div
                   key={e.id}
                   className="fade-in border-l-2 border-orange pl-3 text-base whitespace-pre-line"
                 >
                   {e.text}
-                </p>
+                  {e.text.split("\n").map((text, i) => <VoiceReplay key={i} speaker="관리자" text={text} />)}
+                </div>
               );
             const mine = e.role === "user";
             return (
@@ -468,6 +545,12 @@ export function DayScreen({
                 >
                   {e.text}
                 </p>
+                {!mine && <VoiceReplay speaker={e.speaker} text={e.text} />}
+                {mine && e.delivery !== "sent" && (
+                  <span className="text-sm opacity-70" role="status">
+                    {e.delivery === "pending" ? "답변을 기다리는 중…" : "답변을 받지 못했다."}
+                  </span>
+                )}
               </div>
             );
           })}
@@ -493,7 +576,7 @@ export function DayScreen({
                 const pairs: DialoguePair[] = [];
                 log.forEach((e, i) => {
                   const next = log[i + 1];
-                  if (e.role === "user" && next?.role === "npc")
+                  if (e.role === "user" && e.delivery === "sent" && next?.role === "npc")
                     pairs.push({ q: e.text, npc: next.speaker ?? "", a: next.text });
                 });
                 onDayDone(pairs);
@@ -515,10 +598,24 @@ export function DayScreen({
         {!dayDone && (
           <p className="col-span-2 mb-2 text-base opacity-75" id="conversation-hint">
             {budgetLeft <= 0 ? "오늘 대화를 모두 썼다. 다음 장면과 단서 기록은 계속 볼 수 있다."
-              : selectedUttered ? "이 인물과는 대화했다. 다른 인물을 고르거나 다음 장면으로 간다."
+              : questionUnresolved ? "보낸 질문의 답변을 확인한 뒤 이어서 대화할 수 있다."
+              : !npcsReady ? npcAction.busy ? "이 장면의 인물 상태를 확인하는 중이다." : "인물 상태를 확인하지 못했다. 다음 장면에서 다시 확인할 수 있다."
+              : selectedUttered ? "이 인물과는 이 장면에서 대화했다. 다른 인물을 고르거나 다음 장면으로 간다."
               : loopN === 1 && !hasAsked ? "인물을 고르고 질문을 쓴다. 전송하면 오늘 대화 1회를 쓴다."
-              : "인물마다 한 장면에 1회 대화할 수 있다."}
+              : "한 장면에 인물마다 한 번 물을 수 있다. 질문마다 오늘 대화 1회를 쓴다."}
           </p>
+        )}
+        {utterance.failure && (
+          <p className="col-span-2 mb-2 text-base" role="alert">{utterance.failure.message}</p>
+        )}
+        {pendingUtterance && !waitingReply && (
+          <button
+            type="button"
+            onClick={() => submitUtterance(pendingUtterance)}
+            className="col-span-2 mb-2 justify-self-start border border-ink px-3 py-2 text-base hover:bg-ink hover:text-paper"
+          >
+            같은 질문 다시 보내기
+          </button>
         )}
         <div className="col-span-2 flex min-w-0 w-full items-center gap-2 sm:col-span-1">
           <input
@@ -536,11 +633,13 @@ export function DayScreen({
             }}
             disabled={
               currentPopup !== null ||
-              waitingReply ||
+              mutationBusy ||
+              questionUnresolved ||
               dayDone ||
               budgetLeft <= 0 ||
-              selected === null ||
-              selectedUttered
+              !npcsReady ||
+              selectedUttered ||
+              selected === null
             }
             placeholder={
               currentPopup !== null
@@ -549,11 +648,13 @@ export function DayScreen({
                   ? "하루가 끝났다"
                   : budgetLeft <= 0
                     ? "오늘은 더 말할 수 없다"
-                    : selectedUttered
-                      ? "이 장면에서는 대화했다"
-                      : selected
-                        ? `${npcs.find((n) => n.code === selected)?.name ?? ""}에게 말한다`
-                        : "…"
+                    : !npcsReady
+                      ? "인물 상태를 확인해야 한다"
+                      : selectedUttered
+                        ? "다른 인물을 고르거나 다음 장면으로 간다"
+                        : selected
+                          ? `${npcs.find((n) => n.code === selected)?.name ?? ""}에게 말한다`
+                          : "…"
             }
             className="min-w-0 flex-1 border border-ink/40 bg-transparent px-3 py-2 text-lg outline-none placeholder:opacity-40 focus:border-ink disabled:opacity-40"
           />
@@ -562,12 +663,14 @@ export function DayScreen({
             onClick={send}
             disabled={
               currentPopup !== null ||
-              waitingReply ||
+              mutationBusy ||
+              questionUnresolved ||
               dayDone ||
               budgetLeft <= 0 ||
+              !npcsReady ||
+              selectedUttered ||
               !input.trim() ||
-              selected === null ||
-              selectedUttered
+              selected === null
             }
             className="shrink-0 border border-ink px-3 py-2 text-lg hover:bg-ink hover:text-paper disabled:opacity-30"
           >
@@ -579,7 +682,7 @@ export function DayScreen({
           <button
             type="button"
             onClick={advanceBeat}
-            disabled={dayDone || beatAction.busy || waitingReply}
+            disabled={dayDone || mutationBusy || questionUnresolved || currentPopup !== null}
             className="shrink-0 border border-ink/40 px-3 py-2 text-lg hover:border-ink disabled:opacity-30"
             title="다음 장면 (무료, 대화 횟수는 충전되지 않음)"
           >
@@ -603,9 +706,11 @@ export function DayScreen({
             <p className="text-lg leading-relaxed whitespace-pre-line">
               {currentPopup.text}
             </p>
+            {currentPopup.text.split("\n").map((text, i) => <VoiceReplay key={i} speaker="관리자" text={text} />)}
             <button
               type="button"
               onClick={() => {
+                stopVoice();
                 pushLog({ role: "broadcast", text: currentPopup.text });
                 setPopups((p) => p.slice(1));
               }}
@@ -639,7 +744,7 @@ export function DayScreen({
             <div className="flex gap-4">
               <button
                 type="button"
-                disabled={pawAction.busy}
+                disabled={mutationBusy || questionUnresolved}
                 onClick={() => respondPaw(currentPopup.offer, true)}
                 className="border border-orange px-6 py-2 text-lg text-orange hover:bg-orange hover:text-void disabled:opacity-40"
               >
@@ -647,7 +752,7 @@ export function DayScreen({
               </button>
               <button
                 type="button"
-                disabled={pawAction.busy}
+                disabled={mutationBusy || questionUnresolved}
                 onClick={() => respondPaw(currentPopup.offer, false)}
                 className="border border-paper/50 px-6 py-2 text-lg hover:bg-paper hover:text-void disabled:opacity-40"
               >
@@ -671,9 +776,9 @@ export function DayScreen({
             </div>
             {observationAction.busy && <p role="status" className="text-lg opacity-60">관찰 기록을 펼치는 중…</p>}
             <div className="grid gap-3 sm:grid-cols-2">
-              {observations.map((item) => <ObservationCard key={item.observation_id} observation={item} compact onOpen={(observation) => { sourceDetailReturnFocus.current = document.activeElement as HTMLElement | null; setOpenObservation(observation); }} />)}
+              {shownObservations.map((item) => <ObservationCard key={item.observation_id} observation={item} compact onOpen={(observation) => { sourceDetailReturnFocus.current = document.activeElement as HTMLElement | null; setOpenObservation(observation); }} />)}
             </div>
-            {!observationAction.busy && observations.length === 0 && <p className="text-lg opacity-60">아직 출처가 연결된 관찰이 없다.</p>}
+            {!observationAction.busy && shownObservations.length === 0 && <p className="text-lg opacity-60">아직 출처가 연결된 관찰이 없다.</p>}
             <button type="button" onClick={() => { setOpenObservation(null); setNotebookOpen(false); }} className="self-center border border-ink px-6 py-2 text-base" aria-label="단서 기록 닫기">닫기</button>
           </div>
         </div>
@@ -689,9 +794,12 @@ export function DayScreen({
       )}
 
       <ErrorToast
-        failure={utterance.failure ?? beatAction.failure ?? pawAction.failure}
+        failure={beatAction.failure
+          ? { ...beatAction.failure, retry: advanceBeat }
+          : pawAction.failure
+            ? { ...pawAction.failure, retry: () => { if (currentPopup?.kind === "paw") respondPaw(currentPopup.offer, pawChoice.current); } }
+            : null}
         onClose={() => {
-          utterance.clearFailure();
           beatAction.clearFailure();
           pawAction.clearFailure();
           observationAction.clearFailure();

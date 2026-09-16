@@ -92,7 +92,8 @@ def test_information_rule_uses_only_public_actor_knowledge(db_session):
     RuleRepository(db_session).add(RuleOrm(attempt_id=attempt.id, rule_id="R1", source="user_custom",
         target="은상", action="소문의 알려진 출처를 밝힌다", effect="enforce", when_beat=2, created_loop=0))
     result = day.advance_beat(info["loop_id"])
-    assert any(o["rule_id"] == "R1" and "출처" in o["text"] for o in result["observations"])
+    assert any(o["rule_id"] == "R1" and "준에게 들었어" in o["text"]
+               and o["verification"] == "reported" for o in result["observations"])
     assert "감염원" not in result["narration"]
 
 

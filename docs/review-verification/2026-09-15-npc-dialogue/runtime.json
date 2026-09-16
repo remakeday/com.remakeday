@@ -1,0 +1,14 @@
+{
+  "backend_pid": 797584,
+  "health": {
+    "scenario": "a",
+    "harness": "on",
+    "models": {
+      "npc": "ollama:gemma4:12b",
+      "core": "ollama:gemma4:12b",
+      "embedding": "gemini"
+    },
+    "db": "ok"
+  },
+  "play_http": 200
+}

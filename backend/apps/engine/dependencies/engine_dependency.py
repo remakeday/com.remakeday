@@ -20,10 +20,15 @@ from apps.engine.adapter.outbound.repositories.game_repository import (
     NoteRepository,
     RuleRepository,
 )
+from apps.engine.adapter.outbound.oauth.google_oauth_client import GoogleOAuthClient
 from apps.engine.adapter.outbound.repositories.scene_transaction import SceneTransaction
+from apps.engine.adapter.outbound.repositories.user_repository import UserRepository
+from apps.engine.adapter.outbound.security.session_token_signer import SessionTokenSigner
 from apps.engine.app.dtos.health_dto import HealthDTO, HealthModelsDTO
+from apps.engine.app.ports.input.auth_use_case import AuthUseCase
 from apps.engine.app.ports.input.event_log_use_case import EventLogUseCase
 from apps.engine.app.ports.input.health_use_case import HealthUseCase
+from apps.engine.app.use_cases.auth_interactor import AuthInteractor
 from apps.engine.app.use_cases.event_log_interactor import EventLogInteractor
 from apps.engine.app.use_cases.health_interactor import HealthInteractor
 from apps.engine.app.use_cases.inspector_interactor import InspectorInteractor
@@ -117,6 +122,7 @@ def get_intervention_interactor(session: Session = Depends(get_session)):
         target_names=[c.name for c in bundle.characters if c.playable],
         harness_on=s.system_harness == "on",
         rule_cls=RuleOrm,
+        advisor_leads=bundle.advisor_leads,
         rule_templates=[
             {"target": opportunity.actor, "when_beat": opportunity.beat, "effect": "enforce",
              "action": action, "label": f"{opportunity.actor}: {action}"}
@@ -134,6 +140,20 @@ def get_inspector(session: Session = Depends(get_session)):
         event_log=EventLogRepository(session),
         inspector_token=get_settings().inspector_token,
         notes=NoteRepository(session),
+        scenario=_scenario(),
+    )
+
+
+def get_auth_use_case(session: Session = Depends(get_session)) -> AuthUseCase:
+    s = get_settings()
+    return AuthInteractor(
+        oauth=GoogleOAuthClient(
+            client_id=s.google_oauth_client_id,
+            client_secret=s.google_oauth_client_secret,
+            redirect_uri=s.google_oauth_redirect_uri,
+        ),
+        users=UserRepository(session),
+        tokens=SessionTokenSigner(s.session_secret),
     )
 
 

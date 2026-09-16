@@ -2,6 +2,7 @@
 
 import json
 import uuid
+from base64 import urlsafe_b64encode
 from contextlib import nullcontext
 
 from apps.engine.app.dtos import event_log_dto as ev
@@ -15,11 +16,11 @@ from apps.engine.app.use_cases import prompts
 from apps.engine.app.ports.output.scene_transaction_port import SceneTransactionPort
 from apps.engine.app.use_cases.public_observations import disclose, public_observations
 from apps.engine.app.use_cases.question_replies import question_reply
+from apps.engine.app.use_cases.npc_context import learn_scene, context_output_check, resolve_output_sources, response_sources
 from apps.engine.app.use_cases.scene_execution import execute_scene, EXPLAIN_ACTION
 from apps.engine.app.use_cases.game_support import (
     build_agent_messages,
     lost_names,
-    pick_fallback_line,
     record_harness,
     resolve_npc_code,
     system_msg,
@@ -34,6 +35,7 @@ from apps.engine.app.use_cases.harness import (
     unknown_person_check,
 )
 from apps.engine.domain.entities import loop_rules, npc_rules
+from apps.engine.domain.entities.npc_memory import add_memory, forget_memory, hidden_memory_ids, visible_memories
 from apps.engine.domain.entities.question_rules import is_question_action, question_matches
 from apps.engine.domain.entities.cookie_rules import ab_assign, paw_should_offer
 from apps.engine.domain.entities.rule_rules import (
@@ -63,6 +65,10 @@ def neutral_action_for(vocab: list[str]) -> str:
 
 class GameStateError(Exception):
     """잘못된 상태 전이 — 라우터가 409로 매핑."""
+
+
+class DialogueUnavailable(Exception):
+    """A failed provider response is not a character's ignorance or a paid turn."""
 
 
 class LoopInteractor:
@@ -229,17 +235,33 @@ class LoopInteractor:
 
     # ── 발화 ──────────────────────────────────────────────────
 
-    def utter(self, loop_id: uuid.UUID, target: str, text: str) -> dict:
+    def utter(self, loop_id: uuid.UUID, target: str, text: str, *, request_id=None) -> dict:
+        with self._scene_transaction(loop_id):
+            return self._utter(loop_id, target, text, request_id=request_id)
+
+    def _utter(self, loop_id: uuid.UUID, target: str, text: str, *, request_id=None) -> dict:
         loop = self._loops.get(loop_id)
         if loop is None:
             raise GameStateError("회차가 없다")
+        if not text.strip():
+            raise GameStateError("질문을 적어 주세요")
+        bundle = self._scenario.bundle()
+        code = resolve_npc_code(bundle, target)
+        utterance_id = str(request_id or uuid.uuid4())
+        # Full UUID entropy in 22 characters fits existing note source_key VARCHAR(64).
+        observation_key = "u-" + urlsafe_b64encode(uuid.UUID(utterance_id).bytes).decode().rstrip("=")
+        if request_id:
+            for event in self._events.query(loop.attempt_id, type=ev.EventType.UTTERANCE, loop_n=loop.loop_n):
+                if getattr(event, "utterance_id", None) != utterance_id or not event.response:
+                    continue
+                if resolve_npc_code(bundle, event.target) != code or event.text != text:
+                    raise GameStateError("같은 요청 번호에 다른 질문을 보낼 수 없다")
+                return event.response
         try:
             state = loop_rules.apply_utterance(self._loop_state(loop))
         except loop_rules.DomainError as e:
             raise GameStateError(str(e)) from e
 
-        bundle = self._scenario.bundle()
-        code = resolve_npc_code(bundle, target)
         npc = self._loops.npc_state(loop_id, code) if code else None
         char = next((c for c in bundle.characters if c.code == code), None)
         if npc is None or char is None:
@@ -247,7 +269,7 @@ class LoopInteractor:
         if char.lost and loop.damage_level >= 3:
             raise GameStateError("대화할 수 없는 상대다")
         if npc.uttered_beat == loop.beat:
-            raise GameStateError("이번 비트엔 이미 말을 걸었다")
+            raise GameStateError("이 장면에서는 이미 대화했다. 다른 인물을 고르거나 다음 장면으로 이동해 주세요.")
 
         rule_rows = self._rules.list(loop.attempt_id)
         domain_rules = [self._to_domain_rule(r) for r in rule_rows]
@@ -262,13 +284,12 @@ class LoopInteractor:
             bundle, char,
             suspicion=npc.suspicion, trust=npc.trust, opposite=npc.opposite_mode,
             rules_text=npc_rule_text, memory=list(npc.memory or []),
-            user_text=text, loop_n=loop.loop_n, age7_on=self._age7_on,
+            user_text=text, loop_n=loop.loop_n, age7_on=self._age7_on, damage_level=loop.damage_level,
         )
+        messages[0].content += f"\n현재 장면: {bundle.beats[loop.beat - 1].title}. 아직 하지 않은 행동을 지어내지 않는다."
         seen = public_observations(self._events, loop.attempt_id, through_loop=loop.loop_n)
-        current = [o for o in seen
-                   if o.loop_id == str(loop.id) and o.beat == loop.beat]
-        messages[0].content += "\n[지금 눈앞에서 벌어진 일 — 들은 말이 모두 사실인 것은 아니다]\n" + "\n".join(o.text for o in current)
-        authored_reply = (question_reply(bundle, char, loop, seen, question_rules[-1].action)
+        authored_reply = (question_reply(bundle, char, loop, seen, question_rules[-1].action,
+                                        hidden_ids=hidden_memory_ids(npc.memory or []))
                           if question_rules else None)
         from apps.engine.app.use_cases.game_support import applicable_ban_words
 
@@ -280,22 +301,23 @@ class LoopInteractor:
             lost_character_check(lost_names(bundle, loop.damage_level), fields=["reply"]),
             unknown_person_check([c.name for c in bundle.characters], fields=["reply"]),
             korean_only_check(fields=["reply"]),
+            context_output_check(bundle, char, npc.memory or [], loop.damage_level),
         ]
         if authored_reply is not None:
             out = AgentOutput(reply=authored_reply, suspicion_delta=0, trust_delta=0, mood=npc.mood)
         else:
             out, report = run_with_harness(
                 self._npc_llm, messages, AgentOutput,
-                role="agent", fact_checks=checks, harness_on=self._harness_on,
+                role="agent", fact_checks=checks, harness_on=self._harness_on, retry_feedback=True, temperature=0.3,
             )
             record_harness(self._events, loop.attempt_id, report, loop_n=loop.loop_n, beat=loop.beat)
 
         if out is None:
-            reply, sd, td, tool_call, mood = pick_fallback_line(char), 0, 0, None, "calm"
-        else:
-            reply, sd, td, tool_call, mood = (
-                out.reply, out.suspicion_delta, out.trust_delta, out.tool_call, out.mood
-            )
+            raise DialogueUnavailable("답변을 받지 못했습니다. 같은 질문을 다시 보내 주세요. 대화 횟수는 줄지 않았습니다.")
+        resolve_output_sources(out, bundle, char, npc.memory or [], loop.damage_level)
+        reply, sd, td, tool_call, mood = (
+            out.reply, out.suspicion_delta, out.trust_delta, out.tool_call, out.mood
+        )
 
         gauge = npc_rules.apply_deltas(
             npc_rules.NpcGauge(npc.suspicion, npc.trust, npc.opposite_mode), sd, td
@@ -305,28 +327,19 @@ class LoopInteractor:
         )
         npc.mood = mood
         npc.uttered_beat = loop.beat
-        mem = npc_rules.NpcMemory(tuple(npc.memory or []))
-        mem = npc_rules.remember(mem, f"유저: {text}")
-        mem = npc_rules.remember(mem, f"{char.name}: {reply}")
-        npc.memory = list(mem.turns)
+        memory_sources = response_sources(npc.memory or [], out.evidence_ids)
+        npc.memory = add_memory(npc.memory or [], memory_id=f"{loop.id}:{observation_key}",
+            beat=loop.beat, kind="플레이어와 나눈 말", text=f"플레이어: {text}\n{char.name}: {reply}",
+            speaker=char.name, listeners=["플레이어", char.name], source_ids=memory_sources)
 
         loop.budget_left = state.budget_left
         tool_used = False
         if tool_call is not None:
             tool_used = self._run_ask_npc(loop, bundle, npc, char, tool_call)
 
-        self._loops.save()
-        self._events.record(
-            loop.attempt_id,
-            ev.UtteranceEvent(
-                loop_n=loop.loop_n, beat=loop.beat, target=char.name, text=text,
-                reply=reply, budget_left=loop.budget_left,
-                suspicion_delta=sd, trust_delta=td, disclosure_level=0,
-            ),
-        )
         observation = disclose(
             self._events, loop, bundle.beats[loop.beat - 1],
-            key=f"utterance-{loop.beat}-{char.code}", text=reply, actor=char.name, source_kind="statement",
+            key=observation_key, text=reply, actor=char.name, source_kind="statement",
         )
         for rule in question_rules:
             self._events.record(loop.attempt_id, ev.RuleExecutionEvent(
@@ -337,7 +350,8 @@ class LoopInteractor:
             ))
         self._notes.upsert(loop.attempt_id, kind="fragment", text=observation.text,
                            loop_n=loop.loop_n, source_key=observation.observation_id)
-        return {
+        response = {
+            "utterance_id": utterance_id,
             "observations": [observation.model_dump()],
             "reply": reply,
             "npc": {"code": char.code, "name": char.name, "mood": mood, "uttered": True},
@@ -345,36 +359,63 @@ class LoopInteractor:
             "beat": loop.beat,
             "tool_used": tool_used,
         }
+        self._events.record(loop.attempt_id, ev.UtteranceEvent(
+            loop_n=loop.loop_n, beat=loop.beat, target=char.name, text=text,
+            reply=reply, budget_left=loop.budget_left, suspicion_delta=sd, trust_delta=td,
+            disclosure_level=0, utterance_id=utterance_id, response=response))
+        self._loops.save()
+        return response
 
     def _run_ask_npc(self, loop, bundle, asker_state, asker_char, tool_call) -> bool:
-        new_state, ok = loop_rules.consume_ask_budget(self._loop_state(loop))
-        if not ok:
-            return False
-        loop.ask_budget_left = new_state.ask_budget_left
         target_code = resolve_npc_code(bundle, tool_call.target)
         target_state = self._loops.npc_state(loop.id, target_code) if target_code else None
         target_char = next((c for c in bundle.characters if c.code == target_code), None)
         if target_state is None or target_char is None:
             return False
-
-        roster = ", ".join(c.name for c in bundle.characters)
-        sys = (
-            f"너는 {target_char.name}이다. {target_char.persona}\n"
-            f"{asker_char.name}이(가) 와서 묻는다. 사실대로 짧게 답한다.\n"
-            f"여기 있는 사람은 {roster} — 이게 전부다. 없는 사람 이름을 지어내지 않는다.\n"
-            "said_it: 질문에 인용된 말을 네가 실제로 한 적 있으면 true, 없으면 false."
+        if target_code == asker_char.code or (target_char.lost and loop.damage_level >= 3):
+            return False
+        new_state, ok = loop_rules.consume_ask_budget(self._loop_state(loop))
+        if not ok:
+            return False
+        rule_rows = [self._to_domain_rule(r) for r in self._rules.list(loop.attempt_id)]
+        active = [r for r in rules_for_npc(rule_rows, target_char.name, loop.beat)
+                  if not is_question_action(r.action) or question_matches(r.action, tool_call.question)]
+        messages = build_agent_messages(bundle, target_char,
+            suspicion=target_state.suspicion, trust=target_state.trust, opposite=target_state.opposite_mode,
+            rules_text="\n".join(self._rule_line(r) for r in active), memory=target_state.memory or [],
+            user_text=f"{asker_char.name}: {tool_call.question}", loop_n=loop.loop_n,
+            age7_on=self._age7_on, damage_level=loop.damage_level, reply_field="answer")
+        messages[0].content += (
+            "\n다른 사람이 와서 묻는다. answer에 답한다. said_it은 현재 기억하는지이며 "
+            "기억이 없으면 null이다. 기억나지 않는다는 이유로 실제로 말한 적 없다고 단정하지 않는다."
         )
-        out, report = run_with_harness(
-            self._npc_llm, [system_msg(sys), user_msg(tool_call.question)], AskNpcOutput,
-            role="ask_npc",
-            fact_checks=[
-                unknown_person_check([c.name for c in bundle.characters], fields=["answer"])
-            ],
-            harness_on=self._harness_on,
-        )
-        record_harness(self._events, loop.attempt_id, report, loop_n=loop.loop_n, beat=loop.beat)
-        said_it = out.said_it if out else False
-        answer = out.answer if out else "몰라."
+        seen = public_observations(self._events, loop.attempt_id, through_loop=loop.loop_n)
+        question_rules = [r for r in active if is_question_action(r.action) and r.effect == "enforce"]
+        authored = (question_reply(bundle, target_char, loop, seen, question_rules[-1].action,
+                                   hidden_ids=hidden_memory_ids(target_state.memory or []))
+                    if question_rules else None)
+        from apps.engine.app.use_cases.game_support import applicable_ban_words
+        if authored is not None:
+            out = AskNpcOutput(answer=authored)
+        else:
+            out, report = run_with_harness(self._npc_llm, messages, AskNpcOutput, role="ask_npc",
+                fact_checks=[
+                    forbidden_word_check(applicable_ban_words(bundle, target_char.code, loop.loop_n), fields=["answer"]),
+                    lost_character_check(lost_names(bundle, loop.damage_level), fields=["answer"]),
+                    unknown_person_check([c.name for c in bundle.characters], fields=["answer"]),
+                    korean_only_check(fields=["answer"]),
+                    context_output_check(bundle, target_char, target_state.memory or [], loop.damage_level),
+                ], harness_on=self._harness_on, retry_feedback=True, temperature=0.3)
+            record_harness(self._events, loop.attempt_id, report, loop_n=loop.loop_n, beat=loop.beat)
+        if out is None:
+            raise DialogueUnavailable("답변을 받지 못했습니다. 같은 질문을 다시 보내 주세요. 대화 횟수는 줄지 않았습니다.")
+        resolve_output_sources(out, bundle, target_char, target_state.memory or [], loop.damage_level)
+        answer = out.answer
+        loop.ask_budget_left = new_state.ask_budget_left
+        # The model's current recollection cannot establish who actually spoke.
+        cited = next((o for o in seen if o.observation_id == tool_call.statement_id
+                      and o.loop_id == str(loop.id) and o.source_kind == "statement"), None)
+        statement_verified = cited.actor == target_char.name if cited is not None else None
 
         t_gauge = npc_rules.apply_event_suspicion(
             npc_rules.NpcGauge(target_state.suspicion, target_state.trust, target_state.opposite_mode),
@@ -382,7 +423,7 @@ class LoopInteractor:
         )
         target_state.suspicion, target_state.opposite_mode = t_gauge.suspicion, t_gauge.opposite_mode
         side_effect = f"{target_char.name}.suspicion +{ASK_TARGET_SUSPICION}"
-        if not said_it:
+        if statement_verified is False:
             a_gauge = npc_rules.apply_event_suspicion(
                 npc_rules.NpcGauge(asker_state.suspicion, asker_state.trust, asker_state.opposite_mode),
                 MISMATCH_SPEAKER_SUSPICION,
@@ -390,13 +431,26 @@ class LoopInteractor:
             asker_state.suspicion, asker_state.opposite_mode = a_gauge.suspicion, a_gauge.opposite_mode
             side_effect += f" / 불일치: {asker_char.name}.suspicion +{MISMATCH_SPEAKER_SUSPICION}"
         loop.rumor_index = loop.rumor_index + 1
-
+        utterance_id = str(uuid.uuid4())
+        memory_id = f"{loop.id}:ask-{utterance_id}"
+        target_state.memory = add_memory(target_state.memory or [], memory_id=memory_id,
+            beat=loop.beat, kind="친구와 나눈 말", text=f"{asker_char.name}: {tool_call.question}\n{target_char.name}: {answer}",
+            speaker=target_char.name, listeners=[asker_char.name, target_char.name],
+            source_ids=response_sources(target_state.memory or [], out.evidence_ids))
+        asker_state.memory = add_memory(asker_state.memory or [], memory_id=memory_id,
+            beat=loop.beat, kind="친구에게 들은 말", text=f"{target_char.name}: {answer}",
+            speaker=target_char.name, listeners=[asker_char.name, target_char.name])
+        asker_state.memory = add_memory(asker_state.memory, memory_id=f"{memory_id}-question",
+            beat=loop.beat, kind="친구에게 물은 말", text=tool_call.question,
+            speaker=asker_char.name, listeners=[asker_char.name, target_char.name],
+            source_ids=[m["id"] for m in visible_memories(asker_state.memory) if m["id"] != memory_id])
         self._events.record(
             loop.attempt_id,
             ev.ToolCallEvent(
                 loop_n=loop.loop_n, beat=loop.beat, caller=asker_char.name,
                 tool="ask_npc", args={"target": target_char.name, "question": tool_call.question},
-                result=answer, side_effect=side_effect,
+                result=answer, side_effect=side_effect, utterance_id=utterance_id,
+                statement_verified=statement_verified, recalled=out.said_it,
             ),
         )
         return True
@@ -404,7 +458,7 @@ class LoopInteractor:
     # ── 비트 경계 ──────────────────────────────────────────────
 
     def advance_beat(self, loop_id: uuid.UUID) -> dict:
-        with self._scene_transaction():
+        with self._scene_transaction(loop_id):
             return self._advance_beat(loop_id)
 
     def _advance_beat(self, loop_id: uuid.UUID) -> dict:
@@ -474,23 +528,27 @@ class LoopInteractor:
                     break
             if not eligible:
                 continue
+            required_ids = {f"{loop.id}:action-{loop.beat}-{r.actor}-{r.action}" for r in dialogue.required_actions}
+            if any(required_ids & hidden_memory_ids(s.memory or []) for s in states.values()):
+                continue
             lines = [{"code": line.code, "name": available[line.code].name, "text": line.text}
                      for line in dialogue.lines]
-            for npc in states.values():
-                mem = npc_rules.NpcMemory(tuple(npc.memory or []))
-                for line in lines:
-                    mem = npc_rules.remember(mem, f"{line['name']}: {line['text']}")
-                npc.memory = list(mem.turns)
             for index, line in enumerate(lines):
                 observation = disclose(self._events, loop, bundle.beats[loop.beat - 1],
                     key=f"ambient-{loop.beat}-{index}", text=line["text"], actor=line["name"],
                     source_kind="statement")
+                for npc in states.values():
+                    npc.memory = add_memory(npc.memory or [], memory_id=observation.observation_id,
+                        beat=loop.beat, kind="함께 나눈 말", text=f"{line['name']}: {line['text']}",
+                        speaker=line["name"], listeners=[available[code].name for code in codes],
+                        source_ids=sorted(required_ids))
                 self._notes.upsert(loop.attempt_id, kind="fragment", text=observation.text,
                     loop_n=loop.loop_n, source_key=observation.observation_id)
                 self._events.record(loop.attempt_id, ev.UtteranceEvent(
                     loop_n=loop.loop_n, beat=loop.beat, target=line["name"],
                     text="(지나가는 말)", reply=line["text"], budget_left=loop.budget_left,
-                    suspicion_delta=0, trust_delta=0, disclosure_level=0))
+                    suspicion_delta=0, trust_delta=0, disclosure_level=0,
+                    utterance_id=observation.observation_id))
             return {"lines": lines}
         return None
 
@@ -523,6 +581,7 @@ class LoopInteractor:
                 first = {"id": row.id, "kind": row.kind, "text": row.text}
         current = [o for o in public_observations(self._events, loop.attempt_id)
                    if o.loop_id == str(loop.id) and o.beat == loop.beat]
+        learn_scene(bundle, loop, self._loops.npc_states(loop.id), current)
         return [o.model_dump() for o in current], first
 
     def _manager_check(self, loop, bundle) -> None:
@@ -535,7 +594,7 @@ class LoopInteractor:
         patches, flagged, report = self._manager.check(
             npc_states=[
                 {"name": s.name, "suspicion": s.suspicion, "trust": s.trust,
-                 "memory": s.memory, "plan": s.plan}
+                 "memory": visible_memories(s.memory or []), "plan": s.plan}
                 for s in states
             ],
             user_utterances=[e.text for e in utter_events],
@@ -545,25 +604,34 @@ class LoopInteractor:
         )
         if report:
             record_harness(self._events, loop.attempt_id, report, loop_n=loop.loop_n, beat=loop.beat)
-        by_name = {s.name: s for s in states}
-        applied = []
+        by_name = {ref: s for s in states for ref in (s.name, s.code)}
+        outcomes = []
         for p in patches:
-            s = by_name.get(p.npc) or by_name.get(resolve_npc_code(bundle, p.npc) or "")
+            s = by_name.get(p.npc)
+            applied, failure = False, None
             if s is None:
-                continue
-            if p.kind == "memory_delete":
-                s.memory = []
-            applied.append(p)
-            loop.manager_budget_left -= 1
+                failure = "대상 인물이 없음"
+            elif loop.manager_budget_left <= 0:
+                failure = "보정 예산 없음"
+            elif p.kind == "memory_delete":
+                s.memory, applied = forget_memory(s.memory or [], p.target)
+                if not applied:
+                    failure = "현재 기억에 없는 ID"
+            else:
+                failure = "적용 가능한 계획 수정이 없음"
+            outcomes.append(ev.ManagerPatch(npc=p.npc, kind=p.kind, detail=p.target, reason=p.reason,
+                                             applied=applied, failure_reason=failure))
+            if applied:
+                loop.manager_budget_left -= 1
         for name in flagged:
             if name in by_name:
                 by_name[name].flagged_abnormal = True
-        if applied or flagged:
+        if outcomes or flagged:
             self._events.record(
                 loop.attempt_id,
                 ev.ManagerCheckEvent(
                     loop_n=loop.loop_n, beat=loop.beat,
-                    patches=[ev.ManagerPatch(npc=p.npc, kind=p.kind, detail=p.target, reason=p.reason) for p in applied],
+                    patches=outcomes,
                     budget_left=loop.manager_budget_left,
                 ),
             )

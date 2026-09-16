@@ -8,6 +8,7 @@ from apps.engine.app.use_cases.loop_interactor import LoopInteractor
 from apps.engine.app.use_cases.public_observations import disclose
 from apps.engine.app.use_cases.scene_execution import execute_scene
 from apps.engine.domain.entities.rule_rules import Rule
+from apps.engine.domain.entities.npc_memory import visible_memories
 from apps.scenarios.scenario_a.adapter import build
 from tests.pure.test_real_model_grounding import Model
 from tests.pure.test_review_failure_boundaries import Events, loop_at
@@ -52,7 +53,8 @@ def test_every_scene_has_contextual_free_dialogue_and_reported_source_ids(beat):
     assert all(o.verification == "reported" and o.source_kind == "statement" for o in statements)
     assert {n["source_key"] for n in notes} == {o.observation_id for o in statements}
     for code in {line["code"] for line in result["lines"]}:
-        assert all(f"{o.actor}: {o.text}" in states[code].memory for o in statements)
+        remembered = {m["id"]: m for m in visible_memories(states[code].memory)}
+        assert all(remembered[o.observation_id]["text"] == f"{o.actor}: {o.text}" for o in statements)
     assert all("기록 밖" not in line["text"] and "공개된" not in line["text"] for line in result["lines"])
 
 

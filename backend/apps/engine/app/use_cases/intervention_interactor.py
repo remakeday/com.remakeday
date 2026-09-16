@@ -60,6 +60,42 @@ def _record_needs_detail_check(out) -> str | None:
 _HANGUL_TOKEN_RE = re.compile(r"[가-힣]{2,}")
 
 
+def select_lead(text: str, leads, used_keys: set[str], loop_n: int):
+    """질문 보상용 리드 선택 (순수 함수) — cue 적중 최다, 동률·무적중이면 가장 이른 리드.
+
+    해금 가능(loop_n 이하)하고 아직 안 쓴 리드가 없으면 None.
+    """
+    candidates = [(i, lead) for i, lead in enumerate(leads)
+                  if lead.loop_n <= loop_n and lead.key not in used_keys]
+    if not candidates:
+        return None
+    scored = sorted(candidates, key=lambda pair: (
+        -sum(cue in text for cue in pair[1].cues), pair[1].loop_n, pair[0]))
+    return scored[0][1]
+
+
+def suggest_alternatives(text: str, targets: list[str], templates, max_n: int = 3) -> list[str]:
+    """직접 쓰기 실패 시 대안 — 고정 스냅 대신 실행 가능한 (대상, 행동) 후보를 근접 순으로.
+
+    근접도 = 문장의 한글 토큰 어간(앞 2글자)과 행동 문구의 겹침. 후보가 없으면 설명 폴백.
+    """
+    stems = {token[:2] for token in _HANGUL_TOKEN_RE.findall(text)}
+    pool = [t for t in templates if t["target"] in targets] if targets else list(templates)
+    seen, ranked = set(), []
+    for template in pool:
+        pair = (template["target"], template["action"])
+        if pair in seen:
+            continue
+        seen.add(pair)
+        overlap = sum(stem in template["action"] for stem in stems)
+        ranked.append((-overlap, len(ranked), pair))
+    ranked.sort()
+    alternatives = [f"{target}은 {action}" for _, _, (target, action) in ranked[:max_n]]
+    if not alternatives:
+        alternatives = [f"{name}은 {EXPLAIN_ACTION}" for name in targets[:2]]
+    return alternatives
+
+
 def nearest_action(action: str, vocab: list[str]) -> str | None:
     """어휘 밖 행동을 어휘로 근사 매칭 (순수 함수).
 
@@ -180,6 +216,7 @@ class InterventionInteractor:
         harness_on: bool, rule_cls, rule_templates: list[dict] | None = None,
         world_context: str = "",
         question_rule_targets: list[str] | None = None,
+        advisor_leads: list | None = None,
     ) -> None:
         self._attempts = attempts
         self._loops = loops
@@ -195,6 +232,7 @@ class InterventionInteractor:
         self._templates = rule_templates or []
         self._world_context = world_context
         self._question_rule_targets = question_rule_targets or []
+        self._advisor_leads = advisor_leads or []
 
     def _night_loop(self, night_id: uuid.UUID):
         night = self._nights.get(night_id)
@@ -305,6 +343,19 @@ class InterventionInteractor:
                 next_observation = "이미 공개된 장면의 노트를 확인하고 다음 낮의 행동을 관찰할 수 있다."
         elif meta:
             next_observation = "원본 노트를 확인하거나 규칙 선택에서 다음 날 관찰할 행동을 고를 수 있다."
+        # 질문 보상 — 미공개 관찰 1개 해금 (결정론: LLM 실패·unknown이어도 보장, 노트로 적립)
+        unlocked_note = None
+        if self._advisor_leads:
+            used = {n.source_key.removeprefix("advisor-lead-")
+                    for n in self._notes.list(loop.attempt_id)
+                    if n.source_key.startswith("advisor-lead-")}
+            lead = select_lead(text, self._advisor_leads, used, loop.loop_n)
+            if lead:
+                unlocked_note = lead.text
+                answer = f"{answer}\n한 가지 더 — {lead.text}"
+                self._notes.upsert(loop.attempt_id, kind="fragment", text=lead.text,
+                                   loop_n=loop.loop_n, source_key=f"advisor-lead-{lead.key}")
+                next_observation = lead.direction
         night.questions_left -= 1
         night.questions = list(night.questions or []) + [text]
         self._nights.save()
@@ -312,20 +363,30 @@ class InterventionInteractor:
         self._events.record(loop.attempt_id, ev.InterventionQuestionEvent(
             loop_n=loop.loop_n, q_index=3-night.questions_left, question=text, answer=answer,
             hit_cause_chain=bool(evidence), confirmed_note_id=None, detail=detail,
-            status=status, evidence_ids=ids, next_observation=next_observation))
+            status=status, evidence_ids=ids, next_observation=next_observation,
+            unlocked_note=unlocked_note))
         return {"answer": answer, "detail": detail, "remaining": night.questions_left,
                 "status": status, "evidence_ids": ids, "evidence": [o.model_dump() for o in evidence],
-                "next_observation": next_observation}
+                "next_observation": next_observation, "unlocked_note": unlocked_note}
 
     def options(self, night_id: uuid.UUID) -> dict:
         night, loop = self._night_loop(night_id)
         if night.options is None:
             observations = public_observations(self._events, loop.attempt_id, through_loop=loop.loop_n)
             existing = {(r.target, r.action, r.effect) for r in self._rules.list(loop.attempt_id)}
+            # 규칙 없이도 이미 하는 행동(action-{beat}-{actor}-{action}, rule_id 없음)은 권할 의미가 없다.
+            default_actions = set()
+            for o in observations:
+                key = o.observation_id.split(":", 1)[1]
+                if o.rule_id is None and key.startswith("action-"):
+                    default_actions.add(key.removeprefix("action-").split("-", 1)[1])  # "{actor}-{action}"
             context = " ".join([*(night.claims or []), *(night.questions or [])])
             candidates = []
             for template in self._templates:
                 if (template["target"], template["action"], template["effect"]) in existing:
+                    continue
+                if (template["action"] not in INFORMATION_ACTIONS
+                        and f"{template['target']}-{template['action']}" in default_actions):
                     continue
                 evidence = [o for o in observations if o.actor == template["target"]]
                 if not evidence:
@@ -354,7 +415,8 @@ class InterventionInteractor:
             conflicts = [r.rule_id for r in find_conflicts(existing, new)]
         names = named_targets(custom_text, self._target_names) or self._target_names[:2]
         conditional = any(word in custom_text for word in ("물으면", "물어보면", "질문하면", "질문할 때"))
-        alternatives = [] if spec or conditional else [f"{name}은 {EXPLAIN_ACTION}" for name in names]
+        alternatives = ([] if spec or conditional
+                        else suggest_alternatives(custom_text, names, self._templates))
         preview = {"preview_id": str(uuid.uuid4()), "original_text": custom_text, "executable": spec is not None,
                    "interpretation": spec["label"] if spec else None,
                    "limitations": (["이미 공개된 본인의 관찰만 설명한다. 새로운 진실이나 숨은 이유는 알게 되지 않는다."]

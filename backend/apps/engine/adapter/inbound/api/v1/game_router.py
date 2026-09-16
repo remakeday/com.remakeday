@@ -10,6 +10,7 @@ from apps.engine.app.use_cases.intervention_interactor import (
 )
 from apps.engine.app.use_cases.inspector_interactor import AccessDenied
 from apps.engine.app.use_cases.loop_interactor import GameStateError as LoopError
+from apps.engine.app.use_cases.loop_interactor import DialogueUnavailable
 from apps.engine.app.use_cases.night_interactor import GameStateError as NightError
 from apps.engine.dependencies.engine_dependency import (
     get_inspector,
@@ -31,6 +32,8 @@ def _run(fn, *args, **kwargs):
         raise HTTPException(status_code=409, detail=str(e)) from e
     except AccessDenied as e:
         raise HTTPException(status_code=403, detail=str(e)) from e
+    except DialogueUnavailable as e:
+        raise HTTPException(status_code=503, detail=str(e)) from e
 
 
 class SessionReq(BaseModel):
@@ -40,6 +43,7 @@ class SessionReq(BaseModel):
 class UtteranceReq(BaseModel):
     target: str
     text: str
+    request_id: uuid.UUID | None = None
 
 
 class PawReq(BaseModel):
@@ -84,7 +88,7 @@ def start_loop(attempt_id: uuid.UUID, uc=Depends(get_loop_interactor)):
 
 @router.post("/loops/{loop_id}/utterances")
 def utter(loop_id: uuid.UUID, req: UtteranceReq, uc=Depends(get_loop_interactor)):
-    return _run(uc.utter, loop_id, req.target, req.text)
+    return _run(uc.utter, loop_id, req.target, req.text, request_id=req.request_id)
 
 
 @router.post("/loops/{loop_id}/beats/next")
@@ -150,6 +154,11 @@ def choose_rule(night_id: uuid.UUID, req: RuleReq, uc=Depends(get_intervention_i
 @router.post("/nights/{night_id}/rule/preview")
 def preview_rule(night_id: uuid.UUID, req: RulePreviewReq, uc=Depends(get_intervention_interactor)):
     return _run(uc.preview_rule, night_id, req.custom_text)
+
+
+@router.get("/attempts/{attempt_id}/journey")
+def journey(attempt_id: uuid.UUID, uc=Depends(get_inspector)):
+    return _run(uc.journey_view, attempt_id)
 
 
 @router.get("/attempts/{attempt_id}/harness")

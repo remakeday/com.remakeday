@@ -4,7 +4,6 @@ from dataclasses import dataclass, replace
 
 from apps.engine.domain.value_objects.game_constants import (
     DELTA_CAP,
-    NPC_MEMORY_TURNS,
     SUSPICION_THRESHOLD,
     TRUST_GAIN_CAP,
     TRUST_RETENTION,
@@ -62,5 +61,5 @@ class NpcMemory:
 
 
 def remember(m: NpcMemory, line: str) -> NpcMemory:
-    """최근 3턴만 남긴다 — 망각의 구현."""
-    return replace(m, turns=(m.turns + (line,))[-NPC_MEMORY_TURNS:])
+    """Keep the bounded day's conversation; a new loop creates an empty memory."""
+    return replace(m, turns=m.turns + (line,))

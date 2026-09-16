@@ -29,7 +29,7 @@ export interface Npc {
   code: string;
   name: string;
   mood: Mood;
-  /** 이번 비트에 이미 말을 걸었다 — 비트당 1회 제한 */
+  /** 이번 비트의 직접 질문에 답변을 완료했는지. true면 다음 비트까지 새 질문이 잠긴다. */
   uttered: boolean;
 }
 
@@ -123,8 +123,10 @@ export interface StartLoopRes {
 export interface UtteranceReq {
   target: string; // NPC code
   text: string;
+  request_id?: string; // UUID. 같은 질문의 재시도에는 같은 ID를 보낸다.
 }
 export interface UtteranceRes {
+  utterance_id: string;
   reply: string;
   npc: Npc;
   budget_left: number;
@@ -211,12 +213,33 @@ export interface SubmitRes {
   cells: CellScores | null;
   cookie: Cookie | null;
   intervention_available: boolean;
-  /** 5회차 제출 완료 후 공개하는 시나리오 결말 */
+  /** 5회차 제출 완료 후 — 이해한 셀(≥80)의 결말 줄만 서버가 열어 내려보낸다 */
   ending_lines: string[] | null;
+  /** 5회차 제출 완료 후 — confirmed 명제만 truth 전문, 나머지는 서버가 잠근다 */
+  truth_reveal: TruthReveal[] | null;
   /** 매일 밤 — 칸별 점수는 숨긴 채 정성 문장만 */
   cell_feedback: string | null;
   /** 세계와 닿지 않은 주장 수 (감점 없음, 정보만) */
   wrong_claim_count: number;
+  /** 밤 단서 시퀀스 — 결말 전환에서 방송 → 치지직 → 캡션 순서로 재생. 회차 표가 없는 시나리오는 null */
+  night_clue: NightClue | null;
+}
+
+/**
+ * 밤 단서(밤단서 v2 P.1). 캡션과 방송은 서버가 「N회차 · 소등 후」 관찰로 저장한다 — 프론트는 문장을 만들지 않는다.
+ */
+export interface NightClue {
+  loop_n: number;
+  /** 띠가 꺼진 뒤 바탕 위에 남는 문장 */
+  caption: string;
+  /** 치지직 띠 안 이미지 ID (1~2장, imageMap.nightClueImage) */
+  image_ids: string[];
+  /** 관리자 밤 방송 음원 ID (MA08~12) */
+  voice_id: string;
+  /** 방송 대본 */
+  broadcast: string;
+  /** 트럭 결말 밤에 캡션 뒤에 붙는 기존 트럭 파편 한 줄 */
+  outcome_line: string | null;
 }
 
 // ── 신의개입 (P3) ─────────────────────────────────────
@@ -232,6 +255,39 @@ export interface GodQuestionRes {
   evidence_ids: string[];
   evidence: Observation[];
   next_observation: string | null;
+  /** 질문 보상 — 이번 답으로 해금돼 노트에 적힌 미공개 관찰 (결정론 보장) */
+  unlocked_note: string | null;
+}
+
+// ── 진실 공개·추리 여정 ───────────────────────────────
+
+export type ClaimVerdict = "confirmed" | "partial" | "none";
+
+export interface TruthReveal {
+  code: string;
+  cell: "cause" | "motive" | "identity" | "side_effect";
+  verdict: ClaimVerdict;
+  my_claim: string | null;
+  /** confirmed일 때만 서버가 내려보낸다 */
+  truth: string | null;
+}
+
+export interface JourneyLoop {
+  loop_n: number;
+  total: number;
+  passed: boolean;
+  new_confirmed: { code: string; my_claim: string | null }[];
+  unlocked_notes: string[];
+}
+
+export interface JourneyRes {
+  loops: JourneyLoop[];
+  final: {
+    cells: CellScores;
+    closed_by: ClosedBy | null;
+    truth_reveal: TruthReveal[];
+  } | null;
+  unresolved: { cell: string; hint: string }[];
 }
 
 export interface GodOption {
@@ -390,6 +446,7 @@ async function request<T>(
       method,
       headers: body !== undefined ? { "Content-Type": "application/json" } : {},
       body: body !== undefined ? JSON.stringify(body) : undefined,
+      credentials: "include", // 세션 쿠키(rd_session)를 함께 보낸다
     });
   } catch {
     throw new ApiError(0, "서버에 연결할 수 없습니다");
@@ -446,6 +503,8 @@ export const api = {
     request<GodRuleRes>("POST", `/nights/${nightId}/rule`, req),
 
   // 판 종료 후
+  getJourney: (attemptId: string) =>
+    request<JourneyRes>("GET", `/attempts/${attemptId}/journey`),
   getHarness: (attemptId: string) =>
     request<HarnessRes>("GET", `/attempts/${attemptId}/harness`),
   getInspector: (attemptId: string, token: string) =>
@@ -454,4 +513,15 @@ export const api = {
       `/attempts/${attemptId}/inspector?token=${encodeURIComponent(token)}`,
     ),
   getHealth: () => request<HealthRes>("GET", "/health"),
+
+  // 인증 — Google OAuth 세션
+  getMe: () => request<SessionUser>("GET", "/api/v1/auth/me"),
+  logout: () => request<{ ok: boolean }>("POST", "/api/v1/auth/logout"),
 };
+
+export interface SessionUser {
+  sub: string;
+  email: string;
+  name: string;
+  picture: string;
+}

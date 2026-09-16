@@ -152,6 +152,126 @@ def test_judge_exposes_only_existing_candidate_indices_to_model(claims, expected
     assert choices == expected
 
 
+# ── 채점 신뢰 — temperature 0·후보 분할·단조 잠금 (2026-09-14 실판 da38de28) ──
+
+from apps.engine.app.use_cases.night_interactor import judge_candidates  # noqa: E402
+from apps.engine.domain.entities.scoring_rules import apply_ratchet  # noqa: E402
+
+
+def test_judge_calls_evaluator_with_temperature_zero():
+    # 회귀 고정 — 같은 제출은 같은 조건으로 판정한다
+    interactor, _ = make_night_judge([{"verdict": "confirmed", "matched_index": 0}])
+    interactor._judge(_LOOP, _TRUTH, [], ["채연이 아픈 것 같다"])
+    assert interactor._llm.temperatures == [0.0]
+
+
+def test_judge_candidates_splits_blob_cell_into_sentences():
+    claims = ["하나.", "둘.", "셋.", "넷.", "다섯.", "여섯.", "일곱.", "여덟. 아홉. 우리는 돼지다."]
+    assert judge_candidates(claims) == [
+        "하나.", "둘.", "셋.", "넷.", "다섯.", "여섯.", "일곱.", "여덟.", "아홉.", "우리는 돼지다.",
+    ]
+
+
+def test_judge_candidates_dedupes_and_keeps_plain_cells():
+    assert judge_candidates(["채연이 아프다.", "채연이 아프다.", "트럭 소리."]) == [
+        "채연이 아프다.", "트럭 소리.",
+    ]
+
+
+def test_ratchet_blocks_confirmed_downgrade_when_sentence_unchanged():
+    prev = [{"id": "identity-1", "verdict": "confirmed", "matched_user_claim": "이들은 동물이야."}]
+    cur = [{"id": "identity-1", "verdict": "none", "matched_user_claim": None, "cited": []}]
+    out = apply_ratchet(cur, prev, ["이들은 동물이야.", "채연이 아프다."])
+    assert out[0]["verdict"] == "confirmed"
+    assert out[0]["matched_user_claim"] == "이들은 동물이야."
+    assert out[0]["ratcheted"] is True
+
+
+def test_ratchet_blocks_partial_to_none():
+    prev = [{"id": "cause-1", "verdict": "partial", "matched_user_claim": "채연이 아프다"}]
+    cur = [{"id": "cause-1", "verdict": "none", "matched_user_claim": None, "cited": []}]
+    out = apply_ratchet(cur, prev, ["채연이 아프다"])
+    assert out[0]["verdict"] == "partial"
+    assert out[0]["ratcheted"] is True
+
+
+def test_ratchet_allows_upgrade_without_marking():
+    prev = [{"id": "cause-1", "verdict": "none", "matched_user_claim": None}]
+    cur = [{"id": "cause-1", "verdict": "confirmed", "matched_user_claim": "채연이 아프다", "cited": []}]
+    out = apply_ratchet(cur, prev, ["채연이 아프다"])
+    assert out[0]["verdict"] == "confirmed"
+    assert "ratcheted" not in out[0]
+
+
+def test_ratchet_skips_when_sentence_removed():
+    prev = [{"id": "identity-1", "verdict": "confirmed", "matched_user_claim": "이들은 동물이야."}]
+    cur = [{"id": "identity-1", "verdict": "none", "matched_user_claim": None, "cited": []}]
+    out = apply_ratchet(cur, prev, ["이들은 사람이야."])
+    assert out[0]["verdict"] == "none"
+    assert "ratcheted" not in out[0]
+
+
+def test_ratchet_normalizes_whitespace_and_edge_punctuation():
+    prev = [{"id": "cause-1", "verdict": "confirmed", "matched_user_claim": "채연이  아프다."}]
+    cur = [{"id": "cause-1", "verdict": "none", "matched_user_claim": None, "cited": []}]
+    out = apply_ratchet(cur, prev, ["채연이 아프다"])
+    assert out[0]["verdict"] == "confirmed"
+
+
+def _submit_env(judge_queue, prev_per_truth):
+    loop = SimpleNamespace(
+        id=uuid.uuid4(), attempt_id=uuid.uuid4(), loop_n=2, state="night_draft",
+        rumor_index=0, score=None, anomaly_count=0, side_effect_claims=None,
+        cause_chain=None, world_outcome=None,
+    )
+    night = SimpleNamespace(
+        id=uuid.uuid4(), loop_id=loop.id, submitted=False,
+        claims=["이송된 애들은 동물이야. 그래서 우리도 동물이야."],
+        free_text="", tapped_note_ids=[], per_truth_claim=None,
+        cell_scores=None, total=None, passed=None,
+    )
+    prev_night = SimpleNamespace(per_truth_claim=prev_per_truth)
+    events = _RecorderEvents()
+    events.query = lambda *a, **k: []
+    scenario = SimpleNamespace(
+        truth_claims=lambda: [SimpleNamespace(
+            code="identity-1", cell="identity", text="이들은 동물이다",
+            is_identity_word=True, world_outcomes=[],
+        )],
+        bundle=lambda: SimpleNamespace(fragments=[], ending_lines=[], ending_outcomes={}),
+        beats=lambda: [SimpleNamespace(beat=6)],
+    )
+    interactor = NightInteractor(
+        attempts=SimpleNamespace(get=lambda _: SimpleNamespace(status="active"), save=lambda: None),
+        loops=SimpleNamespace(get=lambda _: loop, save=lambda: None, npc_states=lambda _: []),
+        notes=SimpleNamespace(upsert=lambda *a, **k: None), rules=None,
+        nights=SimpleNamespace(get=lambda _: night, save=lambda: None,
+                               previous_submitted=lambda a, n: (prev_night, 1)),
+        event_log=events, scenario=scenario, core_llm=FakeLLM(judge_queue),
+        harness_on=True, cookie_ab_on=False, night_cls=None,
+    )
+    return interactor, night, events
+
+
+def test_submit_ratchets_identity_downgrade_and_recomputes_wrong():
+    # 실판 재현 — 동일 문장 유지인데 LLM이 confirmed→none으로 흔들린 케이스
+    prev = [{"id": "identity-1", "verdict": "confirmed",
+             "matched_user_claim": "이송된 애들은 동물이야.", "cited": []}]
+    interactor, night, events = _submit_env([{"verdict": "none", "matched_index": None}], prev)
+    result = interactor.submit(night.id)
+
+    item = night.per_truth_claim[0]
+    assert item["verdict"] == "confirmed"
+    assert item["ratcheted"] is True
+    # 덩어리 칸이 문장 단위 후보로 갔는지 — 스키마 enum이 후보 2개
+    schema = interactor._llm.calls[0][1]
+    assert schema["properties"]["matched_index"]["anyOf"][0]["enum"] == [0, 1]
+    # ratchet 매칭 문장은 wrong에서 빠진다
+    assert result["wrong_claim_count"] == 1
+    scored = next(e for e in events.recorded if e.__class__.__name__ == "AnswerScoredEvent")
+    assert scored.per_truth_claim[0].ratcheted is True
+
+
 def test_chain_source_events_excludes_user_claims_and_meta():
     events = [
         ev.UtteranceEvent(

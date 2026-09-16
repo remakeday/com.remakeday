@@ -24,6 +24,8 @@ class ManagerPatch(BaseModel):
     kind: Literal["memory_delete", "plan_patch"]
     detail: str
     reason: str
+    applied: bool = True
+    failure_reason: str | None = None
 
 
 class TruthClaimVerdict(BaseModel):
@@ -33,6 +35,7 @@ class TruthClaimVerdict(BaseModel):
     verdict: Literal["confirmed", "partial", "none"]
     matched_user_claim: str | None
     cited_chunks: list[str]
+    ratcheted: bool = False  # 단조 잠금 적용 — 인스펙터 식별용
 
 
 class CellScores(BaseModel):
@@ -73,6 +76,8 @@ class UtteranceEvent(EventBase):
     suspicion_delta: int
     trust_delta: int
     disclosure_level: int
+    utterance_id: str | None = None
+    response: dict | None = None  # Committed response for idempotent client retries.
 
 
 class ToolCallEvent(EventBase):
@@ -84,6 +89,9 @@ class ToolCallEvent(EventBase):
     args: dict
     result: str
     side_effect: str | None
+    utterance_id: str | None = None
+    statement_verified: bool | None = None
+    recalled: bool | None = None
 
 
 class ManagerCheckEvent(EventBase):
@@ -154,6 +162,7 @@ class InterventionQuestionEvent(EventBase):
     status: str = "unknown"
     evidence_ids: list[str] = Field(default_factory=list)
     next_observation: str | None = None
+    unlocked_note: str | None = None  # 질문 보상으로 해금된 관찰 (advisor_leads)
 
 
 class InterventionOptionsEvent(EventBase):

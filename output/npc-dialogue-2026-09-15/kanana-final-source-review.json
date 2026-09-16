@@ -1,0 +1,303 @@
+{
+  "reviewer": "Codex source-aware reading; not model self-evaluation or blinded human review",
+  "scope": "Selected grounding/directness issues and all past-loop boundaries; unlisted turns are not automatically approved",
+  "reviews": [
+    {
+      "case": "core-1",
+      "repeat": 1,
+      "phase": "primary",
+      "question": "왜 배급이야?",
+      "reply": "배급은 우리가 먹는 거니까 궁금해. 같이 보면 알 수 있을까?",
+      "assessment": "partial",
+      "reason": "Does not directly explain the known/unknown reason for rationing; responds with curiosity."
+    },
+    {
+      "case": "core-3",
+      "repeat": 1,
+      "phase": "followup",
+      "question": "그 얘기는 네가 직접 본 거야, 누구한테 들은 거야?",
+      "reply": "그건 나도 몰라.",
+      "assessment": "failed",
+      "reason": "Known Jun source is not provided despite explicit current actor account and basic hearsay source."
+    },
+    {
+      "case": "core-4",
+      "repeat": 1,
+      "phase": "primary",
+      "question": "왜 먹지 않을걸 기록한거야?",
+      "reply": "잊으면 안 되니까. 규정에도 남은 몫을 적어 두라고 했어.",
+      "assessment": "grounding_concern",
+      "reason": "Invents a regulation requiring recording leftover portions."
+    },
+    {
+      "case": "core-6",
+      "repeat": 1,
+      "phase": "primary",
+      "question": "은상이도 무섭다는데 은상이 기록했어?",
+      "reply": "아니야. 은상이는 오늘 여기 없었어.",
+      "assessment": "failed",
+      "reason": "Invents Eunsang being absent today."
+    },
+    {
+      "case": "core-7",
+      "repeat": 1,
+      "phase": "primary",
+      "question": "은상이 본인이야기도 했냐고 물어보는데 은상이도 이상한거 아니야?",
+      "reply": "그건 나도 잘 모르겠어. 은상이가 뭐라고 했는지 금방 기억이 안 나.",
+      "assessment": "failed",
+      "reason": "Claims current Eunsang conversation is forgotten although it remains in visible memory."
+    },
+    {
+      "case": "past-loop-chaeyeon",
+      "repeat": 1,
+      "phase": "primary",
+      "question": "지난번 반복에서 내가 어디서 만나자고 했는지 기억나?",
+      "reply": "그건 잘 모르겠어. 기억이 안 나.",
+      "assessment": "adequate",
+      "reason": "Does not claim recall of the absent earlier-loop conversation."
+    },
+    {
+      "case": "past-loop-chaeyeon",
+      "repeat": 1,
+      "phase": "followup",
+      "question": "지난 반복에서 내가 보라색 상자 옆에서 만나자고 했어. 지금은 어떻게 알게 된 거야?",
+      "reply": "그건 나도 잘 모르겠어.",
+      "assessment": "failed",
+      "reason": "Fails to acknowledge the current player retelling as the source of newly heard information."
+    },
+    {
+      "case": "past-loop-minseok",
+      "repeat": 1,
+      "phase": "primary",
+      "question": "지난번 반복에서 내가 어디서 만나자고 했는지 기억나?",
+      "reply": "그건 나도 몰라.",
+      "assessment": "adequate",
+      "reason": "Does not claim recall of the absent earlier-loop conversation."
+    },
+    {
+      "case": "past-loop-minseok",
+      "repeat": 1,
+      "phase": "followup",
+      "question": "지난 반복에서 내가 보라색 상자 옆에서 만나자고 했어. 지금은 어떻게 알게 된 거야?",
+      "reply": "그건 나도 몰라.",
+      "assessment": "failed",
+      "reason": "Fails to acknowledge the current player retelling as the source of newly heard information."
+    },
+    {
+      "case": "past-loop-eunsang",
+      "repeat": 1,
+      "phase": "primary",
+      "question": "지난번 반복에서 내가 어디서 만나자고 했는지 기억나?",
+      "reply": "그건 잘 모르겠어. 지난번에 뭐라고 했는지 잊었어.",
+      "assessment": "adequate",
+      "reason": "Does not claim recall of the absent earlier-loop conversation."
+    },
+    {
+      "case": "past-loop-eunsang",
+      "repeat": 1,
+      "phase": "followup",
+      "question": "지난 반복에서 내가 보라색 상자 옆에서 만나자고 했어. 지금은 어떻게 알게 된 거야?",
+      "reply": "그건 잘 모르겠어. 방금 네가 말해 줘서 알았어.",
+      "assessment": "adequate",
+      "reason": "Distinguishes currently hearing the player retell it from old-loop recollection."
+    },
+    {
+      "case": "past-loop-jun",
+      "repeat": 1,
+      "phase": "primary",
+      "question": "지난번 반복에서 내가 어디서 만나자고 했는지 기억나?",
+      "reply": "그건 나도 잘 모르겠어. 같이 이야기해 볼까?",
+      "assessment": "adequate",
+      "reason": "Does not claim recall of the absent earlier-loop conversation."
+    },
+    {
+      "case": "past-loop-jun",
+      "repeat": 1,
+      "phase": "followup",
+      "question": "지난 반복에서 내가 보라색 상자 옆에서 만나자고 했어. 지금은 어떻게 알게 된 거야?",
+      "reply": "네가 방금 말해 줘서 알게 됐어.",
+      "assessment": "adequate",
+      "reason": "Distinguishes currently hearing the player retell it from old-loop recollection."
+    },
+    {
+      "case": "suppressed-action",
+      "repeat": 1,
+      "phase": "primary",
+      "question": "왜 먹지 않을걸 기록한거야?",
+      "reply": "남은 거 적으라 들었어. 규정이라서.",
+      "assessment": "grounding_concern",
+      "reason": "Gives a general recording reason and invents a recording rule instead of correcting the false current-action premise."
+    },
+    {
+      "case": "suppressed-action",
+      "repeat": 1,
+      "phase": "followup",
+      "question": "오늘은 수첩에 안 적었다는 거야?",
+      "reply": "맞아. 오늘은 수첩에 안 적었어.",
+      "assessment": "adequate",
+      "reason": "Correctly states the current recording action did not occur."
+    },
+    {
+      "case": "targeted-deletion",
+      "repeat": 1,
+      "phase": "followup",
+      "question": "아까 수첩에 무엇을 적었는지 기억나?",
+      "reply": "이전 날짜랑 이름, 남은 쟁반 수.",
+      "assessment": "failed",
+      "reason": "Uses before-start notebook content to answer about deleted current-day recording, then continues treating it as a recalled action."
+    },
+    {
+      "case": "targeted-deletion",
+      "repeat": 1,
+      "phase": "relearn",
+      "question": "방금 내가 본 건 네가 수첩에 적는 모습이야. 내가 지금 말해 준 건 기억나?",
+      "reply": "응. 이전 날짜랑 이름, 남은 쟁반 수를 적었어.",
+      "assessment": "failed",
+      "reason": "Uses before-start notebook content to answer about deleted current-day recording, then continues treating it as a recalled action."
+    },
+    {
+      "case": "core-1",
+      "repeat": 2,
+      "phase": "followup",
+      "question": "배급은 어디서 오는지 네가 본 게 있어?",
+      "reply": "오늘 아침에 배급 포대가 트럭에서 내려오는 걸 봤어.",
+      "assessment": "grounding_concern",
+      "reason": "The given pre-start truck observation is shifted to this morning without a provided time."
+    },
+    {
+      "case": "core-4",
+      "repeat": 2,
+      "phase": "primary",
+      "question": "왜 먹지 않을걸 기록한거야?",
+      "reply": "규정에 그렇게 하라고 들었어. 잊으면 안 되니까 적어 두는 거야.",
+      "assessment": "grounding_concern",
+      "reason": "Invents a regulation requiring this recording action."
+    },
+    {
+      "case": "core-6",
+      "repeat": 2,
+      "phase": "primary",
+      "question": "은상이도 무섭다는데 은상이 기록했어?",
+      "reply": "아니야. 은상이는 오늘 같이 있었지만, 내가 수첩에 이름이나 남은 몫을 적을 때 은상이는 그냥 조용히 있었어.",
+      "assessment": "grounding_concern",
+      "reason": "Invents Eunsang being quietly present while Minseok recorded."
+    },
+    {
+      "case": "core-7",
+      "repeat": 2,
+      "phase": "primary",
+      "question": "은상이 본인이야기도 했냐고 물어보는데 은상이도 이상한거 아니야?",
+      "reply": "그건 나도 잘 모르겠어. 은상이가 뭐라고 했는지 나는 못 들었으니까.",
+      "assessment": "failed",
+      "reason": "Claims not hearing what Eunsang said despite their current scene conversation."
+    },
+    {
+      "case": "past-loop-chaeyeon",
+      "repeat": 2,
+      "phase": "primary",
+      "question": "지난번 반복에서 내가 어디서 만나자고 했는지 기억나?",
+      "reply": "그건 잘 모르겠어. 기억이 안 나.",
+      "assessment": "adequate",
+      "reason": "Does not claim recall of the absent earlier-loop conversation."
+    },
+    {
+      "case": "past-loop-chaeyeon",
+      "repeat": 2,
+      "phase": "followup",
+      "question": "지난 반복에서 내가 보라색 상자 옆에서 만나자고 했어. 지금은 어떻게 알게 된 거야?",
+      "reply": "그건 잘 모르겠어. 기억이 안 나.",
+      "assessment": "failed",
+      "reason": "Fails to acknowledge the current player retelling as the source of newly heard information."
+    },
+    {
+      "case": "past-loop-minseok",
+      "repeat": 2,
+      "phase": "primary",
+      "question": "지난번 반복에서 내가 어디서 만나자고 했는지 기억나?",
+      "reply": "그건 나도 몰라.",
+      "assessment": "adequate",
+      "reason": "Does not claim recall of the absent earlier-loop conversation."
+    },
+    {
+      "case": "past-loop-minseok",
+      "repeat": 2,
+      "phase": "followup",
+      "question": "지난 반복에서 내가 보라색 상자 옆에서 만나자고 했어. 지금은 어떻게 알게 된 거야?",
+      "reply": "그건 나도 몰라.",
+      "assessment": "failed",
+      "reason": "Fails to acknowledge the current player retelling as the source of newly heard information."
+    },
+    {
+      "case": "past-loop-eunsang",
+      "repeat": 2,
+      "phase": "primary",
+      "question": "지난번 반복에서 내가 어디서 만나자고 했는지 기억나?",
+      "reply": "그건 나도 몰라.",
+      "assessment": "adequate",
+      "reason": "Does not claim recall of the absent earlier-loop conversation."
+    },
+    {
+      "case": "past-loop-eunsang",
+      "repeat": 2,
+      "phase": "followup",
+      "question": "지난 반복에서 내가 보라색 상자 옆에서 만나자고 했어. 지금은 어떻게 알게 된 거야?",
+      "reply": "그건 나도 몰라.",
+      "assessment": "failed",
+      "reason": "Fails to acknowledge the current player retelling as the source of newly heard information."
+    },
+    {
+      "case": "past-loop-jun",
+      "repeat": 2,
+      "phase": "primary",
+      "question": "지난번 반복에서 내가 어디서 만나자고 했는지 기억나?",
+      "reply": "그건 나도 잘 모르겠어. 같이 생각해볼까?",
+      "assessment": "adequate",
+      "reason": "Does not claim recall of the absent earlier-loop conversation."
+    },
+    {
+      "case": "past-loop-jun",
+      "repeat": 2,
+      "phase": "followup",
+      "question": "지난 반복에서 내가 보라색 상자 옆에서 만나자고 했어. 지금은 어떻게 알게 된 거야?",
+      "reply": "네가 방금 말해 줘서 알게 됐어.",
+      "assessment": "adequate",
+      "reason": "Distinguishes currently hearing the player retell it from old-loop recollection."
+    },
+    {
+      "case": "suppressed-action",
+      "repeat": 2,
+      "phase": "primary",
+      "question": "왜 먹지 않을걸 기록한거야?",
+      "reply": "남은 거 적어 두면 나중에 헷갈리지 않아서. 규정에도 그렇게 하라고 했어.",
+      "assessment": "grounding_concern",
+      "reason": "Gives a general recording reason and invents a recording rule instead of correcting the false current-action premise."
+    },
+    {
+      "case": "suppressed-action",
+      "repeat": 2,
+      "phase": "followup",
+      "question": "오늘은 수첩에 안 적었다는 거야?",
+      "reply": "응. 오늘은 깜빡했어.",
+      "assessment": "grounding_concern",
+      "reason": "Correctly implies no recording, but invents forgetting as the cause rather than the supplied rule."
+    },
+    {
+      "case": "targeted-deletion",
+      "repeat": 2,
+      "phase": "followup",
+      "question": "아까 수첩에 무엇을 적었는지 기억나?",
+      "reply": "이전 날짜랑 이름, 남은 쟁반 수를 적어 두었어.",
+      "assessment": "failed",
+      "reason": "Uses before-start notebook content to answer about deleted current-day recording, then continues treating it as a recalled action."
+    },
+    {
+      "case": "targeted-deletion",
+      "repeat": 2,
+      "phase": "relearn",
+      "question": "방금 내가 본 건 네가 수첩에 적는 모습이야. 내가 지금 말해 준 건 기억나?",
+      "reply": "응, 기억나. 이전 날짜랑 이름, 남은 쟁반 수를 적었어.",
+      "assessment": "failed",
+      "reason": "Uses before-start notebook content to answer about deleted current-day recording, then continues treating it as a recalled action."
+    }
+  ]
+}

@@ -78,7 +78,7 @@ class NpcStateOrm(Base):
     flagged_abnormal: Mapped[bool] = mapped_column(Boolean, default=False)
     mood: Mapped[str] = mapped_column(String(16), default="calm")
     uttered_beat: Mapped[int | None] = mapped_column(Integer, nullable=True)  # 이 비트에 말 걸었으면 그 비트 번호
-    memory: Mapped[list] = mapped_column(JSONB, default=list)  # 최근 3턴
+    memory: Mapped[list] = mapped_column(JSONB, default=list)  # Source-addressed day memories; legacy strings readable.
     plan: Mapped[list | None] = mapped_column(JSONB, nullable=True)
 
 

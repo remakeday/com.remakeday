@@ -1,10 +1,14 @@
-"""E2E — fake(전부 폴백 경로)로 5회차 완주: 낮→밤→채점→신의개입→재도전 종료."""
+"""E2E — valid fake NPC responses and core fallbacks through five complete loops."""
 
 from fastapi.testclient import TestClient
 
 
-def test_full_attempt_five_loops_to_doom(db_session):
+def test_full_attempt_five_loops_to_doom(db_session, monkeypatch):
     from main import app
+    from apps.engine.adapter.outbound.llm.fake_llm import FakeLLM
+    from apps.engine.dependencies import engine_dependency
+    npc = FakeLLM([{"reply": "조금 추워.", "suspicion_delta": 0, "trust_delta": 0}] * 5)
+    monkeypatch.setattr(engine_dependency, "get_npc_llm", lambda: npc)
 
     with TestClient(app) as client:
         session_res = client.post("/sessions", json={}).json()
@@ -78,8 +82,9 @@ def test_full_attempt_five_loops_to_doom(db_session):
         assert client.get(f"/attempts/{attempt_id}/harness").status_code == 200
         bad = client.get(f"/attempts/{attempt_id}/inspector", params={"token": "wrong"})
         assert bad.status_code == 403
+        from core.matrix.grid_keymaker_secret_manager import get_settings
         ok = client.get(
-            f"/attempts/{attempt_id}/inspector", params={"token": "pigfarm-dev-inspector"}
+            f"/attempts/{attempt_id}/inspector", params={"token": get_settings().inspector_token}
         )
         assert ok.status_code == 200
         assert ok.json()["events"]

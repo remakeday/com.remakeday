@@ -10,8 +10,9 @@ until docker exec pigfarm-db pg_isready -U pigfarm -q; do sleep 1; done
 echo "== 2/4 ollama 확인 + 모델 워밍업 (최대 1분) =="
 curl -sf http://localhost:11434/api/tags >/dev/null || {
   echo "ollama가 떠 있지 않습니다. 'ollama serve' 후 다시 실행하세요"; exit 1; }
-for M in "exaone3.5:7.8b" "gemma3:12b"; do
-  curl -s http://localhost:11434/api/chat -d "{\"model\":\"$M\",\"messages\":[{\"role\":\"user\",\"content\":\"안녕\"}],\"stream\":false,\"keep_alive\":\"2h\"}" >/dev/null &
+# 현재 구성: NPC kanana1.5:8b-q4km · Core gemma4:12b — .env와 일치시킬 것
+for M in "kanana1.5:8b-q4km" "gemma4:12b"; do
+  curl -s http://localhost:11434/api/chat -d "{\"model\":\"$M\",\"messages\":[{\"role\":\"user\",\"content\":\"안녕\"}],\"think\":false,\"stream\":false,\"keep_alive\":\"2h\"}" >/dev/null &
 done
 wait
 

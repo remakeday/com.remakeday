@@ -7,6 +7,8 @@ import { useApiAction } from "@/lib/useApiAction";
 import { ErrorToast } from "@/components/ErrorToast";
 import { TypingIndicator } from "@/components/TypingIndicator";
 import { ObservationCard } from "@/components/ObservationCard";
+import { useVoice, VoiceReplay } from "@/components/VoicePlayer";
+import { VOICE_CLIPS } from "@/lib/voiceMap";
 
 interface QA {
   question: string;
@@ -15,6 +17,7 @@ interface QA {
   status: QuestionStatus;
   evidence: Observation[];
   nextObservation: string | null;
+  unlockedNote: string | null;
 }
 
 const STATUS_LABEL: Record<QuestionStatus, string> = {
@@ -52,15 +55,22 @@ function WorldHintDrip() {
  */
 export function GodScreen({
   nightId,
+  firstVisit,
   total,
   hypothesis,
   onRuleApplied,
 }: {
   nightId: string;
+  firstVisit: boolean;
   total: number;
   hypothesis: string;
   onRuleApplied: () => void;
 }) {
+  const { play: playVoice, stop: stopVoice } = useVoice();
+  useEffect(() => {
+    if (firstVisit) playVoice(["AD01"]);
+    return stopVoice;
+  }, [firstVisit, playVoice, stopVoice]);
   const [stage, setStage] = useState<"questions" | "rule">("questions");
   const [qas, setQas] = useState<QA[]>([]);
   const [remaining, setRemaining] = useState(3);
@@ -90,14 +100,14 @@ export function GodScreen({
     "예: 이 발언과 직접 본 사실은 어떻게 달라?",
   ];
 
-  // Q&A가 쌓여도 입력창 위치가 밀리지 않게 — 로그만 스크롤, 새 항목은 맨 아래로
+  // 로그는 높이 제한 없이 쌓이고 페이지가 스크롤된다 — 새 항목이 보이도록 끌어온다
   useEffect(() => {
-    qaLogRef.current?.scrollTo({ top: qaLogRef.current.scrollHeight });
+    qaLogRef.current?.lastElementChild?.scrollIntoView({ block: "nearest" });
   }, [qas, askAction.busy]);
 
-  // 답이 오면 바로 다음 질문을 칠 수 있게
+  // 답이 오면 바로 다음 질문을 칠 수 있게 (포커스 스크롤은 막아 새 답이 보이는 위치를 유지)
   useEffect(() => {
-    if (qas.length > 0) questionRef.current?.focus();
+    if (qas.length > 0) questionRef.current?.focus({ preventScroll: true });
   }, [qas.length]);
 
   // 질문 예시 순환 — 포커스 중에는 멈춘다
@@ -120,7 +130,7 @@ export function GodScreen({
       (res) => {
         setQas((prev) => [
           ...prev,
-          { question: text, answer: res.answer, detail: res.detail, status: res.status, evidence: res.evidence ?? [], nextObservation: res.next_observation },
+          { question: text, answer: res.answer, detail: res.detail, status: res.status, evidence: res.evidence ?? [], nextObservation: res.next_observation, unlockedNote: res.unlocked_note },
         ]);
         setRemaining(res.remaining);
       },
@@ -185,21 +195,35 @@ export function GodScreen({
           이해도 {Math.round(total)}%. 오늘의 세계는 멸망했습니다.
           <br />낮 대화와 별도로 3회 질문할 수 있습니다.
         </p>
+        {firstVisit && (
+          <div className="text-center text-base leading-relaxed">
+            <p>{VOICE_CLIPS.AD01.text}</p>
+            <VoiceReplay speaker="조언자" text={VOICE_CLIPS.AD01.text} />
+          </div>
+        )}
 
-        {/* 질문 로그 — 쌓여도 입력창이 밀리지 않게 높이를 제한하고 안에서 스크롤 */}
-        <div ref={qaLogRef} className="flex max-h-[40vh] flex-col gap-4 overflow-y-auto">
+        {/* 질문 로그 — 긴 답이 잘리지 않게 높이 제한 없이 쌓는다 */}
+        <div ref={qaLogRef} className="flex flex-col gap-4">
           {qas.map((qa, i) => (
             <div key={i} className="fade-in flex flex-col gap-1">
               <p className="text-lg opacity-60">— {qa.question}</p>
               <p className="text-lg">{qa.answer}</p>
-              {(qa.evidence.length > 0 || qa.detail || qa.nextObservation) && (
+              {qa.unlockedNote && (
+                <div className="fade-in border border-orange/70 px-3 py-2">
+                  <p className="text-xs tracking-widest text-orange">새 단서 — 노트에 적혔다</p>
+                  <p className="mt-1 text-lg">{qa.unlockedNote}</p>
+                </div>
+              )}
+              {qa.nextObservation && (
+                <p className="border-l-2 border-orange pl-3 text-base opacity-80">{qa.nextObservation}</p>
+              )}
+              {(qa.evidence.length > 0 || qa.detail) && (
                 <details className="text-lg">
-                  <summary className="cursor-pointer py-1 text-base opacity-60">근거와 확인할 점{qa.evidence.length > 0 ? ` · ${qa.evidence.length}개` : ""}</summary>
+                  <summary className="cursor-pointer py-1 text-base opacity-60">근거 보기{qa.evidence.length > 0 ? ` · ${qa.evidence.length}개` : ""}</summary>
                   <div className="mt-2 flex flex-col gap-2">
                     <p className="text-base text-orange">{STATUS_LABEL[qa.status]}</p>
                     {qa.evidence.length === 0 && qa.detail && <p className="opacity-70">{qa.detail}</p>}
                     {qa.evidence.slice(0, 2).map((item) => <ObservationCard key={item.observation_id} observation={item} compact />)}
-                    {qa.nextObservation && <p className="border-l-2 border-orange pl-3">{qa.nextObservation}</p>}
                   </div>
                 </details>
               )}

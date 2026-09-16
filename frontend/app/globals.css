@@ -17,10 +17,10 @@
 html,
 body {
   height: 100%;
+  background: var(--void);
 }
 
 body {
-  background: var(--paper);
   color: var(--ink);
   font-family: var(--font-serif), "Noto Serif KR", serif;
 }

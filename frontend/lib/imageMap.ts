@@ -113,6 +113,15 @@ export function doomImage(outcome: WorldOutcome): string {
 }
 
 /**
+ * 밤 단서 (9:16) — P군. P01~P05는 밤단서 v2 P.1의 회차별 치지직 이미지, 단서(clue-*) ID는 기존 단서 파일을 쓴다.
+ * 이미지 ID는 서버의 night_clue.image_ids 값이며, 알 수 없는 ID는 띠를 그리지 않는다.
+ */
+export function nightClueImage(imageId: string): string | null {
+  if (/^P0[1-5]$/.test(imageId)) return img(imageId);
+  return clueImage(imageId);
+}
+
+/**
  * 클리어 (9:16) — K군.
  * K01 아직 이해하지 못했다 (50~99%) / K02 세계를 이해했다 (100%)
  */

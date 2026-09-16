@@ -1,0 +1,181 @@
+{
+  "policy_version": "npc-dialogue-2",
+  "sources_identical": true,
+  "kanana_matched": {
+    "requests": 21,
+    "successful_requests": 21,
+    "failed_requests": 0,
+    "regenerations": 0,
+    "failed_harnesses": 0,
+    "harness_violations": [],
+    "all_structural_checks": true,
+    "structural_check_count": 159,
+    "warm_success_all": {
+      "n": 21,
+      "p50_ms": 1026.52,
+      "p95_ms": 1467.54,
+      "p95_method": "nearest_rank"
+    },
+    "warm_success_without_tools": {
+      "n": 21,
+      "p50_ms": 1026.52,
+      "p95_ms": 1467.54,
+      "p95_method": "nearest_rank"
+    },
+    "warm_success_with_tools": {
+      "n": 0,
+      "p50_ms": null,
+      "p95_ms": null,
+      "p95_method": "nearest_rank"
+    },
+    "failed_latency": {
+      "n": 0,
+      "p50_ms": null,
+      "p95_ms": null,
+      "p95_method": "nearest_rank"
+    },
+    "semantic_review": "pending; inspect source context and original responses"
+  },
+  "gemma_matched": {
+    "requests": 21,
+    "successful_requests": 21,
+    "failed_requests": 0,
+    "regenerations": 0,
+    "failed_harnesses": 0,
+    "harness_violations": [],
+    "all_structural_checks": true,
+    "structural_check_count": 159,
+    "warm_success_all": {
+      "n": 21,
+      "p50_ms": 2553.03,
+      "p95_ms": 3052.85,
+      "p95_method": "nearest_rank"
+    },
+    "warm_success_without_tools": {
+      "n": 21,
+      "p50_ms": 2553.03,
+      "p95_ms": 3052.85,
+      "p95_method": "nearest_rank"
+    },
+    "warm_success_with_tools": {
+      "n": 0,
+      "p50_ms": null,
+      "p95_ms": null,
+      "p95_method": "nearest_rank"
+    },
+    "failed_latency": {
+      "n": 0,
+      "p50_ms": null,
+      "p95_ms": null,
+      "p95_method": "nearest_rank"
+    },
+    "semantic_review": "pending; inspect source context and original responses"
+  },
+  "gemma_additional": {
+    "requests": 20,
+    "successful_requests": 20,
+    "failed_requests": 0,
+    "regenerations": 0,
+    "failed_harnesses": 0,
+    "harness_violations": [],
+    "all_structural_checks": true,
+    "structural_check_count": 141,
+    "warm_success_all": {
+      "n": 20,
+      "p50_ms": 2629.02,
+      "p95_ms": 3028.01,
+      "p95_method": "nearest_rank"
+    },
+    "warm_success_without_tools": {
+      "n": 20,
+      "p50_ms": 2629.02,
+      "p95_ms": 3028.01,
+      "p95_method": "nearest_rank"
+    },
+    "warm_success_with_tools": {
+      "n": 0,
+      "p50_ms": null,
+      "p95_ms": null,
+      "p95_method": "nearest_rank"
+    },
+    "failed_latency": {
+      "n": 0,
+      "p50_ms": null,
+      "p95_ms": null,
+      "p95_method": "nearest_rank"
+    },
+    "semantic_review": "pending; inspect source context and original responses"
+  },
+  "gemma_all": {
+    "requests": 41,
+    "successful_requests": 41,
+    "failed_requests": 0,
+    "regenerations": 0,
+    "failed_harnesses": 0,
+    "harness_violations": [],
+    "all_structural_checks": true,
+    "structural_check_count": 300,
+    "warm_success_all": {
+      "n": 41,
+      "p50_ms": 2599.43,
+      "p95_ms": 3052.85,
+      "p95_method": "nearest_rank"
+    },
+    "warm_success_without_tools": {
+      "n": 41,
+      "p50_ms": 2599.43,
+      "p95_ms": 3052.85,
+      "p95_method": "nearest_rank"
+    },
+    "warm_success_with_tools": {
+      "n": 0,
+      "p50_ms": null,
+      "p95_ms": null,
+      "p95_method": "nearest_rank"
+    },
+    "failed_latency": {
+      "n": 0,
+      "p50_ms": null,
+      "p95_ms": null,
+      "p95_method": "nearest_rank"
+    },
+    "semantic_review": "pending; inspect source context and original responses"
+  },
+  "gemma_core_eight": {
+    "requests": 16,
+    "successful_requests": 16,
+    "failed_requests": 0,
+    "regenerations": 0,
+    "failed_harnesses": 0,
+    "harness_violations": [],
+    "all_structural_checks": true,
+    "structural_check_count": 112,
+    "warm_success_all": {
+      "n": 16,
+      "p50_ms": 2726.27,
+      "p95_ms": 3279.04,
+      "p95_method": "nearest_rank"
+    },
+    "warm_success_without_tools": {
+      "n": 16,
+      "p50_ms": 2726.27,
+      "p95_ms": 3279.04,
+      "p95_method": "nearest_rank"
+    },
+    "warm_success_with_tools": {
+      "n": 0,
+      "p50_ms": null,
+      "p95_ms": null,
+      "p95_method": "nearest_rank"
+    },
+    "failed_latency": {
+      "n": 0,
+      "p50_ms": null,
+      "p95_ms": null,
+      "p95_method": "nearest_rank"
+    },
+    "semantic_review": "pending; inspect source context and original responses"
+  },
+  "semantic_gate": "not met; source-aware findings in evaluation-report.md; no automatic semantic PASS",
+  "thinking_probe": "3/3 reached 1024 generated-token cap with no final JSON; not included in use-case metrics"
+}

@@ -21,8 +21,8 @@ class Settings(BaseSettings):
     scenario: str = "a"
 
     npc_llm_provider: str = "fake"
-    npc_llm_model: str = "exaone3.5:7.8b"
-    npc_llm_think: str = "default"
+    npc_llm_model: str = "kanana1.5:8b-q4km"
+    npc_llm_think: str = "off"
     npc_age7_policy: str = "on"
     core_llm_provider: str = "fake"
     core_llm_model: str = "gemma3:12b"
@@ -38,6 +38,13 @@ class Settings(BaseSettings):
     inspector_token: str = "pigfarm-dev-inspector"
     gemini_api_key: str = ""
     gemini_requests_per_minute: int = Field(default=10, gt=0)
+
+    # Google OAuth 로그인 — .env의 GOOGLE_OAUTH_* / SESSION_SECRET / FRONTEND_BASE_URL
+    google_oauth_client_id: str = ""
+    google_oauth_client_secret: str = ""
+    google_oauth_redirect_uri: str = "http://localhost:8500/api/v1/auth/google/callback"
+    session_secret: str = "dev-session-secret-change-me"
+    frontend_base_url: str = "http://localhost:3500"
 
 
 @lru_cache(maxsize=1)

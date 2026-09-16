@@ -26,7 +26,7 @@ def test_start_loop_accrues_only_disclosed_observations(db_session):
     notes = inter.list_notes(info["loop_id"])["notes"]
     assert notes and all(n["sources"] for n in notes)
     assert all(source["beat"] == 1 for note in notes for source in note["sources"])
-    assert any(n["text"] == "소독약 냄새." for n in notes)
+    assert not any(n["text"] == "소독약 냄새." for n in notes)  # 고아 감각 파편은 밤 단서로 옮겼다
     assert not any(n["text"] == "트럭 소리." for n in notes)
 
 
@@ -123,7 +123,7 @@ def test_ambient_chatter_enters_both_speakers_memory(db_session):
     for char in (a, b):
         mem = repo.npc_state(uuid.UUID(info["loop_id"]), char.code).memory or []
         for line in expected:
-            assert line in mem
+            assert any(item["text"] == line for item in mem)
 
 
 def test_ambient_chatter_rejects_speaker_outside_pair(db_session):
@@ -227,7 +227,7 @@ def test_authored_chatter_does_not_introduce_lost_character(db_session):
     assert inter._npc_llm.calls == []
 
 
-def test_agent_prompt_strengthens_rule_compliance():
+def test_agent_context_includes_only_supplied_active_rule():
     bundle = build_a().bundle()
     char = next(c for c in bundle.characters if c.playable)
     kwargs = dict(
@@ -239,8 +239,8 @@ def test_agent_prompt_strengthens_rule_compliance():
         **kwargs,
     )[0].content
     without_rule = build_agent_messages(bundle, char, rules_text="", **kwargs)[0].content
-    assert "실행했다고 단정하지 말고" in with_rule
-    assert "하루를 실제로 바꿨다" not in without_rule
+    assert "[R1] 채연은(는) 하루 종일에 검진 받기 — 반드시 하지 않는다" in with_rule
+    assert "[R1]" not in without_rule
 
 
 def test_start_loop_lists_active_rules(db_session):
