@@ -39,7 +39,8 @@ def build_llm(provider: str, model: str, base_url: str, think: str = "default") 
         settings = get_settings()
         return AnthropicLLM(api_key=settings.anthropic_api_key, model=model,
                             effort=settings.anthropic_effort,
-                            max_tokens=settings.anthropic_max_tokens)
+                            max_tokens=settings.anthropic_max_tokens,
+                            timeout=settings.anthropic_timeout)
     raise ValueError(f"알 수 없는 LLM provider: {provider}")
 
 

@@ -268,22 +268,24 @@ class LoopInteractor:
             raise GameStateError("대화할 수 없는 상대다")
         if npc.uttered_beat == loop.beat:
             raise GameStateError("이 장면에서는 이미 대화했다. 다른 인물을 고르거나 다음 장면으로 이동해 주세요.")
+        if loop.state != "day":
+            raise GameStateError("낮이 아니면 발화할 수 없다")
 
         classification = None
-        gated = is_nonsense(text)
-        if not gated:
-            label, report = classify(self._core_llm, text)
-            record_harness(self._events, loop.attempt_id, report, loop_n=loop.loop_n, beat=loop.beat)
-            classification = label
-            gated = label == "nonsense"
-        if gated:
+        if is_nonsense(text):
             return self._gated_reply(loop, char, text, utterance_id, classification)
-        include_knowledge = classification != "chat"
 
         try:
             state = loop_rules.apply_utterance(self._loop_state(loop))
         except loop_rules.DomainError as e:
             raise GameStateError(str(e)) from e
+
+        label, report = classify(self._core_llm, text)
+        record_harness(self._events, loop.attempt_id, report, loop_n=loop.loop_n, beat=loop.beat)
+        classification = label
+        if classification == "nonsense":
+            return self._gated_reply(loop, char, text, utterance_id, classification)
+        include_knowledge = classification != "chat"
 
         rule_rows = self._rules.list(loop.attempt_id)
         domain_rules = [self._to_domain_rule(r) for r in rule_rows]
@@ -638,7 +640,7 @@ class LoopInteractor:
                  "memory": visible_memories(s.memory or []), "plan": s.plan}
                 for s in states
             ],
-            user_utterances=[e.text for e in utter_events],
+            user_utterances=[e.text for e in utter_events if not getattr(e, "gated", False)],
             rules=[self._rule_text(r) for r in rule_rows],
             budget_left=loop.manager_budget_left,
             yesterday_score=prev,

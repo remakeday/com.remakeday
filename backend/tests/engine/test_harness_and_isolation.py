@@ -116,6 +116,20 @@ def test_advisor_prompt_builder_has_no_scenario_dependency():
     assert "scenario" not in inspect.signature(m.InterventionInteractor.__init__).parameters
 
 
+def test_llm_refusal_error_stops_after_one_attempt_and_sets_fallback_used():
+    """refusal/max_tokens 등은 재시도해도 같은 결과 — 하네스가 재생성하지 않고 즉시 폴백한다."""
+    from apps.engine.app.ports.output.llm_port import LLMRefusalError
+
+    class RefusingLLM:
+        def complete(self, messages, json_schema, *, temperature=None):
+            raise LLMRefusalError("Anthropic 응답이 refusal로 종료됨")
+
+    out, report = run_with_harness(RefusingLLM(), _MSG, Out, role="t")
+    assert out is None
+    assert report.attempts == 1
+    assert report.fallback_used is True
+
+
 def test_temperature_forwarded_to_llm():
     """판정 롤은 temperature=0으로 요동을 줄인다 — 하네스가 포트로 전달."""
     llm = FakeLLM([{"reply": "ok"}])

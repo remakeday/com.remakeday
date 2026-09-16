@@ -8,7 +8,7 @@ import json
 
 import anthropic
 
-from apps.engine.app.ports.output.llm_port import LLMParseError, MessageDTO
+from apps.engine.app.ports.output.llm_port import LLMParseError, LLMRefusalError, MessageDTO
 
 _USER_FALLBACK = "위 지시에 따라 JSON만 출력하라."
 
@@ -17,20 +17,38 @@ _USER_FALLBACK = "위 지시에 따라 JSON만 출력하라."
 # Limitations). .parse()만 클라이언트 측에서 이를 제거하므로 create()를 쓰는 우리는 직접 벗긴다.
 _UNSUPPORTED_SCHEMA_KEYWORDS = frozenset({
     "minimum", "maximum", "exclusiveMinimum", "exclusiveMaximum",
-    "minLength", "maxLength", "minItems", "maxItems",
+    "minLength", "maxLength", "minItems", "maxItems", "multipleOf",
+})
+
+# 재시도해도 같은 응답이 나오는 stop_reason — 하네스 재생성 대상이 아니다.
+_NON_RETRYABLE_STOP_REASONS = frozenset({
+    "refusal", "max_tokens", "model_context_window_exceeded",
 })
 
 
 def strip_unsupported_schema_keywords(schema: dict) -> dict:
-    """Anthropic이 거부하는 JSON Schema 제약 키를 재귀적으로 제거한 복사본을 반환한다."""
+    """Anthropic이 거부하는 JSON Schema 제약 키를 재귀적으로 제거한 복사본을 반환한다.
+
+    minItems는 0/1일 때는 SDK와 동일하게 유지한다. 그 외에 제거되는 키는 값을 잃지 않도록
+    같은 노드의 description에 제약을 이어 붙인다(모델이 여전히 제약을 볼 수 있도록).
+    """
 
     def _strip(node):
         if isinstance(node, dict):
-            return {
-                key: _strip(value)
-                for key, value in node.items()
-                if key not in _UNSUPPORTED_SCHEMA_KEYWORDS
-            }
+            stripped = {}
+            notes = []
+            for key, value in node.items():
+                if key in _UNSUPPORTED_SCHEMA_KEYWORDS:
+                    if key == "minItems" and value in (0, 1):
+                        stripped[key] = value
+                    else:
+                        notes.append(f"{key}={value}")
+                    continue
+                stripped[key] = _strip(value)
+            if notes:
+                note = f"(제약: {', '.join(notes)})"
+                stripped["description"] = f"{stripped.get('description', '')} {note}".strip()
+            return stripped
         if isinstance(node, list):
             return [_strip(item) for item in node]
         return node
@@ -46,6 +64,7 @@ class AnthropicLLM:
         self._model = model
         self._effort = effort
         self._max_tokens = max_tokens
+        self._timeout = timeout
         self._client = client if client is not None else anthropic.Anthropic(
             api_key=api_key, timeout=timeout)
 
@@ -53,7 +72,8 @@ class AnthropicLLM:
         self, messages: list[MessageDTO], json_schema: dict,
         *, temperature: float | None = None,
     ) -> dict:
-        # Claude Opus 5 / Sonnet 5는 temperature 파라미터가 제거되어 400을 내므로 보내지 않는다.
+        # Claude Opus 5 / Sonnet 5는 temperature 파라미터가 제거되어 400을 내므로 하이쿠에만 보낸다.
+        is_haiku = self._model.startswith("claude-haiku")
         system = "\n\n".join(m.content for m in messages if m.role == "system")
         turns = [{"role": m.role, "content": m.content} for m in messages if m.role != "system"]
         if not turns:
@@ -65,7 +85,7 @@ class AnthropicLLM:
                 "type": "json_schema",
                 "schema": strip_unsupported_schema_keywords(json_schema),
             }
-        if not self._model.startswith("claude-haiku"):
+        if not is_haiku:
             output_config["effort"] = self._effort
 
         kwargs = {
@@ -77,13 +97,15 @@ class AnthropicLLM:
             kwargs["system"] = system
         if output_config:
             kwargs["output_config"] = output_config
+        if not is_haiku:
+            kwargs["thinking"] = {"type": "disabled"}
+        if is_haiku and temperature is not None:
+            kwargs["temperature"] = temperature
 
         response = self._client.messages.create(**kwargs)
 
-        if response.stop_reason == "refusal":
-            raise LLMParseError("Anthropic 응답이 refusal로 종료됨")
-        if response.stop_reason == "max_tokens":
-            raise LLMParseError("Anthropic 응답이 max_tokens로 절단됨")
+        if response.stop_reason in _NON_RETRYABLE_STOP_REASONS:
+            raise LLMRefusalError(f"Anthropic 응답이 {response.stop_reason}로 종료됨")
 
         text = "".join(block.text for block in response.content if block.type == "text")
         try:

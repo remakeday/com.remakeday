@@ -82,6 +82,11 @@ F7 답변이 답변 같지 않았던 이유(테스터6 15문답): 판정 0회(�
 ## Anthropic 어댑터
 
 - provider 값 `anthropic` (`.env`의 `CORE_LLM_PROVIDER`/`NPC_LLM_PROVIDER`), 모델 예시 `claude-sonnet-5`·`claude-opus-5`·`claude-haiku-4-5`(하이쿠는 `output_config.effort` 미전송). effort는 `ANTHROPIC_EFFORT`(기본 `low`)로 설정, 키는 `backend/.env`의 `ANTHROPIC_API_KEY`. 스모크: 이 세션의 `.env`에 키가 없어 **미실행**(`grep -c '^ANTHROPIC_API_KEY=.\+' backend/.env` == 0).
+- thinking: 하이쿠가 아닌 모델에는 `thinking: {"type": "disabled"}`를 보낸다(effort `high` 이하에서 허용). 하이쿠에는 `thinking`도 `output_config.effort`도 보내지 않는다.
+- refusal/절단은 비재시도: `stop_reason`이 `refusal`·`max_tokens`·`model_context_window_exceeded`이면 `LLMRefusalError`를 낸다(`LLMParseError`가 아니다) — 재시도해도 같은 응답이므로 하네스가 재생성 없이 즉시 폴백한다.
+- 스키마 strip: `output_config.format`이 거부하는 키(`minimum`/`maximum`/`exclusiveMinimum`/`exclusiveMaximum`/`minLength`/`maxLength`/`maxItems`/`multipleOf`)는 제거하면서 그 값을 해당 필드 `description`에 `(제약: ...)`로 남긴다. `minItems`는 0/1일 때만 SDK와 동일하게 유지한다(그 외 값은 제거+description 기록).
+- temperature는 하이쿠에만 전달한다(Opus 5/Sonnet 5는 거부). timeout은 `Settings.anthropic_timeout`(기본 120.0)으로 설정 가능.
+- 테스터 노트: 비한글(영어·숫자·기호만) 입력은 규칙 게이트로 인물의 되묻기 대사가 나오며 이는 의도된 동작이다.
 
 ## 하지 말 것
 

@@ -160,7 +160,11 @@ def record_harness(event_log, session_id: UUID, report: HarnessReport, *, loop_n
             fallback_used=report.fallback_used,
             call_records=report.call_records,
             model=report.model,
-            version="npc-dialogue-2" if report.role in ("agent", "ask_npc") else "connected-investigation-1",
+            version=(
+                "npc-dialogue-2" if report.role in ("agent", "ask_npc")
+                else "f2-classifier-1" if report.role == "classifier"
+                else "connected-investigation-1"
+            ),
         ),
     )
 

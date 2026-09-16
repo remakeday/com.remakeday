@@ -21,6 +21,10 @@ class LLMParseError(ValueError):
     """LLM 출력이 JSON이 아님 — 하네스 재생성 트리거."""
 
 
+class LLMRefusalError(Exception):
+    """모델이 거부·절단됨 — 재시도해도 같은 결과이므로 하네스가 즉시 폴백한다."""
+
+
 class LLMPort(Protocol):
     def complete(
         self, messages: list[MessageDTO], json_schema: dict,

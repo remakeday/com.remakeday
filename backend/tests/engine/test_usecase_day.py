@@ -289,3 +289,82 @@ def test_classifier_fallback_keeps_current_path(db_session):
     assert events[-1].classification is None and events[-1].gated is False
 
 
+def test_nonsense_utterance_after_day_ended_raises(db_session):
+    """CRITICAL — 낮이 아니면 규칙 게이트(무의미 판정)보다 먼저 상태를 검사한다."""
+    from apps.engine.app.use_cases.loop_interactor import GameStateError
+
+    inter, scenario, attempt, info = make_day(db_session, [])
+    npc = _first_npc(scenario)
+    loop = LoopRepository(db_session).get(info["loop_id"])
+    loop.state = "night_pending"
+    db_session.flush()
+    with pytest.raises(GameStateError, match="낮이 아니면"):
+        inter.utter(info["loop_id"], npc.code, "ㅋㅋㅋㅋ")
+
+
+def test_budget_exhausted_normal_input_raises_before_classifier_call(db_session):
+    """예산이 없으면 분류기(Core) 호출 전에 거부한다 — 거부될 발화에 모델 호출을 쓰지 않는다."""
+    from apps.engine.app.use_cases.loop_interactor import GameStateError
+
+    inter, scenario, attempt, info = make_day(db_session, [])
+    inter._core_llm = FakeLLM([{"label": "chat"}])  # 분류기가 불려도 소비될 응답 — 호출되면 안 된다
+    npc = _first_npc(scenario)
+    loop = LoopRepository(db_session).get(info["loop_id"])
+    loop.budget_left = 0
+    db_session.flush()
+    before = _harness_events(db_session, attempt)
+    with pytest.raises(GameStateError):
+        inter.utter(info["loop_id"], npc.code, "왜 그런지 설명해 줄래?")
+    after = _harness_events(db_session, attempt)
+    assert len(after) == len(before)
+    assert not any(e.role == "classifier" for e in after)
+
+
+def test_gated_input_beat_reset_is_free_again(db_session):
+    inter, scenario, attempt, info = make_day(db_session, [])
+    npc = _first_npc(scenario)
+    first = inter.utter(info["loop_id"], npc.code, "ㅋㅋㅋㅋ")
+    assert first["gated"] is True and first["budget_left"] == 8
+    inter.advance_beat(info["loop_id"])
+    second = inter.utter(info["loop_id"], npc.code, "ㅋㅋㅋㅋ")
+    assert second["gated"] is True and second["budget_left"] == 8  # 새 비트 — 다시 무료
+
+
+def test_gated_input_does_not_change_npc_state(db_session):
+    inter, scenario, attempt, info = make_day(db_session, [])
+    npc = _first_npc(scenario)
+    before = LoopRepository(db_session).npc_state(info["loop_id"], npc.code)
+    snapshot_before = (before.suspicion, before.trust, list(before.memory or []), before.uttered_beat)
+    inter.utter(info["loop_id"], npc.code, "ㅋㅋㅋㅋ")
+    after = LoopRepository(db_session).npc_state(info["loop_id"], npc.code)
+    snapshot_after = (after.suspicion, after.trust, list(after.memory or []), after.uttered_beat)
+    assert snapshot_after == snapshot_before
+
+
+def test_manager_check_excludes_gated_utterances_from_user_utterances(db_session):
+    """MINOR — 관리자 프롬프트 입력에서 게이트된(무의미) 발화는 제외한다."""
+    inter, scenario, attempt, info = make_day(db_session, [])
+    npc = _first_npc(scenario)
+    nonsense_text = "ㅋㅋㅋㅋ"
+    inter.utter(info["loop_id"], npc.code, nonsense_text)
+    inter.advance_beat(info["loop_id"])  # 비트 2 — MANAGER_CHECK_BEATS에서 관리자 점검이 돈다
+    manager_calls = [e for e in _harness_events(db_session, attempt) if e.role == "manager_check"]
+    assert manager_calls
+    assert nonsense_text not in manager_calls[-1].call_records[0]["messages"][0]["content"]
+
+
+def test_classifier_question_and_request_labels_take_normal_path_with_knowledge(db_session):
+    inter, scenario, attempt, info = make_day(
+        db_session, [_agent_reply("응, 그건 이래."), _agent_reply("알겠어.")]
+    )
+    inter._core_llm = FakeLLM([{"label": "question"}, {"label": "request"}])
+    npc = _first_npc(scenario)
+    inter.utter(info["loop_id"], npc.code, "그거 어떻게 된 거야?")
+    inter.advance_beat(info["loop_id"])
+    inter.utter(info["loop_id"], npc.code, "그거 좀 도와줄래?")
+    agent_calls = [e for e in _harness_events(db_session, attempt) if e.role == "agent"]
+    assert len(agent_calls) == 2
+    for call in agent_calls:
+        assert "[하루 시작 전부터 아는 것]" in call.call_records[0]["messages"][0]["content"]
+
+
