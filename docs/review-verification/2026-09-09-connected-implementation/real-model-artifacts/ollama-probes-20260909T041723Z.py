@@ -29,7 +29,7 @@ from apps.engine.app.use_cases.scene_execution import EXPLAIN_ACTION, SOURCE_ACT
 from apps.scenarios.scenario_a.adapter import build
 
 
-OUT = Path('/tmp/pigfarm-connected-integration/ollama-results')
+OUT = Path('/tmp/demo-integration/ollama-results')
 OUT.mkdir(parents=True, exist_ok=True)
 OLLAMA = 'http://127.0.0.1:11434'
 QUESTIONS = [

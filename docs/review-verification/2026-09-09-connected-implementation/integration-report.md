@@ -4,11 +4,11 @@
 담당: `/root/integration`  
 상태: **fake API·실제 UI 통합과 Gemini/Ollama adapter 포함 backend 325개 suite 통과. 실제 Gemini 생성 전환은 미완료, Ollama RM1 실패를 공개한 테스터2 preview 기동.**
 
-이 보고서의 자동 실행은 사람 첫 플레이 자료가 아니다. 운영 DB `pigfarm`과 운영 백엔드 8500은 사용하거나 변경하지 않았다. 실제 HTTP 검증은 가드된 `pigfarm_test`와 fake provider를 사용하는 8501에서만 수행했고, 기존 사용자 판은 재채점·재설정하지 않았다.
+이 보고서의 자동 실행은 사람 첫 플레이 자료가 아니다. 운영 DB `game_db`과 운영 백엔드 8500은 사용하거나 변경하지 않았다. 실제 HTTP 검증은 가드된 `test_db`와 fake provider를 사용하는 8501에서만 수행했고, 기존 사용자 판은 재채점·재설정하지 않았다.
 
 ## 실행 경계
 
-- 가드 launcher는 시작 전에 URL의 DB명과 SQL `current_database()`가 모두 `pigfarm_test`인지 확인하고, NPC/core provider가 모두 fake인지 확인했다. 비밀값을 저장하지 않은 attestation은 API 보고서 안에 복사했다.
+- 가드 launcher는 시작 전에 URL의 DB명과 SQL `current_database()`가 모두 `test_db`인지 확인하고, NPC/core provider가 모두 fake인지 확인했다. 비밀값을 저장하지 않은 attestation은 API 보고서 안에 복사했다.
 - 검증 당시 `/health`: scenario `a`, harness `on`, DB `ok`, NPC `fake:exaone3.5:7.8b`, core `fake:gemma3:12b`, embedding `fake`.
 - 프론트엔드는 기존 `http://localhost:3500` 개발 서버를 사용했다. API 요청만 Playwright route로 8501에 보냈다. 다른 작업자가 소유한 서버를 재빌드·재시작·종료하지 않았다.
 - 실제 Ollama 검증은 DB 없는 in-memory repository에서 별도 실행했으며, 상세 내용과 원문은 [실제 모델 보고](real-model-report.md)와 `real-model-artifacts/`에 둔다.
@@ -68,20 +68,20 @@
 
 ## 재현 명령
 
-아래 명령은 별도 `pigfarm_test`가 준비되고 가드된 fake 8501과 기존 frontend 3500이 실행 중일 때만 사용한다.
+아래 명령은 별도 `test_db`가 준비되고 가드된 fake 8501과 기존 frontend 3500이 실행 중일 때만 사용한다.
 
 ```bash
-BACKEND_ATTESTATION=/tmp/pigfarm-connected-integration/backend-attestation.json \
+BACKEND_ATTESTATION=/tmp/demo-integration/backend-attestation.json \
 API_BASE=http://127.0.0.1:8501 \
 ARTIFACT_DIR="$PWD/docs/review-verification/2026-09-09-connected-implementation/integration-artifacts/live-api" \
-node /tmp/pigfarm-connected-integration/api-live-flow.mjs
+node /tmp/demo-integration/api-live-flow.mjs
 
-BACKEND_ATTESTATION=/tmp/pigfarm-connected-integration/backend-attestation.json \
+BACKEND_ATTESTATION=/tmp/demo-integration/backend-attestation.json \
 API_BASE=http://127.0.0.1:8501 \
 FRONTEND_BASE=http://localhost:3500 \
 ARTIFACT_DIR="$PWD/docs/review-verification/2026-09-09-connected-implementation/integration-artifacts/live-browser-rerun3" \
-NODE_PATH=/tmp/pigfarm-image-browser/node_modules \
-node /tmp/pigfarm-connected-integration/browser-live-observe.cjs
+NODE_PATH=/tmp/demo-image-browser/node_modules \
+node /tmp/demo-integration/browser-live-observe.cjs
 ```
 
 가드 launcher와 Playwright 관찰 코드는 임시 검증 도구라 `/tmp`에만 있다. 장기 보존 대상은 이 폴더의 보고서·JSON·PNG 원문이다. DB 접속 비밀은 명령, 보고서, artifact에 기록하지 않는다.

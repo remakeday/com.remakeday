@@ -6,8 +6,8 @@
 
 ## 실행 경계와 재현 정보
 
-- 실행은 `backend/`에서 `PYTHONPATH=. .venv/bin/python /tmp/pigfarm-connected-integration/ollama-probes.py`로 수행했다.
-- DB 없는 in-memory repository와 실제 use case/harness를 사용했다. production DB, `pigfarm_test`, 8500/8501 서버, frontend, 기존 판에는 접근하지 않았다.
+- 실행은 `backend/`에서 `PYTHONPATH=. .venv/bin/python /tmp/demo-integration/ollama-probes.py`로 수행했다.
+- DB 없는 in-memory repository와 실제 use case/harness를 사용했다. production DB, `test_db`, 8500/8501 서버, frontend, 기존 판에는 접근하지 않았다.
 - 첫 원문 명령은 `/tmp` script 경로 때문에 `apps` import가 되지 않아 모델 호출 전에 종료했다. `PYTHONPATH=.`만 추가했다.
 - 준비된 harness가 삭제된 `ScenarioBundleDTO.rule_templates`를 읽어 모델 호출 전에 종료했다. `/tmp` harness만 현재 composition root와 동일하게 `scene_actions`에서 template을 만들도록 수정했다. production 코드는 이 실행자가 수정하지 않았다.
 - 실제 실행 구간: `2026-09-09T03:58:04.772322+00:00`–`03:58:52.011125+00:00` (47.24초).

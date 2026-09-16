@@ -1,10 +1,10 @@
 // Mock API + real frontend. This test never writes player records.
-// NODE_PATH=/tmp/pigfarm-image-browser/node_modules node tests/connected-investigation.cjs
+// NODE_PATH=/tmp/demo-image-browser/node_modules node tests/connected-investigation.cjs
 const { chromium } = require('playwright');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 
-const out = process.env.TEST_ARTIFACT_DIR || '/tmp/pigfarm-connected-frontend';
+const out = process.env.TEST_ARTIFACT_DIR || '/tmp/demo-connected-frontend';
 fs.mkdirSync(out, { recursive: true });
 
 const seenIllustration = { image_id: 'clue-11', caption: '준이 소매 끝의 번호가 있는 띠를 살핀다.' };

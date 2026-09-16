@@ -9,5 +9,5 @@
   },
   "expected_answer_match": true,
   "latency_seconds": 1.236,
-  "artifact": "/tmp/pigfarm-gemini-connectivity-results/adapter-20260909T080832191157Z.json"
+  "artifact": "/tmp/demo-gemini-connectivity-results/adapter-20260909T080832191157Z.json"
 }

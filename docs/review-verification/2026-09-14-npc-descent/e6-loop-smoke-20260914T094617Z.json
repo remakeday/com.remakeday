@@ -3,7 +3,7 @@
   "core": "gemma4:12b",
   "persona": "성실",
   "loops": 1,
-  "db": "pigfarm_test",
+  "db": "test_db",
   "health_models": {
     "npc": "ollama:qwen3.5:4b",
     "core": "ollama:gemma4:12b",

@@ -13,7 +13,7 @@
 
 ## 결과
 
-- 엔진 188 passed, 기존 라이브러리 경고3건. 별도 `pigfarm_test` DB, fake LLM.
+- 엔진 188 passed, 기존 라이브러리 경고3건. 별도 `test_db` DB, fake LLM.
 - TypeScript 검사 통과. 아키텍처 계약4개 유지, 코어 금칙어0건.
 - 새 이미지 API 전달 테스트와 마지막 회차 소거 이름 회귀 테스트 통과. 각각 구현·수정 전 실패도 확인했다.
 - [브라우저 결과](results.json): 실제 프론트와 PNG, 모의 API. 현재 비트 이미지, 검진 두 장 열람, 비트 전환 시 선택 초기화, 구버전 응답·알 수 없는 ID의 기존 배경 대체, 폐쇄/트럭/고요한 밤 분기, 모바일 버튼 조작 후 이미지 경계 검사 통과. 브라우저 실행 오류0건.
@@ -38,8 +38,8 @@ bash scripts/check_forbidden_words.sh
 
 # frontend/ — 3500 포트에서 npm run dev 실행 후
 ./node_modules/.bin/tsc --noEmit --incremental false
-NODE_PATH=/tmp/pigfarm-image-browser/node_modules node tests/scene-illustrations.cjs
-NODE_PATH=/tmp/pigfarm-image-browser/node_modules node tests/five-loop-flow.cjs
+NODE_PATH=/tmp/demo-image-browser/node_modules node tests/scene-illustrations.cjs
+NODE_PATH=/tmp/demo-image-browser/node_modules node tests/five-loop-flow.cjs
 ```
 
 Playwright와 `/usr/bin/google-chrome`을 사용했다. `/tmp` 설치 경로는 환경에 맞춰 다시 준비한다.

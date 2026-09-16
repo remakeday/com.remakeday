@@ -87,7 +87,7 @@ async function testRestartGuard(browser) {
       body = {
         total: 100, passed: true, loop_n: loopN, world_outcome: loopN === 3 ? 'closure' : 'truck',
         is_final: loopN === 5, closed_by: loopN === 5 ? 'understood_all' : null, cells: loopN === 5 ? cells : null,
-        cookie: null, intervention_available: loopN < 5, ending_lines: loopN === 5 ? ['우리가 대피소라고 믿었던 곳은 양돈장이었다.'] : null,
+        cookie: null, intervention_available: loopN < 5, ending_lines: loopN === 5 ? ['우리가 대피소라고 믿었던 곳은 [결말 장소]였다.'] : null,
         cell_feedback: '원인은 잡혔다.', wrong_claim_count: 0, night_clue: { loop_n: loopN, ...NIGHT_CLUES[loopN] },
       };
     } else if (p.endsWith('/options')) {

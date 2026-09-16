@@ -1,4 +1,4 @@
-// NODE_PATH=/tmp/pigfarm-image-browser/node_modules node frontend/tests/voice-transitions.cjs
+// NODE_PATH=/tmp/demo-image-browser/node_modules node frontend/tests/voice-transitions.cjs
 // One headless browser; mocked game API, real audio except explicit failure injection.
 const { chromium } = require('playwright');
 const assert = require('node:assert/strict');

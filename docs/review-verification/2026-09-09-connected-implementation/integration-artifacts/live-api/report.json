@@ -1,9 +1,9 @@
 {
-  "mode": "live isolated pigfarm_test API; fake models; integration automation, not a human playtest",
+  "mode": "live isolated test_db API; fake models; integration automation, not a human playtest",
   "api_base": "http://127.0.0.1:8501",
   "backend_attestation": {
     "pid": 1045806,
-    "database": "pigfarm_test",
+    "database": "test_db",
     "npc_provider": "fake",
     "core_provider": "fake",
     "scenario": "a",
@@ -13,7 +13,7 @@
     "generated_at": "2026-09-09T03:51:47.951733+00:00"
   },
   "isolation": {
-    "database_name": "pigfarm_test",
+    "database_name": "test_db",
     "npc_provider": "fake",
     "core_provider": "fake"
   },

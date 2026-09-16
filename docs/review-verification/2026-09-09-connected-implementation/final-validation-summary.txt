@@ -13,7 +13,7 @@ Current Gemini/Ollama-adapter backend full suite
 Evidence boundary
 - This record is transcribed from the root-run command result after the
   Gemini/Ollama adapter and process-wide 10 RPM pacing implementation, with
-  exclusive pigfarm_test ownership.
+  exclusive test_db ownership.
 - The preceding 325-passed result (session 61313) is an earlier adapter checkpoint.
 - Prior command .venv/bin/pytest -q in backend lacked PYTHONPATH: 27 import
   collection errors, exit2, 0.40s. It is a command attempt, not passing tests.

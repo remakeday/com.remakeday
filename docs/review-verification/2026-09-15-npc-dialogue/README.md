@@ -16,7 +16,7 @@
 
 ## 기능 검증
 
-- 백엔드 전체: 전용 `pigfarm_test` DB에서 460개 통과. 기존 의존성 폐기 예정 경고 3개.
+- 백엔드 전체: 전용 `test_db` DB에서 460개 통과. 기존 의존성 폐기 예정 경고 3개.
 - 실제 DB의 동시 요청 두 개로 모델 호출 1회·예산 차감 1회를 확인했다. 저장 실패 롤백, 관리자 삭제, 원본 노트 유지, 루프 초기화도 검증했다.
 - TypeScript: `tsc --noEmit --incremental false` 통과.
 - 헤드리스 UI 4종 통과: `npc-followup`, `gameplay-clarity`, `connected-investigation`, `five-loop-flow`.

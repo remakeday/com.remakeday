@@ -2,7 +2,7 @@
   "purpose": "diagnostic only, original corpus, candidate classification and forced-correct-kind evidence",
   "model": "gemma3:12b",
   "temperature": 0,
-  "origin_raw": "/tmp/pigfarm-connected-integration/ollama-results/probes-20260909T071926Z.json",
+  "origin_raw": "/tmp/demo-integration/ollama-results/probes-20260909T071926Z.json",
   "origin_raw_sha256": "2f07c1fc432460e3601d086423b99170716b9709f1d396eabf3f5059f856b814",
   "fixture_sha256": "565804968fbbf3724a27c503bdbbe5cc03805693d4756ca249202fe6e998c1a3",
   "started_at": "2026-09-09T07:25:15.636890+00:00",

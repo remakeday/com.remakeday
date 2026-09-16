@@ -98,14 +98,14 @@ frontend 명령은 pytest와 별도다. 문서에서 구별되는 명령은 아�
 
 | 실행 | 실행 횟수 | 판정 항목·트래픽 | 결과·경계 |
 |---|---:|---:|---|
-| `pigfarm_test` fake API 5회차 | 1 | 25 checks, HTTP request/response 117건 | failed check0. note linkage154/154, rule compliance19/19. 이후 C3/RM 수정 전 소스라 최종-source smoke로 사용하지 않음. [report](integration-artifacts/live-api/report.json), [traffic](integration-artifacts/live-api/traffic.json) |
+| `test_db` fake API 5회차 | 1 | 25 checks, HTTP request/response 117건 | failed check0. note linkage154/154, rule compliance19/19. 이후 C3/RM 수정 전 소스라 최종-source smoke로 사용하지 않음. [report](integration-artifacts/live-api/report.json), [traffic](integration-artifacts/live-api/traffic.json) |
 | 실제 frontend + test API 첫 browser | 1 | 시작 문구 대기 | `127.0.0.1:3500`에서 hydration/HMR 환경 문제. API 판 생성 없음. |
 | 두 번째 browser | 1 | monkey-paw 중간 상태 | disabled 버튼 timing으로 종료. test 판1개가 생성됐지만 완료되지 않음. |
 | 세 번째 browser | 1 | mobile390 + desktop1440 복합 checks2 | errors0, failed requests0. 각 viewport에서 하루 낮·밤, seen gallery, portrait, clue07–12, overflow를 확인. [report](integration-artifacts/live-browser-rerun3/report.json) |
 | real frontend/mock connected | artifact 기준1 | composite checks3 | errors0. owner browser 실행과 artifact가 겹칠 가능성이 있어 전체 frontend 실행 수에 중복 합산하지 않음. [results](integration-artifacts/mock-connected/results.json) |
 | real frontend/mock five-loop | artifact 기준1 | assertions14 | errors0. 위와 같은 중복 경계. [results](integration-artifacts/mock-five-loop/results.json) |
 
-실제 HTTP 자동 실행은 사람 첫 플레이 표본이 아니다. 운영 DB `pigfarm`에는 판 생성·reset·재채점이 없었다.
+실제 HTTP 자동 실행은 사람 첫 플레이 표본이 아니다. 운영 DB `game_db`에는 판 생성·reset·재채점이 없었다.
 
 ## 실제 Ollama 실행
 

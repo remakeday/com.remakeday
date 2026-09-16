@@ -144,7 +144,7 @@ Q1의 제외 대상을 안내한 문제는 **대화 API상 채연에게 말을 �
 
 ## 04:40:44 파일 실재 확인 — 실모델 검증 아님, provider 접근 차단
 
-파일 목록을 직접 조회해 `/tmp/pigfarm-connected-integration/ollama-results/probes-20260909T044044Z.json`의 존재와 JSON 내용을 확인했다. 검토 시점 durable `real-model-artifacts/`에는 03:58·04:17 두 raw만 있었으며 04:40 파일은 없었다. 03:58과 04:17은 위에서 실패한 과거 실행이며 최신 성공 근거로 재사용하지 않는다.
+파일 목록을 직접 조회해 `/tmp/demo-integration/ollama-results/probes-20260909T044044Z.json`의 존재와 JSON 내용을 확인했다. 검토 시점 durable `real-model-artifacts/`에는 03:58·04:17 두 raw만 있었으며 04:40 파일은 없었다. 03:58과 04:17은 위에서 실패한 과거 실행이며 최신 성공 근거로 재사용하지 않는다.
 
 - 파일 크기 **191,606 bytes**, SHA-256 **`bd7ff8db6fa371016c37d61a2866ef672c20ec8caf41226df1706ef204995718`**.
 - 시작 `2026-09-09T04:40:44.894004+00:00`, 끝 `04:40:44.959786+00:00`: 약 **66ms**.
@@ -182,7 +182,7 @@ Q1의 제외 대상을 안내한 문제는 **대화 API상 채연에게 말을 �
 
 ## 05:41:43 실제 실행 — 호출 성공 확인, RM1 PC3 미해결
 
-[검토한 새 raw](real-model-artifacts/probes-20260909T054143Z.json)는 `/tmp/pigfarm-connected-integration/ollama-results/` 원본에서 바이트 그대로 복사했다. **179,724 bytes**, SHA-256 **`ec0b66e7101ff0681aef8c75e1c9e34a6347eee515961e6f58925f69900230c2`**. 실행 `05:41:43.633378Z`–`05:41:57.512622Z`. root의 허용된 실제 실행(exit 0, exec session19347)이 만든 산출물이며 검토자는 모델·네트워크·DB를 호출하지 않았다.
+[검토한 새 raw](real-model-artifacts/probes-20260909T054143Z.json)는 `/tmp/demo-integration/ollama-results/` 원본에서 바이트 그대로 복사했다. **179,724 bytes**, SHA-256 **`ec0b66e7101ff0681aef8c75e1c9e34a6347eee515961e6f58925f69900230c2`**. 실행 `05:41:43.633378Z`–`05:41:57.512622Z`. root의 허용된 실제 실행(exit 0, exec session19347)이 만든 산출물이며 검토자는 모델·네트워크·DB를 호출하지 않았다.
 
 원문 질문 12개, 별도 통제 4개, custom 3개, production ambient 3개가 있다. **실제 provider 응답 18개 모두 output 존재·accepted=true·오류 없음·fallback=false**를 직접 확인했다. advisor는 gemma3:12b 15건(Q1–11+PC4), ambient는 exaone3.5:7.8b 3건이다. Q12와 custom은 결정적 코드 경로다. 이는 04:40의 접근 실패 raw와 구분되는 실제 응답 증거다. 모델명은 harness 기록이며 이 실행에서 모델 digest를 다시 조회하지 않았다.
 

@@ -1,9 +1,9 @@
-// NODE_PATH=/tmp/pigfarm-image-browser/node_modules node tests/scene-illustrations.cjs
+// NODE_PATH=/tmp/demo-image-browser/node_modules node tests/scene-illustrations.cjs
 // Real frontend and assets; game API mocked to avoid creating player records.
 const { chromium } = require('playwright');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const out = process.env.TEST_ARTIFACT_DIR || '/tmp/pigfarm-scene-illustrations';
+const out = process.env.TEST_ARTIFACT_DIR || '/tmp/demo-scene-illustrations';
 fs.mkdirSync(out, { recursive: true });
 
 const scenes = {

@@ -1,5 +1,5 @@
 // Real media playback + API fixtures; one headless browser, no game DB writes.
-// NODE_PATH=/tmp/pigfarm-image-browser/node_modules node frontend/tests/voice-playback.cjs
+// NODE_PATH=/tmp/demo-image-browser/node_modules node frontend/tests/voice-playback.cjs
 const { chromium } = require('playwright');
 const assert = require('node:assert/strict');
 const { readdirSync } = require('node:fs');

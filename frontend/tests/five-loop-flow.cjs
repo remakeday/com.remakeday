@@ -1,9 +1,9 @@
 // Run with Playwright available through NODE_PATH. All game API requests are mocked.
-// NODE_PATH=/tmp/pigfarm-review-Hewzkn/node_modules node tests/five-loop-flow.cjs
+// NODE_PATH=/tmp/demo-review-Hewzkn/node_modules node tests/five-loop-flow.cjs
 const { chromium } = require('playwright');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
-const out = process.env.TEST_ARTIFACT_DIR || '/tmp/pigfarm-five-loop-browser';
+const out = process.env.TEST_ARTIFACT_DIR || '/tmp/demo-five-loop-browser';
 fs.mkdirSync(out, { recursive: true });
 
 // 밤 단서 시퀀스 (밤단서 v2 P.1) — 서버 payload 그대로. 3회차는 폐쇄, 나머지는 트럭 결말.
@@ -57,7 +57,7 @@ const NIGHT_IMAGES = { P01: '/assets/P01.png', P02: '/assets/P02.png', P03: '/as
         else if (path.endsWith('/submit')) {
           const total = loopN < 5 ? 100 : finalScore;
           submitted = true;
-          body = { total, passed: total >= 50, loop_n: loopN, world_outcome: loopN === 3 ? 'closure' : 'truck', is_final: loopN === 5, closed_by: loopN === 5 ? (total === 100 ? 'understood_all' : 'doom') : null, cells: loopN === 5 ? cells : null, cookie: null, intervention_available: loopN < 5, ending_lines: loopN === 5 ? ['우리가 대피소라고 믿었던 곳은 양돈장이었다.'] : null, cell_feedback: '원인은 잡혔다.', wrong_claim_count: 0, night_clue: { loop_n: loopN, ...NIGHT_CLUES[loopN] } };
+          body = { total, passed: total >= 50, loop_n: loopN, world_outcome: loopN === 3 ? 'closure' : 'truck', is_final: loopN === 5, closed_by: loopN === 5 ? (total === 100 ? 'understood_all' : 'doom') : null, cells: loopN === 5 ? cells : null, cookie: null, intervention_available: loopN < 5, ending_lines: loopN === 5 ? ['우리가 대피소라고 믿었던 곳은 [결말 장소]였다.'] : null, cell_feedback: '원인은 잡혔다.', wrong_claim_count: 0, night_clue: { loop_n: loopN, ...NIGHT_CLUES[loopN] } };
         } else if (path.endsWith('/options')) body = { options: [1, 2, 3].map(index => ({ index, label: `추천 규칙 ${index}`, target: '채연', action: '배급을 설명한다', effect: 'enforce', when_beat: 'any', reason: '관찰을 확인하기 위해', evidence_ids: [], expected_observation: '다음 배급 장면에서 설명을 듣는다.' })) };
         else if (path.endsWith('/rule')) body = { ok: true, rule_label: '추천 규칙 1', conflicts: [], reason: null };
         else if (path.endsWith('/journey')) {
@@ -66,7 +66,7 @@ const NIGHT_IMAGES = { P01: '/assets/P01.png', P02: '/assets/P02.png', P03: '/as
           else if (failHarness) { status = 503; body = { detail: '일시적인 오류' }; }
           else body = {
             loops: [1, 2, 3, 4, 5].map(n => ({ loop_n: n, total: n < 5 ? 100 : finalScore, passed: true, new_confirmed: n === 2 && finalScore === 100 ? [{ code: 'cause-1', my_claim: '채연이 처음 아팠다.' }] : [], unlocked_notes: n === 1 ? ['트럭은 실어 갈 뿐이다.'] : [] })),
-            final: { cells, closed_by: finalScore === 100 ? 'understood_all' : 'doom', truth_reveal: [{ code: 'identity-1', cell: 'identity', verdict: finalScore === 100 ? 'confirmed' : 'none', my_claim: finalScore === 100 ? '우리는 돼지였다.' : null, truth: finalScore === 100 ? '이들은 동물이다' : null }] },
+            final: { cells, closed_by: finalScore === 100 ? 'understood_all' : 'doom', truth_reveal: [{ code: 'identity-1', cell: 'identity', verdict: finalScore === 100 ? 'confirmed' : 'none', my_claim: finalScore === 100 ? '우리는 [결말 정체]였다.' : null, truth: finalScore === 100 ? '이들은 동물이다' : null }] },
             unresolved: finalScore === 100 ? [] : [{ cell: 'identity', hint: '내일 준에게 트럭 소리를 물어봐.' }],
           };
         }

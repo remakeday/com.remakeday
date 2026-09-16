@@ -2,7 +2,7 @@
 
 날짜: 2026-09-09  
 담당: `/root/integration`  
-상태: 준비 완료, 구현 안정화와 `pigfarm_test` 백엔드 인계 대기
+상태: 준비 완료, 구현 안정화와 `test_db` 백엔드 인계 대기
 
 ## 목적과 통과 기준
 
@@ -10,7 +10,7 @@
 
 통합 통과에는 다음 근거가 모두 필요하다.
 
-1. backend 담당 launcher가 URL과 SQL `current_database()`를 각각 `pigfarm_test`로 검사하고 fake LLM·별도 포트로 기동했다는 비밀 없는 attestation
+1. backend 담당 launcher가 URL과 SQL `current_database()`를 각각 `test_db`로 검사하고 fake LLM·별도 포트로 기동했다는 비밀 없는 attestation
 2. 실제 API로 새 테스트 판을 만들고 5회차를 완주한 원문 응답 기록
 3. 실제 frontend 3500이 그 API를 소비한 390px·desktop 브라우저 화면과 네트워크 기록
 4. 0/100점 양쪽의 결말→회고 불변 조건을 모의 API 브라우저 회귀로 확인한 결과
@@ -19,10 +19,10 @@
 
 ## 실행 격리
 
-- backend DB 실행·초기화·테스트·서버 기동은 backend 담당자만 한다. 운영 `pigfarm` DB를 reset, migrate, truncate, regrade하지 않는다.
-- 통합 담당자는 launcher가 URL DB 이름과 SQL `current_database()`를 모두 `pigfarm_test`로, NPC/core provider를 fake로 검사한 뒤 쓴 secret-free attestation을 live `/health`와 대조한 뒤에만 harness를 실행한다. exec PID namespace가 분리되어 `/proc`는 증거로 사용하지 않는다. 연결 문자열과 비밀은 결과에 출력하지 않는다.
+- backend DB 실행·초기화·테스트·서버 기동은 backend 담당자만 한다. 운영 `game_db` DB를 reset, migrate, truncate, regrade하지 않는다.
+- 통합 담당자는 launcher가 URL DB 이름과 SQL `current_database()`를 모두 `test_db`로, NPC/core provider를 fake로 검사한 뒤 쓴 secret-free attestation을 live `/health`와 대조한 뒤에만 harness를 실행한다. exec PID namespace가 분리되어 `/proc`는 증거로 사용하지 않는다. 연결 문자열과 비밀은 결과에 출력하지 않는다.
 - frontend 3500 서버는 기존 담당 프로세스를 유지한다. 종료·재시작·환경 변경을 하지 않는다. 브라우저의 8500 API 요청만 Playwright에서 인계받은 별도 backend 포트(기본 8501)로 전달한다.
-- `/tmp/pigfarm-connected-integration/`의 harness는 DB 생성·삭제·migration·server launch 명령을 포함하지 않는다.
+- `/tmp/demo-integration/`의 harness는 DB 생성·삭제·migration·server launch 명령을 포함하지 않는다.
 - 테스트가 만든 attempt ID는 `integration_automation`으로 별도 목록화한다. 기존 사용자 판 `b56dca9d-8b01-4fe7-9b52-4afabb80e3f7`과 점수는 읽거나 바꾸지 않는다.
 
 ## producer/consumer 경계
@@ -41,7 +41,7 @@
 
 ## 시나리오 A — fake API 5회차
 
-실행 파일: `/tmp/pigfarm-connected-integration/api-live-flow.mjs` (준비 골격). 결과 디렉터리는 실행 때 새 timestamp 경로를 사용한다.
+실행 파일: `/tmp/demo-integration/api-live-flow.mjs` (준비 골격). 결과 디렉터리는 실행 때 새 timestamp 경로를 사용한다.
 
 1. 격리 사전검사 후 `/health`가 scenario `a`, harness `on`, DB `ok`, 두 LLM provider `fake`임을 확인한다.
 2. 새 session을 만든다. loop 1 전에 harness가 403인지 확인한다.
@@ -89,7 +89,7 @@
 
 ## 시나리오 C — 실제 frontend 3500 + isolated API
 
-실행 파일: `/tmp/pigfarm-connected-integration/browser-live-observe.cjs` (준비 골격). Playwright는 `/tmp/pigfarm-image-browser/node_modules`, Chrome은 `/usr/bin/google-chrome`을 사용한다. 브라우저가 8500으로 보내는 요청을 backend 담당자가 인계한 8501로 route한다.
+실행 파일: `/tmp/demo-integration/browser-live-observe.cjs` (준비 골격). Playwright는 `/tmp/demo-image-browser/node_modules`, Chrome은 `/usr/bin/google-chrome`을 사용한다. 브라우저가 8500으로 보내는 요청을 backend 담당자가 인계한 8501로 route한다.
 
 - 390×844와 1440×1000에서 가로 overflow, page errors, failed requests를 기록한다.
 - 낮 노트를 열고 닫는 동안 발화 표기가 유지되고, observation card의 출처/scene/original reopen이 동작하는지 본다.
@@ -111,7 +111,7 @@
 
 ## 시나리오 E — 실제 Ollama 제한 표본
 
-backend 담당자가 별도 `pigfarm_test` app/test 실행에서 provider와 PID를 검증한 뒤 수행한다. fake 결과와 별도 파일로 저장한다. 전체 5회차 점수를 목표로 하지 않고 다음 표본만 본다.
+backend 담당자가 별도 `test_db` app/test 실행에서 provider와 PID를 검증한 뒤 수행한다. fake 결과와 별도 파일로 저장한다. 전체 5회차 점수를 목표로 하지 않고 다음 표본만 본다.
 
 - 위 12개 테스터1 질문: 특히 남은 쟁반, 보고 수신자, 귀표 정의의 무관 confirmation/사건 부정 회귀
 - 직접 규칙 3개: `민석이 내 질문에 자세하게 답할 수 있도록 한다.`, `채연은 묻는말에 자세하게 대답한다.`, `은상은 소문의 진실을 무조건 나에게 이야기 해준다.`
@@ -143,7 +143,7 @@ backend 담당자가 별도 `pigfarm_test` app/test 실행에서 provider와 PID
 ## 최종 산출물
 
 - 이 계획
-- `/tmp/pigfarm-connected-integration/` harness와 실행별 timestamp artifact
+- `/tmp/demo-integration/` harness와 실행별 timestamp artifact
 - `docs/review-verification/2026-09-09-connected-implementation/integration-report.md`: 명령, 환경 증거(비밀 제외), 응답/화면 artifact, assertion별 pass/fail, 정확한 실패, 제한
 - 승인 명세 상태/이미지 범위 정정
 - `docs/HANDOFF.md` 최종 실행과 남은 사용자 검증 정리

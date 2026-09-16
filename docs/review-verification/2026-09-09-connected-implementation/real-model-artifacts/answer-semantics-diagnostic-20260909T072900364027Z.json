@@ -2,7 +2,7 @@
   "purpose": "diagnostic only, seven unchanged cases, explicit yes/no meaning and requested lookup value",
   "model": "gemma3:12b",
   "temperature": 0,
-  "origin_raw": "/tmp/pigfarm-connected-integration/ollama-results/kind-diagnostic-20260909T072515636890Z.json",
+  "origin_raw": "/tmp/demo-integration/ollama-results/kind-diagnostic-20260909T072515636890Z.json",
   "origin_raw_sha256": "47429c71ac0840369a03867c5e098f99bda4d56d60959c35b0a5d6a2637fd0f9",
   "fixture_sha256": "6b6ec46c478bd23bf2ef08bf993ecb2675c69152b65fd471d5c52a8f05333126",
   "started_at": "2026-09-09T07:29:00.364027+00:00",

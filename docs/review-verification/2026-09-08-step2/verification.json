@@ -350,7 +350,7 @@
     "passed": 186,
     "warnings": 3,
     "seconds": 2.57,
-    "database": "pigfarm_test",
+    "database": "test_db",
     "llm": "fake"
   },
   "import_contracts": {

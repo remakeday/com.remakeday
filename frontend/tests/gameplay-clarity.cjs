@@ -1,4 +1,4 @@
-// NODE_PATH=/tmp/pigfarm-image-browser/node_modules node tests/gameplay-clarity.cjs
+// NODE_PATH=/tmp/demo-image-browser/node_modules node tests/gameplay-clarity.cjs
 // API fixtures only; the parent task owns the single headless browser process.
 const { chromium } = require('playwright');
 const assert = require('node:assert/strict');

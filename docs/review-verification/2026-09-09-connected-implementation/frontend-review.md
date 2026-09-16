@@ -6,13 +6,13 @@ Assessment: **Frontend review accepted after focused independent recheck.** All 
 
 ## Scope and evidence
 
-Reviewed root/frontend instructions, approved connected-investigation spec (visual A overrides the old E03 scope), frontend implementation plan, additive API contract, implementation files, and browser test sources. Initial stable artifact was `/tmp/demo-pigfarm-connected-frontend.diff`, 1,430 lines, SHA256 `1a33c86425d28590dab806bc51da1d9b7ac73670875d2f538729ad0866e55bd9`. The owner applied review fixes. Final independently rechecked artifact: 1,665 lines, SHA256 `210cb43e8a7cb5271aebbdad499169786435bee37f2aeef0a7181bfa63245f6e`. The hash was confirmed before and after the recheck.
+Reviewed root/frontend instructions, approved connected-investigation spec (visual A overrides the old E03 scope), frontend implementation plan, additive API contract, implementation files, and browser test sources. Initial stable artifact was `/tmp/demo-connected-frontend.diff`, 1,430 lines, SHA256 `1a33c86425d28590dab806bc51da1d9b7ac73670875d2f538729ad0866e55bd9`. The owner applied review fixes. Final independently rechecked artifact: 1,665 lines, SHA256 `210cb43e8a7cb5271aebbdad499169786435bee37f2aeef0a7181bfa63245f6e`. The hash was confirmed before and after the recheck.
 
 Independent browser probe used the existing localhost:3500 frontend and intercepted every localhost:8500 request. No game records, DB, servers, build outputs, or Git metadata were changed by this review. Chrome failed under the sandbox with `setsockopt: Operation not permitted`; the same bounded probe ran successfully after escalation. Probe code was evaluated from the existing mock fixture in memory, with additional delayed-response, focus, comparison, and geometry checks. Screenshot: `/tmp/connected-review-day390.png`.
 
 ## Final independent recheck
 
-The reviewer independently ran the final expanded connected browser fixture against the existing localhost:3500 server, with every backend request intercepted and `TEST_ARTIFACT_DIR=/tmp/pigfarm-connected-review-final`. Additional in-memory assertions checked initial control geometry, twelve Shift+Tab steps in each main modal, inert day/night background controls, zero next-beat calls during notebook browsing, and unchanged raw input. Exit 0; no page errors. No rebuild, server lifecycle operation, or DB access occurred.
+The reviewer independently ran the final expanded connected browser fixture against the existing localhost:3500 server, with every backend request intercepted and `TEST_ARTIFACT_DIR=/tmp/demo-connected-review-final`. Additional in-memory assertions checked initial control geometry, twelve Shift+Tab steps in each main modal, inert day/night background controls, zero next-beat calls during notebook browsing, and unchanged raw input. Exit 0; no page errors. No rebuild, server lifecycle operation, or DB access occurred.
 
 A second bounded probe waited until all four fixed portraits had decoded, then checked and captured both 390×844 and 1440×844 layouts. Exit 0. At 390px the input now starts at x=53.609375, width=143.84375, y=798, height=38; all four portraits and both action buttons fit. At 1440px the input starts at x=498.609375, width=748.84375. The loaded 390px screenshot was visually inspected and shows portraits above readable narration and the full input/action row.
 
@@ -25,7 +25,7 @@ A second bounded probe waited until all four fixed portraits had decoded, then c
 | Delayed previous answer overwrites editing | Closed: initial delayed 503 and delayed successful retry keep draft controls disabled; final edited answer and inherited/current IDs restore correctly. |
 | Exact original custom input lost | Closed: surrounding spaces remain in input and the exact preview/apply payload; preview issues no apply request until the explicit click. |
 
-Artifacts: `/tmp/pigfarm-connected-review-final/results.json`, `day-loaded-390.png`, `day-loaded-1440.png`, `connected-mobile.png`, and `retrospective-mobile.png`. The original failure screenshot remains `/tmp/connected-review-day390.png` for before/after comparison.
+Artifacts: `/tmp/demo-connected-review-final/results.json`, `day-loaded-390.png`, `day-loaded-1440.png`, `connected-mobile.png`, and `retrospective-mobile.png`. The original failure screenshot remains `/tmp/connected-review-day390.png` for before/after comparison.
 
 ## Initial findings and resolution history
 

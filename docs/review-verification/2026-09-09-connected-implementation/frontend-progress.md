@@ -21,8 +21,8 @@ Status: frontend implementation and mocked-browser verification complete; indepe
 ## Preservation
 
 - `git status` fails because `.git` is an empty read-only directory. No repository was initialized or repaired.
-- Pre-change frontend snapshot: `/tmp/demo-pigfarm-frontend-before-connected-20260909`
-- Planned final diff: `/tmp/demo-pigfarm-connected-frontend.diff`
+- Pre-change frontend snapshot: `/tmp/demo-frontend-before-connected-20260909`
+- Planned final diff: `/tmp/demo-connected-frontend.diff`
 
 ## Milestones
 
@@ -42,22 +42,22 @@ Status: frontend implementation and mocked-browser verification complete; indepe
 
 All browser runs use a real Next.js frontend with the API intercepted in Playwright. They create no player records.
 
-- RED: `NODE_PATH=/tmp/pigfarm-image-browser/node_modules node tests/connected-investigation.cjs` failed by timing out on the absent `낮의 노트 열기` control before implementation.
+- RED: `NODE_PATH=/tmp/demo-image-browser/node_modules node tests/connected-investigation.cjs` failed by timing out on the absent `낮의 노트 열기` control before implementation.
 - `npx tsc --noEmit` — exit 0 on the final source.
 - `npm run build` — blocked first by the sandbox's Google-font network restriction, then Turbopack's internal port bind (`EPERM`). This is an execution-environment limitation rather than a source failure.
 - `npx next build --webpack` — exit 0; compiled, typechecked, generated 4/4 pages, and emitted `/`, `/play`, `/harness/[attemptId]`, and `/inspector/[attemptId]`.
-- `NODE_PATH=/tmp/pigfarm-image-browser/node_modules node tests/connected-investigation.cjs` — exit 0. Verified free source-linked daytime notebook; four fixed portraits; all chat/action controls inside the 390px viewport; notebook/gallery/detail focus containment, Escape, and opener restoration; chronological comparison even when selected in reverse; no unseen clue-12; 1536×1024 clue-08/clue-11 loading and 390px fit; delayed previous-answer failure/retry keeps draft locked; previous loop-2 edited draft restored in loop 3; inherited evidence toggled off/on; new evidence added; full current `[1,2,3]` and inherited `[1,2]` request sets; no prose rewrite; final confirmation edit supplies the intervention hypothesis; grounded supported/unknown/contradicted results and next observation; zero-option state then contextual refresh; preview conflict; no custom apply before preview; exact raw preview ID/text including surrounding whitespace; next-beat 5→4 budget refresh; experiment chain; honest `N/A`; no page errors or horizontal overflow.
-- `NODE_PATH=/tmp/pigfarm-image-browser/node_modules node tests/five-loop-flow.cjs` — exit 0. Verified five loops at both final 0% and 100%, retrospective gating/retry, ending-before-retrospective, new-attempt retry, and 390px fit.
-- `NODE_PATH=/tmp/pigfarm-image-browser/node_modules node tests/scene-illustrations.cjs` — exit 0. Verified new/legacy/unknown image sequences, 390px and 1440px containment, illustration navigation without beat advancement, and outcome-specific hidden-image behavior.
+- `NODE_PATH=/tmp/demo-image-browser/node_modules node tests/connected-investigation.cjs` — exit 0. Verified free source-linked daytime notebook; four fixed portraits; all chat/action controls inside the 390px viewport; notebook/gallery/detail focus containment, Escape, and opener restoration; chronological comparison even when selected in reverse; no unseen clue-12; 1536×1024 clue-08/clue-11 loading and 390px fit; delayed previous-answer failure/retry keeps draft locked; previous loop-2 edited draft restored in loop 3; inherited evidence toggled off/on; new evidence added; full current `[1,2,3]` and inherited `[1,2]` request sets; no prose rewrite; final confirmation edit supplies the intervention hypothesis; grounded supported/unknown/contradicted results and next observation; zero-option state then contextual refresh; preview conflict; no custom apply before preview; exact raw preview ID/text including surrounding whitespace; next-beat 5→4 budget refresh; experiment chain; honest `N/A`; no page errors or horizontal overflow.
+- `NODE_PATH=/tmp/demo-image-browser/node_modules node tests/five-loop-flow.cjs` — exit 0. Verified five loops at both final 0% and 100%, retrospective gating/retry, ending-before-retrospective, new-attempt retry, and 390px fit.
+- `NODE_PATH=/tmp/demo-image-browser/node_modules node tests/scene-illustrations.cjs` — exit 0. Verified new/legacy/unknown image sequences, 390px and 1440px containment, illustration navigation without beat advancement, and outcome-specific hidden-image behavior.
 
 ## Artifacts
 
-- Before snapshot: `/tmp/demo-pigfarm-frontend-before-connected-20260909`
-- After snapshot: `/tmp/demo-pigfarm-frontend-after-connected-20260909`
-- Reviewer diff: `/tmp/demo-pigfarm-connected-frontend.diff`
-- Connected screenshots/report: `/tmp/pigfarm-connected-frontend/`
-- Five-loop screenshots/report: `/tmp/pigfarm-five-loop-browser/`
-- Scene screenshots/report: `/tmp/pigfarm-scene-illustrations/`
+- Before snapshot: `/tmp/demo-frontend-before-connected-20260909`
+- After snapshot: `/tmp/demo-frontend-after-connected-20260909`
+- Reviewer diff: `/tmp/demo-connected-frontend.diff`
+- Connected screenshots/report: `/tmp/demo-connected-frontend/`
+- Five-loop screenshots/report: `/tmp/demo-five-loop-browser/`
+- Scene screenshots/report: `/tmp/demo-scene-illustrations/`
 
 ## Limits and Integration Follow-up
 

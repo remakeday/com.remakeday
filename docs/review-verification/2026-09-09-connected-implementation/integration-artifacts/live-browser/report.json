@@ -1,5 +1,5 @@
 {
-  "mode": "real frontend 3500 + isolated pigfarm_test backend; fake models; automated observation, not human playtest",
+  "mode": "real frontend 3500 + isolated test_db backend; fake models; automated observation, not human playtest",
   "checks": [],
   "errors": [],
   "failed_requests": [],

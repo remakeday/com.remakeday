@@ -1,6 +1,6 @@
 {
   "purpose": "diagnostic only; same four cases, current gemma model; no production model switch",
-  "origin_raw": "/tmp/pigfarm-connected-integration/ollama-results/probes-20260909T064753Z.json",
+  "origin_raw": "/tmp/demo-integration/ollama-results/probes-20260909T064753Z.json",
   "origin_raw_sha256": "7c6b057b8913128f3b4ddcff9ed58d8e27a668e62d348229de1f7cbdd0f443a9",
   "fixture_sha256": "f7f5799abde30809095a65cb415fce11b952c1be270bd9338f4a3deed3f48f1d",
   "model": "gemma3:12b",

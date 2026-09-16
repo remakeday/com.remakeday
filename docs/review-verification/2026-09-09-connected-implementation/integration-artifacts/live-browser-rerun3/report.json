@@ -1,5 +1,5 @@
 {
-  "mode": "real frontend 3500 + isolated pigfarm_test backend; fake models; automated observation, not human playtest",
+  "mode": "real frontend 3500 + isolated test_db backend; fake models; automated observation, not human playtest",
   "checks": [
     "mobile: live notebook budget, exact observed gallery, source replay, fixed portraits, no overflow",
     "desktop: live notebook budget, exact observed gallery, source replay, fixed portraits, no overflow"

@@ -1,7 +1,7 @@
 {
   "npc": "kanana1.5:8b-q4km",
   "core": "gemma4:12b",
-  "db": "pigfarm_test",
+  "db": "test_db",
   "health_models": {
     "npc": "ollama:kanana1.5:8b-q4km",
     "core": "ollama:gemma4:12b",
