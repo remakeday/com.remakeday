@@ -114,6 +114,10 @@ class ManagerDecisionOutput(StrictModel):
     decision_reason: str
 
 
+class UtteranceClassOutput(StrictModel):
+    label: Literal["question", "request", "chat", "nonsense"]
+
+
 class AdvisorAnswerOutput(StrictModel):
     answer: Literal["맞다", "틀리다", "그런 일은 없었다", "그건 알 수 없다", "기록은 이렇다"]
     detail: str | None = None
