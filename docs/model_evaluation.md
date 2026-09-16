@@ -23,14 +23,14 @@
 
 외부 API가 로컬보다 "좋아서" 고르는 것이 아니므로, 재는 목적은 **로컬 채택 구성이 확정한 게이트를 외부 후보가 깨지 않는지**(비열등)와 **차이가 어디서 얼마나 나는지**다. 러너·판정 기준·통제 문항은 E7·E6·npc-dialogue-2와 동일하게 두고 모델만 바꾼다. 로컬 기준값은 이 문서의 기존 부록 수치를 그대로 쓴다.
 
-| 축 | 러너·지표 | 로컬 기준(채택 구성) | Anthropic 후보 | 게이트 |
-|---|---|---|---|---|
-| Core 채점 일관성·극성 | `run_model_descent.py` Stage 2 — PCA, 극성쌍, evaluator 기대 일치(A.8 14건) | gemma4:12b-N: PCA 0.90 · 극성 O · eval 0.57 | Sonnet 5 / Opus 5 | PCA ≥ 0.90, 극성 O, eval ≥ 0.57 (비열등) |
-| Core 지연 | 같은 러너 p50/p95(ms, 네트워크 포함) | p50 2,918 · p95 4,231 | 〃 | C11~C13 게이트 그대로(A.6) |
-| Core 완주 | `run_selfplay.py` 1회차 | 완주·폴백 0/17(A.10) | 〃 | 완주·폴백 0·재생성 ≤ 로컬 |
-| NPC 의미 품질 | `run_npc_dialogue_check.py` 41문답 — 실패·재생성·출처 구분·당일 기억·회피 | gemma4:12b: 41/41, 재생성 0, 중간값 2.599s·p95 3.053s | Haiku 4.5 / Sonnet 5 | 실패·재생성 0, 중간값 ≤ 3s, 의미 항목 비열등(사람 검토) |
-| NPC 7세 정책 | `run_age7_check.py`(v2 기준) 5항목 | kanana: 4/5·누설 0 | 〃 | 4/5 이상·누설 0 |
-| 비용 | 판당 실측 토큰 × 단가 | 0(변동비) | `apiscenario.md` §1.3·§1.3b | 결정 입력값, 게이트 아님 |
+| 축 | 러너·지표 | 로컬 기준(채택 구성) | Anthropic 후보 | 게이트 | 측정 결과(A.19) |
+|---|---|---|---|---|---|
+| Core 채점 일관성·극성 | `run_model_descent.py` Stage 2 — PCA, 극성쌍, evaluator 기대 일치(A.8 14건) | gemma4:12b-N: PCA 0.90 · 극성 O · eval 0.57 | Sonnet 5 / Opus 5 | PCA ≥ 0.90, 극성 O, eval ≥ 0.57 (비열등) | 실제 러너는 `run_core_selection.py --stage formal`(§1 정정). Sonnet n=1 PCA 0.90·eval 0.71, n=3 PCA 0.9667·eval 0.7143 — **PASS**. Opus n=1 PCA 1.00·eval 0.57 — **PASS**(경계값) |
+| Core 지연 | 같은 러너 p50/p95(ms, 네트워크 포함) | p50 2,918 · p95 4,231 | 〃 | C11~C13 게이트 그대로(A.6) | Sonnet n=1: C11 O·C13 X. n=3: C11 X·C13 O — **n=1↔n=3 사이 뒤집힘**(표본 3, 동시 GPU 작업과 겹침, 변동성으로 해석). Opus: C11·C13 둘 다 X(advisor p95 +38%) |
+| Core 완주 | `run_selfplay.py` 1회차 | 완주·폴백 0/17(A.10) | 〃 | 완주·폴백 0·재생성 ≤ 로컬 | 5회차 self-play(USER_DAILY_ATTEMPTS 상향): Opus 완주·전 역할 재생성·폴백 0. Sonnet 완주·advisor/evaluator/manager/classifier/agent 재생성 0이나 **planner가 5회 중 2 재생성+1 폴백**(beats 7>maxItems 6 — Anthropic 구조화 출력에서 `maxItems`가 강제되지 않는 어댑터 한계, §5 참고) |
+| NPC 의미 품질 | `run_npc_dialogue_check.py` 41문답 — 실패·재생성·출처 구분·당일 기억·회피 | gemma4:12b: 41/41, 재생성 0, 중간값 2.599s·p95 3.053s | Haiku 4.5 / Sonnet 5 | 실패·재생성 0, 중간값 ≤ 3s, 의미 항목 비열등(사람 검토) | 20케이스×2 재생성: 구조 실패 0(둘 다). NPC-역할 재생성 Haiku 2·Sonnet 1(kanana 1과 동급, 전부 동일 금칙어 케이스에서 자가 회복). 중간값 Haiku 1.9~2.3s·Sonnet 2.5s(둘 다 ≤3s). 사람 검토: "지금 들음 vs 기억" 구분 등 kanana의 지속 약점을 둘 다 개선, Sonnet은 부재 인물 이름나열 약점 재현 — 비열등 이상으로 판단 |
+| NPC 7세 정책 | `run_age7_check.py`(v2 기준) 5항목 | kanana: 4/5·누설 0 | 〃 | 4/5 이상·누설 0 | 채점기 gemma3(당초 기준): Haiku 2/5→3/5 미달(파싱 실패 혼입 확인), Sonnet 2회 정지로 미실행. **채점기를 gemma4:12b(think off)로 통일 후 재측정**(§4): kanana·Haiku·Sonnet **전부 4/5 통과**. 누설 측정은 이 러너 범위 밖(별도 미측정) |
+| 비용 | 판당 실측 토큰 × 단가 | 0(변동비) | `apiscenario.md` §1.3·§1.3b | 결정 입력값, 게이트 아님 | 오늘 실행분 합계 **추정 상한 ~$1.06**(Core 축 담당 몫, 문자수×1.0토큰 가정 — 실측 토큰 아님) + 그 외 축(NPC 대화·gemma4 통일 검증) 비용은 별도 실측 없음. $10 상한 내 |
 
 결과는 **부록 A.19**에 적립하고 `metrics.yml`에 `provider: anthropic` 줄로 남긴다. 실행 규칙:
 - 키는 측정 당일에만 `.env`에 넣고 끝나면 즉시 제거한다. 제출(2026-09-20) 때 재투입한다. 그 사이 개발은 로컬이다.
@@ -1354,6 +1354,163 @@ NPC 채택(§5.3) 확정 전 게이트. `scripts/loop_app_npc.py` 래퍼(8600·p
 
 ---
 
+## A.19 2026-09-16 · 외부 API 평가 — Anthropic(Core·NPC)·Gemini 무료 키(NPC)·gemma4 통일
+
+원문: `output/model-eval-2026-09-16-anthropic/core-age7-summary.md`(Core·NPC 7세 1차) ·
+`stage2-formal-20260916T121314Z.json`(n=1) · `stage2-formal-20260916T143841Z.json`(n=3) ·
+`age7-anthropic.yml` · `age7-anthropic-solo.yml` · `age7-claude-haiku-4-5-verbose.log` ·
+`output/npc-dialogue-2026-09-16-anthropic/comparison.md` ·
+`output/npc-dialogue-2026-09-16-gemini/comparison.md` ·
+`output/gemma4-unify-2026-09-16/summary.md`·`judge_agreement_results.json`·
+`age7-kanana-gemma4judge.yml`·`age7-anthropic-gemma4judge.yml`·
+`age7-claude-haiku-4-5-gemma4judge.log`·`age7-claude-sonnet-5-gemma4judge.log`·
+`selfplay-player-gemma4.log`(전부 `output/`, gitignore — 이 부록이 정본).
+러너: `run_core_selection.py --provider anthropic`(§1 정정, `run_model_descent.py`가 아니다 —
+PCA·극성쌍 개념이 그 스크립트에 없다), `run_npc_dialogue_check.py --provider
+{anthropic,gemini}`, `run_age7_check.py --provider anthropic`, `run_selfplay.py`.
+
+### 1. Core PCA·극성·eval·지연 (`run_core_selection.py --stage formal`, advisor·evaluator만)
+
+| 모델 | PCA | 극성쌍 | eval 기대 일치 | advisor p95(ms) | evaluator p50(ms) | C11(p95≤5s) | C13(p50×10≤30s) |
+|---|---:|:---:|---:|---:|---:|:---:|:---:|
+| 로컬 기준 gemma4:12b-N | 0.90 | O | 0.57 | 4,231 | 2,918 | O | O |
+| claude-sonnet-5 (n=1) | 0.90 | O | 0.7143 | 4,593 | 3,186 | O | X (31,860ms) |
+| claude-opus-5 (n=1) | 1.00 | O | 0.5714 | 5,853 | 3,135 | X (5,853ms) | X (31,350ms) |
+| **claude-sonnet-5 (n=3, 게이트 통과 후 추가 실행)** | **0.9667** | O | 0.7143 | 7,387 | 2,964 | **X** | **O** (29,640ms) |
+
+n=3: advisor 66콜·evaluator 42콜, 폴백 0, advisor p50 3,813ms. **PCA·극성·eval 게이트는 n=1·n=3
+모두 Sonnet·Opus 둘 다 PASS**(Opus의 eval 0.5714는 게이트 하한과 사실상 동률인 경계값). C11·C13
+지연 게이트는 Sonnet에서 n=1↔n=3 사이에 뒤집혔다(n=1: C11 O·C13 X / n=3: C11 X·C13 O) — n=3이
+로컬 GPU 평가 작업과 동시에 돌아 advisor p95가 늘고 evaluator p50는 오히려 줄어든 결과라 표본 3
+의 변동으로 읽는다. Opus는 C11·C13 둘 다 X(advisor p95가 로컬보다 38% 높음 — 모델 자체가 느리다).
+**C13은 evaluator p50 × 10으로 만든 합성 지표**라 채점 호출을 묶으면 실제 호출은 1회가 되고, 이
+설계는 네트워크 왕복이 있는 외부 API에 구조적으로 불리하게 작동한다 — 해석 시 유의.
+
+### 2. Core 완주 — self-play 5회차(USER_DAILY_ATTEMPTS 상향, persona 성실, NPC kanana)
+
+| 구성 | 점수(5회차) | 결말 | 소요 | attempt_id | 하네스 |
+|---|---|---|---:|---|---|
+| Core claude-sonnet-5 | 13.1, 16.0, 4.4, 8.8, 8.8 | doom | 350.3s | `acfad5ac-28b1-458d-9041-a8d419c80cb4` | evaluator_verdict 50·manager_check 15·classifier 10·agent 10·advisor 4콜, 재생성·폴백 0. **planner 5콜, 재생성 2+폴백 1**(스키마 위반: `plans[3].beats` 7개 > maxItems 6 — `maxItems`가 Anthropic 어댑터에서 description으로 강등되어 구조화 출력이 강제하지 못함) |
+| Core claude-opus-5 | 8.8, 0.0, 4.4, 8.8, 4.4 | doom | 295.3s | `4c29beca-84c3-4c2c-b7f9-606ce3bf7bcf` | 전 역할 재생성·폴백 0 |
+| Core ollama gemma4:12b(대조) | 35.0 × 5 | doom | 1526.0s(동시 gemma3 채점기 작업과 GPU 경합) | `87e9faf6-2230-49a3-9f1f-f2ab6036db68` | advisor 루프 재생성 3(non_verbatim_evidence), 그 외 0. 첫 시도는 서술 폴백이 `free_text` 2000자 상한을 넘겨 422로 죽어 수정 후 재실행(§5) |
+
+Core gemma4 플레이어(Core gemma4, NPC kanana)로도 1판 실행: 8.8, 8.8, 8.8, 21.9, 17.5 / doom /
+323.6s / `e5b936ce-ee2d-4616-b1ee-86ffa4c301e2` / 전 역할 재생성·폴백 0. self-play 점수는 회차마다
+크게 흔들려(n=1) 이 표로 플레이어 모델 순위를 매기지 않는다 — 완주·폴백·크래시 0이 이 축의 판정
+대상이다. **완주·폴백 게이트는 Opus·gemma4 대조군 전부 통과, Sonnet은 planner에 한해 재생성 2·
+폴백 1로 "재생성 ≤ 로컬" 기준을 벗어난다**(원인은 §5의 어댑터 한계).
+
+### 3. NPC 의미 품질 — `run_npc_dialogue_check.py`(20케이스 × repeat 2 = 구조상 80평가턴)
+
+| | kanana1.5:8b(기준선, 82턴) | claude-haiku-4-5 | claude-sonnet-5 | gemini-3-flash-preview |
+|---|---:|---:|---:|---:|
+| 구조 실패 | 0 | 0 | 0 | 0(성공분만) |
+| NPC-역할 재생성/미복구 폴백 | 1 / 0 | 2 / 0 | 1 / 0 | 0 / 66(할당량 소진) |
+| 성공 요청 | 82 | 80 | 80 | **14 / 80 시도** |
+| p50 / p95(ms) | 1,060.3 / 1,515.5 | 1,906.5~2,256.1 / 2,545.8~3,418.8(러너 수정 전·후) | 2,498.0 / 3,492.2 | 9,183.2 / 66,669.6(10 RPM 대기 포함 wall time) |
+| 평균 답 길이(자) | 29.4 | 31.4~32.5 | 35.8 | 54.5 (n=14) |
+
+세 모델 모두 재생성은 동일한 `identity` 케이스의 금칙어 '돼지'에서 나왔고 하네스 재시도로 자가
+회복했다(미복구 폴백 0). *원시* 재생성/failed_harnesses 수치(Haiku 162/80, Sonnet 161/80)는
+새 발화 분류기 스텁이 평가 스키마를 못 맞춰 매 턴 2재생성+1폴백을 만드는 러너 결함이며 provider와
+무관하다(§5에서 수정, Haiku만 수정 러너로 재실행).
+
+**의미 품질(사람 검토, 10케이스 선별 표본)** — 두 Anthropic 모델 모두 09-15 보고서가 로컬 모델의
+지속적 약점으로 적은 "지금 방금 들었다 vs 기억한다" 구분을 통과한다(kanana: "그건 나도 몰라."로
+방금 들은 말도 부정). 근거-출처 구분(전언 vs 직접 목격)도 둘 다 명시적으로 한다. Sonnet은 "사라진
+친구 이름을 물으면 현재 인물을 나열"하는 09-15 문서화 약점을 그대로 재현(`lost-name`: "없어진
+친구? 그건 나도 몰라. 채연, 민석, 은상 다 오늘 봤는데."), Haiku는 이 사례를 피한다. `core-6`(부재
+인물이 무엇을 했는지 근거 없이 단정)에서 Sonnet·Gemini는 "은상이는 안 적었어"로 근거 없는 부정
+단정을 하고, Haiku는 모른다고 정직하게 답한다.
+
+**Gemini 무료 키 — NPC 대안으로 채택 불가.** 실제 제약은 과제가 지시한 10 RPM 페이싱이 아니라
+**하루 20요청 상한**이다. 워밍업 시도 2회가 503으로 사례 데이터 없이 실패, 3번째 시도에서 14턴
+성공 후 503 → `429 RESOURCE_EXHAUSTED`("daily cap 20 requests")로 나머지 66턴 전부 실패. 게임
+한 판에 NPC 호출이 수십 건 필요해 하루 20건으로는 운영 불가 — 결정: **Gemini는 NPC 후보에서
+제외**.
+
+### 4. NPC 7세 정책 (`run_age7_check.py`, policy on)
+
+**1차 — 채점기 gemma3:12b(로컬 기준값과 같은 채점기)**
+
+| 모델 | 1_사실대로 | 2_왜=몰라 | 3_3턴망각 | 4_유도수용 | 5_문자그대로 | 통과 | 게이트(4/5) |
+|---|---:|---:|---:|---:|---:|---:|:---:|
+| 로컬 기준 kanana1.5:8b(n=5, 2026-09-14) | 0.6 | 1.0 | 1.0 | 1.0 | 1.0 | 4/5 | O |
+| claude-haiku-4-5(n=4, 1차) | 0.75 | 1.0 | 0.0 | 0.0 | 0.0 | 2/5 | **X** |
+| claude-haiku-4-5(n=4, 단독 재실행) | 0.0 | 1.0 | 0.0 | 0.75 | 1.0 | 3/5 | **X** |
+| claude-sonnet-5 | — | — | — | — | — | — | **2회 정지로 미실행** |
+
+Haiku 재실행분의 `1_사실대로` 4건 전부 "judge 출력 파싱 실패" 주석이 달렸으나 답변 자체는 사실을
+정확히 밝힌 내용이었다(§4의 gemma4 재현에서 같은 20건이 0/20 파싱 실패로 재현돼, 원인이 채점기
+자체가 아니라 당시 VRAM 경합으로 판단). Sonnet은 1차 32분·2차 24분 CPU 0%·소켓 idle로 멈춰
+종료했고, 같은 프롬프트 단발 진단 호출은 3.31초에 정상 완료돼 어댑터 결함은 배제, 이 Anthropic
+키를 동시에 쓰는 여러 평가 작업이 겹친 시점의 계정/네트워크 정체로 추정한다(확정 원인 아님).
+
+**2차 — 채점기를 gemma4:12b(think off)로 통일 후 재측정(§5의 채점기 교체 이후)**
+
+| 모델 | 1_사실대로 | 2_왜=몰라 | 3_3턴망각 | 4_유도수용 | 5_문자그대로 | 통과 | 게이트(4/5) |
+|---|---:|---:|---:|---:|---:|---:|:---:|
+| kanana1.5:8b(n=4) | 0.75 | 1.0 | 0.25 | 1.0 | 1.0 | 4/5 | O |
+| claude-haiku-4-5(n=4, 67s) | 0.75 | 1.0 | 0.0 | 0.75 | 1.0 | 4/5 | **O** |
+| claude-sonnet-5(n=4, 90s) | 1.0 | 1.0 | 0.0 | 0.75 | 1.0 | 4/5 | **O** |
+
+**세 모델 전부 4/5로 게이트를 통과한다.** 공통 약점은 항목 3(3턴 망각) — 셋 다 이름·서랍 위치·
+숫자를 그대로 정확히 기억해 말한다. Sonnet은 이 항목에서 메타 발화 누출도 보였다: "세 번째 서랍에
+있다고 했어, **유저가**." — 페르소나 밖 표현("유저")이 답변에 그대로 섞여 나왔다. 누설(금칙어)
+측정은 `run_age7_check.py` 범위 밖이라 이 축에서 측정하지 않았다.
+
+**gemma3→gemma4 채점기 교체 자체의 영향**: 같은 20개 발화(Haiku 1차 verbose 로그)를 두 채점기로
+각 2회 재채점한 결과 파싱 실패 0/20(양쪽 다), 자기일치성 20/20(양쪽 다), 채점기 간 일치 19/20(95%)
+— 유일한 불일치는 "그건 나도 몰라. 내가 못 봤어."를 gemma3는 회피(FAIL), gemma4는 부정 답변(PASS)
+으로 본 해석 차이다. 즉 1차 표와 2차 표의 점수 변화(특히 Haiku 2/5→3/5→4/5)는 대부분 **채점기
+교체가 아니라 그날 밤 VRAM 경합으로 인한 채점 잡음 제거**로 읽어야 한다.
+
+### 5. 어댑터·러너 결함과 수정
+
+- **Anthropic SDK 1.6.0 `temperature` 인자 소실** — `Messages.create()`에 `temperature` 파라미터가
+  빠져 Haiku 호출이 `TypeError`. `extra_body`로 우회 전송(커밋 `6a02a13`). Sonnet·Opus는 원래
+  temperature를 받지 않는 설계라 영향 없음, effort는 Sonnet·Opus에만 전송.
+- **planner `beats` maxItems 미시행** — 구조화 출력 스키마의 `maxItems`가 Anthropic 어댑터에서
+  description 문구로 강등되어(§HANDOFF "스키마 strip" 참고) 실제 상한을 강제하지 못함 — Sonnet
+  self-play에서 재생성·폴백의 유일한 원인(§2). 후속 과제: 프롬프트 쪽 상한 명시 또는 응답 후
+  절단.
+- **NPC 대화 러너의 발화 분류기 스텁 결함** — `utter()`에 새로 추가된 `classify()` 호출이 러너
+  fixture의 `core_llm` 스텁(`{"plans": []}` 고정)과 스키마가 안 맞아 provider와 무관하게 매 턴
+  재생성 2+폴백 1이 붙던 것을 스텁이 `label` 스키마면 `"question"`을 돌려주도록 수정, Haiku는
+  수정 러너로 재실행.
+- **selfplay 밤 서술 폴백 422** — `free_text` 2000자 상한을 넘겨 죽던 것을 수정(gemma4 대조군
+  1차 시도가 이 결함으로 크래시).
+- **gemma4:12b 채점기 thinking 기본 ON** — `think` 필드를 생략하면 gemma4가 기본으로 thinking을
+  켜 판정 1건에 1,666 thinking 토큰·35초가 걸림. `runner_common.make_llm()` 기본값을
+  `think=False`로 고정(13개 호출 지점 전부 적용).
+
+### 6. 비용 추정 (list price, `docs/apiscenario.md` §1.3, 문자수 × 1.0토큰 가정 — 상한 추정, 실측 아님)
+
+Core 축(§1·§2 일부) 담당 몫 실행분 합계 **~$1.06**(Core smoke Sonnet ~$0.24·Opus ~$0.59, NPC age7
+Haiku 1차 ~$0.10, Sonnet 정지 시도 2건 ~$0.13 이하, 진단 호출 <$0.01) — 내 몫 예산(~$4) 안. NPC
+대화 점검(§3)·gemma4 통일 재측정(§4 2차)의 정확한 토큰 사용량은 별도로 집계하지 않았다(`AnthropicLLM.complete()`가
+`response.usage`를 버려 러너가 기록하지 않음) — **오늘 총 지출은 추정치이며 실측 정산이 아니다.**
+$10 상한은 넘지 않은 것으로 판단하나 근거는 문자수 상한 추정뿐이다.
+
+### 판정과 결정
+
+- **PCA·극성·eval 게이트**: Sonnet·Opus 둘 다 PASS. **지연 게이트(C11·C13)**: Sonnet은 n=1·n=3
+  사이 결과가 갈릴 만큼 경계, Opus는 로컬보다 뚜렷이 느림(advisor p95 +38%). **완주 게이트**:
+  Opus·gemma4 대조군 0 재생성·0 폴백, Sonnet은 planner 축 1건 제외 통과. **NPC 의미 품질**:
+  Haiku·Sonnet 둘 다 로컬 대비 비열등 이상(핵심 약점인 "방금 들음/기억" 구분 개선). **NPC 7세
+  정책**: 채점기를 gemma4로 통일해 재측정한 결과 kanana·Haiku·Sonnet 전부 4/5로 게이트 통과(1차
+  gemma3 채점기 결과는 VRAM 경합으로 인한 잡음이 컸던 것으로 판단). **Gemini**: 하루 20요청
+  상한으로 NPC 후보에서 제외.
+- **권고(최종 결정은 사용자 몫)**: **Core `claude-sonnet-5`, NPC `claude-haiku-4-5`.** Opus 5는
+  이 게이트 조합에서 품질 우위가 없고(eval 게이트 경계·PCA만 소폭 우위) advisor p95가 더 느리며
+  비용이 2~3배라 채택하지 않는다.
+- **관찰 항목(운영 시 유의)**: advisor p95가 5~7s대에서 표본 간 크게 흔들린다(C11 경계) · planner
+  `beats` maxItems가 Anthropic 구조화 출력에서 강제되지 않는다(§5, 후속 과제) · 3턴 망각(항목 3)은
+  로컬·Anthropic 공통 약점 · Sonnet이 "유저가"라는 메타 표현을 답변에 누출한 사례 1건(§4) · Gemini
+  무료 키는 어떤 역할로도 운영 후보가 아니다(하루 20요청).
+
+---
+
 # 9. 변경 이력
 
 | 날짜 | 내용 |
@@ -1377,6 +1534,7 @@ NPC 채택(§5.3) 확정 전 게이트. `scripts/loop_app_npc.py` 래퍼(8600·p
 | 2026-09-14 | **채점 파이프라인 변경 — 이후 evaluator 측정은 새 기준.** 실판 da38de28에서 동일 제출 70.8→59.6 요동(identity-1) 진단 → ① evaluator temp 0은 기배선 확인(그럼에도 요동 — 회귀 테스트 고정) ② `scoring_rules.apply_ratchet` 단조 잠금(같은 문장 유지 시 하향 금지, `ratcheted` 표시) ③ `judge_candidates` 문장 단위 후보(8칸 UI 유지, 덩어리 칸 해소 — **A.8의 "모델 교체로 안 닫히는 결함 2건" 중 덩어리 칸이 이것으로 닫힘**). 실판 오프라인 검산: 요동 케이스 차단(59.6→70.8 유지). 402 passed |
 | 2026-09-16 | **외부 API 전환 결정 기록.** 로컬 채택 구성(Core gemma4:12b-N·NPC kanana/gemma4)은 유효하며, 전환 사유는 해커톤 심사용 서빙 제약(GPU 1장 동시 접속 1명·홈서버 가용성·클라우드 GPU 비용)이다. 로컬 vs Anthropic 비교 프로토콜(같은 러너·같은 게이트·비열등 판정)을 문서 상단에 정의, 결과는 부록 A.19 예정. 키는 측정 당일만 투입. 비용 근거 `docs/apiscenario.md`. Anthropic 어댑터 추가(`AnthropicLLM`, provider `anthropic`) |
 | 2026-09-14 | **AGE7 프롬프트 v2 + 대화 메모리 창 — 이후 7세 계열 측정은 새 기준.** 사용자 확정 7세 정의("몰라로 끝내지 않는다 — 본 것·하고 싶은 말을 붙인다")를 정책 2·3·7에 반영하고 인물별 "직접 본 것"을 페르소나에 추가. 1차 문구는 망각을 0.8→0.0으로 붕괴시켜(4턴 전 사실 회상) 문구 정밀화 + **정책 ON 시 메모리 마지막 두 교환만 제공하는 구조 절단**으로 교정. kanana 재측정(n=5·judge 1표): [0.6·1.0·**1.0**·1.0·1.0] 4/5 통과·누설 0. 신의 질문 해금(`advisor_leads` 10건)·dormant 탐사 행동 5종·직접쓰기 대안 제시도 이 회차 — 이전 E6 수치와 직접 비교 금지 |
+| 2026-09-16 | **외부 API 평가 실행 — 부록 A.19.** Core PCA·극성·eval 게이트는 Sonnet 5·Opus 5 둘 다 통과(n=1·n=3), 지연 게이트는 Sonnet이 n=1↔n=3 사이 경계에서 뒤집히고 Opus는 미달. self-play 완주·폴백은 Opus·gemma4 대조군 0, Sonnet은 planner의 `maxItems` 미시행 1건. NPC 대화 의미 품질은 Haiku·Sonnet 둘 다 로컬 대비 비열등 이상. NPC 7세 정책은 채점기를 gemma4:12b(think off)로 통일해 재측정한 뒤 kanana·Haiku·Sonnet 전부 4/5 통과(1차 gemma3 채점기 결과는 VRAM 경합 잡음으로 판단). Gemini 무료 키는 하루 20요청 상한으로 NPC 후보에서 제외. **권고: Core `claude-sonnet-5` · NPC `claude-haiku-4-5`**(최종 결정은 사용자 몫). 어댑터 결함 2건 수정(Haiku temperature `extra_body` 전송, gemma4 채점기 think 기본값 off). 상단 "측정 결과" 열·`metrics.yml` 병행 기록 |
 
 ---
 

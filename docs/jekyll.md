@@ -4,7 +4,7 @@
 
 ---
 
-## 2026-09-16 — 테스터6 휴먼테스트: 피드백 11건 접수, UI·추천 규칙 5건 반영
+## 2026-09-16 — 테스터6 휴먼테스트: 피드백 11건 접수, UI·추천 규칙 5건 반영 / 밤: 개발 로그인 머지, Anthropic·Gemini 평가, 채점기 gemma4 통일
 
 ### 테스터6 실플레이 (판 2338ec9f, 09:48~11:06)
 
@@ -53,6 +53,91 @@ Anthropic 어댑터(`provider=anthropic`)를 붙였다. 리뷰가 하네스 스�
 하루 동안 F7·F2·허들을 모두 무거운 절차로 돌려 기능당 1~1.5시간이 든 것을 두고, 검토 강도를 **A(비용·보안·인증)/B(게임 로직·UI)/C(문장·문서·러너)** 세 등급으로 나눠 `CLAUDE.md`·`AGENTS.md`에 규칙으로 넣었다. 외부 API 전환 이유(해커톤 서빙 조건, 모델 품질 문제가 아님)와 로컬·Anthropic 비교 프로토콜을 `model_evaluation.md` 맨 위에 기록했다.
 
 허들이 켜지면 구글 없이 들어갈 길이 없어 개발 계정 로그인(`.env`의 `DEV_ACCOUNT_ID`·`DEV_LOGIN`)을 A등급으로 시작했다. 백엔드 엔드포인트·유스케이스·테스트 11개까지 WIP(`7af14dd`, 585 passed)에서 사용자 지시로 중단. 남은 순서(검토·랜딩 폼·selfplay 플래그·머지·재기동)와 Anthropic 평가·F11·untrack 결정은 `HANDOFF-26-09-16.md` "지금 바로 할 일"에 있다.
+
+### 개발 계정 로그인 완료·main 머지 (귀가 후 20:39~21:01, A등급)
+
+낮에 WIP로 멈춘 `7af14dd`부터 이어서 A등급 절차(task별 sonnet 검토 → opus 최종 리뷰 → 수정 1회 → 범위 재검토)로 끝냈다. 진행 장부는 `.superpowers/sdd/2026-09-16-dev-login/progress.md`.
+
+- **Task 1 검토(sonnet)** — Important 1건: 계획 Step 6의 `api_contract.md` 기재 누락 → `34ce698`(20:39)
+- **Task 2 `48a70ac`(20:41)** — 랜딩 `DevLoginForm`(52줄, `NEXT_PUBLIC_DEV_LOGIN`), `run_selfplay --dev-login`, 헤드리스 `dev-login.cjs`. 실서버 실행에서 `getByRole('alert')`가 Next의 route announcer(`role=alert`)와 겹쳐 strict mode로 실패 → 선택자를 폼 안으로 한정(`816f052`) 뒤 PASS(틀린 비번 alert, 로그인 → `/play`, `POST /sessions` 200, `/auth/me`에서 dev 세션 확인)
+- **opus 최종 리뷰** — Critical 0, Important 2. I1: `DEV_LOGIN`을 끄거나 계정을 바꿔도 이미 발급된 dev 세션이 14일간 통과(`current_user`가 서명·만료만 확인) → `dev:` sub를 현재 설정 계정과 대조하도록 수정, 테스트 4개 + password 65자 422 테스트 1개, `.env.example`은 off(`d659be3`, 585 → **590 passed** 10.51초). I2: 저장소가 공개인데 계정 값이 계획·인계 문서·테스트에 적혀 있었다 → 사용자 결정으로 값은 `backend/.env`에만 두고 추적 파일에서 제거(`be42385`, grep 0건, 590 passed). 미푸시 히스토리에 남은 옛 값은 히스토리 재작성 대신 `.env` 비밀번호 교체로 무력화했다 — 옛 값이 알려져도 통하지 않으면 충분하고, 재작성은 되돌리기 어렵기 때문이다
+- **파킹한 Minor** — M1 off 상태에서도 본문 검증 422가 404보다 먼저 나옴(공개 저장소라 은닉 가치 낮음), M2 `TRUST_PROXY`를 켜면 `X-Forwarded-For` 맨 왼쪽을 믿어 로그인 속도 제한 우회 가능(지금은 off라 잠복 — 배포 체크 항목), M4 dev 계정이 하루 5판을 모든 용도가 공유(평가일엔 `USER_DAILY_ATTEMPTS` 로컬 상향), M5 합성 루트 주입 조건 테스트 없음
+- **머지·재기동** — main ff → `be42385`, 백엔드 8500 재기동. 옛 비밀번호 401, 새 `.env` 계정으로 `dev-login.cjs` PASS. 이어서 테스트의 `.env` 폴백 경로(`../backend/.env` → `../../backend/.env`, `78b7cc8`)와 selfplay `--dev-login`이 Secure 쿠키를 http 요청에 못 싣던 문제(속성 없이 재설정, `33bebca`)를 고쳤다
+
+### Anthropic·Gemini 모델 평가 (B등급, `feat/coherence-chain`)
+
+**러너·어댑터 변경** — Anthropic SDK 1.6에서 `create()`의 `temperature` 인자가 빠져 `extra_body`로 전송(`6a02a13`). `run_npc_dialogue_check --provider anthropic`(`59dada7`)·`--provider gemini`(`ece472d`), `run_core_selection`(formal stage만)·`run_age7_check --provider anthropic`(`7527fa2`, 채점기는 ollama 고정). selfplay 밤 서술 폴백이 `free_text` 2000자 상한을 넘어 422 나던 문제(`ff4eb66`). 작업 지시는 Core 축 러너를 `run_model_descent.py`로 적었지만 그 파일은 E6 NPC 디센트라 PCA·극성쌍이 없어서, 실제 게이트가 있는 `run_core_selection.py`에 스위치를 붙였다.
+
+아래 수치의 원문은 `output/`(gitignore)에만 있다 — `npc-dialogue-2026-09-16-anthropic/`·`npc-dialogue-2026-09-16-gemini/`의 `comparison.md`, `model-eval-2026-09-16-anthropic/core-age7-summary.md`와 `stage2-formal-*.json`. **정본 `model_evaluation.md`·`metrics.yml`에는 아직 기록되지 않았다**(`model_evaluation.md` 마지막 수정 18:13, `metrics.yml` 변경 없음).
+
+**NPC 대화 점검 (20케이스 × repeat 2)**
+
+평가 중 러너 결함을 찾았다. 낮에 추가한 발화 분류기가 `core_llm`을 부르는데, 러너 fixture의 `core_llm` stub이 늘 `{"plans": []}`를 돌려줘 분류기 스키마를 못 맞췄다. 그래서 턴마다 재생성 2회·폴백 1회가 모델과 무관하게 붙었다(1차 Haiku·Sonnet 원시 재생성 162·161, failed_harnesses 80). stub이 `label` 스키마면 `question`을 돌려주게 고치고 Haiku만 재실행했다. Sonnet은 재실행하지 않아 NPC 역할 수치만 따로 뽑은 값이다.
+
+| | kanana1.5:8b (09-15 기준선) | claude-haiku-4-5 (수정 러너) | claude-sonnet-5 (수정 전 러너) | gemini-3-flash-preview |
+|---|---:|---:|---:|---:|
+| 평가 턴 | 82 | 80 | 80 | 80 시도 · **성공 14** |
+| NPC 역할 재생성 / 미복구 폴백 | 1 / 0 | 2 / 0 | 1 / 0 | 0 / **66** |
+| p50 / p95 (ms) | 1,060.3 / 1,515.5 | 1,906.5 / 2,545.8 | 2,498.0 / 3,492.2 | 9,183.2 / 66,669.6 (10 RPM 대기 포함) |
+| 평균 답 길이(자) | 29.4 | 31.4 | 35.8 | 54.5 (n=14) |
+
+(수정 전 러너의 Haiku 1차는 p50 2,256.1 · p95 3,418.8ms, 평균 32.5자.) 재생성은 세 모델 모두 같은 `identity` 케이스의 금칙어 '돼지'에서 나왔고 재시도로 회복했다. 10케이스·1회 반복·검토자 1명 기준 읽기로는, 두 Anthropic 모델 모두 09-15 보고서가 로컬 모델의 지속적 약점으로 적은 "지금 네가 말해 줘서 알았어"와 기억을 구분한다(kanana는 "그건 나도 몰라."). 반면 Sonnet은 사라진 친구를 물으면 현재 인물을 나열하는 약점을 그대로 재현했고, `core-6`에서 Sonnet·Gemini는 근거 없이 "은상이는 안 적었어"라고 단정했다(Haiku는 모른다고 답함). Gemini 무료 키의 실제 제약은 10 RPM이 아니라 **하루 20요청**이었다 — 워밍업 503으로 두 번 실패, 세 번째에 14턴 성공 뒤 503과 `429 RESOURCE_EXHAUSTED`로 끊겼다.
+
+**Core — `run_core_selection --stage formal` (advisor·evaluator 역할만)**
+
+| 셀 | PCA | 극성쌍 | eval 기대 일치 | advisor p95 (ms) | evaluator p50 (ms) | C11 (p95≤5s) | C13 (p50×10≤30s) |
+|---|---:|:---:|---:|---:|---:|:---:|:---:|
+| 로컬 기준 gemma4:12b-N | 0.90 | O | 0.57 | 4,231 | 2,918 | O | O |
+| claude-sonnet-5 n=1 | 0.90 | O | 0.7143 | 4,593 | 3,186 | O | X (31,860) |
+| claude-opus-5 n=1 | 1.00 | O | 0.5714 | 5,853 | 3,135 | X | X (31,350) |
+| **claude-sonnet-5 n=3** (23:38) | **0.9667** | O | **0.7143** | 7,387 | 2,964 | **X** | **O** (29,640) |
+
+n=3에서 advisor 66콜·evaluator 42콜 폴백 0, advisor p50 3,813ms. n=1과 n=3에서 두 지연 게이트의 결과가 서로 뒤집혔다 — Sonnet은 두 게이트 모두 경계선에 있다는 뜻으로 읽었다. C13은 evaluator p50 × 10으로 만든 합성 지표라, 채점 호출을 묶으면 실제 호출이 1회가 되어 네트워크 왕복이 있는 외부 API에 불리하게 작동한다는 점도 함께 적었다. Opus는 advisor p95가 로컬보다 38% 느려 n=3을 돌리지 않았다. 비용은 문자수 × 1.0토큰 상한 추정으로 Core 스모크 두 셀·Haiku age7·중단분 합계 약 $1.06(실측 토큰 아님).
+
+**NPC 7세 정책 — `run_age7_check --policy on` (채점기 gemma3:12b)**
+
+| | 1_사실대로 | 2_왜=몰라 | 3_3턴망각 | 4_유도수용 | 5_문자그대로 | 통과 |
+|---|---:|---:|---:|---:|---:|:---:|
+| 로컬 kanana1.5:8b (09-14) | 0.6 | 1.0 | 1.0 | 1.0 | 1.0 | 4/5 O |
+| claude-haiku-4-5 n=4 (21:35, 동시 실행) | 0.75 | 1.0 | 0.0 | 0.0 | 0.0 | 2/5 X |
+| claude-haiku-4-5 n=4 (23:30, 단독 재실행) | 0.0 | 1.0 | 0.0 | 0.75 | 1.0 | 3/5 X |
+
+Haiku는 두 번 다 게이트(4/5) 미달이지만 항목별 값이 크게 흔들린다. 단독 재실행의 1_사실대로 4건에는 모두 "judge 출력 파싱 실패" 주석이 붙었는데, 같은 발화를 뒤에 다시 채점했을 때는 파싱 실패가 0건이었다 — 채점기 문제라기보다 그 시각 VRAM 경합으로 본다. **Sonnet age7은 결과가 없다.** 1차 32분·2차 24분 동안 CPU 0·소켓 idle로 멈춰 종료했고, 같은 프롬프트의 단발 진단 호출은 3.31초에 정상 완료돼 어댑터 결함은 아닌 것으로 판단했다(동시 평가로 인한 계정·네트워크 정체로 추정, 원인 확정 못함). 22:41에 시작한 재시도 로그도 0바이트다.
+
+### 채점기·셀프플레이 기본값 gemma3 → gemma4(think off) 통일 (`06e0906`, 23:44)
+
+`.env`는 이미 `CORE_LLM_MODEL=gemma4:12b`·think off였는데 코드 기본값(`runner_common.DEFAULT_JUDGE_MODEL`, `Settings.core_llm_model`)은 gemma3:12b였다. 16GiB GPU 한 장에 gemma3 채점기와 백엔드의 gemma4가 같이 올라가지 못해 스와핑이 났고, 오늘 밤 평가 러너가 40분 넘게 묶인 원인 중 하나였다. 5파일 +10/−8줄. 요약은 `output/gemma4-unify-2026-09-16/summary.md`.
+
+- **think 기본값** — gemma4:12b는 `think` 필드를 빼면 thinking이 켜진다. 짧은 판정 1건에 thinking 1,666토큰·35초가 걸렸고 JSON이 코드펜스에 싸여 나왔다(curl 직접 재현). `make_llm()`에 `think=False` 기본값을 넣어 이 함수를 쓰는 13개 호출 지점이 한 번에 off를 받게 했고, `Settings.core_llm_think` 기본값도 `"default"` → `"off"`. gemma3·exaone3.5·kanana1.5는 thinking capability가 없어 무해함을 `/api/show`로 확인했다
+- **채점기 일치율** — Haiku age7 발화 20건을 두 채점기로 각 2회 채점
+
+  | 지표 | gemma3:12b | gemma4:12b (think off) |
+  |---|---:|---:|
+  | 파싱 실패 (1회/2회) | 0/20, 0/20 | 0/20, 0/20 |
+  | 자기일치 | 20/20 | 20/20 |
+  | 평균 지연 | ~1.0초/콜 | ~1.2~1.7초/콜 (첫 콜 로드 11.8초) |
+  | 두 채점기 간 일치 | 19/20 (95%) | |
+
+  유일한 불일치는 "그건 나도 몰라. 내가 못 봤어."를 gemma3는 회피(FAIL), gemma4는 부정 답변(PASS)으로 본 해석 차이다
+- **age7 로컬 기준 재측정 (kanana + gemma4 채점기)** — 0.75 / 1.0 / **0.25** / 1.0 / 1.0, 4/5로 게이트 통과(gemma3 채점기 시절과 통과 수 동일, 파싱 실패 0). 다만 3_3턴망각이 09-14 기록 1.0에서 0.25로 내려갔다
+- **건드리지 않은 것** — `run_core_selection.py`의 후보 목록(여러 모델 비교가 목적이라 기본값이 아님), `test_health_and_factories.py`의 `"gemma3:12b"`(임의 문자열 테스트 데이터)
+- **검증** — backend **590 passed**
+- **미완** — 셀프플레이 플레이어 gemma4 확인(D)은 기록 시점 진행 중: 23:45 로그 기준 4회차까지 점수 8.8·8.8·8.8·21.9. 이전 gemma3 플레이어 기록(35.0 × 5)은 다른 세션의 것이라 조건이 같은지 확인하지 않았다. 원인 확인 전에는 gemma4를 플레이어 기본값으로 확정하지 않는다(`--model gemma3:12b`로 되돌릴 수 있음). gemma4 채점기로 Anthropic NPC age7을 다시 재는 단계(E)는 GPU 순차 실행 규칙 때문에 미착수
+
+### 밤 마무리 — Anthropic 평가 결론 기록과 부록 A.19 (자정 무렵)
+
+오늘 밤 작업을 정본에 옮겼다. **개발 계정 로그인**은 A등급 절차로 완료·main 머지(`be42385`, 590 passed) — 계정 id·비밀번호 값은 어떤 문서·테스트에도 남기지 않고 **`backend/.env`에만** 두며, 이번에 비밀번호를 교체했다(공개 저장소라 과거 값이 알려져도 통하지 않게). **Anthropic 어댑터**는 SDK 1.6.0에서 `Messages.create()`의 `temperature` 인자가 빠져 Haiku가 `TypeError`로 죽던 결함을 `extra_body` 경유 전송으로 고쳤다(`6a02a13`). **러너 결함**도 두 건 잡았다 — NPC 대화 러너의 발화 분류기 stub이 매 턴 재생성 2+폴백 1을 provider와 무관하게 만들던 것, gemma4:12b 채점기가 `think` 필드 생략 시 기본으로 thinking을 켜 판정 1건에 35초씩 걸리던 것(`make_llm()` 기본값 `think=False`로 통일).
+
+**평가 결과와 권고**: Core PCA·극성·eval 게이트는 Sonnet 5·Opus 5 둘 다 통과, 지연 게이트는 Sonnet이 n=1↔n=3 사이 경계에서 흔들리고 Opus는 advisor p95가 로컬보다 38% 느려 미달. self-play 완주·폴백은 Opus·gemma4 대조군(35.0×5, GPU 경합으로 1526초) 전부 0, Sonnet은 planner의 `beats maxItems`가 Anthropic 구조화 출력에서 강제되지 않아 재생성 2·폴백 1(후속 과제로 기록). NPC 대화 의미 품질은 Haiku·Sonnet 둘 다 kanana의 지속 약점("방금 들음 vs 기억")을 개선해 비열등 이상. NPC 7세 정책은 1차(채점기 gemma3, VRAM 경합 추정)에서 Haiku 미달·Sonnet 2회 정지였으나, **채점기를 gemma4:12b(think off)로 통일해 재측정하니 kanana·Haiku·Sonnet 전부 4/5 통과**(공통 약점은 항목 3 "3턴 망각", Sonnet은 "유저가"라는 메타 표현 누출 1건). Gemini 무료 키는 하루 20요청 상한이 실제 제약이라(10 RPM 페이싱이 아니라) NPC 후보에서 제외. **권고: Core `claude-sonnet-5` · NPC `claude-haiku-4-5`**(최종 결정은 사용자 몫, Opus는 품질 우위 없이 느리고 비용만 2~3배). 기록: `docs/model_evaluation.md` 부록 A.19·상단 "측정 결과" 열, `docs/metrics.yml` 16줄. `ANTHROPIC_API_KEY` 제거는 사용자 조치로 남겨 뒀다(`HANDOFF-26-09-16.md` "남은 것" 참고).
+
+### 테스터7 피드백 기록 (미추적 파일)
+
+`docs/review-verification/2026-09-16-tester7/tester7.md`에 2건을 기록만 했다(상태 "진행 중"). F1 게임 출력 텍스트가 드래그로 선택되지 않게, F2 현재 장면에 없는 NPC는 딤 처리·선택 불가. 둘 다 미착수. 후보 판은 `e7aa6a4f`(10:33:45 생성), 완주 여부는 미확인.
+
+### 마무리 — 커밋 상태와 이월
+
+- **오늘 커밋 52건**(`c0231c7` 14:50 ~ `06e0906` 23:44), 그중 귀가 후 13건. main은 `be42385`(개발 로그인까지), `feat/coherence-chain`은 main보다 8커밋 앞선 상태로 미머지(`6a02a13`~`06e0906`, 평가 러너·어댑터). 미커밋은 테스터7 기록 폴더 하나
+- **이월(미완)** — ① 오늘 Anthropic·Gemini 평가 결과를 `model_evaluation.md` 부록·`metrics.yml`에 정본으로 기록 ② Sonnet age7, gemma4 통일 D(셀프플레이 결과 확인)·E(Anthropic NPC age7 재측정) ③ Gemini 쿼터 리셋 후 80턴 전체 재실행 ④ `feat/coherence-chain` 머지 여부 결정 ⑤ 평가를 마치면 Anthropic 키 제거(운용 규칙) ⑥ F11 원숭이손 소원, 테스터7 F1·F2 ⑦ 배포 전 `TRUST_PROXY` 버킷 키(M2) 점검 ⑧ 09-15 이월분(Google Console redirect URI 등록, NPC 의미 품질 목표, 블라인드 평가·새 참가자 5회차 실플레이, 세 NPC 목소리) — 오늘 진행 여부는 확인하지 않았다
 
 ### 설계 결정 대기 6건 (오전 시점 기록 — 오후에 위와 같이 해소)
 

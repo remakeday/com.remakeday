@@ -18,7 +18,7 @@
 
 **환경 변경 감지(이 세션 외부, 14:25)**: `backend/.env`의 `GOOGLE_OAUTH_REDIRECT_URI`·`FRONTEND_BASE_URL`이 `https://api.remakeday.com`·`https://remakeday.com`으로, `INSPECTOR_TOKEN` 교체, `NPC_LLM_MODEL=kanana1.5:8b-q4km`(HANDOFF 정본은 gemma4:12b). 백업 `.env.bak.20260916`. 로컬 OAuth 로그인은 이 값으로는 localhost에서 동작하지 않는다 — 배포 세션의 의도인지 확인 필요.
 
-**서버**: 백엔드 8500 재기동됨(18:15, 허들 머지 반영 — main `8137acf`)(NPC `ollama:kanana1.5:8b-q4km`, Core `ollama:gemma4:12b`, embedding gemini), 프런트 3500. `/play` 200, 익명 `POST /sessions` → 401. **허들이 켜져 있어 개발 로그인이 머지·재기동되기 전까지는 `/play`에서 판을 만들 수 없다**(구글 OAuth는 `.env`가 프로덕션 도메인이라 localhost에서 안 됨).
+**서버**: 개발 계정 로그인 머지(`be42385`) 이후 백엔드·프런트 재기동 완료(20:39~21:01, `dev-login.cjs` PASS 확인). 이후 Anthropic·Gemini 평가 동안 `USER_DAILY_ATTEMPTS`를 테스트용으로 임시 상향했다 — **컨트롤러가 오늘 밤 이 상향값을 되돌리며 백엔드를 재기동한다**(아래 "남은 것" ③). 재기동 뒤에는 개발 로그인으로 `/play` → 판 생성 200을 다시 확인할 것.
 
 ## 과잉 사용 방지 허들 — main 머지 완료 (18:12, `8137acf`)
 
@@ -61,21 +61,23 @@ F7 답변이 답변 같지 않았던 이유(테스터6 15문답): 판정 0회(�
 
 > 오후 작업이 예상보다 오래 걸려 사용자가 18:30에 중단했다. 아래 1~2가 끝나야 로컬에서 다시 플레이할 수 있다.
 
-### 1. 개발 계정 로그인 마무리 — 등급 A(인증), 계획 `docs/superpowers/plans/2026-09-16-dev-login.md`
+### 1. 개발 계정 로그인 마무리 — 등급 A(인증), 계획 `docs/superpowers/plans/2026-09-16-dev-login.md` — **완료·main 머지**
 
-상태: 브랜치 `feat/coherence-chain`에 **Task 1 백엔드가 WIP 커밋 `7af14dd`** 로 있다(검토 전). `POST /api/v1/auth/dev/login {id,password}` — `DEV_LOGIN=on`이 아니면 404, 불일치 401 `{"detail":"아이디 또는 비밀번호가 틀렸다"}`, IP당 분당 5회 초과 429(허들과 같은 본문), 64자 초과 422, 성공 200 `{ok,user}` + `rd_session` 쿠키(sub `dev:{DEV_ACCOUNT_ID}`, 구글 콜백과 동일 속성). `hmac.compare_digest`로 아이디·비밀번호를 둘 다 계산한 뒤 합친다. 새 테스트 `tests/engine/test_dev_login.py` 11개 포함 **585 passed**. `.env`에는 `DEV_LOGIN=on`·`DEV_ACCOUNT_ID`·`DEV_ACCOUNT_PASSWORD`가 이미 있다(Settings `extra="ignore"` 확인됨).
+귀가 후 20:39~21:01에 A등급 절차(task별 sonnet 검토 → opus 최종 리뷰 → 수정 1회)로 끝냈다. Task 1 리뷰(Important 1건: api_contract 기재 누락) → `34ce698`. Task 2(랜딩 `DevLoginForm`·`run_selfplay --dev-login`·헤드리스 `dev-login.cjs`) → `48a70ac`, 셀렉터 수정 `816f052`. opus 최종 리뷰 Important 2건(끄거나 계정 변경 시 기존 dev 세션이 14일간 유효하던 결함 → sub 대조 추가, 저장소 공개인데 계정 값이 문서·테스트에 적혀 있던 것 → 값은 `backend/.env`에만·추적 파일에서 제거) → `d659be3`·`be42385`, **590 passed**. `main`을 `be42385`로 ff-merge, 백엔드·프런트 재기동, 옛 비밀번호 401·새 비밀번호로 `dev-login.cjs` PASS 확인. 계정 id·비밀번호 값은 어떤 문서에도 남기지 않았다(비밀번호는 이번에 교체됨 — **값은 `backend/.env`에만 있다**).
 
-남은 순서(장부 `.superpowers/sdd/2026-09-16-dev-login/progress.md`, 브리프 `task-1-brief.md`):
-1. Task 1 검토(sonnet) — `git diff 8137acf 7af14dd`를 리뷰 패키지로. 특히 `auth_router._settings` 간접 참조·`_DEV_LOGIN_BUCKET` 모듈 전역·`client_ip` 재사용 확인. 수정은 1회.
-2. `docs/spec/api_contract.md` 허들 절 근처에 엔드포인트 문단 추가(계획 Task 1 Step 6 문안 그대로).
-3. Task 2 — `frontend/components/DevLoginForm.tsx`(client component, `credentials:"include"`, 성공 시 `/play`), `app/page.tsx`에 `process.env.NEXT_PUBLIC_DEV_LOGIN === "on"` 조건부 렌더, `frontend/.env.example` 예시 줄, `frontend/.env.local`(git-ignored)에 `NEXT_PUBLIC_DEV_LOGIN=on`, `backend/scripts/run_selfplay.py --dev-login`(설정의 dev id/pw로 로그인해 쿠키 획득), 헤드리스 `frontend/tests/dev-login.cjs`(실서버 대상: 틀린 비번 → alert "틀렸다", 맞는 비번 → `/play` 이동 + `POST /sessions` 200 + `/auth/me` sub `dev:{DEV_ACCOUNT_ID}`). 계획에 전체 코드가 있다.
-4. opus 최종 전체 리뷰 1회 → 수정 1회 → 컨트롤러 diff 확인.
-5. `git checkout main && git merge --ff-only feat/coherence-chain`, 백엔드 재기동(중지·기동을 **별도 명령**으로), 프런트도 재기동(`NEXT_PUBLIC_DEV_LOGIN`을 새로 읽어야 함: `pkill -f "next dev -p 3500"` 뒤 `start_demo.sh`의 프런트 부분). 확인: 랜딩 폼으로 `.env`의 `DEV_ACCOUNT_ID`/`DEV_ACCOUNT_PASSWORD`로 로그인 → `/play` 판 생성 200.
-6. 개발 로그인은 **2026-09-20 제출까지 유지**. 리뷰어가 "개발용 제거"를 제안해도 반영하지 않는다. 제출 뒤 프로덕션 `.env`에서 `DEV_LOGIN` 줄만 빼면 닫힌다.
+### 2. Anthropic 모델 평가 — 등급 B(사용자 지정), 키는 평가 직후 제거 — **완료(측정·기록), 키 제거는 사용자 조치 남음**
 
-### 2. Anthropic 모델 평가 — 등급 B(사용자 지정), 키는 평가 직후 제거
+키를 `.env`에 넣고 (a)~(e)까지 실행했다. (b) 어댑터 스모크 3종 OK — 단 Anthropic SDK 1.6.0에서 `Messages.create()`의 `temperature` 인자가 빠져 Haiku가 `TypeError`로 죽는 결함을 발견, `extra_body` 경유 전송으로 수정(`6a02a13`). (c) NPC 41문답 Haiku·Sonnet·Gemini(무료 키, 일부만) 비교 완료 — 러너의 발화 분류기 스텁 결함(매 턴 재생성 2+폴백 1이 provider와 무관하게 붙던 것)도 발견·수정. (d) Core self-play Sonnet·Opus·gemma4 대조군 3판 + gemma4 플레이어 1판 완료, `run_age7_check --provider anthropic`도 실행(1차는 채점기 VRAM 경합으로 Haiku 미달·Sonnet 2회 정지 → 채점기를 gemma4:12b(think off)로 통일 후 재측정해 kanana·Haiku·Sonnet 전부 4/5 통과). (e) `docs/model_evaluation.md` **부록 A.19** + 상단 "측정 결과" 열 + 변경 이력 row, `docs/metrics.yml` 16줄 기록 완료. **권고: Core `claude-sonnet-5` · NPC `claude-haiku-4-5`**(최종 결정은 사용자 몫). **(f) 키 제거는 아직이다** — 아래 "남은 것" ① 참고.
 
-키는 아직 `.env`에 **없다**. 순서: (a) `backend/.env`에 `ANTHROPIC_API_KEY=` 투입(Opus 발급 키 하나로 전 모델 호출 가능, 모델별 키 불필요). (b) 어댑터 스모크 — `CORE_LLM_PROVIDER=anthropic` + 모델 `claude-haiku-4-5`·`claude-sonnet-5`·`claude-opus-5` 각 1회 `complete()` (하이쿠만 temperature·effort 전송 안 함 확인). (c) NPC 41문답 `backend/scripts/run_npc_dialogue_check.py`를 Haiku 4.5·Sonnet 5로, 기존 kanana 결과와 비교(실패·재생성·지연 중간값/p95·의미 품질). (d) Core E7 러너 + `run_selfplay.py --dev-login --loops 5`를 Sonnet 5·Opus 5로 1판씩(gemma4:12b 대조). (e) `docs/model_evaluation.md` **부록 A.19**(형식은 A.10~A.18과 동일) + 맨 위 "외부 API 전환 결정" 절의 "측정 결과" 자리 채우기 + 변경 이력 row, `docs/metrics.yml` 병행. (f) **`.env`에서 키 줄 삭제, `*_LLM_PROVIDER`를 `ollama`로 복원**, `grep -c '^ANTHROPIC_API_KEY=' backend/.env` == 0 확인 후 보고. 비용 추정은 `docs/apiscenario.md` §1.3b(판당 Opus $1.5~2.1, Sonnet ~$0.7, NPC Haiku ~$0.1).
+### 남은 것 (2026-09-16 밤 마감 시점)
+
+1. **`backend/.env`의 `ANTHROPIC_API_KEY` 줄 제거는 사용자 조치** — 이 세션의 `.env` 편집은 권한 분류기가 막았다. 제거 후 `grep -c '^ANTHROPIC_API_KEY=' backend/.env` == 0 확인할 것.
+2. **`feat/coherence-chain`의 `be42385` 이후 커밋(평가 러너·어댑터 수정·gemma4 통일, `6a02a13`~`06e0906`)은 아직 main에 머지되지 않았다.**
+3. **`USER_DAILY_ATTEMPTS` 테스트 상향값을 되돌리고 백엔드를 재기동한다** — 컨트롤러가 오늘 밤 수행.
+4. 2026-09-20 제출용 프로덕션 `.env`: Core `anthropic:claude-sonnet-5` · NPC `anthropic:claude-haiku-4-5` — 사용자 확정 후 전환.
+5. Gemini 무료 키는 NPC 후보에서 제외(하루 20요청 상한).
+6. F11 원숭이손은 아래 3번 그대로 미착수.
+7. 개발 로그인 배포 메모 — `TRUST_PROXY=true`일 때 `client_ip`가 `X-Forwarded-For` 맨 왼쪽을 신뢰한다. cloudflared 뒤에서는 `CF-Connecting-IP`를 쓸 것.
 
 ### 3. F11 원숭이손 — 계획 `docs/superpowers/plans/2026-09-16-f11-monkey-paw-wishes.md` (8 task, 미착수)
 
