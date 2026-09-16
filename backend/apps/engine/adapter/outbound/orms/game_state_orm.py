@@ -32,6 +32,7 @@ class AttemptOrm(Base):
     prior_cell_results: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     cookies_seen: Mapped[list] = mapped_column(JSONB, default=list)
     paw_offered_count: Mapped[int] = mapped_column(Integer, default=0)
+    user_id: Mapped[uuid.UUID | None] = mapped_column(Uuid, nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )

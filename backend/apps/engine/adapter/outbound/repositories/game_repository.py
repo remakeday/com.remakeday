@@ -4,11 +4,13 @@
 """
 
 import uuid
+from datetime import datetime
 
 from sqlalchemy import select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 from apps.engine.adapter.outbound.repositories.scene_transaction import save_game_changes
+from apps.engine.domain.entities.guard_rules import kst_day_start
 
 from apps.engine.adapter.outbound.orms.game_state_orm import (
     AttemptOrm,
@@ -24,12 +26,13 @@ class AttemptRepository:
     def __init__(self, session: Session) -> None:
         self._s = session
 
-    def create(self, prior: AttemptOrm | None) -> AttemptOrm:
+    def create(self, prior: AttemptOrm | None, user_id: uuid.UUID | None = None) -> AttemptOrm:
         row = AttemptOrm(
             attempt_n=(prior.attempt_n + 1) if prior else 1,
             prior_attempt_id=prior.id if prior else None,
             prior_cell_results=prior.prior_cell_results if prior else None,
             cookies_seen=list(prior.cookies_seen or []) if prior else [],
+            user_id=user_id,
         )
         self._s.add(row)
         save_game_changes(self._s)
@@ -37,6 +40,18 @@ class AttemptRepository:
 
     def get(self, attempt_id: uuid.UUID) -> AttemptOrm | None:
         return self._s.get(AttemptOrm, attempt_id)
+
+    def count_today(self, user_id: uuid.UUID, now: datetime) -> int:
+        start = kst_day_start(now)
+        return (
+            self._s.query(AttemptOrm)
+            .filter(AttemptOrm.user_id == user_id, AttemptOrm.created_at >= start)
+            .count()
+        )
+
+    def count_today_all(self, now: datetime) -> int:
+        start = kst_day_start(now)
+        return self._s.query(AttemptOrm).filter(AttemptOrm.created_at >= start).count()
 
     def save(self) -> None:
         save_game_changes(self._s)

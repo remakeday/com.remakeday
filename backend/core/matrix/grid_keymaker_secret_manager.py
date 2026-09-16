@@ -50,6 +50,13 @@ class Settings(BaseSettings):
     session_secret: str = "dev-session-secret-change-me"
     frontend_base_url: str = "http://localhost:3500"
 
+    # 과잉 사용 방지 허들
+    guard_auth: str = "on"
+    user_daily_attempts: int = 5
+    daily_attempt_cap: int = 200
+    ip_sessions_per_minute: int = 5
+    ip_actions_per_minute: int = 30
+
 
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
