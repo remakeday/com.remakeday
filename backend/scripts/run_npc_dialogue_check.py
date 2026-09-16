@@ -6,7 +6,7 @@ Run from the project root::
     backend/.venv/bin/python backend/scripts/run_npc_dialogue_check.py --repeat 2
     backend/.venv/bin/python backend/scripts/run_npc_dialogue_check.py --cases core-3,core-8
 
-Only the NPC Ollama or Anthropic adapter makes network calls (selected via
+Only the NPC Ollama, Anthropic, or Gemini adapter makes network calls (selected via
 --provider; ollama is the default). Kanana is the default model; an explicit
 --model override supports comparison without changing project settings.
 Planner/manager and
@@ -36,6 +36,7 @@ ROOT = BACKEND.parent
 sys.path.insert(0, str(BACKEND))
 
 from apps.engine.adapter.outbound.llm.anthropic_llm import AnthropicLLM
+from apps.engine.adapter.outbound.llm.gemini_llm import GeminiLLM
 from apps.engine.adapter.outbound.llm.ollama_llm import OllamaLLM
 from apps.engine.app.dtos.llm_output_dto import AgentOutput, AskNpcOutput, ManagerPatch
 from apps.engine.app.use_cases.loop_interactor import LoopInteractor, DialogueUnavailable
@@ -158,7 +159,18 @@ class Manager:
 
 
 class Planner:
-    def complete(self, *_args, **_kwargs):
+    """Stub core_llm: planner_output for _run_planner, classifier output for classify().
+
+    Since the utterance classifier (loop_interactor.utter -> classify()) was added,
+    every ask() call routes a classifier call through core_llm too. Returning "question"
+    lets the normal NPC utterance path proceed (include_knowledge=True), matching what a
+    real classifier would do for these fixture questions, instead of a schema mismatch
+    forcing 2 regenerations + 1 fallback per turn regardless of npc_llm.
+    """
+
+    def complete(self, _messages, schema, **_kwargs):
+        if "label" in schema["properties"]:
+            return {"label": "question"}
         return {"plans": []}
 
 
@@ -348,7 +360,7 @@ def main():
     parser.add_argument("--dry-run", action="store_true", help="fixture checks only; no settings/network access")
     parser.add_argument("--model", default=MODEL, help="explicit evaluation model override; does not modify settings")
     parser.add_argument("--think", choices=["default", "off", "on"], help="evaluation-only thinking override; ollama only")
-    parser.add_argument("--provider", choices=["ollama", "anthropic"], default="ollama",
+    parser.add_argument("--provider", choices=["ollama", "anthropic", "gemini"], default="ollama",
                          help="evaluation LLM provider; does not modify project settings")
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
@@ -369,6 +381,14 @@ def main():
         llm = AnthropicLLM(api_key=settings.anthropic_api_key, model=args.model,
                             effort=settings.anthropic_effort, max_tokens=settings.anthropic_max_tokens,
                             timeout=settings.anthropic_timeout)
+    elif args.provider == "gemini":
+        if args.think:
+            print("--think is ignored for --provider gemini", file=sys.stderr)
+        from core.matrix.grid_keymaker_secret_manager import get_settings
+        settings = get_settings()
+        think = None
+        llm = GeminiLLM(api_key=settings.gemini_api_key, model=args.model,
+                         requests_per_minute=settings.gemini_requests_per_minute)
     else:
         from core.matrix.grid_keymaker_secret_manager import get_settings
         settings = get_settings()
