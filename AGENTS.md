@@ -31,7 +31,7 @@ Scale the review process to the importance of the work. Write the tier on the fi
 | **B Normal** | Game logic and UI behavior changes (god questions, nonsense input, monkey-paw engine) | Per-task review with sonnet/haiku; skip per-task review for pure-function, docs and config tasks; one final whole-branch review (sonnet); one fix wave; re-review replaced by the controller's diff check |
 | **C Light** | Scenario text, docs, asset registration, test cleanup, evaluation runner runs | Controller checks the diff and test output after implementation; no whole-branch review (optional single haiku pass) |
 
-Default assignments: dev-account login = A (auth). Monkey-paw engine = B, wish text authoring = C. Anthropic evaluation runner runs = C.
+Default assignments: dev-account login = A (auth). Monkey-paw engine = B, wish text authoring = C. Anthropic model evaluation (adapter smoke, runners, appendix A.19) = B (user-assigned 2026-09-16).
 
 ## 1. Think Before Coding
 

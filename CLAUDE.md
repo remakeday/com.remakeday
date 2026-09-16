@@ -25,7 +25,7 @@ Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-s
 | **B 보통** | 게임 로직·UI 동작 변경(신의 질문, 무의미 입력, 원숭이손 엔진 등) | task 검토는 sonnet/haiku, 순수 함수·문서·설정 task는 개별 검토 생략, 최종 전체 리뷰 sonnet 1회, 수정 1회, 재검토는 컨트롤러의 diff 확인으로 대체 |
 | **C 가벼움** | 시나리오 문장·문서·자산 등록·테스트 정리·평가 러너 실행 | 구현 후 컨트롤러가 diff와 테스트 결과만 확인, 전체 리뷰 생략(원하면 haiku 1회) |
 
-기본 배정 예: 개발 계정 로그인 = A(인증). 원숭이손 엔진 = B, 소원 문장 작성 = C. Anthropic 평가 러너 실행 = C.
+기본 배정 예: 개발 계정 로그인 = A(인증). 원숭이손 엔진 = B, 소원 문장 작성 = C. Anthropic 모델 평가(어댑터 스모크·러너·A.19 기록) = B(사용자 지정 2026-09-16).
 
 ## 1. Think Before Coding
 
