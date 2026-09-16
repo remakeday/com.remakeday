@@ -6,7 +6,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 from apps.engine.adapter.outbound.repositories.scene_transaction import save_game_changes
@@ -43,15 +43,17 @@ class AttemptRepository:
 
     def count_today(self, user_id: uuid.UUID, now: datetime) -> int:
         start = kst_day_start(now)
-        return (
-            self._s.query(AttemptOrm)
-            .filter(AttemptOrm.user_id == user_id, AttemptOrm.created_at >= start)
-            .count()
+        stmt = (
+            select(func.count())
+            .select_from(AttemptOrm)
+            .where(AttemptOrm.user_id == user_id, AttemptOrm.created_at >= start)
         )
+        return self._s.scalar(stmt)
 
     def count_today_all(self, now: datetime) -> int:
         start = kst_day_start(now)
-        return self._s.query(AttemptOrm).filter(AttemptOrm.created_at >= start).count()
+        stmt = select(func.count()).select_from(AttemptOrm).where(AttemptOrm.created_at >= start)
+        return self._s.scalar(stmt)
 
     def save(self) -> None:
         save_game_changes(self._s)

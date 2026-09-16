@@ -10,6 +10,10 @@ def test_full_attempt_five_loops_to_doom(db_session, monkeypatch):
     npc = FakeLLM([{"reply": "조금 추워.", "suspicion_delta": 0, "trust_delta": 0}] * 5)
     monkeypatch.setattr(engine_dependency, "get_npc_llm", lambda: npc)
 
+    from apps.engine.adapter.inbound.api.v1 import guards
+    from apps.engine.app.dtos.auth_dto import SessionUserDTO
+    app.dependency_overrides[guards.require_user] = lambda: SessionUserDTO(sub="tester", email="t@x", name="t")
+
     with TestClient(app) as client:
         session_res = client.post("/sessions", json={}).json()
         attempt_id = session_res["attempt_id"]
@@ -93,3 +97,5 @@ def test_full_attempt_five_loops_to_doom(db_session, monkeypatch):
         retry = client.post("/sessions", json={"prior_attempt_id": attempt_id}).json()
         assert retry["attempt_n"] == 2
         assert retry["prior_cell_results"] is not None
+
+    app.dependency_overrides.clear()

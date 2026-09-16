@@ -14,6 +14,20 @@ class UserRepository:
     def __init__(self, session: Session) -> None:
         self._s = session
 
+    def get_by_sub(self, sub: str) -> User | None:
+        row = self._s.execute(
+            select(UserOrm).where(UserOrm.google_sub == sub)
+        ).scalar_one_or_none()
+        if row is None:
+            return None
+        return User(
+            id=row.id,
+            google_sub=row.google_sub,
+            email=row.email,
+            name=row.name,
+            picture=row.picture,
+        )
+
     def upsert_from_google(self, profile: GoogleProfileDTO) -> User:
         row = self._s.execute(
             select(UserOrm).where(UserOrm.google_sub == profile.sub)

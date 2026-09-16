@@ -56,10 +56,14 @@ def get_event_log_use_case(session: Session = Depends(get_session)) -> EventLogU
 
 
 def get_session_interactor(session: Session = Depends(get_session)):
+    s = get_settings()
     return SessionInteractor(
         attempts=AttemptRepository(session),
         event_log=EventLogRepository(session),
         scenario=_scenario(),
+        users=UserRepository(session),
+        user_daily_attempts=s.user_daily_attempts,
+        daily_attempt_cap=s.daily_attempt_cap,
     )
 
 

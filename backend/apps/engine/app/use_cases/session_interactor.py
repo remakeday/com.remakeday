@@ -1,17 +1,59 @@
+import uuid
+from datetime import datetime, timezone
 from uuid import UUID
 
 from apps.engine.app.dtos import event_log_dto as ev
+from apps.engine.app.dtos.auth_dto import GoogleProfileDTO, SessionUserDTO
+
+
+class UserDailyLimit(Exception):
+    pass
+
+
+class DailyCapReached(Exception):
+    pass
 
 
 class SessionInteractor:
-    def __init__(self, *, attempts, event_log, scenario) -> None:
+    def __init__(self, *, attempts, event_log, scenario, users,
+                 user_daily_attempts: int, daily_attempt_cap: int) -> None:
         self._attempts = attempts
         self._events = event_log
         self._scenario = scenario
+        self._users = users
+        self._user_daily_attempts = user_daily_attempts
+        self._daily_attempt_cap = daily_attempt_cap
 
-    def start(self, prior_attempt_id: UUID | None) -> dict:
+    def _resolve_user_id(self, user: SessionUserDTO) -> UUID:
+        existing = self._users.get_by_sub(user.sub)
+        if existing is not None:
+            return existing.id
+        if user.sub == "dev":
+            profile = GoogleProfileDTO(sub="dev", email="dev@local", name="dev")
+        else:
+            profile = GoogleProfileDTO(sub=user.sub, email=user.email, name=user.name, picture=user.picture)
+        return self._users.upsert_from_google(profile).id
+
+    def start(self, prior_attempt_id: UUID | None, user: SessionUserDTO) -> dict:
+        user_id = self._resolve_user_id(user)
+        now = datetime.now(timezone.utc)
+
+        if self._attempts.count_today_all(now) >= self._daily_attempt_cap:
+            self._events.record(
+                uuid.uuid4(),
+                ev.GuardEvent(layer="daily_cap", reason="오늘 정원이 마감됐다", ip_hash="", user_sub=user.sub),
+            )
+            raise DailyCapReached()
+
+        if self._attempts.count_today(user_id, now) >= self._user_daily_attempts:
+            self._events.record(
+                uuid.uuid4(),
+                ev.GuardEvent(layer="user_daily", reason="오늘은 여기까지", ip_hash="", user_sub=user.sub),
+            )
+            raise UserDailyLimit()
+
         prior = self._attempts.get(prior_attempt_id) if prior_attempt_id else None
-        attempt = self._attempts.create(prior)
+        attempt = self._attempts.create(prior, user_id=user_id)
         prior_cells = attempt.prior_cell_results
         self._events.record(
             attempt.id,
