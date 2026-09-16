@@ -5,7 +5,7 @@
 
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class QuestionReplyActionDTO(BaseModel):
@@ -154,15 +154,23 @@ class SceneActionDTO(BaseModel):
 
 
 class AdvisorLeadDTO(BaseModel):
-    """신의 질문이 해금하는 미공개 관찰 — 스포일러가 아닌 계단. 질문 보상은 결정론으로 보장한다."""
+    """신의 질문 뒤에 붙는 조언 — 세계 구조(인물 지식·잠재 행동)만 가리킨다. 숨은 사실은 싣지 않는다 (기획서 5.6)."""
 
     model_config = ConfigDict(extra="forbid")
 
-    key: str  # 해금 dedup 식별자 (노트 source_key로 쓰인다)
-    loop_n: int = Field(ge=1, le=5)  # 이 회차부터 해금 가능
+    key: str  # 한 판 1회 dedup 식별자 (노트 source_key)
+    loop_n: int = Field(ge=1, le=5)  # 이 회차부터 후보
     cues: list[str] = Field(default_factory=list)  # 질문 매칭 키워드
-    text: str  # 해금되는 관찰 문구 (세계 안 문장)
-    direction: str  # 다음 행동 힌트 1문장
+    anchor_cues: list[str]  # 플레이어 공개 관찰에서 닻을 찾는 키워드 — 없으면 조언 생략
+    target: str  # 다음 낮에 물을 인물 또는 규칙 대상
+    ask: str | None = None  # "…을 물어봐라"의 목적어
+    rule_action: str | None = None  # "{target}: {action} 규칙을 걸어 봐라"
+
+    @model_validator(mode="after")
+    def _one_of(self):
+        if bool(self.ask) == bool(self.rule_action):
+            raise ValueError("ask와 rule_action 중 정확히 하나를 채운다")
+        return self
 
 
 class SceneDialogueActionDTO(BaseModel):
