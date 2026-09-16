@@ -6,8 +6,9 @@ Run from the project root::
     backend/.venv/bin/python backend/scripts/run_npc_dialogue_check.py --repeat 2
     backend/.venv/bin/python backend/scripts/run_npc_dialogue_check.py --cases core-3,core-8
 
-Only the NPC Ollama adapter makes network calls. Kanana is the default; an
-explicit --model override supports comparison without changing project settings.
+Only the NPC Ollama or Anthropic adapter makes network calls (selected via
+--provider; ollama is the default). Kanana is the default model; an explicit
+--model override supports comparison without changing project settings.
 Planner/manager and
 repositories are deterministic in-memory ports; no production database is opened.
 Semantic quality remains pending review of answers together with their source
@@ -34,6 +35,7 @@ BACKEND = Path(__file__).resolve().parents[1]
 ROOT = BACKEND.parent
 sys.path.insert(0, str(BACKEND))
 
+from apps.engine.adapter.outbound.llm.anthropic_llm import AnthropicLLM
 from apps.engine.adapter.outbound.llm.ollama_llm import OllamaLLM
 from apps.engine.app.dtos.llm_output_dto import AgentOutput, AskNpcOutput, ManagerPatch
 from apps.engine.app.use_cases.loop_interactor import LoopInteractor, DialogueUnavailable
@@ -345,7 +347,9 @@ def main():
     parser.add_argument("--cases", default="all", help="all, core, or comma-separated case IDs")
     parser.add_argument("--dry-run", action="store_true", help="fixture checks only; no settings/network access")
     parser.add_argument("--model", default=MODEL, help="explicit evaluation model override; does not modify settings")
-    parser.add_argument("--think", choices=["default", "off", "on"], help="evaluation-only thinking override")
+    parser.add_argument("--think", choices=["default", "off", "on"], help="evaluation-only thinking override; ollama only")
+    parser.add_argument("--provider", choices=["ollama", "anthropic"], default="ollama",
+                         help="evaluation LLM provider; does not modify project settings")
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
     if args.repeat < 1:
@@ -356,6 +360,15 @@ def main():
     if args.dry_run:
         llm = DryLLM()
         think = None
+    elif args.provider == "anthropic":
+        if args.think:
+            print("--think is ignored for --provider anthropic", file=sys.stderr)
+        from core.matrix.grid_keymaker_secret_manager import get_settings
+        settings = get_settings()
+        think = None
+        llm = AnthropicLLM(api_key=settings.anthropic_api_key, model=args.model,
+                            effort=settings.anthropic_effort, max_tokens=settings.anthropic_max_tokens,
+                            timeout=settings.anthropic_timeout)
     else:
         from core.matrix.grid_keymaker_secret_manager import get_settings
         settings = get_settings()
