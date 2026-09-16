@@ -221,3 +221,17 @@ def test_budget_exhaustion_raises(db_session):
         inter.utter(info["loop_id"], c.code, "말")
     with pytest.raises(GameStateError):
         inter.utter(info["loop_id"], chars[0].code, "말")
+
+
+def test_agent_messages_can_omit_knowledge_block():
+    from apps.engine.app.use_cases.game_support import build_agent_messages
+    scenario = build_a()
+    char = next(c for c in scenario.bundle().characters if c.code == "chaeyeon")
+    with_k = build_agent_messages(scenario.bundle(), char, suspicion=0, trust=0, opposite=False,
+                                  rules_text="", memory=[], user_text="안녕", loop_n=1, age7_on=True)
+    without = build_agent_messages(scenario.bundle(), char, suspicion=0, trust=0, opposite=False,
+                                   rules_text="", memory=[], user_text="안녕", loop_n=1, age7_on=True,
+                                   include_knowledge=False)
+    assert "[하루 시작 전부터 아는 것]" in with_k[0].content
+    assert "[하루 시작 전부터 아는 것]" not in without[0].content
+    assert "이송될 거라고 믿는다" not in without[0].content

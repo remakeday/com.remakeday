@@ -78,6 +78,9 @@ class UtteranceEvent(EventBase):
     disclosure_level: int
     utterance_id: str | None = None
     response: dict | None = None  # Committed response for idempotent client retries.
+    classification: str | None = None  # question | request | chat | nonsense | None(분류 실패)
+    gated: bool = False  # 규칙 게이트·무의미 판정으로 모델 호출 없이 즉답
+    budget_charged: bool = True
 
 
 class ToolCallEvent(EventBase):

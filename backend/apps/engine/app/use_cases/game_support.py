@@ -61,6 +61,7 @@ def build_agent_messages(
     age7_on: bool,
     damage_level: int = 0,
     reply_field: str = "reply",
+    include_knowledge: bool = True,
 ) -> list[MessageDTO]:
     banned = applicable_ban_words(bundle, char.code, loop_n)
     age7 = (
@@ -90,7 +91,7 @@ def build_agent_messages(
     labels = {"observed": "직접 본 경험", "heard": "전해 들은 말", "belief": "내가 믿는 것", "body": "내 몸과 기분"}
     knowledge = [k for k in char.knowledge if not any(n in k.text or n == k.source for n in absent)]
     references = {source: ref for ref, source in evidence_reference_map(bundle, char, memory, damage_level).items()}
-    if knowledge:
+    if knowledge and include_knowledge:
         sys += "\n\n[하루 시작 전부터 아는 것]\n" + "\n".join(json.dumps(
             {"id": references[k.id], "종류": labels[k.kind], "출처": k.source, "내용": k.text}, ensure_ascii=False)
             for k in knowledge)
