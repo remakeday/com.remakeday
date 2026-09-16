@@ -3,7 +3,7 @@
 > 기준일: 2026-09-14
 > 문서 지위: **팀 역할 정본.** 제출 폼·팀 소개·발표 크레딧·데브로그 작성자 표기에 동일하게 사용한다
 > 프로젝트: **REMAKE DAY** — 시나리오 A (구역)
-> Jekyll: `beyondbob.remakeday.com` — BeyondFacade 개발 허브
+> Jekyll: `blog.remakeday.com` — BeyondFacade 개발 허브
 > 팀: BeyondFacade — 류준 · 장민석 · 신채연 · 이은상 · 김충식
 > 일정: 2026-09-20 (예선) · 2026-10-17 데모데이 (본선)
 > 역할 구조 원본: `Masterless_Company_Team_Roles_v1.1_2026-09-10.md` — 동일 팀·동일 분담을 이 프로젝트에 맞게 번역했다
@@ -17,7 +17,7 @@
 현재 확정된 Surface는 다음과 같이 구분한다.
 
 ```text
-beyondbob.remakeday.com
+blog.remakeday.com
 → BeyondFacade Jekyll 개발 허브 — 기획·칸반·일정·데브로그
 
 Game Runtime Frontend
@@ -201,7 +201,7 @@ REMAKE DAY가 살아가는 세계를 쓴다. 시나리오 A(구역)의 인물·�
 - 배경 BGM · 음성 대사 녹음 파일 (반입 규격 포함)
 - `docs/REMAKE_DAY_이미지제작서_v1.md` · `docs/REMAKE_DAY_이미지제작서_쿠키12종.md`
 - `docs/demo_guide.md` · `docs/first-play-guide.md`
-- `beyondbob.remakeday.com` Jekyll 데브로그 콘텐츠, 시연 영상
+- `blog.remakeday.com` Jekyll 데브로그 콘텐츠, 시연 영상
 
 ---
 

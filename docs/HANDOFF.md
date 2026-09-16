@@ -18,6 +18,7 @@
    NPC_LLM_MODEL=claude-haiku-4-5
    ```
    `*_LLM_THINK`는 ollama 전용이라 남아 있어도 무시된다. `ANTHROPIC_EFFORT`는 기본 `low`.
+   같은 `.env`에서 판 수 한도를 되돌린다 — 09-20 전 로컬 운영용으로 `USER_DAILY_ATTEMPTS`·`DAILY_ATTEMPT_CAP`를 사실상 해제해 두었다(2026-09-17). 코드 기본값과 다른 배포용 실제 한도로 다시 적고, 실제 값은 문서에 적지 않는다. `INSPECTOR_TOKEN`도 배포 `.env`에서 코드 기본값과 다른 값으로 덮어써져 있는지 확인한다.
 2. 백엔드 재기동(설정은 `get_settings()` lru_cache라 재기동해야 반영) → `curl localhost:8500/health`의 `models`가 `anthropic:claude-sonnet-5`/`anthropic:claude-haiku-4-5`인지 확인.
 3. 확인 1판: `cd backend && PYTHONPATH=. .venv/bin/python scripts/run_selfplay.py --dev-login --loops 5 --n 1 -v`(계정 하루 5판 한도에 포함). 크래시·폴백 0이면 끝.
 4. Anthropic 콘솔 지출 한도 설정 확인(판당 약 $0.8 추정: Core Sonnet ~$0.7 + NPC Haiku ~$0.1, `docs/apiscenario.md` §1.3b).
