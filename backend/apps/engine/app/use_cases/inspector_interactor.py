@@ -62,8 +62,10 @@ class InspectorInteractor:
             final = {"cells": cells, "closed_by": attempt.closed_by,
                      "truth_reveal": scoring_rules.truth_reveal(truth, per_truth)}
             # 못 맞춘 셀에는 리드의 direction(비스포일러 설계)을 힌트로 돌려쓴다
-            directions = [lead.direction
-                          for lead in getattr(self._scenario.bundle(), "advisor_leads", [])]
+            directions = [
+                (f"내일 {lead.target}에게 {lead.ask} 물어봐라." if lead.ask
+                 else f"{lead.target}: {lead.rule_action} 규칙을 걸어 봐라.")
+                for lead in getattr(self._scenario.bundle(), "advisor_leads", [])]
             locked_cells = sorted({t.cell for t in truth}
                                   & {c for c, s in cells.items()
                                      if s < scoring_rules.REVEAL_THRESHOLD})

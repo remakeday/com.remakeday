@@ -5,13 +5,13 @@ from apps.engine.app.use_cases.intervention_interactor import select_lead
 
 L_RATION = AdvisorLeadDTO(
     key="ration", loop_n=1, cues=["배급", "쟁반"],
-    text="배급 포대는 늘 같은 트럭에서 내려온다.", direction="내일 배급 자리를 지켜봐라.")
+    anchor_cues=["배급"], target="준", ask="배급이 어디서 오는지")
 L_TRUCK = AdvisorLeadDTO(
     key="truck", loop_n=2, cues=["트럭", "이송"],
-    text="트럭은 소등 뒤에만 온다.", direction="소등 후 소리를 기록해 둬라.")
+    anchor_cues=["트럭"], target="준", rule_action="밤에 깨어 있는다")
 L_BAND = AdvisorLeadDTO(
     key="band", loop_n=1, cues=["손목띠", "숫자"],
-    text="손목띠 숫자는 자리 순서가 아니다.", direction="준에게 손목띠를 보여 달라고 해라.")
+    anchor_cues=["손목띠"], target="준", rule_action="가진 것을 보여준다")
 
 LEADS = [L_RATION, L_TRUCK, L_BAND]
 

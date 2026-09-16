@@ -124,8 +124,8 @@ def _journey_env(events_list, notes):
     scenario = SimpleNamespace(
         truth_claims=lambda: _TRUTH,
         bundle=lambda: SimpleNamespace(advisor_leads=[SimpleNamespace(
-            key="truck", loop_n=1, cues=[], text="트럭은 실어 갈 뿐이다.",
-            direction="내일 준에게 트럭 소리를 물어봐.")]),
+            key="truck", loop_n=1, cues=[], target="준", ask="트럭 소리를 들었는지",
+            rule_action=None)]),
     )
     interactor = InspectorInteractor(
         attempts=SimpleNamespace(get=lambda _: attempt),
