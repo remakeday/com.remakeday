@@ -17,7 +17,7 @@ build/
 *.tsbuildinfo
 
 # Generated images
-/output/imagegen/
+/output/
 
 # Env
 .env
