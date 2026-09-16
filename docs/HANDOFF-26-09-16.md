@@ -47,7 +47,7 @@ F7 답변이 답변 같지 않았던 이유(테스터6 15문답): 판정 0회(�
 
 ## 지금 바로 할 일 (우선순위 순)
 
-1. 설계 문서 **승인됨(2026-09-16 오후)**. 구현 계획 3개 작성: `docs/superpowers/plans/2026-09-16-f7-god-question-answer.md`(7 tasks) · `2026-09-16-f2-nonsense-input-gate.md`(5 tasks) · `2026-09-16-f11-monkey-paw-wishes.md`(8 tasks). 실행 순서 F7 → F2 → F11, 각 계획은 subagent-driven-development로. F8 구현은 서브에이전트가 진행 중(제작서 P.6 브리프) — **F8 완료·커밋 뒤에 F7 착수**(adapter.py 충돌 방지)
+1. **F7 구현 완료** (feat/coherence-chain, commits 40c4c47..HEAD). `POST /nights/{night_id}/questions` 응답에 `verdict`, `answer` 3부 형식, `unlocked_note(null)`, `next_observation(조언·null)`, `status`/`evidence` 추가. status="supported"일 때 kind "confirmed" 노트 저장. 리드 표 사실 공개 문장·면책 문장 제거. 검증: backend **490 passed** · tsc · 헤드리스 3종. DB: `alembic upgrade head` 적용. 다음: F2 · F11 구현 계획 착수
 2. F7+F8 **캡션만으로 흐름 선검증** — 리드 표에서 사실 공개 문장 제거, 조언을 구조 기반 고정형으로, 파편을 낮 노트에서 빼고 결말 전환 뒤로. 러너 dry-run으로 5회차 사슬 확인
 3. F2 규칙 게이트 → 분류기 순으로 구현. 테스트: "ㅋㅋㅋㅋ"·"......"·"왜왜왜왜"는 모델 호출 0, "왜?"·"왜 안어"는 통과
 4. ~~밤 단서 이미지·Q군 제작~~ 완료. 남은 것: 밤 단서 시퀀스 실플레이 확인(구현 완료)(Codex, v2 P.6), 소원 구현 때 Q군 `imageMap` 연결
