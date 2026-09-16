@@ -155,8 +155,9 @@ def play_game(client: httpx.Client, player_llm, persona: str, *, max_loops: int,
         else:  # 침묵
             free_text, tapped = "", []
 
+        # 서버 free_text 상한 2000자(허들) — 폴백으로 노트 전체를 보낼 때 넘지 않게 자른다.
         draft = client.post(f"/loops/{loop_id}/night/draft",
-                            json={"tapped_note_ids": tapped, "free_text": free_text}).json()
+                            json={"tapped_note_ids": tapped, "free_text": free_text[:2000]}).json()
         night_id = draft["night_id"]
         sub = client.post(f"/nights/{night_id}/submit").json()
         total = float(sub.get("total") or 0)
