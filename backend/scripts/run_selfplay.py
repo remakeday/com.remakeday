@@ -226,6 +226,10 @@ def main() -> None:
         res = client.post("/api/v1/auth/dev/login", json={"id": s.dev_account_id, "password": s.dev_account_password})
         if res.status_code != 200:
             raise SystemExit(f"개발 로그인 실패 {res.status_code}: {res.text} — backend/.env DEV_LOGIN/DEV_ACCOUNT_* 확인")
+        # FRONTEND_BASE_URL이 https면 쿠키에 Secure가 붙어 http://localhost로는 전송되지 않는다 — 속성 없이 다시 싣는다.
+        token = client.cookies.get("rd_session")
+        client.cookies.clear()
+        client.cookies.set("rd_session", token)
 
     ollama_url = args.ollama_url or rc.ollama_base_url()
     rc.check_ollama(ollama_url, [args.model])
