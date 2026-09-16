@@ -1474,6 +1474,17 @@ Haiku 재실행분의 `1_사실대로` 4건 전부 "judge 출력 파싱 실패" 
 
 ### 5. 어댑터·러너 결함과 수정
 
+**어댑터 스모크(모델당 `complete()` 1회, 페르소나 한 줄 + JSON 스키마, 2026-09-16 20:5x)**
+
+| 모델 | 수정 전 | 수정 후(`6a02a13`) | temperature 전송 | effort 전송 |
+|---|---|---|---|---|
+| claude-haiku-4-5 | temperature 없으면 OK, 있으면 `TypeError` | OK 1.9s `{"reply": "죽하고 계란말이 먹었어요"}` | `extra_body`로만 | 안 보냄 |
+| claude-sonnet-5 | OK 3.3s | OK 2.3s | 안 보냄 | `low` |
+| claude-opus-5 | OK 2.6s | OK 2.5s | 안 보냄 | `low` |
+
+수정 전 Haiku는 temperature 없이 부른 호출에서 "저는 AI이라 음식을 먹지 않습니다"라고 답했다(페르소나가 한 줄뿐인 스모크 프롬프트) — 실제 NPC 프롬프트를 쓰는 §3·§4와 조합 self-play(§2 끝)에서는 메타 누설이 재현되지 않았다.
+
+- **selfplay `--dev-login` Secure 쿠키** — `.env`의 `FRONTEND_BASE_URL`이 https라 `rd_session`에 `Secure`가 붙어 httpx가 `http://localhost:8500`으로 쿠키를 보내지 않아 첫 판 생성이 401. 로그인 뒤 토큰을 속성 없이 다시 싣도록 수정(커밋 `33bebca`). 브라우저(Chromium)는 localhost를 보안 컨텍스트로 취급해 헤드리스 로그인 테스트는 영향 없음.
 - **Anthropic SDK 1.6.0 `temperature` 인자 소실** — `Messages.create()`에 `temperature` 파라미터가
   빠져 Haiku 호출이 `TypeError`. `extra_body`로 우회 전송(커밋 `6a02a13`). Sonnet·Opus는 원래
   temperature를 받지 않는 설계라 영향 없음, effort는 Sonnet·Opus에만 전송.
