@@ -26,6 +26,7 @@ from apps.engine.app.ports.output.llm_port import LLMParseError  # noqa: E402
 from apps.engine.app.use_cases import prompts  # noqa: E402
 from apps.engine.app.use_cases.game_support import system_msg  # noqa: E402
 from apps.engine.app.use_cases.harness import run_with_harness  # noqa: E402
+from apps.engine.dependencies.llm_factory import build_llm as build_anthropic_llm  # noqa: E402
 
 GEMINI_PREFIX = "gemini"
 DEFAULT_MODELS = "gemma3:12b,gemma4:12b,gemma4:e4b,qwen3.5:9b,gemini-3-flash-preview"
@@ -123,7 +124,10 @@ class ThinkingGeminiLLM:
             raise LLMParseError(f"JSON 파싱 실패: {str(response.text)[:200]}") from exc
 
 
-def build_cell_llm(model: str, think: bool | None, base_url: str):
+def build_cell_llm(model: str, think: bool | None, base_url: str, provider: str = "ollama"):
+    # anthropic은 thinking 제어가 없다(어댑터가 thinking 파라미터를 보내지 않는다) — think는 무시.
+    if provider == "anthropic":
+        return build_anthropic_llm("anthropic", model, base_url)
     if model.startswith(GEMINI_PREFIX):
         key = rc.load_env().get("GEMINI_API_KEY", "")
         if not key.strip():
@@ -334,9 +338,9 @@ def role_stats(items):
             "latency_p50_ms": p_at(lat, 0.5), "latency_p95_ms": p_at(lat, 0.95)}
 
 
-def run_formal_cell(model, think, base_url, timeout, n, roles):
+def run_formal_cell(model, think, base_url, timeout, n, roles, provider="ollama"):
     from apps.scenarios.scenario_a.adapter import build as build_sc
-    llm = build_cell_llm(model, think, base_url)
+    llm = build_cell_llm(model, think, base_url, provider=provider)
     if hasattr(llm, "_timeout"):
         llm._timeout = timeout
     scenario = build_sc()
@@ -364,6 +368,7 @@ def run_formal_cell(model, think, base_url, timeout, n, roles):
                                  extra={"truth": case[0], "rep": rep}))
 
     is_gem = model.startswith(GEMINI_PREFIX)
+    is_api = is_gem or provider == "anthropic"  # VRAM/ps는 로컬 ollama 전용 지표 — API provider는 N/A
     pace_ms = 60000 // PACING_RPM
     cell = {"model": model, "think": {None: "default", False: "off", True: "on"}[think], "n": n,
             "roles": sorted(roles)}
@@ -413,7 +418,7 @@ def run_formal_cell(model, think, base_url, timeout, n, roles):
     cell.update({
         "gates": gates,
         "pacing_note": "gemini는 effective = max(raw, 6000ms) 유도값. 측정값 아님" if is_gem else None,
-        "peak_vram_gib": None if is_gem else peak_vram_gib(base_url, model),
+        "peak_vram_gib": None if is_api else peak_vram_gib(base_url, model),
         "items": {k: v for k, v in
                   [("advisor", adv), ("planner", pln), ("manager_check", mgr), ("evaluator_verdict", evl)] if v},
     })
@@ -689,13 +694,13 @@ def stage_loop(spec, base_url, timeout, out_dir):
     return cells
 
 
-def stage_formal(cells_spec, base_url, timeout, n, roles):
+def stage_formal(cells_spec, base_url, timeout, n, roles, provider="ollama"):
     print(f"\n### E7 Stage 2 — formal · {len(cells_spec)}셀 × 역할 {sorted(roles)} × n={n}\n", flush=True)
     out = []
     for model, think in cells_spec:
         label = {None: "default", False: "off", True: "on"}[think]
         print(f"  … {model} / think={label}", flush=True)
-        c = run_formal_cell(model, think, base_url, timeout, n, roles)
+        c = run_formal_cell(model, think, base_url, timeout, n, roles, provider=provider)
         out.append(c)
         g = c["gates"]
         parts = []
@@ -725,18 +730,31 @@ def main() -> None:
     parser.add_argument("--models", default=DEFAULT_MODELS)
     parser.add_argument("--base-url", dest="ollama_url", default=None)
     parser.add_argument("--out-dir", default=DEFAULT_OUT_DIR)
+    parser.add_argument("--provider", choices=["ollama", "anthropic"], default="ollama",
+                        help="Core 후보 provider (기본 ollama). anthropic은 --stage formal만 지원 "
+                             "— --models에 Anthropic 모델 ID(예: claude-sonnet-5)를 준다")
     args = parser.parse_args()
+
+    if args.provider == "anthropic" and args.stage != "formal":
+        raise SystemExit(
+            f"[에러] --provider anthropic은 --stage formal에서만 지원한다 (받은 stage={args.stage})")
 
     base_url = args.ollama_url or rc.ollama_base_url()
     models = [m.strip() for m in args.models.split(",") if m.strip()]
-    local = [m for m in models if not m.startswith(GEMINI_PREFIX)]
-    rc.check_ollama(base_url, local)
 
-    # thinking capability 조회 — 없는 모델은 default만 잰다
-    caps: dict[str, list[str]] = {}
-    for m in local:
-        res = httpx.post(f"{base_url.rstrip('/')}/api/show", json={"model": m}, timeout=10.0)
-        caps[m] = res.json().get("capabilities", [])
+    if args.provider == "anthropic":
+        # thinking·VRAM/ps 조회는 ollama 전용이라 건너뛴다 — anthropic 모델은 로컬에 없다.
+        local: list[str] = []
+        caps: dict[str, list[str]] = {}
+    else:
+        local = [m for m in models if not m.startswith(GEMINI_PREFIX)]
+        rc.check_ollama(base_url, local)
+
+        # thinking capability 조회 — 없는 모델은 default만 잰다
+        caps = {}
+        for m in local:
+            res = httpx.post(f"{base_url.rstrip('/')}/api/show", json={"model": m}, timeout=10.0)
+            caps[m] = res.json().get("capabilities", [])
 
     if args.stage == "loop":
         # Stage 3 통과 후보 (docs/model_evaluation.md 부록 A.9)
@@ -794,11 +812,14 @@ def main() -> None:
         bad = roles - {"advisor", "planner", "manager", "evaluator"}
         if bad:
             raise SystemExit(f"--roles 알 수 없는 역할: {sorted(bad)}")
-        # Stage 1 통과 셀 (docs/model_evaluation.md 부록 A.6)
-        spec = [("gemma3:12b", None), ("gemma4:12b", False),
-                ("gemma4:e4b", False), ("gemini-3-flash-preview", False)]
-        spec = [c for c in spec if c[0] in models]
-        cells = stage_formal(spec, base_url, args.timeout, args.n, roles)
+        if args.provider == "anthropic":
+            spec = [(m, None) for m in models]  # anthropic은 thinking 제어가 없다
+        else:
+            # Stage 1 통과 셀 (docs/model_evaluation.md 부록 A.6)
+            spec = [("gemma3:12b", None), ("gemma4:12b", False),
+                    ("gemma4:e4b", False), ("gemini-3-flash-preview", False)]
+            spec = [c for c in spec if c[0] in models]
+        cells = stage_formal(spec, base_url, args.timeout, args.n, roles, provider=args.provider)
         out_dir = rc.PROJECT_ROOT / args.out_dir
         out_dir.mkdir(parents=True, exist_ok=True)
         stamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
@@ -807,7 +828,9 @@ def main() -> None:
             "experiment": "E7", "stage": "formal", "n": args.n,
             "roles": sorted({"advisor": "advisor_answer", "planner": "planner",
                              "manager": "manager_check", "evaluator": "evaluator_verdict"}[r] for r in roles),
-            "started_at": stamp, "host": "rtx5060ti-16g", "runtime": "ollama-cuda",
+            "started_at": stamp, "provider": args.provider,
+            "host": "anthropic-api" if args.provider == "anthropic" else "rtx5060ti-16g",
+            "runtime": "anthropic-api" if args.provider == "anthropic" else "ollama-cuda",
             "pacing_rpm": PACING_RPM, "cells": cells,
         }, ensure_ascii=False, indent=2), encoding="utf-8")
         print(f"\n원문 → {path}")

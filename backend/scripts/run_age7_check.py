@@ -18,6 +18,7 @@ import runner_common as rc  # noqa: E402
 from apps.engine.app.dtos.llm_output_dto import AgentOutput  # noqa: E402
 from apps.engine.app.use_cases.game_support import build_agent_messages, pick_fallback_line  # noqa: E402
 from apps.engine.app.use_cases.harness import run_with_harness  # noqa: E402
+from apps.engine.dependencies.llm_factory import build_llm as build_anthropic_llm  # noqa: E402
 from apps.scenarios.scenario_a.adapter import build as build_scenario  # noqa: E402
 
 # ── 항목별 테스트 발화 (모델정책 §11 판정 기준) ──────────────────────
@@ -170,12 +171,18 @@ def main() -> None:
                         help="AGE7_POLICY 조건 (기본 both)")
     parser.add_argument("--item-threshold", type=float, default=0.7,
                         help="항목 통과 기준 통과율 (기본 0.7)")
+    parser.add_argument("--provider", choices=["ollama", "anthropic"], default="ollama",
+                        help="--model(NPC 후보) provider (기본 ollama). judge는 항상 ollama로 남는다")
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args()
 
     base_url = args.ollama_url or rc.ollama_base_url()
-    rc.check_ollama(base_url, [args.model, args.judge_model])
-    npc_llm = rc.make_llm(args.model, base_url)
+    if args.provider == "anthropic":
+        rc.check_ollama(base_url, [args.judge_model])
+        npc_llm = build_anthropic_llm("anthropic", args.model, base_url)
+    else:
+        rc.check_ollama(base_url, [args.model, args.judge_model])
+        npc_llm = rc.make_llm(args.model, base_url)
     judge_llm = rc.make_llm(args.judge_model, base_url)
 
     bundle = build_scenario().bundle()
