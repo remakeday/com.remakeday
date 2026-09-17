@@ -35,7 +35,7 @@ class Settings(BaseSettings):
     cookie_ab: str = "on"
     paw_reason_ab: str = "on"
 
-    inspector_token: str = "pigfarm-dev-inspector"
+    inspector_token: str = ""  # 비어 있으면 인스펙터 라우트 비활성(404) — 값은 .env에만
     gemini_api_key: str = ""
     gemini_requests_per_minute: int = Field(default=10, gt=0)
     anthropic_api_key: str = ""
@@ -61,6 +61,18 @@ class Settings(BaseSettings):
     dev_account_id: str = ""
     dev_account_password: str = ""
     dev_login_per_minute: int = 5
+
+    @property
+    def auth_required(self) -> bool:
+        """로그인을 요구하는가 — 정확히 `off`일 때만 우회하고 그 밖의 값(`on`·`On` 등)은 전부 켜진 것으로 본다.
+        guards·기동 검사가 이 값 하나로 판정한다."""
+        return self.guard_auth != "off"
+
+    @property
+    def public_deploy(self) -> bool:
+        """공개 배포 설정인가 — 프론트 주소가 https면 공개로 본다(세션 쿠키 Secure 판정과 같은 기준).
+        배포 설정에 따른 동작 차이는 main.deploy_profile이 이 값 하나로 고른다."""
+        return self.frontend_base_url.startswith("https://")
 
 
 @lru_cache(maxsize=1)

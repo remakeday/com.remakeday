@@ -53,7 +53,8 @@ class SessionInteractor:
             )
             raise UserDailyLimit()
 
-        prior = self._attempts.get(prior_attempt_id) if prior_attempt_id else None
+        # 남의 판은 없는 판과 같게 무시한다 — 그 판의 점수·쿠키를 물려받지 않는다 (F26).
+        prior = self._attempts.get_owned(prior_attempt_id, user_id) if prior_attempt_id else None
         attempt = self._attempts.create(prior, user_id=user_id)
 
         # TOCTOU: 생성 직후(내 판을 포함해) 다시 세어, 한도를 넘어섰으면 방금 만든 판을 지운다.

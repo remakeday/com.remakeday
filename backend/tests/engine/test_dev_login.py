@@ -92,7 +92,7 @@ def _client(monkeypatch, dev_login="on", per_minute=5):
     monkeypatch.setattr(auth_router, "_settings", lambda: type("S", (), {
         "dev_login": dev_login, "frontend_base_url": "http://localhost:3500",
         "dev_login_per_minute": per_minute})())
-    monkeypatch.setattr(guards, "_settings", lambda: type("S", (), {"trust_proxy": False, "guard_auth": "on",
+    monkeypatch.setattr(guards, "_settings", lambda: type("S", (), {"trust_proxy": False, "guard_auth": "on", "auth_required": True,
         "ip_sessions_per_minute": 5, "ip_actions_per_minute": 30})())
     auth_router._DEV_LOGIN_BUCKET.clear()
     app.dependency_overrides[get_auth_use_case] = lambda: _interactor()

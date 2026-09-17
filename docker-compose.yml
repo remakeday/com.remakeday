@@ -8,9 +8,12 @@ services:
     # 5432(kr.co.foodrm) · 5433(lifetutorial) · 5434(beyondfacade)가 사용 중이므로 5435로 분리
     ports:
       - "127.0.0.1:5435:5432"
+    # 비밀번호는 코드에 두지 않는다 — 루트 .env(compose가 자동으로 읽음, git 무시)의 POSTGRES_PASSWORD.
+    # backend/.env DATABASE_URL의 비밀번호와 같은 값. 이미 초기화된 볼륨은 이 값을 다시 읽지 않으므로
+    # 교체는 ALTER USER로 한다 (docs/superpowers/plans/2026-09-18-db-password-rotation.md)
     environment:
       POSTGRES_USER: pigfarm
-      POSTGRES_PASSWORD: pigfarm-dev
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?루트 .env에 POSTGRES_PASSWORD를 설정하세요 (backend/.env DATABASE_URL과 같은 값)}
       POSTGRES_DB: pigfarm
     volumes:
       - pigfarm-db-data:/var/lib/postgresql/data

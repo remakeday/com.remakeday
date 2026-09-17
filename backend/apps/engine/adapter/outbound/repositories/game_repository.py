@@ -41,6 +41,12 @@ class AttemptRepository:
     def get(self, attempt_id: uuid.UUID) -> AttemptOrm | None:
         return self._s.get(AttemptOrm, attempt_id)
 
+    def get_owned(self, attempt_id: uuid.UUID, user_id: uuid.UUID) -> AttemptOrm | None:
+        """판 소유 규칙의 유일한 정의 — 그 사용자가 만든 판만 돌려준다(user_id 없는 구판은 누구의 것도 아니다)."""
+        return self._s.scalars(
+            select(AttemptOrm).where(AttemptOrm.id == attempt_id, AttemptOrm.user_id == user_id)
+        ).first()
+
     def count_today(self, user_id: uuid.UUID, now: datetime) -> int:
         start = kst_day_start(now)
         stmt = (
@@ -133,15 +139,6 @@ class NoteRepository:
         return list(
             self._s.scalars(
                 select(NoteOrm).where(NoteOrm.attempt_id == attempt_id).order_by(NoteOrm.id)
-            ).all()
-        )
-
-    def by_ids(self, attempt_id: uuid.UUID, ids: list[int]) -> list[NoteOrm]:
-        if not ids:
-            return []
-        return list(
-            self._s.scalars(
-                select(NoteOrm).where(NoteOrm.attempt_id == attempt_id, NoteOrm.id.in_(ids))
             ).all()
         )
 

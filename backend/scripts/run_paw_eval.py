@@ -1,7 +1,7 @@
 """run_paw_eval.py — 원숭이손 수락/거부 후 다음 회차 점수 변화 (작업지시서 §P6).
 
 run_selfplay가 남긴 attempt(scripts/.selfplay_attempts.log)를 inspector API
-(GET /attempts/{id}/inspector?token=INSPECTOR_TOKEN)로 읽어,
+(GET /attempts/{id}/inspector, 헤더 X-Inspector-Token: INSPECTOR_TOKEN)로 읽어,
 monkey_paw_offer 이벤트(수락 여부, loop_n)와 answer_scored(loop_n, total)를 대조해
 수락/거부 각각의 다음 회차 점수 변화(Δ)를 계산한다. 데이터 없으면 "데이터 없음" 후 정상 종료.
 
@@ -33,7 +33,7 @@ def collect_attempt_ids(args) -> list[str]:
 
 def eval_attempt(client: httpx.Client, attempt_id: str, token: str) -> list[dict]:
     """수락/거부 이벤트별 (loop_n, accepted, delta) 목록. 접근 실패는 건너뛴다."""
-    res = client.get(f"/attempts/{attempt_id}/inspector", params={"token": token})
+    res = client.get(f"/attempts/{attempt_id}/inspector", headers={"X-Inspector-Token": token})
     if res.status_code != 200:
         print(f"  [skip] {attempt_id}: HTTP {res.status_code}")
         return []

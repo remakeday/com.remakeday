@@ -32,8 +32,8 @@ from apps.engine.adapter.inbound.api.v1 import guards
 
 def _app(monkeypatch, auth="on", per_minute=2):
     monkeypatch.setattr(guards, "_settings", lambda: type("S", (), {
-        "guard_auth": auth, "ip_sessions_per_minute": per_minute, "ip_actions_per_minute": per_minute,
-        "trust_proxy": False})())
+        "guard_auth": auth, "auth_required": auth != "off", "ip_sessions_per_minute": per_minute,
+        "ip_actions_per_minute": per_minute, "trust_proxy": False})())
     guards._BUCKETS.clear()
     app = FastAPI()
 
@@ -52,6 +52,36 @@ def test_require_user_401_without_cookie(monkeypatch):
 def test_guard_auth_off_allows_anonymous(monkeypatch):
     app = _app(monkeypatch, auth="off")
     assert TestClient(app).post("/g").json() == {"sub": "dev"}
+
+
+def test_guard_auth_off_rejects_request_via_cloudflare(monkeypatch):
+    """off로 떠 있어도 Cloudflare(터널)를 거친 요청은 `dev`로 통과시키지 않는다 — .env 프론트 주소가 틀려도 공개 우회 차단."""
+    app = _app(monkeypatch, auth="off")
+    r = TestClient(app).post("/g", headers={"CF-Connecting-IP": "203.0.113.9"})
+    assert r.status_code == 403
+    assert "code" not in r.json()  # daily_attempt_limit 같은 허들 화면으로 오해되지 않는다
+
+
+def test_guard_auth_on_ignores_cloudflare_header(monkeypatch):
+    app = _app(monkeypatch, auth="on")
+    user = type("User", (), {"sub": "u-1"})()
+    app.dependency_overrides[guards.get_auth_use_case] = lambda: type("U", (), {"current_user": lambda self, t: user})()
+    r = TestClient(app).post("/g", headers={"CF-Connecting-IP": "203.0.113.9"})
+    assert r.status_code == 200 and r.json() == {"sub": "u-1"}
+
+
+def test_guard_auth_off_cloudflare_rejection_records_guard_event(db_session, monkeypatch):
+    from main import app
+    from core.matrix import grid_keymaker_secret_manager as cfg
+    from apps.engine.adapter.outbound.orms.event_log_orm import EventLogOrm
+    from apps.engine.domain.value_objects.event_type import EventType
+    from sqlalchemy import select
+    monkeypatch.setattr(cfg.get_settings(), "guard_auth", "off")
+    guards._BUCKETS.clear()
+    with TestClient(app) as c:
+        assert c.post("/sessions", json={}, headers={"CF-Connecting-IP": "203.0.113.9"}).status_code == 403
+    rows = db_session.scalars(select(EventLogOrm).where(EventLogOrm.type == str(EventType.GUARD))).all()
+    assert any(r.payload.get("layer") == "auth" and r.payload.get("reason") == "guard_auth_off_via_proxy" for r in rows)
 
 
 def test_ip_bucket_429_with_retry_after(monkeypatch):
@@ -154,38 +184,53 @@ def test_text_length_limit(db_session, logged_in):
         assert r.status_code == 422
 
 
+def _own_loop_and_night(c, db_session):
+    """본문 상한 검사용 — 판 주인 확인(F26)을 통과하는 내 회차·밤 ID."""
+    from apps.engine.adapter.outbound.orms.game_state_orm import NightOrm
+    from apps.engine.adapter.outbound.repositories.game_repository import NightRepository
+    a = c.post("/sessions", json={}).json()
+    loop_id = c.post(f"/sessions/{a['attempt_id']}/loops").json()["loop_id"]
+    night = NightRepository(db_session).create(NightOrm(loop_id=uuid.UUID(loop_id)))
+    return loop_id, night.id
+
+
 def test_free_text_length_limit(db_session, logged_in):
     from main import app
     with TestClient(app) as c:
-        r = c.post(f"/loops/{uuid.uuid4()}/night/draft", json={"free_text": "가" * 2001})
+        loop_id, _ = _own_loop_and_night(c, db_session)
+        r = c.post(f"/loops/{loop_id}/night/draft", json={"free_text": "가" * 2001})
         assert r.status_code == 422
 
 
 def test_claims_count_limit(db_session, logged_in):
     from main import app
     with TestClient(app) as c:
-        r = c.patch(f"/nights/{uuid.uuid4()}/claims", json={"claims": ["주장"] * 9})
+        _, night_id = _own_loop_and_night(c, db_session)
+        r = c.patch(f"/nights/{night_id}/claims", json={"claims": ["주장"] * 9})
         assert r.status_code == 422
 
 
 def test_claim_length_limit(db_session, logged_in):
     from main import app
     with TestClient(app) as c:
-        r = c.patch(f"/nights/{uuid.uuid4()}/claims", json={"claims": ["가" * 501]})
+        _, night_id = _own_loop_and_night(c, db_session)
+        r = c.patch(f"/nights/{night_id}/claims", json={"claims": ["가" * 501]})
         assert r.status_code == 422
 
 
 def test_rule_custom_text_length_limit(db_session, logged_in):
     from main import app
     with TestClient(app) as c:
-        r = c.post(f"/nights/{uuid.uuid4()}/rule", json={"choice": "custom", "custom_text": "가" * 201})
+        _, night_id = _own_loop_and_night(c, db_session)
+        r = c.post(f"/nights/{night_id}/rule", json={"choice": "custom", "custom_text": "가" * 201})
         assert r.status_code == 422
 
 
 def test_rule_preview_custom_text_length_limit(db_session, logged_in):
     from main import app
     with TestClient(app) as c:
-        r = c.post(f"/nights/{uuid.uuid4()}/rule/preview", json={"custom_text": "가" * 201})
+        _, night_id = _own_loop_and_night(c, db_session)
+        r = c.post(f"/nights/{night_id}/rule/preview", json={"custom_text": "가" * 201})
         assert r.status_code == 422
 
 
@@ -213,6 +258,56 @@ def test_lifespan_rejects_default_session_secret_when_guard_auth_on(monkeypatch)
     with pytest.raises(RuntimeError, match="SESSION_SECRET"):
         with TestClient(app):
             pass
+
+
+def test_lifespan_rejects_default_session_secret_for_any_auth_on_value(monkeypatch):
+    """`off`가 아니면 인증이 켜진다(guards와 같은 판정) — `On` 같은 값도 기본 SESSION_SECRET 검사를 건너뛰지 않는다."""
+    from main import app
+    from core.matrix import grid_keymaker_secret_manager as cfg
+    s = cfg.get_settings()
+    monkeypatch.setattr(s, "guard_auth", "On")
+    monkeypatch.setattr(s, "session_secret", "dev-session-secret-change-me")
+    with pytest.raises(RuntimeError, match="SESSION_SECRET"):
+        with TestClient(app):
+            pass
+
+
+def test_lifespan_rejects_guard_auth_off_on_public_deploy(monkeypatch):
+    """공개 배포(https 프론트)에서 GUARD_AUTH=off면 모든 요청이 `dev` 한 사용자가 되므로 기동을 거부한다."""
+    from main import app
+    from core.matrix import grid_keymaker_secret_manager as cfg
+    s = cfg.get_settings()
+    monkeypatch.setattr(s, "frontend_base_url", "https://remakeday.example")
+    monkeypatch.setattr(s, "guard_auth", "off")
+    with pytest.raises(RuntimeError, match="GUARD_AUTH"):
+        with TestClient(app):
+            pass
+
+
+@pytest.mark.parametrize("frontend,auth", [
+    ("https://remakeday.example", "on"),
+    ("http://localhost:3500", "off"),  # 로컬·러너
+    ("http://localhost:3500", "on"),
+])
+def test_lifespan_starts_when_auth_mode_fits_deploy(db_session, monkeypatch, frontend, auth):
+    from main import app
+    from core.matrix import grid_keymaker_secret_manager as cfg
+    s = cfg.get_settings()
+    monkeypatch.setattr(s, "frontend_base_url", frontend)
+    monkeypatch.setattr(s, "guard_auth", auth)
+    monkeypatch.setattr(s, "session_secret", "test-secret-f26b")
+    with TestClient(app) as c:
+        assert c.get("/health").status_code == 200
+
+
+@pytest.mark.parametrize("frontend,public", [
+    ("https://remakeday.example", True),
+    ("http://localhost:3500", False),
+    ("http://127.0.0.1:3500", False),
+])
+def test_public_deploy_is_decided_by_frontend_scheme(frontend, public):
+    from core.matrix.grid_keymaker_secret_manager import Settings
+    assert Settings(database_url="postgresql://x", frontend_base_url=frontend).public_deploy is public
 
 
 def test_max_body_size_middleware_rejects_oversized_content_length():

@@ -91,8 +91,8 @@ def play_game(client: httpx.Client, player_llm, persona: str, *, max_loops: int,
     res = client.post("/sessions", json={})
     if res.status_code == 401 and "rd_session" not in client.cookies:
         raise SystemExit(
-            "로그인 필수(GUARD_AUTH=on). --dev-login 또는 --session-cookie 를 주거나 "
-            "backend/.env 에 GUARD_AUTH=off 를 설정하라"
+            "로그인 필수(GUARD_AUTH=on). --dev-login(또는 --session-cookie)을 쓴다. "
+            "GUARD_AUTH=off는 8500이 아닌 포트로 띄운 러너 프로세스의 환경변수로만 — Cloudflare를 거친 요청은 off에서도 거부된다"
         )
     res.raise_for_status()
     attempt_id = res.json()["attempt_id"]

@@ -16,11 +16,8 @@ def test_health_endpoint(db_session):
         res = client.get("/health")
 
     assert res.status_code == 200
-    body = res.json()
-    assert body["scenario"] in ("a", "example")
-    assert body["harness"] in ("on", "off")
-    assert set(body["models"]) == {"npc", "core", "embedding"}
-    assert body["db"] == "ok"
+    # 공개 경로(api.remakeday.com)라 기동 확인에 필요한 DB 상태만 준다 — 모델·시나리오·하네스 구성은 노출하지 않는다.
+    assert res.json() == {"db": "ok"}
 
 
 def test_scenario_fallback_when_a_is_missing(monkeypatch):

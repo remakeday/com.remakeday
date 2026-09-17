@@ -40,18 +40,42 @@ class MaxBodySizeMiddleware:
         await self.app(scope, receive, send)
 
 
+class LocalProfile:
+    """로컬 개발·러너 — FastAPI 문서 라우트를 두고, 인증 모드는 제한하지 않는다."""
+
+    docs_routes: dict = {}
+
+    def check_startup(self, settings) -> None:
+        pass
+
+
+class PublicProfile:
+    """공개 배포(api.remakeday.com) — 문서 라우트를 끄고, 인증 우회(GUARD_AUTH=off) 기동을 거부한다."""
+
+    docs_routes: dict = {"docs_url": None, "redoc_url": None, "openapi_url": None}
+
+    def check_startup(self, settings) -> None:
+        if not settings.auth_required:
+            raise RuntimeError("GUARD_AUTH=off is not allowed when FRONTEND_BASE_URL is https (public deploy)")
+
+
+def deploy_profile(settings) -> LocalProfile | PublicProfile:
+    return PublicProfile() if settings.public_deploy else LocalProfile()
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     settings = get_settings()
-    if settings.guard_auth == "on" and settings.session_secret == "dev-session-secret-change-me":
+    if settings.auth_required and settings.session_secret == "dev-session-secret-change-me":
         raise RuntimeError("SESSION_SECRET must be set when GUARD_AUTH=on")
+    deploy_profile(settings).check_startup(settings)
     scenario = build_scenario(settings.scenario)
     with get_session_factory()() as session:
         ScenarioSeedInteractor(ScenarioSeedRepository(session)).sync(scenario.bundle())
     yield
 
 
-app = FastAPI(title="REMAKE DAY Backend", lifespan=lifespan)
+app = FastAPI(title="REMAKE DAY Backend", lifespan=lifespan, **deploy_profile(get_settings()).docs_routes)
 app.add_middleware(MaxBodySizeMiddleware)
 app.add_middleware(
     CORSMiddleware,
