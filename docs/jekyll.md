@@ -159,6 +159,16 @@ Haiku는 두 번 다 게이트(4/5) 미달이지만 항목별 값이 크게 흔�
 
 `docs/review-verification/2026-09-16-tester7/tester7.md`에 2건을 기록만 했다(상태 "진행 중"). F1 게임 출력 텍스트가 드래그로 선택되지 않게, F2 현재 장면에 없는 NPC는 딤 처리·선택 불가. 둘 다 미착수. 후보 판은 `e7aa6a4f`(10:33:45 생성), 완주 여부는 미확인.
 
+### 프로덕션 도메인 연결 — 프론트 remakeday.com(Vercel) · 백엔드 api.remakeday.com(홈서버 터널)
+
+09-15에 적은 "백엔드 t3.micro" 안은 쓰지 않았다. t3.micro에서 홈서버 Ollama로 가는 통로가 따로 필요해서, 백엔드를 홈서버에 그대로 두고 Cloudflare 터널로 공개했다.
+
+- **DNS** — `remakeday.com` 네임서버를 가비아에서 Cloudflare로 이전(존 Active, SSL Full). 기존 레코드(apex·www·`blog`·`research`)는 전부 DNS only로 옮겼다. 프록시를 켜면 Vercel·GitHub Pages 인증서 발급이 깨진다. 지킬 허브는 `blog.remakeday.com`(GitHub Pages)로 확정 — 홈서버가 꺼져도 허브는 보이게 하려는 분리다
+- **백엔드** — cloudflared 터널 `remakeday`로 `api.remakeday.com` → `127.0.0.1:8500`. Swagger 경로(`/docs`·`/redoc`·`/openapi.json`)는 외부 404. 사용자 systemd 서비스로 등록해 재부팅 시 자동 기동. `main.py` CORS에 `https://remakeday.com`·`https://www.remakeday.com` 추가, `backend/.env`의 프론트 주소와 구글 로그인 콜백을 프로덕션 값으로 교체, 인스펙터 토큰 재발급. Google Console에 프로덕션 콜백 등록
+- **프론트** — Vercel 팀 beyondbob에 프로젝트 `com-remakeday` 신설(GitHub `remakeday/com.remakeday`, Root Directory `frontend`, `NEXT_PUBLIC_API_BASE=https://api.remakeday.com`). 기존 지킬용 Vercel 프로젝트에서 apex·www를 떼어 옮겼다. 대표 주소는 `remakeday.com`, `www`는 308로 apex 리다이렉트
+- **검증** — `https://remakeday.com` → `/play` 200, 빌드 청크에 `https://api.remakeday.com`만 포함(localhost 없음), `api.remakeday.com/health` 200(db ok), 프로덕션 오리진 CORS 프리플라이트 200, 구글 로그인 시작이 프로덕션 콜백으로 307. 사전 로컬 프로덕션 빌드 통과(라우트 7개)
+- **한계** — 첫 배포는 당시 GitHub main(`09c3f23`, 09-14) 기준이라 이후 작업이 빠진 상태였다. main에 푸시하면 Vercel이 자동 재배포한다. 실제 구글 계정 로그인 왕복은 사람 확인 필요. uvicorn은 아직 `start_demo.sh`의 nohup 기동이라 재부팅 시 수동 기동 필요
+
 ### 마무리 — 커밋 상태와 이월
 
 - **오늘 커밋 52건**(`c0231c7` 14:50 ~ `06e0906` 23:44), 그중 귀가 후 13건. main은 `be42385`(개발 로그인까지), `feat/coherence-chain`은 main보다 8커밋 앞선 상태로 미머지(`6a02a13`~`06e0906`, 평가 러너·어댑터). 미커밋은 테스터7 기록 폴더 하나 — *23:44 시점 기록. 이후 기록 커밋이 더해져 09-17 00:3x에 main으로 fast-forward 머지(아래 09-17 항목)*
