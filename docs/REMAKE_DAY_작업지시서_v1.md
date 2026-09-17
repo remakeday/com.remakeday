@@ -218,7 +218,7 @@ POST /nights/{id}/rule              {choice: 1|2|3|custom, custom_text?} → rul
 ### P4 · Manager (1.5일) — 방어선 ③
 
 **만드는 것**
-- 비트 경계 점검: 입력 = 전체 NPC 상태 + 규칙 + 손상 + 전날 점수. 출력 = 패치 `{npc, memory_delete|plan_patch, reason}` 예산 2/회차
+- 비트 경계 점검: 입력 = 전체 NPC 상태 + 규칙 + 손상 + 전날 점수. 출력 = 패치 `{npc, memory_delete|plan_patch, reason}` (plan_patch: 2026-09-18 제거 — 관리자는 기억 수정만) 예산 2/회차
 - 원숭이손: 1회차 무조건, 이후 전날 ≥40% 시 1회, 판당 최대 2. `{rule, shown_reason|null, hidden_side_effect}`. `PAW_REASON_AB`로 reason 표시 50:50
 - 밤의 결정: 이상자 수·소문 지수 → 트럭/조용히/폐쇄/무사. 도메인 함수, Manager는 사유만
 - Manager 메모리 유지 (회차 간, 판 간 전날 점수)
