@@ -11,7 +11,8 @@
 #   jekyll-devlog.sh --posts-only DATE [DATE...]       1단계를 건너뛰고, 지정한 날짜(YYYY-MM-DD)들의
 #                                                      허브 포스트만 docs/jekyll.md 원본 기준으로 재생성
 #
-# git 커밋/푸시는 사용자가 직접 수행한다. 이 스크립트는 파일만 갱신한다.
+# com.remakeday 의 git 커밋/푸시는 하지 않는다(docs/jekyll.md 는 사용자가 커밋).
+# 허브 포스트는 새로 쓴 파일만 beyondbob 저장소에 커밋·푸시한다(scripts/beyondbob-publish.sh).
 #
 # 저장소 역할 분리:
 #   com.remakeday/docs/jekyll.md                          ← 개발 작업만. 개발 일지의 원본(비공개 정보 포함 가능)
@@ -173,6 +174,7 @@ EOF
     DAYS=("${POSTS_ONLY[@]}")
   fi
 
+  WRITTEN_POSTS=()
   # 지정된 날짜들의 섹션 → 공개 재작성 → 게이트 → 지킬 포스트로 변환해 복사.
   # 섹션이 없으면 그 날짜 포스트는 건드리지 않는다. 게이트를 통과하지 못해도 건드리지 않는다.
   if [ -d "$BLOG/_posts" ]; then
@@ -204,6 +206,7 @@ EOF
             printf '%s\n' "$PUBLIC_BODY"
           } > "$BLOG/_posts/$DAY-dev-log.md"
           echo "post written: $BLOG/_posts/$DAY-dev-log.md (title: $TITLE)"
+          WRITTEN_POSTS+=("_posts/$DAY-dev-log.md")
         elif [ -z "$PUBLIC_BODY" ]; then
           echo "BLOCKED post $DAY — claude 재작성 결과 비어 있음"
         else
@@ -215,6 +218,11 @@ EOF
     done
   else
     echo "SKIP post — $BLOG/_posts 없음"
+  fi
+
+  # 허브 반영 — 게이트를 통과해 새로 쓴 포스트만 커밋·푸시
+  if [ ${#WRITTEN_POSTS[@]} -gt 0 ]; then
+    "$PROJECT/scripts/beyondbob-publish.sh" "데브로그 자동 갱신 — ${WRITTEN_POSTS[*]##*/}" "${WRITTEN_POSTS[@]}"
   fi
 
   echo "=== done $(date +%H:%M:%S) ==="
