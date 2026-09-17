@@ -70,6 +70,16 @@ const CLUE_IMAGES: Record<string, string> = {
   "clue-10": `${ASSET}/clues/clue-10-eunsang-rumor-path-v1.png`,
   "clue-11": `${ASSET}/clues/clue-11-jun-band-observation-v1.png`,
   "clue-12": `${ASSET}/clues/clue-12-chaeyeon-checkup-route-v1.png`,
+  // 원숭이손 소원 장면·반대 사건 — 스펙 §3 이미지 표, 이미지제작서 원숭이손Q군 v2.
+  // Q02·Q08은 조건부 재사용 판단에서 v2로 교체(ID 유지). Q05·Q07은 새 소원에서 쓰지 않아 보관.
+  Q02: `${ASSET}/clues/Q02-evening-two-blankets-v2.png`,
+  Q03: `${ASSET}/clues/Q03-eunsang-silent-corner-v1.png`,
+  Q04: `${ASSET}/clues/Q04-minseok-reports-eunsang-v2.png`,
+  Q06: `${ASSET}/clues/Q06-notebook-closed-v1.png`,
+  Q08: `${ASSET}/clues/Q08-eunsang-number-rumor-v2.png`,
+  Q09: `${ASSET}/clues/Q09-chaeyeon-empty-tray-v1.png`,
+  Q10: `${ASSET}/clues/Q10-cough-after-lights-out-v1.png`,
+  Q11: `${ASSET}/clues/Q11-band-matches-bunk-mark-v1.png`,
 };
 
 export function clueImage(imageId: string): string | null {
