@@ -159,6 +159,10 @@ export interface PawRespondReq {
 export interface PawRespondRes {
   applied: boolean;
   rule_label: string | null;
+  /** 수락 즉시 장면 — 소원 장면이 지금 비트면 새로 생긴 서술·삽화·관찰. 아니면 null·빈 배열. */
+  narration: string | null;
+  illustrations: Illustration[];
+  observations: Observation[];
 }
 
 export interface NotesRes {
@@ -182,7 +186,8 @@ export interface NightDraftReq {
 }
 export interface NightDraftRes {
   night_id: string;
-  claims: string[]; // ≤8
+  claims: string[]; // ≤8 — 직접 쓴 글에서만 나온다. 고른 기록은 참고용이라 들어가지 않는다
+  is_question: boolean[]; // claims와 같은 순서 — 질문형 문장 안내용, 채점과 무관
 }
 
 export interface PatchClaimsReq {
@@ -190,6 +195,7 @@ export interface PatchClaimsReq {
 }
 export interface PatchClaimsRes {
   claims: string[];
+  is_question: boolean[];
 }
 
 export interface PreviousAnswer {
@@ -203,6 +209,9 @@ export interface PreviousAnswer {
 export interface PreviousAnswerRes {
   previous_answer: PreviousAnswer | null;
 }
+
+/** 밤 점수 화면이 이름을 꺼내는 칸 */
+export type HintCell = "cause" | "motive";
 
 export interface SubmitRes {
   total: number;
@@ -219,10 +228,14 @@ export interface SubmitRes {
   ending_lines: string[] | null;
   /** 5회차 제출 완료 후 — confirmed 명제만 truth 전문, 나머지는 서버가 잠근다 */
   truth_reveal: TruthReveal[] | null;
-  /** 매일 밤 — 칸별 점수는 숨긴 채 정성 문장만 */
+  /** 매일 밤 — 칸별 점수는 숨긴 채 원인·동기 중 잡힌 칸의 진행 문장만. 잡힌 칸이 없으면 null */
   cell_feedback: string | null;
   /** 세계와 닿지 않은 주장 수 (감점 없음, 정보만) */
   wrong_claim_count: number;
+  /** 매일 밤 — 인정(확인·부분)된 내 문장. 칸 구분 없이 쓴 순서대로. 진실 문장은 담지 않는다 */
+  accepted_claims: string[];
+  /** 매일 밤 — 점수 0인 칸 코드(원인·동기만, 정체는 안내하지 않는다). 문구는 화면이 정한다 */
+  empty_cells: HintCell[];
   /** 밤 단서 시퀀스 — 결말 전환에서 방송 → 치지직 → 캡션 순서로 재생. 회차 표가 없는 시나리오는 null */
   night_clue: NightClue | null;
 }
@@ -261,6 +274,10 @@ export interface GodQuestionRes {
   next_observation: string | null;
   /** 항상 null — 리드 사실 공개는 제거됨(F7). 호환용 필드 */
   unlocked_note: string | null;
+  /** guide = 게임 목적·사용법 안내 답. 판정(verdict "")·근거·조언이 없고 횟수를 쓰지 않는다 */
+  kind: "answer" | "guide";
+  /** "알 수 없다"라 횟수를 돌려받았다 (같은 밤 3회까지, 같은 질문 재입력은 제외). remaining에 이미 반영 */
+  refunded: boolean;
 }
 
 // ── 진실 공개·추리 여정 ───────────────────────────────
@@ -372,7 +389,7 @@ export interface Metric {
 export interface HarnessRes {
   rules: {
     rule_id: string;
-    source: "monkey_paw" | "user_choice" | "user_custom";
+    source: "monkey_paw" | "paw_effect" | "user_choice" | "user_custom";
     target: string;
     when_beat: number | null;
     effect: "suppress" | "enforce";
@@ -417,9 +434,6 @@ export interface InspectorRes {
 }
 
 export interface HealthRes {
-  scenario: string;
-  harness: string;
-  models: { npc: string; core: string; embedding: string };
   db: string;
 }
 
@@ -449,12 +463,16 @@ async function request<T>(
   method: "GET" | "POST" | "PATCH",
   path: string,
   body?: unknown,
+  extraHeaders: Record<string, string> = {},
 ): Promise<T> {
   let res: Response;
   try {
     res = await fetch(`${API_BASE}${path}`, {
       method,
-      headers: body !== undefined ? { "Content-Type": "application/json" } : {},
+      headers: {
+        ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
+        ...extraHeaders,
+      },
       body: body !== undefined ? JSON.stringify(body) : undefined,
       credentials: "include", // 세션 쿠키(rd_session)를 함께 보낸다
     });
@@ -534,10 +552,10 @@ export const api = {
   getHarness: (attemptId: string) =>
     request<HarnessRes>("GET", `/attempts/${attemptId}/harness`),
   getInspector: (attemptId: string, token: string) =>
-    request<InspectorRes>(
-      "GET",
-      `/attempts/${attemptId}/inspector?token=${encodeURIComponent(token)}`,
-    ),
+    // 토큰은 헤더로만 — URL 쿼리는 접근 로그·브라우저 기록에 남는다
+    request<InspectorRes>("GET", `/attempts/${attemptId}/inspector`, undefined, {
+      "X-Inspector-Token": token,
+    }),
   getHealth: () => request<HealthRes>("GET", "/health"),
 
   // 인증 — Google OAuth 세션

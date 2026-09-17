@@ -49,7 +49,7 @@ const files = {
         else if (path.endsWith('/night/previous')) body = { previous_answer: null };
         else if (path.endsWith('/notes')) body = { notes: [] };
         else if (path.endsWith('/night/draft')) body = { night_id: 'night', claims: ['관찰한 내용을 정리했다.'] };
-        else if (path.endsWith('/submit')) body = { total: 0, passed: false, loop_n: 1, world_outcome: outcome, is_final: false, closed_by: null, cells: null, cookie: null, intervention_available: true, ending_lines: null, cell_feedback: '원인은 비어 있다.', wrong_claim_count: 0 };
+        else if (path.endsWith('/submit')) body = { total: 0, passed: false, loop_n: 1, world_outcome: outcome, is_final: false, closed_by: null, cells: null, cookie: null, intervention_available: true, ending_lines: null, cell_feedback: null, wrong_claim_count: 0, accepted_claims: [], empty_cells: ['cause', 'motive'] };
         else { report.errors.push(`Unexpected API: ${path}`); return route.abort(); }
         return route.fulfill({ json: body, headers: { 'access-control-allow-origin': 'http://localhost:3500', 'access-control-allow-credentials': 'true' } });
       });

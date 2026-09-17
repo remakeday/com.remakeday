@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { api } from "@/contracts/api";
-import type { GodAnswer, GodOption, Observation, QuestionStatus, RulePreview } from "@/contracts/api";
+import type { GodAnswer, GodOption, GodQuestionRes, Observation, QuestionStatus, RulePreview } from "@/contracts/api";
 import { useApiAction } from "@/lib/useApiAction";
 import { ErrorToast } from "@/components/ErrorToast";
 import { TypingIndicator } from "@/components/TypingIndicator";
@@ -18,6 +18,8 @@ interface QA {
   status: QuestionStatus;
   evidence: Observation[];
   nextObservation: string | null;
+  kind: GodQuestionRes["kind"];
+  refunded: boolean;
 }
 
 const STATUS_LABEL: Record<QuestionStatus, string> = {
@@ -25,6 +27,44 @@ const STATUS_LABEL: Record<QuestionStatus, string> = {
   contradicted: "기록과 모순된다",
   unknown: "아직 확인되지 않았다",
 };
+
+/** 판정 배지 — 문장 대신 표시 (테스터9 F20 원칙 3). wh 질문의 supported는 판정 접두가 없어 배지도 없다 */
+function verdictBadge(qa: QA): string | null {
+  if (qa.kind === "guide") return "안내";
+  if (!qa.verdict) return null;
+  if (qa.verdict.startsWith("왜인지는")) return "이유는 말할 수 없다";
+  return qa.verdict.replace(/\.$/, "");
+}
+
+/** 판정 접두를 뗀 본문을 첫 문장(먼저 보임)과 나머지(펼쳐 봄)로 나눈다 — F20 원칙 4. 안내 답은 접지 않는다 */
+function splitAnswer(qa: QA): [string, string] {
+  const body = qa.answer.startsWith(qa.verdict) ? qa.answer.slice(qa.verdict.length).trim() : qa.answer;
+  if (qa.kind === "guide") return [body, ""];
+  const match = body.match(/^([\s\S]+?[.!?])\s+([\s\S]+)$/);
+  return match ? [match[1], match[2]] : [body, ""];
+}
+
+/** 조언 — 답의 중심. 계약 형식 "네 기록의 「닻」. 행동"이면 행동을 크게, 닻은 작게 */
+function AdviceBlock({ text }: { text: string }) {
+  const match = text.match(/^네 기록의 「([\s\S]+)」\.\s*([\s\S]+)$/);
+  return (
+    <div className="border-2 border-orange px-4 py-3">
+      <p className="text-sm tracking-wide text-orange">내일 해 볼 일</p>
+      <p className="mt-1 text-xl leading-relaxed">{match ? match[2] : text}</p>
+      {match && <p className="mt-2 text-base opacity-60">네 기록: {match[1]}</p>}
+    </div>
+  );
+}
+
+/** 공개 사다리 칸(`ladder:`) — 장면 관찰이 아니라 세계에 알려진 사실이라 회차·장면 없이 따로 표시한다 */
+function WorldFactCard({ observation }: { observation: Observation }) {
+  return (
+    <article className="space-y-1 border border-current/25 p-3">
+      <p className="text-base text-orange">세계에 알려진 사실</p>
+      <p className="text-lg leading-relaxed">{observation.text}</p>
+    </article>
+  );
+}
 
 /** 다음 하루 대기 중 흘리는 세계 힌트 — 무심코 읽으면 풍경, 잘 읽으면 답이다 */
 const WORLD_HINTS = [
@@ -95,7 +135,7 @@ export function GodScreen({
   const qaLogRef = useRef<HTMLDivElement>(null);
   const questionRef = useRef<HTMLInputElement>(null);
   const questionPlaceholders = [
-    hypothesis ? `예: “${hypothesis.slice(0, 28)}”을 확인할 기록은?` : "예: 내 주장을 확인할 기록은?",
+    hypothesis ? `예: “${hypothesis.slice(0, 28)}” 맞아?` : "예: 내 가설을 넣어 맞는지 물어봐",
     qas.at(-1)?.nextObservation ? `예: ${qas.at(-1)?.nextObservation}` : "예: 아직 모르는 이유를 어디서 확인해?",
     "예: 이 발언과 직접 본 사실은 어떻게 달라?",
   ];
@@ -130,7 +170,7 @@ export function GodScreen({
       (res) => {
         setQas((prev) => [
           ...prev,
-          { question: text, answer: res.answer, verdict: res.verdict, detail: res.detail, status: res.status, evidence: res.evidence ?? [], nextObservation: res.next_observation },
+          { question: text, answer: res.answer, verdict: res.verdict, detail: res.detail, status: res.status, evidence: res.evidence ?? [], nextObservation: res.next_observation, kind: res.kind, refunded: res.refunded },
         ]);
         setRemaining(res.remaining);
       },
@@ -193,7 +233,7 @@ export function GodScreen({
       <div className="fade-in-slow relative z-10 flex w-full max-w-xl flex-col gap-6 bg-void px-4 py-4">
         <p className="text-center text-lg leading-relaxed">
           이해도 {Math.round(total)}%. 오늘의 세계는 멸망했습니다.
-          <br />낮 대화와 별도로 3회 질문할 수 있습니다.
+          <br />낮 대화와 별도로 세 번 물을 수 있다. 알 수 없다는 답에는 횟수를 쓰지 않는다.
         </p>
         {firstVisit && (
           <div className="text-center text-base leading-relaxed">
@@ -204,28 +244,36 @@ export function GodScreen({
 
         {/* 질문 로그 — 긴 답이 잘리지 않게 높이 제한 없이 쌓는다 */}
         <div ref={qaLogRef} className="flex flex-col gap-4">
-          {qas.map((qa, i) => (
-            <div key={i} className="fade-in flex flex-col gap-1">
-              <p className="text-lg opacity-60">— {qa.question}</p>
-              <p className="text-lg">
-                <span className="text-orange">{qa.verdict}</span>{" "}
-                {qa.answer.startsWith(qa.verdict) ? qa.answer.slice(qa.verdict.length).trim() : qa.answer}
-              </p>
-              {qa.nextObservation && (
-                <p className="border-l-2 border-orange pl-3 text-base opacity-80">{qa.nextObservation}</p>
-              )}
-              {(qa.evidence.length > 0 || qa.detail) && (
-                <details className="text-lg">
-                  <summary className="cursor-pointer py-1 text-base opacity-60">근거 보기{qa.evidence.length > 0 ? ` · ${qa.evidence.length}개` : ""}</summary>
-                  <div className="mt-2 flex flex-col gap-2">
-                    <p className="text-base text-orange">{STATUS_LABEL[qa.status]}</p>
-                    {qa.evidence.length === 0 && qa.detail && <p className="opacity-70">{qa.detail}</p>}
-                    {qa.evidence.slice(0, 2).map((item) => <ObservationCard key={item.observation_id} observation={item} compact />)}
-                  </div>
-                </details>
-              )}
-            </div>
-          ))}
+          {qas.map((qa, i) => {
+            // 판정 배지 + 한 줄 답 → 조언 블록 → 자세히(나머지 문장·판정 설명·근거) 순 (테스터9 F20 원칙 4)
+            const badge = verdictBadge(qa);
+            const [firstLine, rest] = splitAnswer(qa);
+            return (
+              <div key={i} className="fade-in flex flex-col gap-2">
+                <p className="text-lg opacity-60">— {qa.question}</p>
+                <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-lg">
+                  {badge && <span className="border border-orange px-2 text-base text-orange">{badge}</span>}
+                  {qa.refunded && <span className="text-base opacity-80">횟수를 돌려받았다</span>}
+                  {firstLine && <span className="w-full">{firstLine}</span>}
+                </p>
+                {qa.nextObservation && <AdviceBlock text={qa.nextObservation} />}
+                {(rest || qa.evidence.length > 0 || qa.detail) && (
+                  <details className="text-lg">
+                    <summary className="cursor-pointer py-1 text-base opacity-60">자세히{qa.evidence.length > 0 ? ` · 근거 ${qa.evidence.length}개` : ""}</summary>
+                    <div className="mt-2 flex flex-col gap-2">
+                      {rest && <p className="opacity-80">{rest}</p>}
+                      {qa.kind !== "guide" && <p className="text-base text-orange">{STATUS_LABEL[qa.status]}</p>}
+                      {qa.evidence.length === 0 && qa.detail && <p className="opacity-70">{qa.detail}</p>}
+                      {qa.evidence.slice(0, 2).map((item) =>
+                        item.observation_id.startsWith("ladder:")
+                          ? <WorldFactCard key={item.observation_id} observation={item} />
+                          : <ObservationCard key={item.observation_id} observation={item} compact />)}
+                    </div>
+                  </details>
+                )}
+              </div>
+            );
+          })}
           {askAction.busy && <TypingIndicator />}
         </div>
 
@@ -233,8 +281,8 @@ export function GodScreen({
           <>
             {remaining > 0 ? (
               <div className="flex flex-wrap items-center gap-2">
-                <p className="w-full text-base opacity-80">이 목소리는 오늘 일어난 일만 안다. 무엇을 했는지 물어라.</p>
-                <p className="w-full text-sm tracking-wide opacity-60">맞다 · 아니다 · 그건 알 수 없다</p>
+                <p className="w-full text-base opacity-80">가설을 넣어 물으면 맞다·아니다로 판정받고, 누가·무엇을 물으면 기록에서 찾아 준다.</p>
+                <p className="w-full text-sm opacity-60">기록으로 알 수 없는 질문은 횟수를 쓰지 않는다 · 한 밤 세 번까지. 게임 방법을 물어도 된다.</p>
                 <span className="w-full text-base opacity-70">
                   남은 질문 {remaining}
                 </span>
@@ -274,7 +322,8 @@ export function GodScreen({
             <button
               type="button"
               onClick={() => setStage("rule")}
-              className="mx-auto border border-white/60 px-8 py-2 text-lg hover:border-white hover:bg-white hover:text-void"
+              disabled={askAction.busy}
+              className="mx-auto border border-white/60 px-8 py-2 text-lg hover:border-white hover:bg-white hover:text-void disabled:opacity-30"
             >
               규칙을 고른다
             </button>
@@ -297,7 +346,7 @@ export function GodScreen({
         {stage === "rule" && appliedLabel === null && (
           <div className="flex flex-col gap-4">
             <p className="text-center text-lg opacity-70">
-              내일에 규칙 하나를 건다.
+              남은 모든 날에 규칙 하나를 건다.
             </p>
             {options === null ? (
               <p className="text-center text-lg opacity-40">
@@ -360,9 +409,10 @@ export function GodScreen({
                     type="button"
                     onClick={requestPreview}
                     disabled={ruleAction.busy || previewAction.busy || !customText.trim()}
+                    aria-busy={previewAction.busy}
                     className="shrink-0 border border-white px-4 py-2 text-lg hover:bg-white hover:text-void disabled:opacity-30"
                   >
-                    {previewAction.busy ? "…" : "해석 미리보기"}
+                    {previewAction.busy ? "해석 미리보기 준비 중…" : "해석 미리보기"}
                   </button>
                 </div>
                 {preview && (

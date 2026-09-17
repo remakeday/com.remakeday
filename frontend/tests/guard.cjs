@@ -15,10 +15,10 @@ const CASES = [
     status: 401,
     headers: {},
     json: { detail: '로그인이 필요하다' },
-    expectText: '로그인이 필요하다',
+    expectText: '로그인이 필요합니다',
     check: async page => {
-      await page.getByRole('link', { name: '랜딩으로' }).waitFor();
-      assert.equal(await page.getByRole('link', { name: '랜딩으로' }).getAttribute('href'), '/');
+      await page.getByRole('link', { name: '처음 화면으로' }).waitFor();
+      assert.equal(await page.getByRole('link', { name: '처음 화면으로' }).getAttribute('href'), '/');
     },
   },
   {
@@ -88,7 +88,8 @@ async function testRestartGuard(browser) {
         total: 100, passed: true, loop_n: loopN, world_outcome: loopN === 3 ? 'closure' : 'truck',
         is_final: loopN === 5, closed_by: loopN === 5 ? 'understood_all' : null, cells: loopN === 5 ? cells : null,
         cookie: null, intervention_available: loopN < 5, ending_lines: loopN === 5 ? ['우리가 대피소라고 믿었던 곳은 [결말 장소]였다.'] : null,
-        cell_feedback: '원인은 잡혔다.', wrong_claim_count: 0, night_clue: { loop_n: loopN, ...NIGHT_CLUES[loopN] },
+        cell_feedback: '원인은 잡혔다. 동기는 잡혔다.', wrong_claim_count: 0, accepted_claims: ['상황과 정체에 대한 이해'], empty_cells: [],
+        night_clue: { loop_n: loopN, ...NIGHT_CLUES[loopN] },
       };
     } else if (p.endsWith('/options')) {
       body = { options: [1, 2, 3].map(index => ({ index, label: `추천 규칙 ${index}`, target: '채연', action: '배급을 설명한다', effect: 'enforce', when_beat: 'any', reason: '관찰을 확인하기 위해', evidence_ids: [], expected_observation: '다음 배급 장면에서 설명을 듣는다.' })) };

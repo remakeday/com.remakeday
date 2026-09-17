@@ -136,11 +136,11 @@ const path = require('node:path');
       }
       return result;
     }, files);
-    assert.equal(Object.keys(durations).length, 34);
+    assert.equal(Object.keys(durations).length, 35);
     assert.ok(Object.values(durations).every(value => Number.isFinite(value) && value > 0), 'all supplied voice recordings decode');
     assert.ok(await page.evaluate(() => window.bgmVolumes.length > 0 && window.bgmVolumes.every(volume => volume <= 0.25)), 'BGM never exceeds its configured volume, including initialization');
     assert.deepEqual(errors, []);
-    console.log(JSON.stringify({ checks: ['broadcast before dialogue', 'character lines text only (F1)', 'BGM duck and restore', 'manager line replay', 'scene cancellation', 'voice-off persists', 'exact dialogue matching', 'missing audio recovery', 'music-off persists', 'all 34 recordings decode'], durations, errors }, null, 2));
+    console.log(JSON.stringify({ checks: ['broadcast before dialogue', 'character lines text only (F1)', 'BGM duck and restore', 'manager line replay', 'scene cancellation', 'voice-off persists', 'exact dialogue matching', 'missing audio recovery', 'music-off persists', 'all 35 recordings decode'], durations, errors }, null, 2));
   } finally {
     await browser.close();
   }

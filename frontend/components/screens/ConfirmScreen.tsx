@@ -34,19 +34,23 @@ function DayRecap({ pairs }: { pairs: DialoguePair[] }) {
 /**
  * 정리 확인 — "이렇게 이해했는데 맞아?"
  * claims 목록. 수정은 1회만 (PATCH), 그 후 제출.
+ * 질문형 주장에는 단정해서 고치라는 안내만 붙인다 — 자동 변환·채점 제외 없음 (테스터11 O2).
  */
 export function ConfirmScreen({
   nightId,
   initialClaims,
+  initialIsQuestion,
   dayLog,
   onSubmitted,
 }: {
   nightId: string;
   initialClaims: string[];
+  initialIsQuestion: boolean[];
   dayLog: DialoguePair[];
   onSubmitted: (result: SubmitRes, finalClaims: string[]) => void;
 }) {
   const [claims, setClaims] = useState<string[]>(initialClaims);
+  const [isQuestion, setIsQuestion] = useState<boolean[]>(initialIsQuestion);
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState("");
   const [editUsed, setEditUsed] = useState(false);
@@ -87,6 +91,7 @@ export function ConfirmScreen({
       () => api.patchClaims(nightId, { claims: next }),
       (res) => {
         setClaims(res.claims);
+        setIsQuestion(res.is_question ?? []);
         setEditing(false);
         setEditUsed(true);
       },
@@ -140,9 +145,10 @@ export function ConfirmScreen({
                 type="button"
                 onClick={saveEdit}
                 disabled={patchAction.busy}
+                aria-busy={patchAction.busy}
                 className="border border-paper px-6 py-2 text-lg hover:bg-paper hover:text-void disabled:opacity-30"
               >
-                {patchAction.busy ? "…" : "이렇게 고친다"}
+                {patchAction.busy ? "이렇게 고치는 중…" : "이렇게 고친다"}
               </button>
               <button
                 type="button"
@@ -173,6 +179,13 @@ export function ConfirmScreen({
                     className="border border-paper/30 px-3 py-2 text-lg leading-relaxed"
                   >
                     {c}
+                    {isQuestion[i] && (
+                      <span className="mt-1 block text-base text-orange">
+                        {editUsed
+                          ? "질문이다. 고치기를 이미 써서 이대로 제출된다."
+                          : "질문이다. '~다'로 단정해 고쳐 쓴다. 다음 밤 글에도 고쳐 써야 이어진다."}
+                      </span>
+                    )}
                   </li>
                 ))}
               </ol>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { api, ApiError } from "@/contracts/api";
 import type {
   CreateSessionRes,
@@ -85,6 +85,7 @@ export default function PlayPage() {
   const [night, setNight] = useState<{
     nightId: string;
     claims: string[];
+    isQuestion: boolean[];
   } | null>(null);
   const [dayLog, setDayLog] = useState<DialoguePair[]>([]);
   const [submitResult, setSubmitResult] = useState<SubmitRes | null>(null);
@@ -97,6 +98,12 @@ export default function PlayPage() {
   const sessionAction = useApiAction();
   const loopAction = useApiAction();
   const retryAction = useApiAction();
+
+  // 화면이 바뀌면 창 스크롤을 맨 위로 — 긴 화면(신의 질문·밤)의 스크롤이 다음 화면에 남으면
+  // 푸터 높이만큼 아래로 밀린 채 시작한다(테스터8 F1).
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+  }, [phase]);
 
   useEffect(() => {
     const audio = bgmRef.current;
@@ -256,8 +263,8 @@ export default function PlayPage() {
       {phase === "night" && loop && !guard && (
         <NightScreen
           loopId={loop.loop_id}
-          onDrafted={(nightId, claims) => {
-            setNight({ nightId, claims });
+          onDrafted={(nightId, claims, isQuestion) => {
+            setNight({ nightId, claims, isQuestion });
             setPhase("confirm");
           }}
         />
@@ -267,6 +274,7 @@ export default function PlayPage() {
         <ConfirmScreen
           nightId={night.nightId}
           initialClaims={night.claims}
+          initialIsQuestion={night.isQuestion}
           dayLog={dayLog}
           onSubmitted={(result, finalClaims) => {
             setNight((current) => current ? { ...current, claims: finalClaims } : current);

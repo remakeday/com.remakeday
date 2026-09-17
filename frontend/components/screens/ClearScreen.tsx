@@ -39,9 +39,9 @@ export function ClearScreen({
           </>
         )}
         {showRetrospective && (
-          <button type="button" onClick={onRetry} disabled={retryBusy}
+          <button type="button" onClick={onRetry} disabled={retryBusy} aria-busy={retryBusy}
             className="border border-paper/60 px-10 py-3 text-sm hover:bg-paper hover:text-void disabled:opacity-40">
-            {retryBusy ? "…" : "다시 시작"}
+            {retryBusy ? "다시 시작 준비 중…" : "다시 시작"}
           </button>
         )}
       </div>

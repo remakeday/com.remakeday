@@ -12,8 +12,9 @@ import {
 import { TruthRevealCards } from "@/components/TruthRevealCards";
 import { useVoice, VoiceReplay } from "@/components/VoicePlayer";
 import { VOICE_CLIPS } from "@/lib/voiceMap";
+import { observationLabel } from "@/lib/observationLabel";
 
-const SOURCE_LABEL = { monkey_paw: "원숭이손", user_choice: "추천 규칙", user_custom: "직접 쓴 규칙" };
+const SOURCE_LABEL = { monkey_paw: "원숭이손", paw_effect: "원숭이손의 대가", user_choice: "추천 규칙", user_custom: "직접 쓴 규칙" };
 const RESULT_LABEL: Record<RuleOpportunity["result"], string> = {
   obeyed: "지킴",
   violated: "지키지 못함",
@@ -45,6 +46,19 @@ function MetricRow({ name, metric }: { name: string; metric: Metric }) {
   );
 }
 
+/** 관찰 근거 — 내부 ID 대신 라벨. 3건 이상이면 접는다(테스터9 F25). */
+function EvidenceLabels({ ids }: { ids: string[] }) {
+  if (ids.length === 0) return <>연결 기록 없음</>;
+  const list = <ul>{ids.map((id) => <li key={id}>{observationLabel(id)}</li>)}</ul>;
+  if (ids.length <= 2) return list;
+  return (
+    <details>
+      <summary className="cursor-pointer">관찰 {ids.length}건</summary>
+      {list}
+    </details>
+  );
+}
+
 function OpportunityCard({ opportunity }: { opportunity: RuleOpportunity }) {
   return (
     <li className="border border-paper/25 p-3">
@@ -53,7 +67,7 @@ function OpportunityCard({ opportunity }: { opportunity: RuleOpportunity }) {
         <dt className="text-xs opacity-55">기회</dt><dd>{opportunity.condition}</dd>
         <dt className="text-xs opacity-55">실제 행동</dt><dd>{opportunity.actual_action ?? "기록된 행동 없음"}</dd>
         <dt className="text-xs opacity-55">검사 결과</dt><dd className={opportunity.result === "obeyed" ? "" : "text-orange"}>{RESULT_LABEL[opportunity.result]}</dd>
-        <dt className="text-xs opacity-55">관찰 근거</dt><dd>{opportunity.observation_ids.length > 0 ? opportunity.observation_ids.join(", ") : "연결 기록 없음"}</dd>
+        <dt className="text-xs opacity-55">관찰 근거</dt><dd><EvidenceLabels ids={opportunity.observation_ids} /></dd>
         {opportunity.side_effect && <><dt className="text-xs opacity-55">발생 결과</dt><dd>{opportunity.side_effect}</dd></>}
       </dl>
     </li>

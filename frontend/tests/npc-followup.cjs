@@ -136,7 +136,7 @@ const deferred = () => {
     const assertPendingLocks = async () => {
       assert.equal(await input.isDisabled(), true, 'pending question locks editing');
       assert.equal(await send.isDisabled(), true, 'pending question locks duplicate sends');
-      assert.equal(await page.getByRole('button', { name: /^(다음 장면|…)$/, exact: true }).isDisabled(), true, 'pending mutation locks scene movement');
+      assert.equal(await page.getByRole('button', { name: /^다음 장면( 준비 중…)?$/, exact: true }).isDisabled(), true, 'pending mutation locks scene movement');
     };
     await page.getByText('오늘 남은 대화 8회', { exact: true }).waitFor();
     const gatedQuestion = await beginQuestion('ㅁㄴㅇㄹ 의미 없는 입력');

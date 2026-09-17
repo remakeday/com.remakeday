@@ -5,10 +5,10 @@ import Link from "next/link";
 export type GuardKind = "login" | "daily_limit" | "daily_cap" | "rate";
 
 const MESSAGE: Record<GuardKind, string> = {
-  login: "로그인이 필요하다. 랜딩에서 구글로 시작해라.",
-  daily_limit: "오늘은 여기까지. 내일 다시 시작할 수 있다.",
-  daily_cap: "오늘 정원이 마감됐다. 내일 다시 열린다.",
-  rate: "요청이 너무 잦다.",
+  login: "로그인이 필요합니다. 처음 화면에서 Google로 시작해 주세요.",
+  daily_limit: "오늘은 여기까지입니다. 내일 다시 시작할 수 있습니다.",
+  daily_cap: "오늘 정원이 마감되었습니다. 내일 다시 열립니다.",
+  rate: "요청이 너무 잦습니다.",
 };
 
 /**
@@ -25,7 +25,7 @@ export function GuardScreen({
     <div className="relative flex min-h-dvh w-full flex-col items-center justify-center gap-8 bg-void px-8 py-10 text-center text-paper">
       <p className="text-lg leading-relaxed">
         {kind === "rate"
-          ? `${MESSAGE.rate} ${retryAfter ?? 0}초 뒤 다시.`
+          ? `${MESSAGE.rate} ${retryAfter ?? 0}초 뒤 다시 시도해 주세요.`
           : MESSAGE[kind]}
       </p>
       {kind === "login" && (
@@ -33,7 +33,7 @@ export function GuardScreen({
           href="/"
           className="border border-paper px-10 py-2 text-lg hover:bg-paper hover:text-void"
         >
-          랜딩으로
+          처음 화면으로
         </Link>
       )}
     </div>

@@ -1,7 +1,6 @@
 "use client";
 
-import { Suspense, use, useEffect, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { use, useState } from "react";
 import { api } from "@/contracts/api";
 import type { InspectorRes } from "@/contracts/api";
 import { useApiAction } from "@/lib/useApiAction";
@@ -69,12 +68,10 @@ function DataTable({ title, rows }: { title: string; rows: unknown[] }) {
 }
 
 function InspectorView({ attemptId }: { attemptId: string }) {
-  const searchParams = useSearchParams();
-  const urlToken = searchParams.get("token") ?? "";
-  const [token, setToken] = useState(urlToken);
+  // 토큰은 입력칸으로만 받는다 — URL(?token=)에 두면 프론트 호스팅 로그·브라우저 기록에 남는다
+  const [token, setToken] = useState("");
   const [data, setData] = useState<InspectorRes | null>(null);
   const action = useApiAction();
-  const loadedFor = useRef<string | null>(null);
 
   const load = (t: string) => {
     if (!t) return;
@@ -83,14 +80,6 @@ function InspectorView({ attemptId }: { attemptId: string }) {
       setData,
     );
   };
-
-  useEffect(() => {
-    if (urlToken && loadedFor.current !== urlToken) {
-      loadedFor.current = urlToken;
-      load(urlToken);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [urlToken]);
 
   return (
     <div className="min-h-dvh bg-paper px-4 py-8 text-ink">
@@ -104,7 +93,9 @@ function InspectorView({ attemptId }: { attemptId: string }) {
 
         <div className="mb-8 flex items-center gap-2">
           <input
-            type="text"
+            type="password"
+            autoComplete="off"
+            spellCheck={false}
             value={token}
             onChange={(e) => setToken(e.target.value)}
             onKeyDown={(e) => {
@@ -149,9 +140,5 @@ export default function InspectorPage({
   params: Promise<{ attemptId: string }>;
 }) {
   const { attemptId } = use(params);
-  return (
-    <Suspense fallback={null}>
-      <InspectorView attemptId={attemptId} />
-    </Suspense>
-  );
+  return <InspectorView attemptId={attemptId} />;
 }

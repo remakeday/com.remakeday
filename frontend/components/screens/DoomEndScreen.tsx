@@ -26,9 +26,10 @@ export function DoomEndScreen({
           type="button"
           onClick={onRetry}
           disabled={retryBusy}
+          aria-busy={retryBusy}
           className="border border-paper/60 px-10 py-2 text-sm hover:border-paper hover:bg-paper hover:text-void disabled:opacity-40"
         >
-          {retryBusy ? "…" : "다시"}
+          {retryBusy ? "다시 준비 중…" : "다시"}
         </button>
       </div>
     </div>

@@ -46,7 +46,7 @@ const assert = require('node:assert/strict');
           else if (path.endsWith('/night/previous')) body = { previous_answer: null };
           else if (path.endsWith('/notes')) body = { notes: [] };
           else if (path.endsWith('/night/draft')) body = { night_id: 'night', claims: ['상황을 이해했다.'] };
-          else if (path.endsWith('/submit')) body = { total: 0, passed: false, loop_n: 1, world_outcome: 'closure', is_final: false, closed_by: null, cells: null, cookie: null, intervention_available: true, ending_lines: null, cell_feedback: '', wrong_claim_count: 0,
+          else if (path.endsWith('/submit')) body = { total: 0, passed: false, loop_n: 1, world_outcome: 'closure', is_final: false, closed_by: null, cells: null, cookie: null, intervention_available: true, ending_lines: null, cell_feedback: null, wrong_claim_count: 0, accepted_claims: [], empty_cells: ['cause', 'motive'],
             night_clue: { loop_n: 1, caption: '소독약 냄새. 발 아래 콘크리트가 차다.', image_ids: ['P01'], voice_id: 'MA08', broadcast: '소독을 실시합니다. 바닥에서 떨어져 자리에 오르십시오.', outcome_line: null } };
           else if (path.endsWith('/journey')) body = { loops: [], final: null, unresolved: [] };
           else if (path.endsWith('/harness')) body = { rules: [], harness_summary: { total_events: 0, harness_interventions: 0, fallbacks: 0, paw_accepted: 0, recommended_rules: 0, custom_rules: 0, rule_conflicts: 0, questions_asked: 0, tool_side_effects: [] } };

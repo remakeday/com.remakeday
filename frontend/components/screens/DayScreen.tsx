@@ -277,9 +277,10 @@ export function DayScreen({
           return [...byId.values()];
         });
       },
-      (status) => {
+      (status, code) => {
         setLog((previous) => previous.map((entry) => entry.id === question.entryId ? { ...entry, delivery: "failed" } : entry));
-        if (status >= 400 && status < 500) {
+        // 앞 요청이 아직 처리 중(request_in_flight)이면 같은 request_id를 남겨 "다시 보내기"가 저장된 답을 받게 한다.
+        if (status >= 400 && status < 500 && code !== "request_in_flight") {
           setPendingUtterance(null);
           setInput(question.text);
         }
@@ -357,6 +358,18 @@ export function DayScreen({
           pushLog({
             role: "system",
             text: `규칙이 걸렸다 — ${res.rule_label}`,
+          });
+          // 수락 즉시 장면 — 소원 장면이 지금 장면이면 서버가 새로 생긴 서술·삽화·관찰만 돌려준다
+          if (res.narration) pushLog({ role: "narration", text: res.narration });
+          const wishImages = res.illustrations ?? [];
+          if (wishImages.length > 0) {
+            setIllustrationIndex(illustrations.length); // 소원 장면 그림을 바로 보여준다
+            setIllustrations([...illustrations, ...wishImages]);
+          }
+          setObservations((previous) => {
+            const byId = new Map(previous.map((item) => [item.observation_id, item]));
+            for (const item of res.observations ?? []) byId.set(item.observation_id, item);
+            return [...byId.values()];
           });
         } else if (!accept) {
           pushLog({ role: "system", text: "원숭이손의 제안을 거절했다." });
@@ -449,6 +462,8 @@ export function DayScreen({
           const portrait = npcImage(n.code, n.mood);
           const active = selected === n.code;
           const status = dayDone ? "하루 종료" : budgetLeft <= 0 ? "오늘 대화 소진" : !npcsReady ? "인물 확인 중" : n.uttered ? "이 장면 대화 완료" : "대화 가능";
+          // 이 장면 대화를 마친 인물은 흑백·흐림으로 한눈에 구분한다. 선택은 막지 않는다(테스터9 F12).
+          const talked = status === "이 장면 대화 완료";
           return (
             <button
               key={n.code}
@@ -461,14 +476,14 @@ export function DayScreen({
                 active
                   ? "border-ink bg-ink text-paper"
                   : "border-ink/30 hover:border-ink"
-              }`}
+              } ${talked ? "opacity-55" : ""}`}
             >
               {portrait ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={portrait}
                   alt=""
-                  className="h-10 min-h-0 w-full object-cover object-top sm:h-auto sm:aspect-[3/4]"
+                  className={`h-10 min-h-0 w-full object-cover object-top sm:h-auto sm:aspect-[3/4] ${talked ? "grayscale" : ""}`}
                 />
               ) : (
                 <span className="min-h-0 w-full flex-1 bg-ink/20" />
@@ -684,10 +699,11 @@ export function DayScreen({
             type="button"
             onClick={advanceBeat}
             disabled={dayDone || mutationBusy || questionUnresolved || currentPopup !== null}
+            aria-busy={beatAction.busy}
             className="shrink-0 border border-ink/40 px-3 py-2 text-lg hover:border-ink disabled:opacity-30"
             title="다음 장면 (무료, 대화 횟수는 충전되지 않음)"
           >
-            {beatAction.busy ? "…" : "다음 장면"}
+            {beatAction.busy ? "다음 장면 준비 중…" : "다음 장면"}
           </button>
         </div>
       </div>
@@ -742,6 +758,8 @@ export function DayScreen({
                 {currentPopup.offer.shown_reason}
               </p>
             )}
+            {/* 대가의 존재만 암시한다 — 내용은 밝히지 않는다(테스터10 F4). 시나리오 디렉터 확인 전 초안 */}
+            <p className="text-base leading-relaxed opacity-60">대가 없이 굴러오는 것은 없다.</p>
             <div className="flex gap-4">
               <button
                 type="button"

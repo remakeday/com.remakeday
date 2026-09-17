@@ -99,13 +99,14 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
       }
       else if (path === '/loops/loop-3/night/draft') {
         draftBody = requestBody;
-        body = { night_id: 'night-2', claims: ['민석은 남은 쟁반을 기록했다.', '관리자 방송이 배급을 통제한다.'] };
+        body = { night_id: 'night-2', claims: ['민석은 남은 쟁반을 기록했다.', '관리자 방송이 배급을 통제하는가?'], is_question: [false, true] };
       }
-      else if (path === '/nights/night-2/claims') body = { claims: requestBody.claims };
+      else if (path === '/nights/night-2/claims') body = { claims: requestBody.claims, is_question: requestBody.claims.map(() => false) };
       else if (path === '/nights/night-2/submit') body = {
         total: 48, passed: false, loop_n: 2, world_outcome: 'truck', is_final: false, closed_by: null,
         cells: null, cookie: null, intervention_available: true, ending_lines: null,
-        cell_feedback: '관찰과 보고의 연결을 더 확인할 수 있다.', wrong_claim_count: 0,
+        cell_feedback: '원인은 조금 잡혔다.', wrong_claim_count: 0,
+        accepted_claims: ['민석은 남은 쟁반을 기록했다.'], empty_cells: ['motive'],
         night_clue: { loop_n: 2, caption: '트럭 소리.', image_ids: ['P02', 'clue-05'], voice_id: 'MA09', broadcast: '정리 작업이 있겠습니다. 비어 있는 자리는 아침에 정돈됩니다.', outcome_line: null },
       };
       else if (path === '/nights/night-2/questions') {
@@ -113,13 +114,15 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
         body = questionCalls === 1 ? {
           answer: '그건 알 수 없다. 아직 트럭이 도착한 장면은 보지 못했어. 다음 이송 방송이나 출입구를 살펴봐.', verdict: '그건 알 수 없다.', detail: '현재 기록에는 트럭의 도착 여부가 없다.', remaining: 2,
           status: 'unknown', evidence_ids: [], evidence: [], next_observation: '다음 이송 방송과 출입구를 확인한다.',
-          unlocked_note: null,
+          unlocked_note: null, kind: 'answer', refunded: true,
         } : questionCalls === 2 ? {
           answer: '맞다. 기록은 이렇다', verdict: '맞다.', detail: '은상이 그렇게 말했다는 사실만 기록됐다.', remaining: 1,
           status: 'supported', evidence_ids: ['obs-statement'], evidence: [observations[3]], next_observation: null,
+          unlocked_note: null, kind: 'answer', refunded: false,
         } : {
           answer: '아니다. 틀리다', verdict: '아니다.', detail: '기록된 이동 시각과 질문의 시각이 다르다.', remaining: 0,
           status: 'contradicted', evidence_ids: ['obs-current'], evidence: [observations[2]], next_observation: null,
+          unlocked_note: null, kind: 'answer', refunded: false,
         };
       }
       else if (path === '/nights/night-2/options') {
@@ -222,7 +225,16 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
     assert.ok(bounds && bounds.y + bounds.height < 844, 'writing is visible before the record collection');
     assert.equal(await page.getByRole('button', { name: /민석이 남은 쟁반을 기록했다/ }).count(), 0);
     await page.screenshot({ path: `${out}/night-writing-mobile.png`, fullPage: true });
-    await page.getByRole('button', { name: /관찰 기록에서 근거 고르기/ }).click();
+    // 기록은 참고 목록 — 글이 비면 기록을 표시해도 정리할 수 없다 (테스터9 F17)
+    const understood = page.getByRole('button', { name: '이렇게 이해했다', exact: true });
+    await draft.fill('   ');
+    assert.equal(await understood.isDisabled(), true, 'blank writing cannot be submitted even with marked records');
+    await page.getByText('한 줄 이상 쓰면 정리할 수 있다.', { exact: true }).waitFor();
+    await draft.fill(previousWriting);
+    assert.equal(await understood.isEnabled(), true, 'writing re-enables submission');
+    assert.equal(await page.getByText('한 줄 이상 쓰면 정리할 수 있다.', { exact: false }).count(), 0);
+    await page.getByRole('button', { name: /기록 보며 쓰기 · 표시 2개/ }).click();
+    await page.getByText('기록은 참고용이다. 판정에는 위에 직접 쓴 글만 들어간다.', { exact: false }).waitFor();
     const trayNoteButtons = page.getByRole('button', { name: /민석이 남은 쟁반을 기록했다/ });
     await trayNoteButtons.first().waitFor();
     assert.equal(await trayNoteButtons.count(), 2, 'confirmed note stays visible next to its duplicate-text fragment note (per-kind dedupe)');
@@ -268,40 +280,52 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
     assert.deepEqual([...draftBody.inherited_note_ids].sort((a, b) => a - b), [1, 2]);
     assert.deepEqual([...draftBody.tapped_note_ids].sort((a, b) => a - b), [1, 2, 3]);
     assert.equal(draftBody.free_text, previousWriting);
+    // 질문형 주장 안내 — 표시만, 자동 변환 없음 (테스터11 O2)
+    await page.getByText('관리자 방송이 배급을 통제하는가?', { exact: false }).waitFor();
+    assert.equal(await page.getByText("질문이다. '~다'로 단정해 고쳐 쓴다. 다음 밤 글에도 고쳐 써야 이어진다.", { exact: true }).count(), 1, 'only the question claim gets the hint');
     await page.getByRole('button', { name: '아니, 고친다 (1회)', exact: true }).click();
     await page.locator('textarea').fill('확인 화면에서 고친 최종 가설');
     await page.getByRole('button', { name: '이렇게 고친다', exact: true }).click();
     await page.getByText('확인 화면에서 고친 최종 가설', { exact: true }).waitFor();
+    assert.equal(await page.getByText('질문이다.', { exact: false }).count(), 0, 'hint follows the edited claims');
     await page.getByRole('button', { name: '맞아, 제출한다', exact: true }).click();
     await page.getByRole('button', { name: '계속', exact: true }).click();
     // 밤 단서 시퀀스 — 문장이 남은 뒤 탭해서 신의개입으로 (자동 진행 없음)
     await page.getByText('트럭 소리.', { exact: true }).waitFor();
     await page.getByRole('button', { name: '계속', exact: true }).click();
 
-    await page.getByText('이 목소리는 오늘 일어난 일만 안다. 무엇을 했는지 물어라.', { exact: true }).waitFor();
+    await page.getByText('가설을 넣어 물으면 맞다·아니다로 판정받고, 누가·무엇을 물으면 기록에서 찾아 준다.', { exact: true }).waitFor();
     assert.equal(await page.getByText('새 단서 — 노트에 적혔다').count(), 0);
 
     const questionInput = page.locator('input[placeholder^="예:"]');
     assert.match(await questionInput.getAttribute('placeholder'), /확인 화면에서 고친 최종 가설/, 'question example uses confirmed final claim');
     await questionInput.fill('트럭이 왔어?');
     await page.getByRole('button', { name: '묻는다', exact: true }).click();
-    await page.getByText('그건 알 수 없다. 아직 트럭이 도착한 장면은 보지 못했어. 다음 이송 방송이나 출입구를 살펴봐.', { exact: true }).waitFor();
+    // 판정 배지 + 한 줄 답 먼저, 조언 블록은 펼치지 않아도 보이고, 나머지 문장·판정 설명은 "자세히" 안 (테스터9 F20 원칙 4)
+    await page.getByText('아직 트럭이 도착한 장면은 보지 못했어.', { exact: true }).waitFor();
+    await page.getByText('그건 알 수 없다', { exact: true }).waitFor();
+    await page.getByText('횟수를 돌려받았다', { exact: true }).waitFor();
+    await page.getByText('내일 해 볼 일', { exact: true }).waitFor();
     assert.equal(await page.getByText('아직 확인되지 않았다', { exact: true }).isVisible(), false);
-    await page.getByText('그건 알 수 없다. 아직 트럭이 도착한 장면은 보지 못했어. 다음 이송 방송이나 출입구를 살펴봐.', { exact: true })
-      .evaluate(element => Promise.all(element.parentElement.getAnimations().map(animation => animation.finished)));
+    assert.equal(await page.getByText('다음 이송 방송이나 출입구를 살펴봐.', { exact: true }).isVisible(), false);
+    await page.getByText('아직 트럭이 도착한 장면은 보지 못했어.', { exact: true })
+      .evaluate(element => Promise.all(element.closest('.fade-in').getAnimations().map(animation => animation.finished)));
     await page.screenshot({ path: `${out}/god-reply-mobile.png`, fullPage: true });
     await page.locator('summary').nth(0).click();
     await page.getByText('아직 확인되지 않았다', { exact: true }).waitFor();
+    await page.getByText('다음 이송 방송이나 출입구를 살펴봐.', { exact: true }).waitFor();
     await page.getByText('다음 이송 방송과 출입구를 확인한다.').waitFor();
     await page.locator('input[placeholder^="예:"]').fill('은상이 트럭이 온다고 말했어?');
     await page.getByRole('button', { name: '묻는다', exact: true }).click();
-    await page.getByText('맞다. 기록은 이렇다', { exact: true }).waitFor();
+    await page.getByText('기록은 이렇다', { exact: true }).waitFor();
+    await page.getByText('맞다', { exact: true }).waitFor();
     await page.locator('summary').nth(1).click();
     await page.getByText('근거와 일치한다', { exact: true }).waitFor();
     await page.getByText('발언을 들음', { exact: true }).waitFor();
     await page.locator('input[placeholder^="예:"]').fill('준이 첫 장면에 있었어?');
     await page.getByRole('button', { name: '묻는다', exact: true }).click();
-    await page.getByText('아니다. 틀리다', { exact: true }).waitFor();
+    await page.getByText('틀리다', { exact: true }).waitFor();
+    await page.getByText('아니다', { exact: true }).waitFor();
     await page.locator('summary').nth(2).click();
     await page.getByText('기록과 모순된다', { exact: true }).waitFor();
     await page.getByRole('button', { name: '규칙을 고른다', exact: true }).click();
