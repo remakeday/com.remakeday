@@ -112,3 +112,23 @@ def test_notebook_contents_require_a_current_reading_and_can_be_learned_after_de
     learn_scene(bundle, loop, [npc], public_observations(events, loop.attempt_id))
     assert source not in context_ids(bundle, char, npc.memory, 0)
     assert any("날짜와 이름, 남은 쟁반 수" in m["text"] for m in visible_memories(npc.memory))
+
+
+def test_lost_name_account_falls_back_to_one_without_the_absent_name():
+    """테스터9 F14 — 소실 인물이 든 경험은 통째로 빠지므로 다음 경험으로 수첩을 기억한다."""
+    bundle, loop, events = build().bundle(), loop_at(3), Events()
+    loop.damage_level = 3
+    execute_scene(events, loop, bundle, [Rule("R1", "user_choice", "민석", 3, "enforce", "가진 것을 보여준다", 1)])
+    npc = NS(code="minseok", name="민석", memory=[])
+    learn_scene(bundle, loop, [npc], public_observations(events, loop.attempt_id))
+    shown = next(m for m in npc.memory if m["id"] == f"{loop.id}:action-3-민석-가진 것을 보여준다")
+    assert "채연" in shown["text"] and "충식" not in shown["text"]
+
+
+def test_notebook_reading_names_everyone_written_before_damage():
+    bundle, loop, events = build().bundle(), loop_at(3), Events()
+    execute_scene(events, loop, bundle, [Rule("R1", "user_choice", "민석", 3, "enforce", "가진 것을 보여준다", 1)])
+    npc = NS(code="minseok", name="민석", memory=[])
+    learn_scene(bundle, loop, [npc], public_observations(events, loop.attempt_id))
+    shown = next(m for m in npc.memory if m["id"] == f"{loop.id}:action-3-민석-가진 것을 보여준다")
+    assert "충식" in shown["text"] and "채연" in shown["text"]

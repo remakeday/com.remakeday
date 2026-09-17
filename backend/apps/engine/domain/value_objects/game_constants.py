@@ -16,6 +16,8 @@ MISMATCH_SPEAKER_SUSPICION = 12  # 거짓 출처 발각 시 발화 NPC의 대유
 ASK_TARGET_SUSPICION = 6  # ask_npc 대상 의심 상승
 
 QUESTIONS_PER_NIGHT = 3  # 신의개입 질문
+QUESTION_REFUNDS_PER_NIGHT = 3  # "알 수 없다" 답의 횟수 환급 — 같은 밤 상한
+LADDER_SCORE_STEPS = (25.0, 50.0, 75.0)  # 신의 질문 공개 사다리 — 점수로 한 칸씩 앞당기는 기준
 CLAIMS_MAX = 8
 
 CELL_FULL_THRESHOLD = 0.8  # 칸 만점 임계 (확인 비율)
@@ -27,6 +29,7 @@ RUMOR_THRESHOLD = 3  # 소문 지수 임계 → 조용히 이송
 
 PAW_MIN_YESTERDAY = 40.0  # 원숭이손: 전날 점수 조건
 PAW_MAX_PER_ATTEMPT = 2
+PAW_DECLINE_LIMIT = 2  # 원숭이손: 같은 판 연속 거절 한도
 
 CELLS = ("cause", "motive", "side_effect", "identity")
 COOKIE_TIE_ORDER = ("cause", "motive", "side_effect", "identity")

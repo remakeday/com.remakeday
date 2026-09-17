@@ -88,7 +88,7 @@ def run_case(llm, source):
     saved, events = [], []
     interactor = NightInteractor(
         attempts=None, loops=NS(get=lambda _: loop, save=lambda: None),
-        notes=NS(by_ids=lambda *_: []), rules=None,
+        notes=None, rules=None,
         nights=NS(for_loop=lambda _: None, create=saved.append),
         event_log=NS(record=lambda _, event: events.append(event.model_dump(mode="json"))),
         scenario=None, core_llm=llm, harness_on=True, cookie_ab_on=False,

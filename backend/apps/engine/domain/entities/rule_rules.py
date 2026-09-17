@@ -2,16 +2,24 @@
 
 from dataclasses import dataclass
 
+PAW_EFFECT_SOURCE = "paw_effect"  # 원숭이손 숨은 규칙(반대 사건)
+
 
 @dataclass(frozen=True)
 class Rule:
     rule_id: str
-    source: str  # user_choice | user_custom | monkey_paw
+    source: str  # user_choice | user_custom | monkey_paw | paw_effect
     target: str
     when_beat: int | None  # None = any
     effect: str  # suppress | enforce
     action: str
     created_loop: int
+    hidden_side_effect: str | None = None  # 원숭이손 숨은 규칙의 부작용 관찰 문장
+
+
+def player_visible(rules: list) -> list:
+    """플레이어·NPC에게 보이는 규칙만 — 숨은 규칙은 장면 실행에만 쓰인다 (가시성 불변조건의 한 곳)."""
+    return [r for r in rules if r.source != PAW_EFFECT_SOURCE]
 
 
 def _overlaps(a: int | None, b: int | None) -> bool:

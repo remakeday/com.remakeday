@@ -1,7 +1,6 @@
 """Dialogue, evidence and budget are a single retriable day action."""
 
 import uuid
-from concurrent.futures import ThreadPoolExecutor
 from threading import Event
 
 import pytest
@@ -138,8 +137,9 @@ def test_asking_friend_does_not_preserve_deleted_fact_inside_own_question(db_ses
     assert "기억이 잘 안 나" in visible  # Friend's independently heard answer remains.
 
 
-def test_concurrent_retry_executes_model_and_charges_only_once(db_session):
-    """A second real DB session must wait for the first committed response."""
+def test_concurrent_retry_is_409_while_in_flight_and_same_id_retry_returns_the_stored_reply(db_session):
+    """A duplicate arriving while the first holds the loop does not wait (opus review C1, 5b); retrying the same id after commit returns the stored response once."""
+    import threading
     from sqlalchemy.orm import Session
     from apps.engine.adapter.outbound.repositories.event_log_repository import EventLogRepository
     from apps.engine.adapter.outbound.repositories.game_repository import NoteRepository, RuleRepository
@@ -151,7 +151,7 @@ def test_concurrent_retry_executes_model_and_charges_only_once(db_session):
         def complete(self, *_args, **_kwargs):
             self.calls += 1
             started.set()
-            assert release.wait(5)
+            release.wait(10)
             return _agent_reply("방송에서 들었어.")
     model = PausingModel()
     engine = db_session.get_bind()
@@ -166,12 +166,98 @@ def test_concurrent_retry_executes_model_and_charges_only_once(db_session):
             worker._rules = RuleRepository(session)
             worker._scene_transaction = SceneTransaction(session)
             worker._npc_llm = model
-            return worker.utter(info["loop_id"], "minseok", "어디서 들었어?", request_id=key)
-    with ThreadPoolExecutor(max_workers=2) as pool:
-        first = pool.submit(send)
-        assert started.wait(5)
-        second = pool.submit(send)
+            try:
+                return worker.utter(info["loop_id"], "minseok", "어디서 들었어?", request_id=key)
+            except Exception as exc:  # 결과로 비교한다
+                return exc
+    outcome = {}
+    first = threading.Thread(target=lambda: outcome.update(first=send()))
+    first.start()
+    try:
+        assert started.wait(10)
+        duplicate = send()
+        first_still_held = first.is_alive()
+    finally:
         release.set()
-        assert first.result(timeout=10) == second.result(timeout=10)
+        first.join(20)
+    assert first_still_held
+    assert isinstance(duplicate, GameStateError) and type(duplicate).__name__ == "RequestInFlight"
+    assert isinstance(outcome["first"], dict)
+    assert send() == outcome["first"]
     db_session.expire_all()
     assert model.calls == 1 and LoopRepository(db_session).get(info["loop_id"]).budget_left == 7
+
+
+def test_player_dialogue_names_the_asker_but_friend_question_does_not(db_session):
+    """테스터8 F5 — 플레이어 대화에만 '묻는 상대는 명부 밖 친구' 안내가 붙는다."""
+    from apps.engine.app.dtos.llm_output_dto import ToolCallSpec
+    day, scenario, _, info = make_day(db_session, [_agent_reply("알겠어. 내가 기록할게."),
+                                                   {"answer": "응, 적었어.", "said_it": None}])
+    loop = LoopRepository(db_session).get(info["loop_id"])
+    day.utter(loop.id, "minseok", "민석아 나 밥을 전부 남겼다고 기록해")
+    assert "[지금 말을 거는 상대]" in day._npc_llm.calls[-1][0][0].content
+    asker = LoopRepository(db_session).npc_state(loop.id, "jun")
+    day._run_ask_npc(loop, scenario.bundle(), asker, next(c for c in scenario.bundle().characters if c.code == "jun"),
+                     ToolCallSpec(name="ask_npc", target="민석", question="뭐 적었어?"))
+    assert "[지금 말을 거는 상대]" not in day._npc_llm.calls[-1][0][0].content
+
+
+def test_manager_sees_short_memory_ids_and_they_resolve_per_npc(db_session):
+    """테스터11 O5 — 긴 회차 UUID ID 대신 인물별 짧은 id를 주고, 삭제는 점검 시점의 목록으로 해석한다."""
+    from apps.engine.adapter.outbound.repositories.event_log_repository import EventLogRepository
+    day, scenario, attempt, info = make_day(db_session, [])
+    repo = LoopRepository(db_session)
+    day.advance_beat(info["loop_id"])
+    day.advance_beat(info["loop_id"])
+    loop = repo.get(info["loop_id"])
+    npc = repo.npc_state(loop.id, "minseok")
+    visible = visible_memories(npc.memory)
+    assert len(visible) >= 3
+    second, third = visible[1], visible[2]
+    day._core_llm._queue.append({"patches": [
+        {"npc": "민석", "kind": "memory_delete", "target": "m2", "reason": "첫 삭제"},
+        {"npc": "민석", "kind": "memory_delete", "target": third["id"].split(":", 1)[1], "reason": "UUID 없는 ID"},
+        {"npc": "민석", "kind": "memory_delete", "target": "어제 밤에 민석이와 나눈 대화 내용", "reason": "뜻풀이"},
+    ], "flagged_abnormal": []})
+    loop.manager_budget_left = 3
+    day._manager_check(loop, scenario.bundle())
+    system = day._core_llm.calls[-1][0][0].content
+    state_block = system[system.index("[점검 대상]"):system.index("[플레이어가 오늘 한 말]")]
+    assert '"id": "m1"' in state_block
+    assert str(loop.id) not in state_block  # 긴 회차 ID·source_ids를 싣지 않는다
+    audit = [e for e in EventLogRepository(db_session).query(attempt.id) if e.type == "manager_check"][-1]
+    assert [p.applied for p in audit.patches] == [True, True, False]
+    assert [p.detail for p in audit.patches][:2] == [second["id"], third["id"]]
+    assert audit.patches[2].failure_reason == "현재 기억에 없는 ID"
+    forgotten = {m["id"] for m in npc.memory if m.get("forgotten")}
+    assert {second["id"], third["id"]} <= forgotten
+
+
+def test_manager_plan_patch_is_not_offered_and_is_silently_ignored(db_session):
+    """6번 리뷰 A안 — 계획 수정은 적용 경로가 없어 선택지에서 뺐다. 모델이 여전히 내도 에러 없이 버린다."""
+    from apps.engine.adapter.outbound.repositories.event_log_repository import EventLogRepository
+    from apps.engine.app.dtos import event_log_dto as ev
+    from apps.engine.app.dtos.llm_output_dto import ManagerCheckOutput
+    from apps.engine.app.use_cases import prompts
+    assert "plan_patch" not in str(ManagerCheckOutput.model_json_schema())
+    assert "계획" not in prompts.MANAGER_SYSTEM
+    day, scenario, attempt, info = make_day(db_session, [])
+    repo = LoopRepository(db_session)
+    day.advance_beat(info["loop_id"])
+    day.advance_beat(info["loop_id"])
+    loop = repo.get(info["loop_id"])
+    loop.manager_budget_left = 2
+    day._core_llm._queue.append({"patches": [
+        {"npc": "민석", "kind": "plan_patch", "target": "beat 3", "reason": "계획 바꾸기"},
+        {"npc": "민석", "kind": "memory_delete", "target": "m1", "reason": "기억 지우기"},
+    ], "flagged_abnormal": []})
+    calls_before = len(day._core_llm.calls)
+    day._manager_check(loop, scenario.bundle())
+    assert len(day._core_llm.calls) == calls_before + 1  # 스키마 위반 재생성 없음
+    audit = [e for e in EventLogRepository(db_session).query(attempt.id) if e.type == "manager_check"][-1]
+    assert [(p.kind, p.applied) for p in audit.patches] == [("memory_delete", True)]
+    assert loop.manager_budget_left == 1
+    # 과거 이벤트 읽기 호환 — 예전에 기록된 plan_patch 감사 항목은 그대로 읽힌다.
+    old = ev.ManagerPatch(npc="민석", kind="plan_patch", detail="beat 3", reason="예전 기록",
+                          applied=False, failure_reason="적용 가능한 계획 수정이 없음")
+    assert old.kind == "plan_patch"

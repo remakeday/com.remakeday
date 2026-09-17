@@ -21,7 +21,7 @@ class ManagerPatch(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     npc: str
-    kind: Literal["memory_delete", "plan_patch"]
+    kind: Literal["memory_delete", "plan_patch"]  # plan_patch는 과거 기록 읽기 호환용 — 새로 기록되지 않는다
     detail: str
     reason: str
     applied: bool = True
@@ -113,6 +113,7 @@ class MonkeyPawOfferEvent(EventBase):
     rule_id: str
     reason_shown: str | None
     accepted: bool
+    wish_key: str | None = None  # 이미 제안한 소원(수락·거절 무관)을 다시 내지 않기 위한 키
 
 
 class AnswerDraftEvent(EventBase):
@@ -137,6 +138,7 @@ class AnswerScoredEvent(EventBase):
     cell_scores: CellScores
     total: float
     passed: bool
+    response: dict | None = None  # 커밋된 제출 응답 — 연결이 끊긴 뒤 재제출이 채점 없이 같은 응답을 받는다 (opus 리뷰 I2)
 
 
 class AnswerWrongClaimsEvent(EventBase):
@@ -166,6 +168,9 @@ class InterventionQuestionEvent(EventBase):
     evidence_ids: list[str] = Field(default_factory=list)
     next_observation: str | None = None
     unlocked_note: str | None = None  # 질문 보상으로 해금된 관찰 (advisor_leads)
+    kind: Literal["answer", "guide"] = "answer"  # guide = 게임 목적·사용법 안내 답 (판정·횟수 없음)
+    refunded: bool = False  # "알 수 없다"라 횟수를 돌려받음
+    model_failed: bool = False  # 모델이 답을 내지 못함 — 같은 질문 재입력 비교에서 뺀다
 
 
 class InterventionOptionsEvent(EventBase):

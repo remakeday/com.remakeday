@@ -62,6 +62,7 @@ def build_agent_messages(
     damage_level: int = 0,
     reply_field: str = "reply",
     include_knowledge: bool = True,
+    player_asker: bool = True,
 ) -> list[MessageDTO]:
     banned = applicable_ban_words(bundle, char.code, loop_n)
     age7 = (
@@ -85,6 +86,9 @@ def build_agent_messages(
         opposite_note=(prompts.OPPOSITE_NOTE + "\n") if opposite else "",
         rules=rules_block,
         age7_policy=age7,
+        asker_note=prompts.PLAYER_ASKER_NOTE.format(others=", ".join(
+            c.name for c in bundle.characters if c.name not in absent and c.name != char.name))
+        if player_asker else "",
     )
     if reply_field != "reply":
         sys = sys.replace("reply에는", f"{reply_field}에는")

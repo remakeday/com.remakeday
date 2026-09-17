@@ -1,5 +1,6 @@
 """인스펙터·하네스 공개 (P5) — 읽기 전용 관찰가능성 (기획서 8.9)."""
 
+import hmac
 import uuid
 
 from apps.engine.domain.entities import scoring_rules
@@ -8,6 +9,10 @@ from apps.engine.domain.value_objects.game_constants import LOOPS_PER_ATTEMPT
 
 class AccessDenied(Exception):
     pass
+
+
+class InspectorDisabled(Exception):
+    """INSPECTOR_TOKEN 미설정 — 인스펙터를 열지 않는다."""
 
 
 class InspectorInteractor:
@@ -116,7 +121,7 @@ class InspectorInteractor:
                 "recommended_rules": sum(r.source == "user_choice" for r in rules),
                 "custom_rules": sum(r.source == "user_custom" for r in rules),
                 "rule_conflicts": sum(bool(r.conflict) for r in rules),
-                "questions_asked": sum(e.type == "intervention_question" for e in events),
+                "questions_asked": sum(e.type == "intervention_question" and e.kind == "answer" for e in events),  # 안내 답 제외
                 # 규칙 등록 로그는 실제 행동 이행 검증이 아니다. 분모 없는 성공률을 만들지 않는다.
                 "rule_success_rate": compliance["value"],
                 "tool_side_effects": [
@@ -150,7 +155,9 @@ class InspectorInteractor:
         }
 
     def inspector_view(self, attempt_id: uuid.UUID, token: str) -> dict:
-        if token != self._token:
+        if not self._token:
+            raise InspectorDisabled
+        if not hmac.compare_digest(token.encode(), self._token.encode()):
             raise AccessDenied("토큰이 다르다")
         attempt = self._attempts.get(attempt_id)
         if attempt is None:
@@ -161,7 +168,7 @@ class InspectorInteractor:
         return {
             "events": dumped,
             "patches": [e for e in dumped if e["type"] == "manager_check"],
-            "paw_rules": [self._rule_dict(r, hide_hidden=False) for r in rules if r.source == "monkey_paw"],
+            "paw_rules": [self._rule_dict(r, hide_hidden=False) for r in rules if r.source in ("monkey_paw", "paw_effect")],
             "scoring": [e for e in dumped if e["type"] == "answer_scored"],
         }
 

@@ -27,26 +27,102 @@ def test_pass_threshold_50():
 # ── 정성 칸 피드백 (REMAKE DAY #5) ──
 
 
-def test_cell_feedback_three_levels_without_side_effect():
-    scores = {"cause": 100.0, "motive": 30.0, "side_effect": 50.0, "identity": 0.0}
+def test_cell_feedback_reports_only_progress_in_cause_and_motive():
+    # 정체는 아무도 묻지 않는 질문 — 밤 피드백이 이름을 꺼내지 않는다 (기획서 §4.8⑤)
+    scores = {"cause": 100.0, "motive": 30.0, "side_effect": 50.0, "identity": 50.0}
     s = scoring_rules.cell_feedback(scores, include_side_effect=False)
-    assert s == "원인은 잡혔다. 동기는 조금 잡혔다. 정체는 비어 있다."
-    assert "부작용" not in s
+    assert s == "원인은 잡혔다. 동기는 조금 잡혔다."
+    assert "부작용" not in s and "정체" not in s
 
 
-def test_cell_feedback_ignores_legacy_side_effect_option():
-    scores = {"cause": 80.0, "motive": 0.0, "side_effect": 50.0, "identity": 79.9}
+def test_cell_feedback_leaves_empty_cells_to_hint():
+    scores = {"cause": 79.9, "motive": 0.0, "side_effect": 50.0, "identity": 0.0}
     s = scoring_rules.cell_feedback(scores, include_side_effect=True)
-    assert "원인은 잡혔다." in s  # 80 경계는 만점 취급
-    assert "동기는 비어 있다." in s
-    assert "부작용" not in s
-    assert "정체는 조금 잡혔다." in s  # 79.9는 아직 "조금"
+    assert s == "원인은 조금 잡혔다."  # 79.9는 아직 "조금", 빈 동기는 empty_hint_cells로
 
 
 def test_cell_feedback_all_empty():
+    scores = {"cause": 0.0, "motive": 0.0, "side_effect": 0.0, "identity": 100.0}
+    assert scoring_rules.cell_feedback(scores, include_side_effect=True) == ""
+
+
+def test_empty_hint_cells_are_cause_and_motive_only():
     scores = {"cause": 0.0, "motive": 0.0, "side_effect": 0.0, "identity": 0.0}
-    s = scoring_rules.cell_feedback(scores, include_side_effect=True)
-    assert s == "원인은 비어 있다. 동기는 비어 있다. 정체는 비어 있다."
+    assert scoring_rules.empty_hint_cells(scores) == ["cause", "motive"]
+    assert scoring_rules.empty_hint_cells({**scores, "cause": 20.0}) == ["motive"]
+    assert scoring_rules.empty_hint_cells({"cause": 80.0, "motive": 0.5, "identity": 0.0}) == []
+
+
+# ── 인정된 내 문장 (테스터10 F1) ──
+
+
+def _item(code, verdict, match, **extra):
+    return {"id": code, "cell": code.split("-")[0], "text": "진실 명제 원문",
+            "verdict": verdict, "matched_user_claim": match, **extra}
+
+
+def test_accepted_claims_keep_player_order_and_dedupe_across_cells():
+    candidates = ["트럭 소리가 났다.", "채연은 아픈 걸 숨겼다.", "우리는 사람이 아니다."]
+    per_truth = [
+        _item("cause-1", "confirmed", "채연은 아픈 걸 숨겼다.", matched_index=1),
+        _item("identity-1", "partial", "우리는 사람이 아니다.", matched_index=2),
+        _item("motive-1", "partial", "채연은 아픈 걸 숨겼다.", matched_index=1),
+        _item("cause-5", "none", None),
+    ]
+    assert scoring_rules.accepted_claims(per_truth, candidates) == [
+        "채연은 아픈 걸 숨겼다.", "우리는 사람이 아니다.",
+    ]
+
+
+def test_accepted_claims_never_carry_truth_text_or_unaccepted_match():
+    candidates = ["채연이 아프다.", "민석이 방송실에 갔다."]
+    per_truth = [
+        _item("cause-1", "none", "민석이 방송실에 갔다.", matched_index=1),  # none 판정의 지목 문장은 인정이 아니다
+        _item("cause-2", "confirmed", "채연이 아프다.", matched_index=0),
+    ]
+    out = scoring_rules.accepted_claims(per_truth, candidates)
+    assert out == ["채연이 아프다."]
+    assert "진실 명제 원문" not in out
+
+
+def test_accepted_claims_include_ratcheted_verdict_as_current_wording():
+    # 잠금은 공백·끝 문장부호만 다른 같은 문장을 인정한다 — 표시는 이번에 쓴 원문으로
+    per_truth = [_item("cause-1", "confirmed", "채연이  아프다.", matched_index=0, ratcheted=True)]
+    assert scoring_rules.accepted_claims(per_truth, ["채연이 아프다"]) == ["채연이 아프다"]
+
+
+def test_accepted_claims_mark_only_the_matched_one_of_near_duplicates():
+    # 리뷰 반영 — 정규화만 다른 두 후보 중 채점기가 하나만 지목하면 그 하나만 인정 문장이다
+    candidates = ["트럭 소리가 났다", "트럭 소리가 났다.", "채연이 아프다."]
+    per_truth = [_item("cause-1", "confirmed", "트럭 소리가 났다.", matched_index=1)]
+    assert scoring_rules.accepted_claims(per_truth, candidates) == ["트럭 소리가 났다."]
+
+
+def test_ratchet_points_at_exact_candidate_among_near_duplicates():
+    prev = [{"id": "cause-1", "verdict": "confirmed", "matched_user_claim": "트럭 소리가 났다."}]
+    cur = [{"id": "cause-1", "verdict": "none", "matched_user_claim": None, "matched_index": None}]
+    out = scoring_rules.apply_ratchet(cur, prev, ["트럭 소리가 났다", "트럭 소리가 났다."])
+    assert out[0]["matched_index"] == 1
+    assert scoring_rules.accepted_claims(out, ["트럭 소리가 났다", "트럭 소리가 났다."]) == [
+        "트럭 소리가 났다.",
+    ]
+
+
+def test_ratchet_points_at_normalized_candidate_when_no_exact_match():
+    prev = [{"id": "cause-1", "verdict": "confirmed", "matched_user_claim": "채연이  아프다."}]
+    cur = [{"id": "cause-1", "verdict": "none", "matched_user_claim": None, "matched_index": None}]
+    out = scoring_rules.apply_ratchet(cur, prev, ["민석이 갔다.", "채연이 아프다"])
+    assert out[0]["matched_index"] == 1
+
+
+def test_accepted_claims_drop_match_not_in_candidates():
+    # 테스터9 F11 — 이번 밤 후보가 아닌 문장(지난 기록 조각·어긋난 매칭)은 인덱스가 없어 비슷해도 빠진다
+    candidates = ["검진 방송에 따르면 아픈 사람은 이송된다."]
+    per_truth = [
+        _item("motive-2", "confirmed", "오후 검진을 시작합니다."),
+        _item("cause-3", "confirmed", "검진 방송에 따르면 아픈 사람은 이송된다고 한다."),
+    ]
+    assert scoring_rules.accepted_claims(per_truth, candidates) == []
 
 
 def test_world_outcome():

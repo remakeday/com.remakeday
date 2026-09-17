@@ -47,3 +47,40 @@ def forget_memory(memory: list, memory_id: str) -> tuple[list[dict], bool]:
     if memory_id not in visible_ids:
         return entries, False
     return [dict(m, forgotten=True) if m["id"] == memory_id else m for m in entries], True
+
+
+def memory_references(memory: list) -> dict[str, dict]:
+    """관리자 점검용 짧은 참조(m1…) → 보이는 기억. 삭제로 번호가 밀리지 않게 점검 시작 때 한 번 고정한다."""
+    return {f"m{index}": m for index, m in enumerate(visible_memories(memory), 1)}
+
+
+_MIN_QUOTE_LENGTH = 6
+
+
+def _by_reference(references: dict[str, dict], target: str) -> set[str]:
+    return {references[target]["id"]} if target in references else set()
+
+
+def _by_memory_id(references: dict[str, dict], target: str) -> set[str]:
+    """원래 ID, 또는 모델이 회차 접두어("{loop_id}:")를 뗀 ID."""
+    return {m["id"] for m in references.values() if m["id"] == target or m["id"].endswith(":" + target)}
+
+
+def _by_verbatim_quote(references: dict[str, dict], target: str) -> set[str]:
+    """기억 원문을 그대로 옮긴 인용만. 뜻풀이·요약은 어느 기억인지 확정할 수 없어 매칭하지 않는다."""
+    if len(target) < _MIN_QUOTE_LENGTH:
+        return set()
+    return {m["id"] for m in references.values() if target in m["text"]}
+
+
+_REFERENCE_RESOLVERS = (_by_reference, _by_memory_id, _by_verbatim_quote)
+
+
+def resolve_memory_reference(references: dict[str, dict], target: str) -> str | None:
+    """앞 단계에서 찾으면 멈춘다. 후보가 둘 이상이면 오삭제를 막기 위해 적용하지 않는다."""
+    target = target.strip()
+    for resolver in _REFERENCE_RESOLVERS:
+        ids = resolver(references, target)
+        if ids:
+            return next(iter(ids)) if len(ids) == 1 else None
+    return None

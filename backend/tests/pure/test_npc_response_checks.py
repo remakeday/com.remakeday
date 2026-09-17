@@ -65,3 +65,96 @@ def test_unavailable_short_evidence_reference_is_rejected():
     char = next(c for c in bundle.characters if c.code == "minseok")
     out = AgentOutput(reply="봤어.", suspicion_delta=0, trust_delta=0, evidence_ids=["m1"])
     assert context_output_check(bundle, char, [], 0)(out) is not None
+
+
+def _number_check(code, memory, question, field="reply", beat=1):
+    from apps.engine.app.use_cases.npc_context import grounded_number_check
+    from apps.scenarios.scenario_a.adapter import build
+    bundle = build().bundle()
+    char = next(c for c in bundle.characters if c.code == code)
+    return grounded_number_check(bundle, char, memory, 0, question=question, beat=beat, field=field)
+
+
+def _said(text, loop_beat=2, speaker="준"):
+    return [{"id": "a", "beat": loop_beat, "kind": "내가 한 일", "text": text, "speaker": speaker,
+             "listeners": [speaker], "source_ids": [], "forgotten": False}]
+
+
+def test_number_absent_from_memory_and_question_is_rejected():
+    """테스터9 F14 — 손목띠 숫자 값은 어디에도 없는데 '내 거는 7이야'를 지어냈다."""
+    check = _number_check("jun", _said("불빛에 비춰 봤어. 숫자가 써 있잖아."), "네 손목띠 숫자 읽어 줄래?")
+    violation = check(AgentOutput(reply="내 거는 7이야. 채연이는 5야.", suspicion_delta=0, trust_delta=0))
+    assert violation and "unsupported_number" in violation and "7" in violation
+
+
+def test_number_in_memory_question_or_numeral_word_is_allowed():
+    check = _number_check("jun", _said("쟁반 2개가 남았어. 하나는 채연 거야."), "3번 봤어?")
+    for reply in ["쟁반 2개 남았어.", "응, 3번 봤어.", "1개는 채연 거야.", "숫자는 잘 모르겠어."]:
+        assert check(AgentOutput(reply=reply, suspicion_delta=0, trust_delta=0)) is None
+
+
+def test_number_check_reads_the_ask_npc_answer_field():
+    from apps.engine.app.dtos.llm_output_dto import AskNpcOutput
+    check = _number_check("jun", [], "민석: 네 띠 숫자 뭐야?", field="answer")
+    assert check(AskNpcOutput(answer="9야."))
+
+
+def test_public_scene_text_numbers_are_grounded():
+    """B등급 리뷰 — 장면 제목 '기상 — 7:12'은 인물도 아는 공개 값이다. '7:12'와 '7시 12분'은 같은 숫자다."""
+    check = _number_check("minseok", [], "오늘 몇 시에 일어났어?", beat=1)
+    for reply in ["7시 12분에 일어났어.", "7:12에 일어났어.", "7시쯤 일어났어."]:
+        assert check(AgentOutput(reply=reply, suspicion_delta=0, trust_delta=0)) is None, reply
+
+
+def test_public_scene_numbers_do_not_leak_unrelated_values():
+    """공개 텍스트를 넣어도 어디에도 없는 값(7시 13분·질문 숫자의 19시 변환)은 계속 거부한다."""
+    check = _number_check("minseok", [], "7시에 뭐 했어?", beat=6)
+    for reply in ["7시 13분에 일어났어.", "19시에 배급 받았어.", "내 거는 12야."]:
+        violation = check(AgentOutput(reply=reply, suspicion_delta=0, trust_delta=0))
+        assert violation and "unsupported_number" in violation, reply
+
+
+def _denial(reply):
+    from apps.engine.app.use_cases.npc_context import own_action_denial_check
+    memory = _said("오늘 방송실에 갔어. 문 앞까지 갔다가 돌아왔어.", 5, "민석")
+    check = own_action_denial_check(memory, names=["채연", "민석", "은상", "준", "충식", "관리자"])
+    return check(AgentOutput(reply=reply, suspicion_delta=0, trust_delta=0))
+
+
+def test_denial_about_another_person_or_another_day_is_allowed():
+    """B등급 리뷰 — 부정 절의 주어가 다른 인물이거나 시점이 오늘이 아니면 내 행동 부정이 아니다."""
+    for reply in ["채연이는 방송실에 안 갔어. 나만 갔어.",
+                  "어제는 방송실에 안 갔어. 어제 얘기는 잘 몰라.",
+                  "준은 방송실에 가지 않았어.",
+                  "나는 갔는데 은상이는 방송실까지는 안 갔어.",
+                  "방송실 안에는 안 들어갔어."]:
+        assert _denial(reply) is None, reply
+
+
+def test_own_denial_still_rejected_next_to_other_names_or_days():
+    for reply in ["나는 오늘 방송실에 가지 않았어.",
+                  "어제는 갔는데 오늘은 방송실에 안 갔어.",
+                  "채연이랑 나는 방송실에 안 갔어.",
+                  "채연이는 잤어. 나도 방송실에 안 갔어.",
+                  "기준이 없어서 방송실에 안 갔어."]:
+        violation = _denial(reply)
+        assert violation and "own_action_denial" in violation, reply
+
+
+def test_denying_a_place_the_actor_remembers_going_to_is_rejected():
+    """테스터9 F14 — 기억 '오늘 방송실에 갔어'가 있는데 '방송실에 가지 않았어'라고 답했다."""
+    from apps.engine.app.use_cases.npc_context import own_action_denial_check
+    check = own_action_denial_check(_said("오늘 방송실에 갔어. 문 앞까지 갔다가 돌아왔어.", 5, "민석"), names=["민석", "채연"])
+    for reply in ["나는 오늘 방송실에 가지 않았어.", "오늘은 방송실에 직접 가지 않았어.",
+                  "방송실까지는 안 갔어.", "실제로 방송실에 간 적은 없어."]:
+        violation = check(AgentOutput(reply=reply, suspicion_delta=0, trust_delta=0))
+        assert violation and "own_action_denial" in violation, reply
+
+
+def test_place_denial_is_allowed_when_not_in_own_actions():
+    from apps.engine.app.use_cases.npc_context import own_action_denial_check
+    seen = [{**_said("민석이 방송실에 갔어.", 5, "민석")[0], "kind": "직접 본 일"}]
+    for memory in (seen, _said("오늘 방송실에 갔어.", 5, "민석")):
+        check = own_action_denial_check(memory, names=["민석"])
+        assert check(AgentOutput(reply="방송실까지 갔다가 돌아왔어. 안에는 안 들어갔어.", suspicion_delta=0, trust_delta=0)) is None
+    assert own_action_denial_check(seen, names=["민석"])(AgentOutput(reply="나는 방송실에 가지 않았어.", suspicion_delta=0, trust_delta=0)) is None

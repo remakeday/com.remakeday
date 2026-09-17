@@ -3,7 +3,6 @@
 from apps.engine.domain.value_objects.game_constants import (
     ANOMALY_CLOSURE,
     CELL_FULL_THRESHOLD,
-    CELLS,
     PASS_THRESHOLD,
     RUMOR_THRESHOLD,
     UNDERSTANDING_WEIGHTS,
@@ -60,24 +59,29 @@ def _with_topic_particle(word: str) -> str:
     return word + ("은" if has_final else "는")
 
 
-def cell_feedback(cell_scores: dict[str, float], *, include_side_effect: bool) -> str:
-    """밤의 정성 피드백 — 점수는 숨기고 3단계 상태만 문장으로.
+# 밤마다 이름을 꺼내는 칸 — 정체는 아무도 묻지 않는 질문이라 안내하지 않는다(기획서 §4.8⑤),
+# 부작용은 채점하지 않는다.
+HINT_CELLS = ("cause", "motive")
 
-    ≥80 "잡혔다" / >0 "조금 잡혔다" / 0 "비어 있다". 부작용은 답안에서 제외한다.
+
+def cell_feedback(cell_scores: dict[str, float], *, include_side_effect: bool) -> str:
+    """밤의 정성 피드백 — 점수는 숨기고 원인·동기의 진행만 문장으로.
+
+    ≥80 "잡혔다" / >0 "조금 잡혔다". 점수 0인 칸은 empty_hint_cells()가 힌트로 넘긴다.
     """
     parts = []
-    for cell in CELLS:
-        if cell == "side_effect":
-            continue
+    for cell in HINT_CELLS:
         score = cell_scores.get(cell, 0.0)
-        if score >= 80.0:
-            status = "잡혔다"
-        elif score > 0.0:
-            status = "조금 잡혔다"
-        else:
-            status = "비어 있다"
+        if score <= 0.0:
+            continue
+        status = "잡혔다" if score >= 80.0 else "조금 잡혔다"
         parts.append(f"{_with_topic_particle(_CELL_LABELS[cell])} {status}.")
     return " ".join(parts)
+
+
+def empty_hint_cells(cell_scores: dict[str, float]) -> list[str]:
+    """점수 0인 칸 코드 — 힌트는 칸 이름만(테스터10 F1). 문구는 화면이 정한다."""
+    return [cell for cell in HINT_CELLS if cell_scores.get(cell, 0.0) <= 0.0]
 
 
 def world_outcome(anomaly_count: int, rumor_index: int) -> str:
@@ -113,12 +117,12 @@ def apply_ratchet(per_truth: list[dict], prev_per_truth: list[dict],
 
     직전 밤 같은 명제의 matched_user_claim 문장이 이번 후보에도 그대로 있으면
     직전 verdict 미만으로 내리지 않는다(confirmed→partial/none, partial→none 차단).
-    상향은 그대로 둔다. 적용된 항목은 "ratcheted": True로 표시한다.
+    상향은 그대로 둔다. 적용된 항목은 "ratcheted": True로 표시하고, matched_index는
+    이번 후보에서 찾은 문장(같은 원문 우선, 없으면 정규화가 같은 첫 후보)을 가리킨다.
     """
     if not prev_per_truth:
         return per_truth
     prev_by_id = {p.get("id"): p for p in prev_per_truth}
-    current = {_normalize_claim(c) for c in user_claims}
     out = []
     for item in per_truth:
         prev = prev_by_id.get(item.get("id"))
@@ -126,8 +130,33 @@ def apply_ratchet(per_truth: list[dict], prev_per_truth: list[dict],
             prev_match = prev.get("matched_user_claim")
             downgraded = (_VERDICT_RANK.get(item.get("verdict"), 0)
                           < _VERDICT_RANK.get(prev.get("verdict"), 0))
-            if prev_match and downgraded and _normalize_claim(prev_match) in current:
-                item = {**item, "verdict": prev["verdict"],
-                        "matched_user_claim": prev_match, "ratcheted": True}
+            index = _candidate_index(prev_match, user_claims) if prev_match else None
+            if downgraded and index is not None:
+                item = {**item, "verdict": prev["verdict"], "matched_user_claim": prev_match,
+                        "matched_index": index, "ratcheted": True}
         out.append(item)
     return out
+
+
+def _candidate_index(claim: str, candidates: list[str]) -> int | None:
+    if claim in candidates:
+        return candidates.index(claim)
+    key = _normalize_claim(claim)
+    return next((j for j, c in enumerate(candidates) if _normalize_claim(c) == key), None)
+
+
+_ACCEPTED_VERDICTS = frozenset({"confirmed", "partial"})
+
+
+def accepted_claims(per_truth: list[dict], candidates: list[str]) -> list[str]:
+    """인정된 내 문장 — 점수에 들어간 판정(잠금 포함)이 지목한 이번 밤 후보 원문.
+
+    칸 구분 없이 플레이어가 쓴 순서로 낸다(진실 명제 순서·칸 구조를 드러내지 않는다).
+    판정이 실제로 지목한 후보 인덱스(matched_index — 채점기 인덱스, 잠금이면 apply_ratchet이
+    이번 후보에서 찾은 인덱스)만 쓴다. 문자열로 거르지 않으므로 정규화만 다른 근접 중복 후보는
+    지목된 쪽만 보이고, 인덱스가 없는 지목(지난 기록 조각·어긋난 매칭)은 보정 없이 빠진다
+    (테스터9 F11).
+    """
+    indices = {i["matched_index"] for i in per_truth
+               if i.get("verdict") in _ACCEPTED_VERDICTS and i.get("matched_index") is not None}
+    return [c for j, c in enumerate(candidates) if j in indices]

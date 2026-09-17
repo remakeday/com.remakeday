@@ -3,14 +3,16 @@
 from apps.engine.domain.value_objects.game_constants import (
     COOKIE_TIE_ORDER,
     PASS_THRESHOLD,
+    PAW_DECLINE_LIMIT,
     PAW_MAX_PER_ATTEMPT,
     PAW_MIN_YESTERDAY,
 )
 
 
-def paw_should_offer(loop_n: int, yesterday_score: float | None, offered_so_far: int) -> bool:
-    """1회차 무조건, 이후 전날 ≥40% 시 1회, 판당 최대 2."""
-    if offered_so_far >= PAW_MAX_PER_ATTEMPT:
+def paw_should_offer(loop_n: int, yesterday_score: float | None, offered_so_far: int,
+                     consecutive_declines: int = 0) -> bool:
+    """1회차 무조건, 이후 전날 ≥40% 시 1회, 판당 최대 2, 같은 판 2회 연속 거절 뒤에는 없음."""
+    if offered_so_far >= PAW_MAX_PER_ATTEMPT or consecutive_declines >= PAW_DECLINE_LIMIT:
         return False
     if loop_n == 1:
         return True

@@ -44,8 +44,8 @@ def test_previous_answer_uses_direct_writing_and_stays_inside_attempt(db_session
     assert uc.previous_answer(info["loop_id"])["previous_answer"] is None
 
 
-def test_source_composition_deduplicates_selected_evidence():
-    assert source_claims("첫 주장.\n소독약 냄새.", ["소독약 냄새."]) == ["첫 주장.", "소독약 냄새."]
+def test_source_composition_uses_only_written_text_and_deduplicates():
+    assert source_claims("첫 주장.\n소독약 냄새.\n첫 주장.") == ["첫 주장.", "소독약 냄새."]
 
 
 def test_each_night_restores_only_its_own_attempts_latest_direct_writing(db_session):
@@ -178,7 +178,7 @@ def test_repeated_note_deselection_and_reselection_preserve_direct_writing(db_se
     previous = uc.previous_answer(next_loop.id)["previous_answer"]
     draft = uc.draft(next_loop.id, [note_id], previous["draft_text"], [note_id])
     assert previous["draft_text"] == first.free_text == "원문"
-    assert draft["claims"] == source_claims("원문", [NoteRepository(db_session).by_ids(attempt.id, [note_id])[0].text])
+    assert draft["claims"] == ["원문"]  # 이어받은 기록은 참고용 — 주장에 붙지 않는다
     second = NightRepository(db_session).get(draft["night_id"])
     second.submitted = True
     second.tapped_note_ids = []  # user detached the old source while retaining edited prose
@@ -198,26 +198,6 @@ def test_definition_question_cannot_be_answered_with_unrelated_action(db_session
     inter._llm = FakeLLM(question_responses(model_assessment('supported', detail=observation.text, evidence_ids=[observation.observation_id])))
     answer = inter.ask(night.id, "귀표는 무엇인가?")
     assert answer["status"] == "unknown"
-
-
-def test_paw_benefit_and_cost_occur_in_linked_scene_only(db_session):
-    from apps.engine.adapter.outbound.repositories.event_log_repository import EventLogRepository
-    day, _, attempt, info = make_day(db_session, [])
-    first_loop = LoopRepository(db_session).get(info["loop_id"])
-    first_loop.state, first_loop.score = "closed", 50
-    db_session.commit()
-    info = day.start_loop(attempt.id)
-    scene = day.advance_beat(info["loop_id"])
-    offer = scene["paw_offer"]
-    assert offer is not None
-    day.respond_paw(info["loop_id"], offer["offer_id"], True)
-    before = LoopRepository(db_session).get(info["loop_id"]).budget_left
-    result = day.advance_beat(info["loop_id"])
-    executions = [e for e in EventLogRepository(db_session).query(attempt.id) if e.type == "rule_execution"]
-    assert executions and executions[-1].side_effect
-    assert executions[-1].actual_action == "알고 있는 관찰을 설명한다"
-    assert LoopRepository(db_session).get(info["loop_id"]).budget_left == before - 1
-    assert result["budget_left"] == before - 1
 
 
 def test_conflicting_rule_result_is_not_counted_as_compliance_success(db_session):
@@ -315,7 +295,7 @@ def test_same_polarity_rules_share_one_real_action_without_false_conflict(db_ses
     executions = [e for e in EventLogRepository(db_session).query(attempt.id) if e.type == "rule_execution"]
     assert [e.result for e in executions] == ["obeyed", "obeyed"]
     assert result["narration"].count("민석: 배급 자리 보고 적었어. 잊으면 안 되잖아.") == 1
-    assert result["budget_left"] == before - 1
+    assert result["budget_left"] == before  # F11: 원숭이손 예산 대가 폐기
 
 
 def test_legacy_notes_are_unmeasured_instead_of_failed_source_links():

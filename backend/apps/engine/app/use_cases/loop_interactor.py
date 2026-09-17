@@ -4,6 +4,7 @@ import json
 import uuid
 from base64 import urlsafe_b64encode
 from contextlib import nullcontext
+from itertools import takewhile
 
 from apps.engine.app.dtos import event_log_dto as ev
 from apps.engine.app.dtos.llm_output_dto import (
@@ -13,11 +14,12 @@ from apps.engine.app.dtos.llm_output_dto import (
     planner_output,
 )
 from apps.engine.app.use_cases import prompts
-from apps.engine.app.ports.output.scene_transaction_port import SceneTransactionPort
+from apps.engine.app.ports.output.scene_transaction_port import RequestInFlight as InFlight
+from apps.engine.app.ports.output.scene_transaction_port import SceneTransactionPort, one_request_per_row
 from apps.engine.app.use_cases.public_observations import disclose, public_observations
 from apps.engine.app.use_cases.question_replies import question_reply
-from apps.engine.app.use_cases.npc_context import learn_scene, context_output_check, resolve_output_sources, response_sources
-from apps.engine.app.use_cases.scene_execution import execute_scene, EXPLAIN_ACTION
+from apps.engine.app.use_cases.npc_context import learn_scene, context_output_check, grounded_number_check, own_action_denial_check, resolve_output_sources, response_sources
+from apps.engine.app.use_cases.scene_execution import execute_scene, PAW_EFFECT_SOURCE
 from apps.engine.app.use_cases.game_support import (
     build_agent_messages,
     lost_names,
@@ -37,14 +39,18 @@ from apps.engine.app.use_cases.harness import (
     unknown_person_check,
 )
 from apps.engine.domain.entities import loop_rules, npc_rules
-from apps.engine.domain.entities.npc_memory import add_memory, forget_memory, hidden_memory_ids, visible_memories
+from apps.engine.domain.entities.npc_memory import (
+    add_memory, forget_memory, hidden_memory_ids, memory_references, resolve_memory_reference, visible_memories,
+)
 from apps.engine.domain.entities.question_rules import is_question_action, question_matches
 from apps.engine.domain.entities.cookie_rules import ab_assign, paw_should_offer
+from apps.engine.domain.entities.paw_rules import choose_wish
 from apps.engine.domain.entities.utterance_rules import is_nonsense
 from apps.engine.domain.entities.rule_rules import (
     Rule,
     enforce_rules_on_plan,
     narration_with_rule_note,
+    player_visible,
     rules_for_npc,
 )
 from apps.engine.domain.value_objects.game_constants import (
@@ -66,8 +72,28 @@ def neutral_action_for(vocab: list[str]) -> str:
     return next((c for c in _NEUTRAL_ACTION_CANDIDATES if c in vocab), vocab[0])
 
 
+# 원숭이손 반대 사건이 처음 일어날 때 원인 사슬을 한 칸 민다 — 밤 결말(world_outcome)의 입력 (스펙 §3 새 개념 3)
+def _flag_actor(loops, loop, actor: str) -> None:
+    for state in (s for s in loops.npc_states(loop.id) if s.name == actor):
+        state.flagged_abnormal = True
+
+
+def _raise_rumor(loops, loop, actor: str) -> None:
+    loop.rumor_index = loop.rumor_index + 1
+
+
+_WORLD_EFFECTS = {"flag_actor": _flag_actor, "rumor": _raise_rumor, None: lambda loops, loop, actor: None}
+
+
 class GameStateError(Exception):
     """잘못된 상태 전이 — 라우터가 409로 매핑."""
+
+
+class RequestInFlight(GameStateError, InFlight):
+    """같은 행의 앞 요청이 처리 중이다 — 기다리지 않고 409. 라우터가 재시도 코드(request_in_flight)를 붙인다."""
+
+
+_BUSY = "앞 요청을 처리하는 중이다. 잠시 뒤 다시 시도해 주세요."
 
 
 class DialogueUnavailable(Exception):
@@ -80,6 +106,7 @@ class LoopInteractor:
         npc_llm, core_llm, manager, harness_on: bool, age7_on: bool,
         paw_reason_ab_on: bool, loop_cls, npc_state_cls, rule_cls,
         scene_transaction: SceneTransactionPort = nullcontext,
+        attempt_transaction: SceneTransactionPort = nullcontext,
     ) -> None:
         self._loop_cls = loop_cls
         self._npc_state_cls = npc_state_cls
@@ -97,11 +124,13 @@ class LoopInteractor:
         self._age7_on = age7_on
         self._paw_reason_ab_on = paw_reason_ab_on
         self._scene_transaction = scene_transaction
+        self._attempt_transaction = attempt_transaction
 
     # ── 회차 시작 ──────────────────────────────────────────────
 
     def start_loop(self, attempt_id: uuid.UUID) -> dict:
-        with self._scene_transaction():
+        # 판 행 잠금 — 동시 시작이 둘 다 "이전 회차 닫힘"을 보고 planner를 부르거나 INSERT에서 기다리지 않게.
+        with one_request_per_row(self._attempt_transaction, attempt_id, RequestInFlight, "하루를 준비하는 중이다. 잠시 뒤 다시 시도해 주세요."):
             return self._start_loop(attempt_id)
 
     def _start_loop(self, attempt_id: uuid.UUID) -> dict:
@@ -161,7 +190,7 @@ class LoopInteractor:
         )
 
         first = MORNING_SHIFTED if shifted else MORNING_FIRST
-        beat1 = execute_scene(self._events, loop, bundle, rule_rows)
+        beat1 = execute_scene(self._events, loop, bundle, rule_rows, on_action=self._world_effect(loop))
         observations, note_found = self._disclose_scene(loop, bundle, beat1)
         ambient = self._make_ambient(loop, bundle)
         observations = [o.model_dump() for o in public_observations(self._events, loop.attempt_id)
@@ -191,7 +220,7 @@ class LoopInteractor:
             "active_rules": [
                 r.shown_reason
                 or f"{r.target}: {r.action} {'금지' if r.effect == 'suppress' else '강제'}"
-                for r in rule_rows
+                for r in player_visible(rule_rows)  # 숨은 규칙은 보이지 않는다
             ],
         }
 
@@ -239,7 +268,8 @@ class LoopInteractor:
     # ── 발화 ──────────────────────────────────────────────────
 
     def utter(self, loop_id: uuid.UUID, target: str, text: str, *, request_id=None) -> dict:
-        with self._scene_transaction(loop_id):
+        # 같은 request_id가 처리 중에 또 오면 409 — 앞 요청이 커밋한 뒤 같은 ID로 다시 보내면 저장된 응답을 돌려준다.
+        with one_request_per_row(self._scene_transaction, loop_id, RequestInFlight, "앞 대화를 처리하는 중이다. 잠시 뒤 같은 질문을 다시 보내 주세요."):
             return self._utter(loop_id, target, text, request_id=request_id)
 
     def _utter(self, loop_id: uuid.UUID, target: str, text: str, *, request_id=None) -> dict:
@@ -289,7 +319,7 @@ class LoopInteractor:
 
         rule_rows = self._rules.list(loop.attempt_id)
         domain_rules = [self._to_domain_rule(r) for r in rule_rows]
-        active_rules = [r for r in rules_for_npc(domain_rules, char.name, loop.beat)
+        active_rules = [r for r in rules_for_npc(player_visible(domain_rules), char.name, loop.beat)
                         if not is_question_action(r.action) or question_matches(r.action, text)]
         question_rules = [r for r in active_rules if is_question_action(r.action) and r.effect == "enforce"]
         npc_rule_text = "\n".join(
@@ -319,6 +349,8 @@ class LoopInteractor:
             unknown_person_check([c.name for c in bundle.characters], fields=["reply"]),
             korean_only_check(fields=["reply"]),
             context_output_check(bundle, char, npc.memory or [], loop.damage_level),
+            grounded_number_check(bundle, char, npc.memory or [], loop.damage_level, question=text, beat=loop.beat),
+            own_action_denial_check(npc.memory or [], names=[c.name for c in bundle.characters]),
         ]
         if authored_reply is not None:
             out = AgentOutput(reply=authored_reply, suspicion_delta=0, trust_delta=0, mood=npc.mood)
@@ -421,13 +453,13 @@ class LoopInteractor:
         if not ok:
             return False
         rule_rows = [self._to_domain_rule(r) for r in self._rules.list(loop.attempt_id)]
-        active = [r for r in rules_for_npc(rule_rows, target_char.name, loop.beat)
+        active = [r for r in rules_for_npc(player_visible(rule_rows), target_char.name, loop.beat)
                   if not is_question_action(r.action) or question_matches(r.action, tool_call.question)]
         messages = build_agent_messages(bundle, target_char,
             suspicion=target_state.suspicion, trust=target_state.trust, opposite=target_state.opposite_mode,
             rules_text="\n".join(self._rule_line(r) for r in active), memory=target_state.memory or [],
             user_text=f"{asker_char.name}: {tool_call.question}", loop_n=loop.loop_n,
-            age7_on=self._age7_on, damage_level=loop.damage_level, reply_field="answer")
+            age7_on=self._age7_on, damage_level=loop.damage_level, reply_field="answer", player_asker=False)
         messages[0].content += (
             "\n다른 사람이 와서 묻는다. answer에 답한다. said_it은 현재 기억하는지이며 "
             "기억이 없으면 null이다. 기억나지 않는다는 이유로 실제로 말한 적 없다고 단정하지 않는다."
@@ -448,6 +480,10 @@ class LoopInteractor:
                     unknown_person_check([c.name for c in bundle.characters], fields=["answer"]),
                     korean_only_check(fields=["answer"]),
                     context_output_check(bundle, target_char, target_state.memory or [], loop.damage_level),
+                    grounded_number_check(bundle, target_char, target_state.memory or [], loop.damage_level,
+                                          question=tool_call.question, beat=loop.beat, field="answer"),
+                    own_action_denial_check(target_state.memory or [], names=[c.name for c in bundle.characters],
+                                            field="answer"),
                 ], harness_on=self._harness_on, retry_feedback=True, temperature=0.3)
             record_harness(self._events, loop.attempt_id, report, loop_n=loop.loop_n, beat=loop.beat)
         if out is None:
@@ -501,7 +537,7 @@ class LoopInteractor:
     # ── 비트 경계 ──────────────────────────────────────────────
 
     def advance_beat(self, loop_id: uuid.UUID) -> dict:
-        with self._scene_transaction(loop_id):
+        with one_request_per_row(self._scene_transaction, loop_id, RequestInFlight, _BUSY):
             return self._advance_beat(loop_id)
 
     def _advance_beat(self, loop_id: uuid.UUID) -> dict:
@@ -524,7 +560,8 @@ class LoopInteractor:
         if loop.beat in MANAGER_CHECK_BEATS:
             self._manager_check(loop, bundle)
         paw_offer = self._maybe_offer_paw(loop, bundle)
-        beat = execute_scene(self._events, loop, bundle, self._rules.list(loop.attempt_id))
+        beat = execute_scene(self._events, loop, bundle, self._rules.list(loop.attempt_id),
+                             on_action=self._world_effect(loop))
         observations, note_found = self._disclose_scene(loop, bundle, beat)
         ambient = self._make_ambient(loop, bundle)
         observations = [o.model_dump() for o in public_observations(self._events, loop.attempt_id)
@@ -634,10 +671,14 @@ class LoopInteractor:
         utter_events = self._events.query(loop.attempt_id, type=ev.EventType.UTTERANCE, loop_n=loop.loop_n)
         rule_rows = self._rules.list(loop.attempt_id)
         prev = self._prev_score(loop)
+        references = {s.name: memory_references(s.memory or []) for s in states}
         patches, flagged, report = self._manager.check(
             npc_states=[
                 {"name": s.name, "suspicion": s.suspicion, "trust": s.trust,
-                 "memory": visible_memories(s.memory or []), "plan": s.plan}
+                 "memory": [{"id": ref, "beat": m["beat"], "kind": m["kind"], "speaker": m.get("speaker"),
+                             "listeners": m.get("listeners", []), "text": m["text"]}
+                            for ref, m in references[s.name].items()],
+                 "plan": s.plan}
                 for s in states
             ],
             user_utterances=[e.text for e in utter_events if not getattr(e, "gated", False)],
@@ -651,18 +692,17 @@ class LoopInteractor:
         outcomes = []
         for p in patches:
             s = by_name.get(p.npc)
-            applied, failure = False, None
+            applied, failure, detail = False, None, p.target
             if s is None:
                 failure = "대상 인물이 없음"
             elif loop.manager_budget_left <= 0:
                 failure = "보정 예산 없음"
-            elif p.kind == "memory_delete":
-                s.memory, applied = forget_memory(s.memory or [], p.target)
+            else:
+                detail = resolve_memory_reference(references[s.name], p.target) or p.target
+                s.memory, applied = forget_memory(s.memory or [], detail)
                 if not applied:
                     failure = "현재 기억에 없는 ID"
-            else:
-                failure = "적용 가능한 계획 수정이 없음"
-            outcomes.append(ev.ManagerPatch(npc=p.npc, kind=p.kind, detail=p.target, reason=p.reason,
+            outcomes.append(ev.ManagerPatch(npc=p.npc, kind=p.kind, detail=detail, reason=p.reason,
                                              applied=applied, failure_reason=failure))
             if applied:
                 loop.manager_budget_left -= 1
@@ -683,65 +723,97 @@ class LoopInteractor:
         if loop.beat != 2 or loop.pending_paw is not None:
             return None
         attempt = self._attempts.get(loop.attempt_id)
-        if not paw_should_offer(loop.loop_n, self._prev_score(loop), attempt.paw_offered_count):
+        offers = [e for e in self._events.query(loop.attempt_id) if e.type == "monkey_paw_offer"]
+        declines = len(list(takewhile(lambda e: not e.accepted, reversed(offers))))
+        if not paw_should_offer(loop.loop_n, self._prev_score(loop), attempt.paw_offered_count,
+                                consecutive_declines=declines):
             return None
-        active_rules = self._rules.list(loop.attempt_id)
-        future = next((a for a in bundle.scene_actions if a.beat > loop.beat
-                       and not any(r.target == a.actor and r.action == EXPLAIN_ACTION
-                                   and (r.when_beat is None or r.when_beat == a.beat)
-                                   for r in active_rules)), None)
-        if future is None:
-            return None
-        spec = {"target": future.actor, "when_beat": future.beat,
-                "action": EXPLAIN_ACTION, "effect": "enforce"}
-        shown_reason = f"{future.actor}이(가) 다음에 직접 한 일을 말로 설명한다. 놓친 관찰을 들을 수 있다."
-        hidden_side_effect = "설명을 듣는 장면에서 발화 여유가 남아 있으면 1회 줄어든다. 없으면 대가는 발생하지 않는다."
+        wish = choose_wish(loop.loop_n, self._prev_cells(loop), bundle.paw_wishes, {e.wish_key for e in offers})
+        if wish is None:
+            return None  # 전부 소진 — 제안 횟수도 올리지 않는다
+        reason, report = self._manager.make_paw_reason(wish)
+        if report:
+            record_harness(self._events, loop.attempt_id, report, loop_n=loop.loop_n, beat=loop.beat)
+        shown_reason = reason or wish.default_reason
         attempt.paw_offered_count += 1
         offer_id = str(uuid.uuid4())[:8]
         show_reason = (not self._paw_reason_ab_on) or ab_assign(str(loop.attempt_id))
-        label = f"{future.actor}: {EXPLAIN_ACTION} — 강제"
         loop.pending_paw = {
-            "offer_id": offer_id, "offer_index": attempt.paw_offered_count,
-            "rule": spec, "shown_reason": shown_reason,
-            "hidden_side_effect": hidden_side_effect, "label": label,
-            "show_reason": show_reason,
+            "offer_id": offer_id, "offer_index": attempt.paw_offered_count, "wish_key": wish.key,
+            "label": wish.label, "shown_reason": shown_reason, "show_reason": show_reason,
         }
         self._attempts.save()
         return {
-            "offer_id": offer_id, "rule_label": label,
+            "offer_id": offer_id, "rule_label": wish.label,
             "shown_reason": shown_reason if show_reason else None,
         }
 
     def respond_paw(self, loop_id: uuid.UUID, offer_id: str, accept: bool) -> dict:
+        with one_request_per_row(self._scene_transaction, loop_id, RequestInFlight, _BUSY):
+            return self._respond_paw(loop_id, offer_id, accept)
+
+    def _respond_paw(self, loop_id: uuid.UUID, offer_id: str, accept: bool) -> dict:
         loop = self._loops.get(loop_id)
         if loop is None or not loop.pending_paw or loop.pending_paw["offer_id"] != offer_id:
             raise GameStateError("유효한 원숭이손 오퍼가 없다")
         paw = loop.pending_paw
-        rule_label = None
+        bundle = self._scenario.bundle()
+        wish = next((w for w in bundle.paw_wishes if w.key == paw.get("wish_key")), None)
+        if wish is None:
+            raise GameStateError("유효한 원숭이손 오퍼가 없다")
         rule_id = self._rules.next_rule_id(loop.attempt_id)
+        scene = {"narration": None, "illustrations": [], "observations": []}
         if accept:
-            spec = paw["rule"]
-            when = spec["when_beat"]
-            self._rules.add(self._rule_orm_cls(
-                attempt_id=loop.attempt_id, rule_id=rule_id, source="monkey_paw",
-                target=spec["target"], when_beat=None if when == "any" else when,
-                effect=spec["effect"], action=spec["action"],
-                shown_reason=paw["shown_reason"] if paw["show_reason"] else None,
-                hidden_side_effect=paw["hidden_side_effect"], created_loop=loop.loop_n,
-            ))
+            self._store_wish_rules(loop, wish, rule_id, paw["shown_reason"] if paw["show_reason"] else None)
             self._events.record(loop.attempt_id, ev.RuleAppliedEvent(
                 loop_n=loop.loop_n, rule_id=rule_id, source="monkey_paw", conflict=False,
             ))
-            rule_label = paw["label"]
+            if wish.reveal.beat == loop.beat:
+                scene = self._replay_wish_scene(loop, bundle)
         self._events.record(loop.attempt_id, ev.MonkeyPawOfferEvent(
             loop_n=loop.loop_n, beat=loop.beat, offer_index=paw["offer_index"],
             rule_id=rule_id if accept else "-",
             reason_shown=paw["shown_reason"] if paw["show_reason"] else None,
-            accepted=accept,
+            accepted=accept, wish_key=wish.key,
         ))
         loop.pending_paw = None
         self._loops.save()
-        return {"applied": accept, "rule_label": rule_label}
+        return {"applied": accept, "rule_label": wish.label if accept else None, **scene}
+
+    def _store_wish_rules(self, loop, wish, rule_id, shown_reason) -> None:
+        """보이는 규칙(소원 장면) 1개 + 숨은 규칙(반대 사건) N개, 관찰 문장은 마지막 숨은 규칙에만. 판 단위 지속."""
+        reveal = wish.reveal
+        self._rules.add(self._rule_orm_cls(
+            attempt_id=loop.attempt_id, rule_id=rule_id, source="monkey_paw",
+            target=reveal.actor, when_beat=reveal.beat, effect=reveal.effect, action=reveal.action,
+            shown_reason=shown_reason, hidden_side_effect=None, created_loop=loop.loop_n,
+        ))
+        last = len(wish.effects) - 1
+        for index, effect in enumerate(wish.effects):
+            self._rules.add(self._rule_orm_cls(
+                attempt_id=loop.attempt_id, rule_id=self._rules.next_rule_id(loop.attempt_id),
+                source=PAW_EFFECT_SOURCE, target=effect.actor, when_beat=effect.beat,
+                effect=effect.effect, action=effect.action, shown_reason=None,
+                hidden_side_effect=wish.observation if index == last else None, created_loop=loop.loop_n,
+            ))
+
+    def _replay_wish_scene(self, loop, bundle) -> dict:
+        """수락 즉시 장면 — 소원 장면이 지금 비트면 현재 장면을 다시 실행하고 새로 생긴 기록만 돌려준다.
+        관찰 공개는 키로 멱등이라 이미 공개된 장면·노트는 중복되지 않는다. 지나가는 대사는 재생하지 않는다."""
+        before = {o.observation_id for o in public_observations(self._events, loop.attempt_id)}
+        beat = execute_scene(self._events, loop, bundle, self._rules.list(loop.attempt_id),
+                             on_action=self._world_effect(loop))
+        self._disclose_scene(loop, bundle, beat)
+        new = [o for o in public_observations(self._events, loop.attempt_id) if o.observation_id not in before]
+        spoken = [o for o in new if o.source_kind != "image"]  # 삽화는 행동 관찰에 이미 붙어 있다
+        return {
+            "narration": " ".join(o.text for o in spoken) or None,
+            "illustrations": [i.model_dump() for o in spoken for i in o.illustrations],
+            "observations": [o.model_dump() for o in new],
+        }
+
+    def _world_effect(self, loop):
+        return lambda action: _WORLD_EFFECTS[action.world_effect](self._loops, loop, action.actor)
 
     # ── 조회 ──────────────────────────────────────────────────
 
@@ -795,6 +867,12 @@ class LoopInteractor:
         if loop.loop_n <= 1:
             return None
         return self._loops.score_of(loop.attempt_id, loop.loop_n - 1)
+
+    def _prev_cells(self, loop) -> dict[str, float] | None:
+        if loop.loop_n <= 1:
+            return None
+        scored = [e for e in self._events.query(loop.attempt_id, loop_n=loop.loop_n - 1) if e.type == "answer_scored"]
+        return scored[-1].cell_scores.model_dump() if scored else None
 
     def _to_domain_rule(self, r) -> Rule:
         return Rule(

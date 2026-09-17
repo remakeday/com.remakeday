@@ -131,3 +131,15 @@ def test_retrospective_counts_registered_rules_not_rejected_custom_attempts():
     assert summary['tool_side_effects'] == [{'loop_n': 2, 'beat': 3, 'text': '의심 증가'}]
     assert summary['rule_success_rate'] is None
     assert summary['fallbacks'] == 1
+
+
+def test_retrospective_question_count_excludes_guide_answers():
+    """안내 답(게임 목적·사용법)은 판정 질문이 아니다 — 회고의 질문 수에 넣지 않는다."""
+    _, attempt, _, events = submit_night(5, 'none')
+    def question(kind):
+        return ev.InterventionQuestionEvent(loop_n=1, q_index=0 if kind == 'guide' else 1, question='질문',
+                                            answer='답', hit_cause_chain=False, confirmed_note_id=None, kind=kind)
+    events.recorded += [question('answer'), question('guide'), question('answer')]
+    summary = InspectorInteractor(attempts=Memory(attempt), rules=Memory(), event_log=events,
+                                  inspector_token='secret').harness_view(attempt.id)['harness_summary']
+    assert summary['questions_asked'] == 2

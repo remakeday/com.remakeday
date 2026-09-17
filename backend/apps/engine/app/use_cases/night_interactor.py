@@ -1,14 +1,18 @@
 """밤 — 원문 정리·채점(Evaluator)·판정·판 종료 (P2·P5).
 
-정리는 시나리오 데이터 없이 사용자 원문과 선택한 노트만 보존한다.
+정리는 시나리오 데이터 없이 사용자가 직접 쓴 원문만 주장으로 보존한다.
+고른 노트는 참고 목록 표시 복원용으로만 저장하고 채점 후보에 넣지 않는다 (테스터9 F17).
 """
 
 import json
 import re
 import uuid
 from concurrent.futures import ThreadPoolExecutor
+from contextlib import nullcontext
 
 from apps.engine.app.dtos import event_log_dto as ev
+from apps.engine.app.ports.output.scene_transaction_port import RequestInFlight as InFlight
+from apps.engine.app.ports.output.scene_transaction_port import SceneTransactionPort, one_request_per_row
 from apps.engine.app.dtos.llm_output_dto import (
     EvaluatorSideEffectOutput,
     evaluator_verdict_output,
@@ -18,6 +22,7 @@ from apps.engine.app.use_cases.game_support import record_harness, system_msg
 from apps.engine.app.use_cases.harness import run_with_harness
 from apps.engine.app.use_cases.public_observations import public_observations, disclose
 from apps.engine.domain.entities import scoring_rules
+from apps.engine.domain.entities.claim_rules import is_question_claim
 from apps.engine.domain.entities.rule_rules import Rule, narration_with_rule_note
 from apps.engine.domain.value_objects.event_type import EventType
 from apps.engine.domain.value_objects.game_constants import CELLS, LOOPS_PER_ATTEMPT
@@ -27,13 +32,21 @@ class GameStateError(Exception):
     pass
 
 
-def source_claims(free_text: str, tapped_notes: list[str]) -> list[str]:
-    """원문을 보존해 분할한다. 8칸을 넘는 문장은 마지막 칸에 모은다."""
-    source = "\n".join([free_text, *tapped_notes])
-    claims = list(dict.fromkeys(s.strip() for s in re.split(r"(?<=[.!?])\s+|\n+", source) if s.strip()))
+class RequestInFlight(GameStateError, InFlight):
+    """같은 밤의 앞 요청(제출·수정)이 처리 중이다 — 기다리지 않고 409, 라우터가 request_in_flight 코드를 붙인다."""
+
+
+def source_claims(free_text: str) -> list[str]:
+    """직접 쓴 원문을 보존해 분할한다. 8칸을 넘는 문장은 마지막 칸에 모은다."""
+    claims = list(dict.fromkeys(s.strip() for s in re.split(r"(?<=[.!?])\s+|\n+", free_text) if s.strip()))
     if len(claims) > 8:
         return claims[:7] + [" ".join(claims[7:])]
     return claims
+
+
+def _question_flags(claims: list[str]) -> list[bool]:
+    """확인 화면 안내용 — 채점에는 쓰지 않는다 (테스터11 O2)."""
+    return [is_question_claim(c) for c in claims]
 
 
 def judge_candidates(claims: list[str]) -> list[str]:
@@ -61,6 +74,7 @@ class NightInteractor:
     def __init__(
         self, *, attempts, loops, notes, rules, nights, event_log, scenario,
         core_llm, harness_on: bool, cookie_ab_on: bool, night_cls,
+        night_transaction: SceneTransactionPort = nullcontext,
     ) -> None:
         self._attempts = attempts
         self._loops = loops
@@ -73,6 +87,7 @@ class NightInteractor:
         self._harness_on = harness_on
         self._cookie_ab_on = cookie_ab_on
         self._night_cls = night_cls
+        self._night_transaction = night_transaction
 
     # ── 정리 ──────────────────────────────────────────────────
 
@@ -97,12 +112,10 @@ class NightInteractor:
         if self._nights.for_loop(loop_id) is not None:
             raise GameStateError("이미 정리를 시작했다")
 
-        note_rows = self._notes.by_ids(loop.attempt_id, tapped_note_ids)
-        tapped_texts = [n.text for n in note_rows]
-
         # 요약 모델의 누락·바꿔 쓰기와 어휘 필터의 오탐을 피한다.
         # 원문만 옮기므로 정답을 보충할 수 없고, 의미의 정오는 채점기가 판정한다.
-        kept = source_claims(free_text, tapped_texts)
+        # 고른 노트 원문은 넣지 않는다 — 관찰 조각이 무관한 명제에 인정되던 오인정(테스터9 F11) 차단.
+        kept = source_claims(free_text)
 
         night = self._night_cls(
             loop_id=loop_id, tapped_note_ids=tapped_note_ids, free_text=free_text,
@@ -119,9 +132,15 @@ class NightInteractor:
         self._events.record(loop.attempt_id, ev.AnswerNormalizedEvent(
             loop_n=loop.loop_n, claims=kept, user_edited=False, edit_diff=None,
         ))
-        return {"night_id": str(night.id), "claims": kept}
+        return {"night_id": str(night.id), "claims": kept, "is_question": _question_flags(kept)}
 
     def edit_claims(self, night_id: uuid.UUID, claims: list[str]) -> dict:
+        # 밤 행 잠금 안에서 — 채점 중 수정이 잠금을 기다렸다가 커밋 뒤 옛 submitted=False로 통과해 제출한 답을 덮어쓰지 않게.
+        # 잠금을 얻은 뒤 다시 읽은 submitted·edit_count로 판정한다(opus 리뷰 I1).
+        with one_request_per_row(self._night_transaction, night_id, RequestInFlight, "답을 처리하는 중이다. 잠시 뒤 다시 시도해 주세요."):
+            return self._edit_claims(night_id, claims)
+
+    def _edit_claims(self, night_id: uuid.UUID, claims: list[str]) -> dict:
         night = self._nights.get(night_id)
         if night is None:
             raise GameStateError("정리가 없다")
@@ -137,17 +156,23 @@ class NightInteractor:
             loop_n=loop.loop_n, claims=night.claims, user_edited=True,
             edit_diff=f"{before} -> {night.claims}",
         ))
-        return {"claims": night.claims}
+        return {"claims": night.claims, "is_question": _question_flags(night.claims)}
 
     # ── 채점·판정 ──────────────────────────────────────────────
 
     def submit(self, night_id: uuid.UUID) -> dict:
+        # 제출 판정부터 채점·기록·회차 종료까지 밤 행 잠금 안에서 한 커밋 — 동시 제출이 둘 다 "미제출"을 보고 채점 모델을 N배 부르지 않는다.
+        # 잠금은 기다리지 않는다: 앞 제출이 채점 중이면 곧바로 409 request_in_flight (opus 리뷰 C1, 5b).
+        with one_request_per_row(self._night_transaction, night_id, RequestInFlight, "제출한 답을 채점하는 중이다. 잠시 뒤 다시 시도해 주세요."):
+            return self._submit(night_id)
+
+    def _submit(self, night_id: uuid.UUID) -> dict:
         night = self._nights.get(night_id)
         if night is None:
             raise GameStateError("정리가 없다")
-        if night.submitted:
-            raise GameStateError("이미 제출했다")
         loop = self._loops.get(night.loop_id)
+        if night.submitted:
+            return self._stored_submit_response(loop)
         attempt = self._attempts.get(loop.attempt_id)
 
         # 다음 아침의 변화 기록은 유지하되, 부작용을 답안으로 요구하지 않는다.
@@ -163,8 +188,8 @@ class NightInteractor:
         if previous is not None:
             per_truth = scoring_rules.apply_ratchet(
                 per_truth, previous[0].per_truth_claim or [], candidates)
-            matched = {i["matched_user_claim"] for i in per_truth if i["matched_user_claim"]}
-            wrong = [c for c in candidates if c not in matched]
+            matched = {i["matched_index"] for i in per_truth if i.get("matched_index") is not None}
+            wrong = [c for j, c in enumerate(candidates) if j not in matched]
         verdicts_by_cell: dict[str, list[str]] = {c: [] for c in CELLS}
         for item in per_truth:
             verdicts_by_cell[item["cell"]].append(item["verdict"])
@@ -178,6 +203,30 @@ class NightInteractor:
         night.submitted = True
         loop.score = total
 
+        is_final = loop.loop_n >= LOOPS_PER_ATTEMPT
+        world = scoring_rules.world_outcome(anomaly, loop.rumor_index)
+        loop.world_outcome = world
+        identity_ok = is_final and any(
+            i["verdict"] == "confirmed" and i.get("is_identity_word")
+            for i in per_truth
+        )
+        closed = scoring_rules.closed_by(total, identity_word_confirmed=identity_ok) if is_final else None
+        feedback = scoring_rules.cell_feedback(cell_scores, include_side_effect=False)
+        # 응답은 기록 전에 확정해 채점 이벤트에 함께 저장한다 — 연결이 끊긴 뒤 재제출이 모델 호출 없이 같은 응답을 받는다(opus 리뷰 I2).
+        # 모든 값이 이 제출 시점에 정해진다(밤 단서도 시나리오 데이터·이번 결말로만 정해진다).
+        response = {
+            "total": total, "passed": passed, "loop_n": loop.loop_n,
+            "world_outcome": world, "is_final": is_final,
+            "closed_by": closed, "cells": cell_scores if is_final else None,
+            "cookie": None, "intervention_available": not is_final,
+            "ending_lines": self._ending_lines(cell_scores, world) if is_final else None,
+            "truth_reveal": scoring_rules.truth_reveal(truth, per_truth) if is_final else None,
+            "cell_feedback": feedback or None, "wrong_claim_count": len(wrong),
+            "accepted_claims": scoring_rules.accepted_claims(per_truth, candidates),
+            "empty_cells": scoring_rules.empty_hint_cells(cell_scores),
+            "night_clue": self._night_clue_view(loop),
+        }
+
         self._events.record(loop.attempt_id, ev.AnswerScoredEvent(
             loop_n=loop.loop_n,
             per_truth_claim=[ev.TruthClaimVerdict(
@@ -186,6 +235,7 @@ class NightInteractor:
                 ratcheted=i.get("ratcheted", False),
             ) for i in per_truth],
             cell_scores=ev.CellScores(**cell_scores), total=total, passed=passed,
+            response=response,
         ))
         if wrong:
             self._events.record(loop.attempt_id, ev.AnswerWrongClaimsEvent(
@@ -196,22 +246,11 @@ class NightInteractor:
             rumor_index=loop.rumor_index,
         ))
 
-        is_final = loop.loop_n >= LOOPS_PER_ATTEMPT
-        world = scoring_rules.world_outcome(anomaly, loop.rumor_index)
-        loop.world_outcome = world
         self._make_cause_chain(loop)
-        night_clue = self._disclose_night_clue(loop)
+        self._disclose_night_clue(loop)
         self._record_death(loop, world)
-        cookie = None
-        closed = None
-        intervention = False
 
         if is_final:
-            identity_ok = any(
-                i["verdict"] == "confirmed" and i.get("is_identity_word")
-                for i in per_truth
-            )
-            closed = scoring_rules.closed_by(total, identity_word_confirmed=identity_ok)
             attempt.status = "closed"
             attempt.closed_by = closed
             attempt.prior_cell_results = cell_scores
@@ -222,20 +261,17 @@ class NightInteractor:
             ))
         else:
             loop.state = "intervention"
-            intervention = True
 
         self._attempts.save()
-        feedback = scoring_rules.cell_feedback(cell_scores, include_side_effect=False)
-        return {
-            "total": total, "passed": passed, "loop_n": loop.loop_n,
-            "world_outcome": world, "is_final": is_final,
-            "closed_by": closed, "cells": cell_scores if is_final else None,
-            "cookie": cookie, "intervention_available": intervention,
-            "ending_lines": self._ending_lines(cell_scores, world) if is_final else None,
-            "truth_reveal": scoring_rules.truth_reveal(truth, per_truth) if is_final else None,
-            "cell_feedback": feedback, "wrong_claim_count": len(wrong),
-            "night_clue": night_clue,
-        }
+        return response
+
+    def _stored_submit_response(self, loop) -> dict:
+        """이미 제출한 밤 — 저장된 제출 응답을 그대로 돌려준다(모델 호출 0). 저장 응답이 없는 과거 제출은 기존대로 409."""
+        stored = [e.response for e in self._events.query(loop.attempt_id, type=EventType.ANSWER_SCORED, loop_n=loop.loop_n)
+                  if e.response]
+        if not stored:
+            raise GameStateError("이미 제출했다")
+        return stored[-1]
 
     def _ending_lines(self, cell_scores: dict, world: str) -> list[str]:
         """결말은 이해한 만큼만 — 셀 ≥ REVEAL_THRESHOLD의 줄만 연다. 매핑 없는 시나리오는 구 거동."""
@@ -262,7 +298,8 @@ class NightInteractor:
         ]
         if not user_claims:
             return (
-                [{**it, "verdict": "none", "matched_user_claim": None, "cited": []} for it in items],
+                [{**it, "verdict": "none", "matched_user_claim": None, "matched_index": None,
+                  "cited": []} for it in items],
                 [],
             )
         # 유저 주장은 최대 8개 — 자르지 않고 전부 후보로 넣는다 (top-k 절단이 매칭 실패 원인)
@@ -294,12 +331,13 @@ class NightInteractor:
         for it, (out, report) in zip(items, results):
             record_harness(self._events, loop.attempt_id, report, loop_n=loop.loop_n, beat=None)
             verdict = out.verdict if out else "none"
-            match = None  # per_truth·이벤트 스키마는 문자열 유지 — 인덱스를 후보 원문으로 되돌린다
+            match = index = None  # 이벤트 스키마는 문자열 유지 — 인덱스는 이번 밤 인정 문장 계산용
             if out and out.matched_index is not None and 0 <= out.matched_index < len(user_claims):
-                match = user_claims[out.matched_index]
+                index = out.matched_index
+                match = user_claims[index]
                 matched.add(match)
             per_truth.append({
-                **it, "verdict": verdict, "matched_user_claim": match,
+                **it, "verdict": verdict, "matched_user_claim": match, "matched_index": index,
                 "cited": list(user_claims),
             })
         wrong = [c for c in user_claims if c not in matched]
@@ -323,12 +361,15 @@ class NightInteractor:
                 self._notes.upsert(loop.attempt_id, kind="fragment", text=o.text,
                                    loop_n=loop.loop_n, source_key=o.observation_id)
 
+    def _night_clue(self, loop):
+        return next((c for c in getattr(self._scenario.bundle(), "night_clues", None) or []
+                     if c.loop_n == loop.loop_n), None)
+
     def _disclose_night_clue(self, loop) -> dict | None:
         """밤 단서(밤단서 v2 P.1) — 캡션은 「N회차 · 소등 후」 관찰, 방송은 전언(statement)으로 저장한다.
 
-        둘 다 노트에 적혀 다음 밤의 근거로 탭할 수 있다. 트럭 결말 밤에는 위에서 공개한 결말 파편이 한 줄 더 붙는다."""
-        bundle = self._scenario.bundle()
-        clue = next((c for c in getattr(bundle, "night_clues", None) or [] if c.loop_n == loop.loop_n), None)
+        둘 다 노트에 적혀 다음 밤 글을 쓸 때 펼쳐 보는 참고 목록에 오른다(채점 후보는 아니다)."""
+        clue = self._night_clue(loop)
         if clue is None:
             return None
         lights_out = self._scenario.beats()[-1]
@@ -337,6 +378,14 @@ class NightInteractor:
             o = disclose(self._events, loop, lights_out, key=key, text=text, source_kind=kind)
             self._notes.upsert(loop.attempt_id, kind="fragment", text=o.text,
                                loop_n=loop.loop_n, source_key=o.observation_id)
+        return self._night_clue_view(loop)
+
+    def _night_clue_view(self, loop) -> dict | None:
+        """제출 응답의 밤 단서 — 시나리오 데이터와 이번 결말로만 정해진다. 트럭 결말 밤에는 결말 파편이 한 줄 더 붙는다."""
+        clue = self._night_clue(loop)
+        if clue is None:
+            return None
+        bundle = self._scenario.bundle()
         outcome_lines = [f.text for f in bundle.fragments
                          if f.world_outcome is not None and f.loop_n == loop.loop_n
                          and f.world_outcome == loop.world_outcome]

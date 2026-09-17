@@ -21,17 +21,17 @@ def test_previous_night_restores_exact_writing_not_selected_or_edited_claims():
     assert inter.previous_answer(loop.id)["previous_answer"]["draft_text"] == raw
 
 
-def test_inherited_selected_note_still_contributes_without_entering_saved_writing():
+def test_inherited_selected_note_is_reference_only_and_stays_out_of_saved_writing():
     loop = loop_at()
     loop.state = "night_pending"
     saved = []
     inter = NightInteractor(attempts=None, loops=NS(get=lambda _: loop, save=lambda: None),
-        notes=NS(by_ids=lambda *_: [NS(id=7, text="채연이 배급을 남겼다.")]), rules=None,
+        notes=None, rules=None,
         nights=NS(for_loop=lambda _: None, create=saved.append), event_log=Events(),
         scenario=None, core_llm=None, harness_on=True, cookie_ab_on=False,
         night_cls=lambda **kw: NS(id=uuid4(), **kw))
     result = inter.draft(loop.id, [7], "내 추측.\n", [7])
-    assert result["claims"] == ["내 추측.", "채연이 배급을 남겼다."]
+    assert result["claims"] == ["내 추측."]
     assert saved[0].free_text == "내 추측.\n"
 
 
@@ -63,7 +63,7 @@ def test_conditional_question_gets_natural_answer_in_one_call_with_only_public_c
     inter, night, model, bundle, answer = advisor()
     result = inter.ask(night.id, "채연이 아프면 어떻게 돼?")
     assert result["answer"] == f"{WHY_PREFIX} {answer}"
-    assert len(model.calls) == 1 and result["remaining"] == 2
+    assert len(model.calls) == 1 and result["remaining"] == 3  # unknown 환급 (순서표 5번)
     context = model.calls[0][0][0].content
     assert bundle.surface_summary in context and "채연이 아프면 어떻게 돼?" in context
     assert bundle.hidden_truth not in context and "미래 전용 비밀 사건" not in context

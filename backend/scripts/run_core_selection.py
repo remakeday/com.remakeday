@@ -570,9 +570,18 @@ def stage_concurrency(spec, base_url, timeout, rounds):
 
 # ── Stage 4 — loop ───────────────────────────────────────────────────
 
-LOOP_DB_URL = "postgresql+psycopg://pigfarm:pigfarm-dev@localhost:5435/pigfarm_test"
+LOOP_DB_NAME = "pigfarm_test"
 LOOP_PORT = 8600
 LOOP_PLAYER_MODEL = NPC_MODEL  # 상주 NPC 재사용 — 제3 모델 로드로 인한 축출 회피
+
+
+def _loop_db_url():
+    """루프 서버용 DB URL — 비밀번호는 코드에 두지 않고 설정(DATABASE_URL)에서 DB 이름만 바꾼다."""
+    from sqlalchemy.engine import make_url
+
+    from core.matrix.grid_keymaker_secret_manager import get_settings
+    url = make_url(get_settings().database_url).set(database=LOOP_DB_NAME)
+    return url.render_as_string(hide_password=False)
 
 
 def _loop_harness_stats(attempt_id):
@@ -581,7 +590,7 @@ def _loop_harness_stats(attempt_id):
     /attempts/{id}/harness 인스펙터는 다섯 번째 밤 종료 후에만 열리므로(AccessDenied)
     1회차 스모크에서는 쓸 수 없다. events 테이블 읽기 전용 SELECT만 한다."""
     from sqlalchemy import create_engine, text
-    eng = create_engine(LOOP_DB_URL)
+    eng = create_engine(_loop_db_url())
     try:
         with eng.connect() as conn:
             rows = conn.execute(text(
@@ -637,7 +646,7 @@ def stage_loop(spec, base_url, timeout, out_dir):
                 unload_model(base_url, m["model"])
         row = {"model": model, "think": "off", "persona": "성실", "loops": 1}
         env = dict(os.environ)
-        env.update({"DATABASE_URL": LOOP_DB_URL, "CORE_LLM_PROVIDER": "ollama",
+        env.update({"DATABASE_URL": _loop_db_url(), "CORE_LLM_PROVIDER": "ollama",
                     "CORE_LLM_MODEL": model, "LOOP_CORE_TIMEOUT": str(timeout)})
         slug = model.replace(":", "_").replace("/", "_")
         log_path = out_dir / f"stage4-server-{slug}.log"

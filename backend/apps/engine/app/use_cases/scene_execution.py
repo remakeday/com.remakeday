@@ -1,14 +1,33 @@
 """Execute finite public scene actions and audit actual rule opportunities."""
 
 from apps.engine.app.dtos.event_log_dto import RuleExecutionEvent
-from apps.engine.app.use_cases.public_observations import disclose
+from apps.engine.app.use_cases.public_observations import disclose, public_observations
+from apps.engine.domain.entities.rule_rules import PAW_EFFECT_SOURCE
 
 EXPLAIN_ACTION = "알고 있는 관찰을 설명한다"
 SOURCE_ACTION = "소문의 알려진 출처를 밝힌다"
 INFORMATION_ACTIONS = (EXPLAIN_ACTION, SOURCE_ACTION)
 
+# 숨은 규칙이 "의도대로" 실행됐을 때의 실제 행동 — enforce는 행동 발생, suppress는 억제
+_INTENDED_ACTION = {"enforce": lambda effect: effect.action, "suppress": lambda effect: None}
 
-def execute_scene(event_log, loop, bundle, rules):
+
+def _wish_fulfilled(bundle, rules, outcomes, observation):
+    """관찰 문장을 가진 소원의 숨은 규칙이 이 회차에 전부 의도대로 실행됐는가 (스펙 §3 공개 조건)."""
+    wish = next((w for w in bundle.paw_wishes if w.observation == observation), None)
+    if wish is None:
+        return False
+    for effect in wish.effects:
+        rule = next((r for r in rules if r.source == PAW_EFFECT_SOURCE and r.target == effect.actor
+                     and r.action == effect.action and r.when_beat == effect.beat and r.effect == effect.effect), None)
+        expected = ("obeyed", _INTENDED_ACTION[effect.effect](effect))
+        if rule is None or outcomes.get((rule.rule_id, effect.beat)) != expected:
+            return False
+    return True
+
+
+def execute_scene(event_log, loop, bundle, rules, on_action=None):
+    """on_action(opportunity): 억제되지 않은 행동의 관찰이 이번 호출에서 처음 생겼을 때만 호출된다."""
     beat = bundle.beats[loop.beat - 1]
     if not bundle.scene_actions:
         return beat
@@ -16,9 +35,10 @@ def execute_scene(event_log, loop, bundle, rules):
     illustrations = list(beat.illustrations)
     if loop.loop_n == 1 and beat.n == 1 and not any(c.playable and c.lost for c in bundle.characters):
         illustrations.extend(bundle.first_morning_illustrations)
-    executed = {(e.rule_id, e.beat) for e in event_log.query(loop.attempt_id, loop_n=loop.loop_n)
-                if e.type == "rule_execution"}
-    shared_costs = {}
+    outcomes = {(e.rule_id, e.beat): (e.result, e.actual_action)
+                for e in event_log.query(loop.attempt_id, loop_n=loop.loop_n) if e.type == "rule_execution"}
+    executed = set(outcomes)
+    disclosed = {o.observation_id for o in public_observations(event_log, loop.attempt_id)}
     absent = [c.name for c in bundle.characters if c.lost and loop.damage_level >= 3]
     for opportunity in bundle.scene_actions:
         if opportunity.beat != beat.n:
@@ -47,6 +67,9 @@ def execute_scene(event_log, loop, bundle, rules):
             key=f"action-{beat.n}-{opportunity.actor}-{opportunity.action}", text=text,
             actor=opportunity.actor, illustrations=images,
             source_kind="rule_result" if winner else "scene", rule_id=winner.rule_id if winner else None)
+        if on_action is not None and not suppressed and observation.observation_id not in disclosed:
+            disclosed.add(observation.observation_id)
+            on_action(opportunity)
         information_records = {}
         for rule in applicable:
             if (rule.rule_id, beat.n) in executed:
@@ -74,19 +97,16 @@ def execute_scene(event_log, loop, bundle, rules):
                     action = rule.action
             elif winner and winner.effect != rule.effect:
                 result = "conflict"
+            outcomes[(rule.rule_id, beat.n)] = (result, action)
             side_effect = None
-            cost_key = (opportunity.actor, action)
-            if (rule.source == "monkey_paw" and action == EXPLAIN_ACTION and result == "obeyed"
-                    and loop.budget_left > 0 and cost_key not in shared_costs):
-                # A concrete cost of drawing public attention, not an invented model side effect.
-                side_effect = f"{opportunity.actor}의 설명을 듣느라 다음에 말을 걸 여유가 줄었다."
-                loop.budget_left = max(0, loop.budget_left - 1)
-                cost = disclose(event_log, loop, beat, key=f"paw-cost-{beat.n}-{rule.rule_id}",
-                                text=side_effect, actor=opportunity.actor, source_kind="rule_result", rule_id=rule.rule_id)
+            if (rule.source == PAW_EFFECT_SOURCE and rule.hidden_side_effect and result == "obeyed"
+                    and _wish_fulfilled(bundle, rules, outcomes, rule.hidden_side_effect)):
+                # 반대 사건이 전부 실제로 일어난 날만 문장을 남긴다 — 노트에 거짓 문장이 들어가지 않는다.
+                side_effect = rule.hidden_side_effect
+                revealed = disclose(event_log, loop, beat, key=f"paw-effect-{beat.n}-{rule.rule_id}",
+                                text=side_effect, source_kind="rule_result", rule_id=rule.rule_id)
                 narration.append(side_effect)
-                shared_costs[cost_key] = cost
-            if result == "obeyed" and cost_key in shared_costs:
-                evidence.append(shared_costs[cost_key].observation_id)
+                evidence.append(revealed.observation_id)
             event_log.record(loop.attempt_id, RuleExecutionEvent(
                 loop_n=loop.loop_n, beat=beat.n, rule_id=rule.rule_id,
                 condition=f"{opportunity.actor}: {opportunity.action} 기회", actual_action=action,

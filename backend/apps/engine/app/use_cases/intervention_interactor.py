@@ -7,8 +7,12 @@
 import json
 import re
 import uuid
+from contextlib import nullcontext
 
 from apps.engine.app.dtos import event_log_dto as ev
+from apps.engine.app.dtos.observation_dto import ObservationDTO
+from apps.engine.app.ports.output.scene_transaction_port import RequestInFlight as InFlight
+from apps.engine.app.ports.output.scene_transaction_port import SceneTransactionPort, one_request_per_row
 from apps.engine.app.dtos.llm_output_dto import (
     AdvisorReplyOutput,
     AdvisorMapOutput,
@@ -16,19 +20,34 @@ from apps.engine.app.dtos.llm_output_dto import (
 )
 from apps.engine.app.use_cases import prompts
 from apps.engine.app.use_cases.advisor_advice import (
-    advice_sentence, find_anchor, is_why_question, polite_register_check,
-    strip_leading_verdict, unbacked_confirmation_check, verdict_prefix,
+    GUIDE_ANSWERS, advice_sentence, find_anchor, guide_kind, is_wh_question, is_why_question, ladder_stage,
+    open_rungs, polite_register_check, refund_question, settle_status, strip_leading_verdict,
+    unbacked_confirmation_check, verdict_prefix,
 )
 from apps.engine.app.use_cases.public_observations import public_observations
 from apps.engine.app.use_cases.scene_execution import INFORMATION_ACTIONS, EXPLAIN_ACTION, SOURCE_ACTION
 from apps.engine.app.use_cases.game_support import record_harness, system_msg
 from apps.engine.app.use_cases.harness import run_with_harness
-from apps.engine.domain.entities.rule_rules import Rule, find_conflicts
+from apps.engine.domain.entities.rule_rules import Rule, find_conflicts, player_visible
 from apps.engine.domain.entities.question_rules import is_question_action, report_question_rule
+from apps.engine.domain.entities.rule_grammar import SUPPRESS_RE, find_actions, wants_suppress
+from apps.engine.domain.value_objects.game_constants import QUESTIONS_PER_NIGHT
 
 
 class GameStateError(Exception):
     pass
+
+
+class RequestInFlight(GameStateError, InFlight):
+    """같은 밤의 앞 요청(질문·규칙 선택)이 처리 중이다 — 기다리지 않고 409, 라우터가 request_in_flight 코드를 붙인다."""
+
+
+LADDER_SCENE_TITLE = "세계에 알려진 사실"
+_LADDER_ID_PREFIX = "ladder:"
+
+
+def _is_rung(observation: ObservationDTO) -> bool:
+    return observation.observation_id.startswith(_LADDER_ID_PREFIX)
 
 
 def render_cause_chain(cause_chain: list[dict]) -> str:
@@ -78,10 +97,12 @@ def select_lead(text: str, leads, used_keys: set[str], loop_n: int):
     return scored[0][1]
 
 
-def suggest_alternatives(text: str, targets: list[str], templates, max_n: int = 3) -> list[str]:
+def suggest_alternatives(text: str, targets: list[str], templates, max_n: int = 3,
+                         suppress: bool = False) -> list[str]:
     """직접 쓰기 실패 시 대안 — 고정 스냅 대신 실행 가능한 (대상, 행동) 후보를 근접 순으로.
 
     근접도 = 문장의 한글 토큰 어간(앞 2글자)과 행동 문구의 겹침. 후보가 없으면 설명 폴백.
+    금지를 원한 문장(suppress)에는 반대 뜻의 강제형 대신 금지형 대안을 준다.
     """
     stems = {token[:2] for token in _HANGUL_TOKEN_RE.findall(text)}
     pool = [t for t in templates if t["target"] in targets] if targets else list(templates)
@@ -94,9 +115,10 @@ def suggest_alternatives(text: str, targets: list[str], templates, max_n: int = 
         overlap = sum(stem in template["action"] for stem in stems)
         ranked.append((-overlap, len(ranked), pair))
     ranked.sort()
-    alternatives = [f"{target}은 {action}" for _, _, (target, action) in ranked[:max_n]]
+    suffix = " 금지" if suppress else ""
+    alternatives = [f"{target}은 {action}{suffix}" for _, _, (target, action) in ranked[:max_n]]
     if not alternatives:
-        alternatives = [f"{name}은 {EXPLAIN_ACTION}" for name in targets[:2]]
+        alternatives = [f"{name}은 {EXPLAIN_ACTION}{suffix}" for name in targets[:2]]
     return alternatives
 
 
@@ -111,8 +133,15 @@ def nearest_action(action: str, vocab: list[str]) -> str | None:
 
 # 직접 쓰기 거부 사유 — 실패 유형별 고정 인월드 문구 (LLM reason의 메타 용어 비노출)
 _REJECT_NOT_ONE_ACTION = "사람 하나의 행동 하나로 옮겨 적을 수 없다"
-_REJECT_UNKNOWN_ACTION = "그 행동은 이 세계에 없다"
-_REJECT_UNKNOWN_TARGET = "그런 사람은 여기 없다"
+_REJECT_UNKNOWN_ACTION = "그 행동은 쓸 수 있는 행동 목록에 없다."
+_REJECT_MANY_TARGETS = "규칙은 한 사람에게만 걸 수 있다. 적힌 이름: {names}. 한 명만 남겨 주세요."
+_REJECT_GROUP_TARGET = ("규칙은 한 사람에게만 걸 수 있다. '서로'·'모두'처럼 여러 사람에게 한꺼번에 거는 규칙은 없다. "
+                        "{names} 중 한 명을 골라 적어 주세요.")
+_REJECT_NO_TARGET = "누구에게 거는 규칙인지 알 수 없다. {names} 중 한 명의 이름을 적어 주세요."
+_REJECT_MANY_ACTIONS = "규칙 하나에는 행동 하나만 쓸 수 있다. 적힌 행동: {actions}."
+_REJECT_DOUBLE_NEGATION = "금지·부정 표현은 하나만 써 주세요. 두 번 겹치면 하라는 뜻인지 말라는 뜻인지 정할 수 없다."
+_GROUP_WORDS = ("서로", "모두", "다들", "다 같이", "모든 사람", "전부", "우리")
+_SCENE_PHRASES = (("아침", 1), ("오전", 2), ("정오", 3), ("오후", 4), ("저녁", 5), ("소등 후", 6))
 
 
 def named_targets(text: str, names: list[str]) -> list[str]:
@@ -125,7 +154,8 @@ def named_targets(text: str, names: list[str]) -> list[str]:
 def question_evidence(text, observations, names, *, fallback=False):
     """Find public records for the requested topic and actors."""
     groups = (
-        (("밥", "배급", "음식", "쟁반", "몫", "남기", "남긴", "남겼"), ("남기", "남긴", "남겼", "남은", "남아", "반쯤", "몫", "쟁반")),
+        # 남김 주제는 남김 낱말로만 건다 — 밥·배급 같은 음식 명사만으로 걸면 남김과 무관한 밥 질문의 기록이 떨어진다
+        (("쟁반", "몫", "남기", "남긴", "남겼"), ("남기", "남긴", "남겼", "남은", "남아", "반쯤", "몫", "쟁반")),
         (("보고", "방송", "알리라고"), ("보고", "방송실", "알립니다")),
         (("손목띠", "귀표"), ("손목띠", "귀표")),
         (("검진", "건강", "열이", "열나", "아프", "아픈"), ("검진", "이마", "건강", "열이", "열나")),
@@ -203,6 +233,17 @@ def advisor_answer_messages(cause_chain: list[dict], question: str):
     return [system_msg(sys + f"\n\n[질문] {question}")]
 
 
+# 규칙 출처별 "의도" — 직접 쓴 규칙은 원문, 추천 규칙은 그 선택지의 규칙 설명(없으면 기록 없음).
+_INTENT_BY_SOURCE = {
+    "user_custom": lambda spec, custom_text: custom_text,
+    "user_choice": lambda spec, custom_text: spec.get("label"),
+}
+
+
+def rule_intent(source: str, spec: dict, custom_text: str | None) -> str | None:
+    return _INTENT_BY_SOURCE[source](spec, custom_text)
+
+
 class InterventionInteractor:
     def __init__(
         self, *, attempts, loops, notes, rules, nights, event_log,
@@ -211,6 +252,8 @@ class InterventionInteractor:
         world_context: str = "",
         question_rule_targets: list[str] | None = None,
         advisor_leads: list | None = None,
+        advisor_ladder: list | None = None,
+        night_transaction: SceneTransactionPort = nullcontext,
     ) -> None:
         self._attempts = attempts
         self._loops = loops
@@ -227,6 +270,8 @@ class InterventionInteractor:
         self._world_context = world_context
         self._question_rule_targets = question_rule_targets or []
         self._advisor_leads = advisor_leads or []
+        self._advisor_ladder = advisor_ladder or []
+        self._night_transaction = night_transaction
 
     def _night_loop(self, night_id: uuid.UUID):
         night = self._nights.get(night_id)
@@ -238,21 +283,28 @@ class InterventionInteractor:
         return night, loop
 
     def ask(self, night_id: uuid.UUID, text: str) -> dict:
+        # 잔여·환급 판정부터 차감·기록까지 밤 행 잠금 안에서 — 동시 요청이 환급 상한 3·한 밤 모델 호출 6을 넘지 못한다.
+        # 모델 호출도 잠금 안이다: 같은 밤의 다른 요청은 기다리지 않고 409를 받는다(opus 리뷰 C1).
+        with one_request_per_row(self._night_transaction, night_id, RequestInFlight, "앞 질문에 답하는 중이다. 답을 받은 뒤 다시 물어라."):
+            return self._ask(night_id, text)
+
+    def _ask(self, night_id: uuid.UUID, text: str) -> dict:
         night, loop = self._night_loop(night_id)
         if night.questions_left <= 0:
             raise GameStateError("질문을 다 썼다")
+        guide = guide_kind(text, self._target_names)
+        if guide:
+            return self._guide(night, loop, text, guide)
         observations = public_observations(self._events, loop.attempt_id, through_loop=loop.loop_n)
-        history = [e for e in self._events.query(loop.attempt_id, loop_n=loop.loop_n)
-                   if e.type == "intervention_question"][-2:]
-        relevant = advisor_context(text, observations, self._target_names,
-                                   history_text=" ".join(e.question for e in history))
-        answer, detail, status, evidence = "", None, "unknown", []
-        meta = "너에게" in text and any(word in text for word in ("물어", "질문"))
-        if meta:
-            answer = "이곳의 규칙이나 오늘 본 일에 관해 물어봐. 그 일이 무엇을 뜻할지 함께 짚어볼 수 있어."
-            status = "supported"
-            detail = "공개된 세계의 기본 규칙과 관찰을 바탕으로 답한다. 아직 밝혀지지 않은 정체나 결말은 알려주지 않는다."
-        elif relevant or self._world_context:
+        # 안내 답은 판정 문답이 아니다 — 최근 대화·같은 질문 비교에서 뺀다
+        answered = [e for e in self._events.query(loop.attempt_id, loop_n=loop.loop_n)
+                    if e.type == "intervention_question" and e.kind == "answer"]
+        history = answered[-2:]
+        rungs = self._open_rungs(loop, text)
+        relevant = rungs + advisor_context(text, observations, self._target_names,
+                                           history_text=" ".join(e.question for e in history))[:8 - len(rungs)]
+        answer, detail, status, evidence, model_failed = "", None, "unknown", [], False
+        if relevant or self._world_context:
             records = "\n".join(
                 f"[{o.observation_id}] ({o.verification}; {o.loop_n}회차; 장면 {o.beat}: {o.scene_title}; "
                 f"행위자: {o.actor or '명시되지 않음'}) {o.text}" for o in relevant)
@@ -315,25 +367,24 @@ class InterventionInteractor:
                 }
                 if len(relations) == 1:
                     status = next(iter(relations))
-                if out.question_kind == "lookup" and status == "contradicted":
-                    status = "unknown"
+                status = settle_status(status, text, answer, lookup=out.question_kind == "lookup")
                 detail = "\n".join(o.text for o in evidence) or None
             else:
-                answer = "지금은 답변을 정리하지 못했어. 잠시 후 다시 물어봐."
+                answer, model_failed = "지금은 답변을 정리하지 못했어. 잠시 후 다시 물어봐.", True
         if status == "unknown":
-            if not evidence:
-                evidence = question_evidence(text, relevant, self._target_names, fallback=True)[:2]
-            if evidence:
-                detail = "확인된 기록:\n" + "\n".join(
-                    f"{o.loop_n}회차 · {'전언' if o.verification == 'reported' else '관찰'}: {o.text}" for o in evidence)
-        why = is_why_question(text) and not meta
-        verdict = verdict_prefix(status, why)
+            # 사다리 칸은 판정 재료다 — 판정이 서지 않은(환급되는) 답에 칸 원문을 "확인된 기록"으로 보여 주지 않는다 (opus 리뷰 I2)
+            evidence = [o for o in evidence if not _is_rung(o)] or [
+                o for o in question_evidence(text, relevant, self._target_names, fallback=True) if not _is_rung(o)][:2]
+            detail = ("확인된 기록:\n" + "\n".join(
+                f"{o.loop_n}회차 · {'전언' if o.verification == 'reported' else '관찰'}: {o.text}" for o in evidence)
+                if evidence else None)
+        verdict = verdict_prefix(status, is_why_question(text), wh=is_wh_question(text))
         answer = f"{verdict} {strip_leading_verdict(answer)}".strip()
         if self._notes is not None and status == "supported" and evidence:
             head = evidence[0]
             self._notes.upsert(loop.attempt_id, kind="confirmed", text=head.text,
                                loop_n=loop.loop_n, source_key=f"confirmed-{head.observation_id}")
-        # 조언 — 세계 구조에서만, 플레이어 기록에 닻이 있을 때만 (기획서 5.6)
+        # 조언 — 세계 구조에서만, 플레이어 기록에 닻이 있을 때만 (기획서 §7.1)
         next_observation = None
         if self._advisor_leads:
             used = {n.source_key.removeprefix("advisor-lead-")
@@ -345,20 +396,47 @@ class InterventionInteractor:
                 next_observation = advice_sentence(lead, anchor)
                 self._notes.upsert(loop.attempt_id, kind="advice", text=next_observation,
                                    loop_n=loop.loop_n, source_key=f"advisor-lead-{lead.key}")
-        if next_observation is None and meta:
-            next_observation = "원본 노트를 확인하거나 규칙 선택에서 다음 날 관찰할 행동을 고를 수 있다."
-        night.questions_left -= 1
-        night.questions = list(night.questions or []) + [text]
+        # 환급 — "알 수 없다"는 헛걸음이 아니다. 같은 밤 상한·같은 질문 재입력은 차감 (계획서 2026-09-18 §1)
+        # 모델이 답하지 못한 질문은 재입력 비교에서 뺀다 — 상한 집계(refunds_used)에는 그대로 든다
+        asked = list(night.questions or [])
+        refunds_used = len(asked) - (QUESTIONS_PER_NIGHT - night.questions_left)
+        refunded = refund_question(status, text, [e.question for e in answered if not e.model_failed],
+                                   refunds_used=refunds_used)
+        if not refunded:
+            night.questions_left -= 1
+        night.questions = asked + [text]
         self._nights.save()
         ids = [o.observation_id for o in evidence]
         self._events.record(loop.attempt_id, ev.InterventionQuestionEvent(
-            loop_n=loop.loop_n, q_index=3-night.questions_left, question=text, answer=answer,
+            loop_n=loop.loop_n, q_index=len(night.questions), question=text, answer=answer,
             hit_cause_chain=bool(evidence), confirmed_note_id=None, detail=detail,
             status=status, evidence_ids=ids, next_observation=next_observation,
-            unlocked_note=None))
+            unlocked_note=None, refunded=refunded, model_failed=model_failed))
         return {"answer": answer, "verdict": verdict, "detail": detail, "remaining": night.questions_left,
                 "status": status, "evidence_ids": ids, "evidence": [o.model_dump() for o in evidence],
-                "next_observation": next_observation, "unlocked_note": None}
+                "next_observation": next_observation, "unlocked_note": None, "kind": "answer", "refunded": refunded}
+
+    def _guide(self, night, loop, text: str, kind: str) -> dict:
+        """게임 목적·사용법 질문 — 판정·모델 호출·노트·횟수 없이 고정 안내로 답한다 (테스터10 F5)."""
+        answer = GUIDE_ANSWERS[kind]
+        self._events.record(loop.attempt_id, ev.InterventionQuestionEvent(
+            loop_n=loop.loop_n, q_index=0, question=text, answer=answer, hit_cause_chain=False,
+            confirmed_note_id=None, status="unknown", kind="guide"))  # q_index 0 = 횟수에 들지 않는 질문
+        return {"answer": answer, "verdict": "", "detail": None, "remaining": night.questions_left,
+                "status": "unknown", "evidence_ids": [], "evidence": [], "next_observation": None,
+                "unlocked_note": None, "kind": "guide", "refunded": False}
+
+    def _open_rungs(self, loop, text: str) -> list[ObservationDTO]:
+        """공개 사다리 — 열린 칸 중 질문이 묻는 칸만 공개 기록과 같은 자격으로 조언자에게 준다 (기획서 §7.4: 세계가 흘린 공개 사실)."""
+        if not self._advisor_ladder:
+            return []
+        totals = [e.total for e in self._events.query(loop.attempt_id)
+                  if e.type == "answer_scored" and e.loop_n <= loop.loop_n]
+        stage = ladder_stage(loop.loop_n, max(totals, default=0.0))
+        return [ObservationDTO(observation_id=f"{_LADDER_ID_PREFIX}{rung.key}", attempt_id=str(loop.attempt_id),
+                               loop_id=str(loop.id), loop_n=loop.loop_n, beat=0, scene_id="ladder",
+                               scene_title=LADDER_SCENE_TITLE, text=rung.text, source_kind="scene")
+                for rung in open_rungs(self._advisor_ladder, stage, text)]
 
     def options(self, night_id: uuid.UUID) -> dict:
         night, loop = self._night_loop(night_id)
@@ -372,23 +450,30 @@ class InterventionInteractor:
                 if o.rule_id is None and key.startswith("action-"):
                     default_actions.add(key.removeprefix("action-").split("-", 1)[1])  # "{actor}-{action}"
             context = " ".join([*(night.claims or []), *(night.questions or [])])
+            # 오늘 밤 조언이 "규칙을 걸어 봐라"로 권한 (대상, 행동)은 앞 3개 자르기에 밀리지 않게 맨 앞에 둔다.
+            advised_keys = {n.source_key.removeprefix("advisor-lead-") for n in self._notes.list(loop.attempt_id)
+                            if n.source_key.startswith("advisor-lead-") and n.loop_n == loop.loop_n}
+            advised = {(lead.target, lead.rule_action) for lead in self._advisor_leads
+                       if lead.rule_action and lead.key in advised_keys}
             candidates = []
             for template in self._templates:
                 if (template["target"], template["action"], template["effect"]) in existing:
                     continue
-                if (template["action"] not in INFORMATION_ACTIONS
+                # 조언이 권한 규칙은 규칙 없이도 하는 행동과 겹쳐도 빼지 않는다.
+                is_advised = (template["target"], template["action"]) in advised
+                if (not is_advised and template["action"] not in INFORMATION_ACTIONS
                         and f"{template['target']}-{template['action']}" in default_actions):
                     continue
                 evidence = [o for o in observations if o.actor == template["target"]]
-                if not evidence:
+                if not evidence and not is_advised:
                     continue
-                candidate = {**template, "evidence_ids": [evidence[-1].observation_id],
-                             "reason": f"관찰: {evidence[-1].text}",
+                candidate = {**template, "evidence_ids": [evidence[-1].observation_id] if evidence else [],
+                             "reason": f"관찰: {evidence[-1].text}" if evidence else "오늘 밤 조언이 권한 규칙이다.",
                              "expected_observation": f"다음 하루에 {template['target']}의 {template['action']} 행동을 확인한다."}
                 if not any(c["target"] == candidate["target"] and c["action"] == candidate["action"]
                            and c["effect"] == candidate["effect"] for c in candidates):
                     candidates.append(candidate)
-            candidates.sort(key=lambda c: c["target"] not in context)
+            candidates.sort(key=lambda c: ((c["target"], c["action"]) not in advised, c["target"] not in context))
             night.options = candidates[:3]
             self._nights.save()
         return {"options": [{**option, "index": i+1} for i, option in enumerate(night.options)]}
@@ -403,11 +488,12 @@ class InterventionInteractor:
                        spec["effect"], spec["action"], loop.loop_n)
             existing = [Rule(r.rule_id, r.source, r.target, r.when_beat, r.effect, r.action, r.created_loop)
                         for r in self._rules.list(loop.attempt_id)]
-            conflicts = [r.rule_id for r in find_conflicts(existing, new)]
+            conflicts = [r.rule_id for r in player_visible(find_conflicts(existing, new))]
         names = named_targets(custom_text, self._target_names) or self._target_names[:2]
         conditional = any(word in custom_text for word in ("물으면", "물어보면", "질문하면", "질문할 때"))
         alternatives = ([] if spec or conditional
-                        else suggest_alternatives(custom_text, names, self._templates))
+                        else suggest_alternatives(custom_text, names, self._templates,
+                                                  suppress=wants_suppress(custom_text)))
         preview = {"preview_id": str(uuid.uuid4()), "original_text": custom_text, "executable": spec is not None,
                    "interpretation": spec["label"] if spec else None,
                    "limitations": (["이미 공개된 본인의 관찰만 설명한다. 새로운 진실이나 숨은 이유는 알게 되지 않는다."]
@@ -422,6 +508,10 @@ class InterventionInteractor:
         return preview
 
     def choose_rule(self, night_id: uuid.UUID, choice: str, custom_text: str | None, preview_id: str | None = None) -> dict:
+        with one_request_per_row(self._night_transaction, night_id, RequestInFlight, "앞 요청을 처리하는 중이다. 잠시 뒤 다시 골라라."):  # 한 밤 규칙 하나 — 동시 선택이 둘 다 "아직 안 정했다"를 보지 않게
+            return self._choose_rule(night_id, choice, custom_text, preview_id)
+
+    def _choose_rule(self, night_id: uuid.UUID, choice: str, custom_text: str | None, preview_id: str | None) -> dict:
         night, loop = self._night_loop(night_id)
         if night.rule_chosen:
             raise GameStateError("이미 규칙을 정했다")
@@ -467,20 +557,20 @@ class InterventionInteractor:
         ))
         self._events.record(loop.attempt_id, ev.RuleAppliedEvent(
             loop_n=loop.loop_n, rule_id=rule_id, source=source, conflict=bool(conflicts),
-            intent=custom_text if source == "user_custom" else " ".join(night.claims or []),
+            intent=rule_intent(source, spec, custom_text),
             interpretation=spec.get("label"), evidence_ids=spec.get("evidence_ids", []),
         ))
         label = spec.get("label") or f"{spec['target']}: {spec['action']}"
         return {
             "ok": True, "rule_label": label,
-            "conflicts": [c.rule_id for c in conflicts], "reason": None,
+            "conflicts": [c.rule_id for c in player_visible(conflicts)], "reason": None,
         }
 
     def _map_custom(self, loop, text: str):
         # Deliberately finite grammar: preserve a supported meaning or offer an explicit rewrite.
         targets = named_targets(text, self._target_names)
         if len(targets) != 1:
-            return None, _REJECT_UNKNOWN_TARGET
+            return None, self._target_reject(text, targets)
         question_rule = report_question_rule(text, targets[0])
         if question_rule:
             if targets[0] not in self._question_rule_targets:
@@ -491,27 +581,51 @@ class InterventionInteractor:
         if (any(word in text for word in ("모든 질문", "마음을", "정답", "진짜 이유"))
                 or ("진실" in text and any(word in text for word in ("무조건", "항상")))):
             return None, "모르는 사실까지 알게 하거나 모든 질문에 답하게 할 수는 없다."
-        actions = [action for action in self._action_vocab if action in text]
-        if len(actions) != 1:
-            return None, "실행할 행동을 확정할 수 없다. 아래 대안을 선택해 다시 미리 보세요."
-        action, target = actions[0], targets[0]
-        # Only text outside the exact actor/action and finite condition/polarity grammar is rejected.
-        rest = text.replace(target, "", 1).replace(action, "", 1)
+        target = targets[0]
+        matches = find_actions(text, self._action_vocab)
+        if not matches:
+            return None, f"{_REJECT_UNKNOWN_ACTION} {self._usable_actions(target)}"
+        if len(matches) > 1:
+            return None, _REJECT_MANY_ACTIONS.format(actions=", ".join(m.action for m in matches))
+        match = matches[0]
+        action = match.action
+        # Only text outside the actor/action (with its finite inflections) and condition/polarity grammar is rejected.
+        rest = text.replace(match.span, "", 1).replace(target, "", 1)
         when = "any"
-        for phrase, beat in (("아침",1),("오전",2),("정오",3),("오후",4),("저녁",5),("소등 후",6)):
+        for phrase, beat in _SCENE_PHRASES:
             if phrase in rest:
                 if when != "any":
-                    return None, "한 장면의 조건으로 다시 적어 주세요."
+                    return None, "장면 조건은 하나만 쓸 수 있다(아침·오전·정오·오후·저녁·소등 후 중 하나)."
                 when = beat
                 rest = rest.replace(phrase, "")
-        suppress = any(word in rest for word in ("금지", "못하게", "하지 않는다"))
-        for word in ("하지 않는다", "못하게", "금지", "강제", "하루 종일", "오늘", "다음 하루", "은", "는", "에", "이", "가", ".", " ", "\n", ":"):
+        negations = len(SUPPRESS_RE.findall(rest)) + match.negated
+        if negations > 1:
+            return None, _REJECT_DOUBLE_NEGATION
+        suppress = negations == 1
+        rest = SUPPRESS_RE.sub("", rest)
+        for word in ("강제", "하루 종일", "오늘", "다음 하루", "은", "는", "에", "이", "가", "을", "를", "걸", "것", ".", " ", "\n", ":"):
             rest = rest.replace(word, "")
         if rest:
             return None, "대상·조건·행동·수신자를 그대로 실행할 수 없다. 지원하는 한 행동으로 다시 적어 주세요."
         effect = "suppress" if suppress else "enforce"
-        if self._templates and not any(t["target"] == target and t["action"] == action and
-                (when == "any" or t["when_beat"] == when) for t in self._templates):
-            return None, "이 대상에게 그 행동을 확인할 장면이 없다."
+        if self._templates:
+            beats = sorted({t["when_beat"] for t in self._templates if t["target"] == target and t["action"] == action})
+            if not beats:
+                return None, f"{target}에게는 '{action}' 행동을 확인할 장면이 없다. {self._usable_actions(target)}"
+            if when != "any" and when not in beats:
+                scenes = "·".join(phrase for phrase, beat in _SCENE_PHRASES if beat in beats)
+                return None, f"{target}의 '{action}' 행동은 {scenes} 장면에서만 확인할 수 있다. 장면 조건을 빼거나 그 장면으로 바꿔 주세요."
         return {"target": target, "when_beat": when, "effect": effect, "action": action,
                 "label": f"{target}: {action} — {'금지' if suppress else '강제'}"}, None
+
+    def _target_reject(self, text: str, targets: list[str]) -> str:
+        names = "·".join(self._target_names)
+        if targets:
+            return _REJECT_MANY_TARGETS.format(names=", ".join(targets))
+        if any(word in text for word in _GROUP_WORDS):
+            return _REJECT_GROUP_TARGET.format(names=names)
+        return _REJECT_NO_TARGET.format(names=names)
+
+    def _usable_actions(self, target: str) -> str:
+        actions = list(dict.fromkeys(t["action"] for t in self._templates if t["target"] == target))
+        return f"{target}에게 쓸 수 있는 행동: {', '.join((actions or self._action_vocab)[:5])}."

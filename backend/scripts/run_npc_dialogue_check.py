@@ -157,6 +157,9 @@ class Manager:
         patches, self.patches = self.patches, []
         return patches, [], None
 
+    def make_paw_reason(self, _wish):
+        return None, None  # 원숭이손 제안 문구 — 표의 기본 문구를 쓴다
+
 
 class Planner:
     """Stub core_llm: planner_output for _run_planner, classifier output for classify().

@@ -2,7 +2,7 @@
 
 from typing import Annotated, Literal
 
-from pydantic import AfterValidator, BaseModel, ConfigDict, Field, create_model
+from pydantic import AfterValidator, BaseModel, ConfigDict, Field, create_model, field_validator
 
 
 def _bare_evidence_id(value: str) -> str:
@@ -87,27 +87,30 @@ def planner_output(action_vocab: list[str]) -> type[PlannerOutput]:
 
 class ManagerPatch(StrictModel):
     npc: str
-    kind: Literal["memory_delete", "plan_patch"]
+    kind: Literal["memory_delete"]
     target: str
     reason: str
+
+
+# 적용 경로가 없어 선택지에서 뺀 예전 보정 종류. 모델이 습관처럼 내도 스키마 위반으로 재생성하지 않고 버린다.
+_RETIRED_PATCH_KINDS = ("plan_patch",)
 
 
 class ManagerCheckOutput(StrictModel):
     patches: list[ManagerPatch] = Field(default_factory=list)
     flagged_abnormal: list[str] = Field(default_factory=list)
 
-
-class RuleSpec(StrictModel):
-    target: str
-    when_beat: int | Literal["any"]
-    effect: Literal["suppress", "enforce"]
-    action: str
+    @field_validator("patches", mode="before")
+    @classmethod
+    def _drop_retired_kinds(cls, value):
+        if not isinstance(value, list):
+            return value
+        return [p for p in value if not (isinstance(p, dict) and p.get("kind") in _RETIRED_PATCH_KINDS)]
 
 
 class ManagerPawOutput(StrictModel):
-    rule: RuleSpec
-    shown_reason: str
-    hidden_side_effect: str
+    """원숭이손 제안 문구만 — 소원 선택은 코드가 한다 (스펙 §3 선택)."""
+    shown_reason: str = Field(min_length=1, max_length=120)
 
 
 class ManagerDecisionOutput(StrictModel):

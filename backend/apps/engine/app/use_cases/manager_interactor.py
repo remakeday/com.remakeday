@@ -34,7 +34,8 @@ class ManagerInteractor:
             return [], [], report  # 폴백: 패치 없음
         return out.patches[:budget_left], out.flagged_abnormal, report
 
-    def make_paw(self, *, npc_names: list[str]):
+    def make_paw_reason(self, wish):
+        """원숭이손 제안 문구만 쓴다. 소원 선택은 코드다. 반환: (문구 또는 None, report)."""
         sys = prompts.MANAGER_SYSTEM.format(
             hidden_truth=self._scenario.hidden_truth(),
             budget_left=0,
@@ -42,21 +43,9 @@ class ManagerInteractor:
             user_utterances="(생략)",
             rules="(생략)",
             yesterday_score="(생략)",
-        ) + "\n\n" + prompts.MANAGER_PAW_ADDENDUM.format(
-            action_vocab=", ".join(self._scenario.action_vocabulary()),
-            npc_names=", ".join(npc_names),
-        )
-        vocab = self._scenario.action_vocabulary()
-
-        def paw_checks(o) -> str | None:
-            if o.rule.action not in vocab:
-                return f"action_vocab: '{o.rule.action}'"
-            if o.rule.target not in npc_names:
-                return f"target: '{o.rule.target}' — 사람 하나가 아니다"
-            return None
-
+        ) + "\n\n" + prompts.MANAGER_PAW_ADDENDUM.format(wish=wish.label)
         out, report = run_with_harness(
             self._llm, [system_msg(sys)], ManagerPawOutput,
-            role="manager_paw", fact_checks=[paw_checks], harness_on=True,
-        )  # 원숭이손은 게임 규칙 정합성이라 ablation과 무관하게 항상 검사
-        return out, report
+            role="manager_paw", harness_on=True,
+        )
+        return (out.shown_reason if out else None), report

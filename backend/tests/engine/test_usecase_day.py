@@ -19,7 +19,7 @@ from apps.engine.adapter.outbound.repositories.game_repository import (
     NoteRepository,
     RuleRepository,
 )
-from apps.engine.adapter.outbound.repositories.scene_transaction import SceneTransaction
+from apps.engine.adapter.outbound.repositories.scene_transaction import AttemptTransaction, SceneTransaction
 from apps.engine.app.use_cases.loop_interactor import LoopInteractor
 from apps.engine.app.use_cases.manager_interactor import ManagerInteractor
 from apps.scenarios.scenario_a.adapter import build as build_a
@@ -49,6 +49,7 @@ def make_day(db_session, npc_queue, *, harness_on=True):
         harness_on=harness_on, age7_on=True, paw_reason_ab_on=True,
         loop_cls=LoopOrm, npc_state_cls=NpcStateOrm, rule_cls=RuleOrm,
         scene_transaction=SceneTransaction(db_session),
+        attempt_transaction=AttemptTransaction(db_session),
     )
     attempt = AttemptRepository(db_session).create(None)
     loop_info = interactor.start_loop(attempt.id)
@@ -182,7 +183,7 @@ def test_today_memory_survives_later_scene_dialogue(db_session):
 def test_same_npc_is_locked_until_next_beat_without_spending_budget(db_session):
     from apps.engine.app.use_cases.loop_interactor import GameStateError
 
-    queue = [_agent_reply("응"), _agent_reply("응2")]
+    queue = [_agent_reply("응"), _agent_reply("응, 나도.")]
     inter, scenario, attempt, info = make_day(db_session, queue)
     chars = [c for c in scenario.bundle().characters if c.playable]
     inter.utter(info["loop_id"], chars[0].code, "말")
@@ -193,7 +194,7 @@ def test_same_npc_is_locked_until_next_beat_without_spending_budget(db_session):
 
     # 한 인물의 대화 완료가 다른 인물까지 잠그지는 않는다.
     res = inter.utter(info["loop_id"], chars[1].code, "너는 어때?")
-    assert res["reply"] == "응2"
+    assert res["reply"] == "응, 나도."
     assert res["budget_left"] == 6
     assert res["beat"] == 1
 
@@ -368,3 +369,26 @@ def test_classifier_question_and_request_labels_take_normal_path_with_knowledge(
         assert "[하루 시작 전부터 아는 것]" in call.call_records[0]["messages"][0]["content"]
 
 
+
+
+def test_harness_regenerates_reply_with_invented_number(db_session):
+    """테스터9 F14 — 기억·질문에 없는 숫자 값을 지어낸 답은 거부·재생성한다."""
+    queue = [_agent_reply("내 거는 7이야. 다른 애는 5야."), _agent_reply("숫자는 잘 모르겠어.")]
+    inter, scenario, attempt, info = make_day(db_session, queue)
+    npc = _first_npc(scenario)
+    res = inter.utter(info["loop_id"], npc.code, "손목띠 숫자 읽어 줄래?")
+    assert res["reply"] == "숫자는 잘 모르겠어."
+
+
+def test_harness_regenerates_reply_denying_remembered_own_trip(db_session):
+    """테스터9 F14 — 기억에 간 곳을 안 갔다고 부정한 답은 거부·재생성한다."""
+    queue = [_agent_reply("나는 오늘 방송실에 가지 않았어."), _agent_reply("방송실 문 앞까지 갔다 왔어.")]
+    inter, scenario, attempt, info = make_day(db_session, queue)
+    npc = _first_npc(scenario)
+    repo = LoopRepository(db_session)
+    state = repo.npc_state(info["loop_id"], npc.code)
+    state.memory = [{"id": "went", "beat": 1, "kind": "내가 한 일", "text": "오늘 방송실에 갔어.",
+                     "speaker": npc.name, "listeners": [npc.name], "source_ids": [], "forgotten": False}]
+    repo.save()
+    res = inter.utter(info["loop_id"], npc.code, "오늘 방송실에 가서 뭐 알렸어?")
+    assert res["reply"] == "방송실 문 앞까지 갔다 왔어."

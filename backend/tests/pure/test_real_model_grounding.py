@@ -93,9 +93,10 @@ def test_report_instruction_is_partial_not_completed_report_or_known_recipient()
 
 
 def test_meta_question_explains_real_capabilities_without_using_model():
+    """순서표 5번 — 신에게 무엇을 물을지 묻는 질문은 사용법 안내 답(판정·횟수 없음)."""
+    from apps.engine.app.use_cases.advisor_advice import GUIDE_ANSWERS
     result, model, _ = question(model_assessment('unknown'), "너에게 물어볼 수 있는건 뭐야?", FOOD)
-    assert "공개" in result["detail"] and "규칙" in result["detail"]
-    assert result["next_observation"]
+    assert (result["kind"], result["answer"], result["remaining"]) == ("guide", GUIDE_ANSWERS["usage"], 3)
     assert model.calls == []
 
 
@@ -145,7 +146,7 @@ def ambient(output, *, current=True, reported=False, fact="민석이 배급 자�
     scene = bundle.beats[2 if current else 1]
     disclose(events, loop, scene, key="scene-3", text=scene.narration)
     for action in bundle.scene_actions:
-        if action.beat != 3:
+        if action.beat != 3 or action.dormant:  # 잠재 행동은 규칙 없이 일어나지 않는다
             continue
         disclose(events, loop, scene, key=f"action-3-{action.actor}-{action.action}",
                  text=fact if action.actor == "민석" else action.narration,

@@ -151,6 +151,8 @@ class SceneActionDTO(BaseModel):
     witnesses: list[str] = Field(default_factory=list)  # Display names of actual witnesses.
     illustration_participants: list[str] = Field(default_factory=list)
     dormant: bool = False  # True면 기본 하루에는 일어나지 않고, enforce 규칙이 걸린 날에만 일어난다
+    paw_only: bool = False  # 원숭이손 소원 전용 — 신의 개입 규칙 후보에서 뺀다
+    world_effect: Literal["flag_actor", "rumor"] | None = None  # 처음 일어날 때 세계 상태를 한 칸 민다
 
 
 class AdvisorLeadDTO(BaseModel):
@@ -171,6 +173,42 @@ class AdvisorLeadDTO(BaseModel):
         if bool(self.ask) == bool(self.rule_action):
             raise ValueError("ask와 rule_action 중 정확히 하나를 채운다")
         return self
+
+
+class AdvisorRungDTO(BaseModel):
+    """신의 질문 공개 사다리 한 칸 — 세계가 흘리는 확인 가능한 사실. 단계가 열리고 질문이 cue를 물을 때만 판정 재료가 된다.
+
+    스토리보드·숨은 진실·정답 주장·결말 문장이 아니다 (기획서 §7.4). 정체 단어는 싣지 않는다."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    key: str
+    stage: int = Field(ge=1, le=5)  # 이 단계부터 열린다 — 단계는 회차 바닥 + 점수 앞당김
+    cues: list[str] = Field(min_length=1)  # 질문 매칭 키워드
+    text: str
+
+
+class PawRuleDTO(BaseModel):
+    """원숭이손 소원이 거는 규칙 하나 — 대상 행동은 scene_actions에 있어야 한다."""
+    model_config = ConfigDict(extra="forbid")
+
+    actor: str
+    action: str
+    effect: Literal["suppress", "enforce"]
+    beat: int = Field(ge=1, le=6)
+
+
+class PawWishDTO(BaseModel):
+    """원숭이손 소원 표 한 줄 (스펙 §3). 보이는 규칙 1개 + 숨은 규칙(반대 사건) N개."""
+    model_config = ConfigDict(extra="forbid")
+
+    key: str
+    label: str  # 팝업 소원 문장
+    default_reason: str  # 관리자 제안 문구 생성 실패 시 쓰는 문구
+    target_cell: Literal["cause", "motive", "identity"]  # 부작용 칸은 겨냥 대상이 아니다
+    reveal: PawRuleDTO  # 보이는 규칙 — 소원 장면
+    effects: list[PawRuleDTO] = Field(min_length=1)  # 숨은 규칙 — 마지막 규칙 비트에서 관찰 문장 공개
+    observation: str  # 부작용 관찰 문장 = 채점 주장 원문
 
 
 class SceneDialogueActionDTO(BaseModel):
@@ -215,6 +253,8 @@ class ScenarioBundleDTO(BaseModel):
     night_clues: list[NightClueDTO] = Field(default_factory=list)  # 회차당 1행 — 밤 결말 전환의 단서
     scene_actions: list[SceneActionDTO] = Field(default_factory=list)
     advisor_leads: list[AdvisorLeadDTO] = Field(default_factory=list)
+    advisor_ladder: list[AdvisorRungDTO] = Field(default_factory=list)  # 신의 질문 공개 사다리
+    paw_wishes: list[PawWishDTO] = Field(default_factory=list)  # 표 순서 = 1회차 고정 소원이 첫 줄
     scene_dialogues: list[SceneDialogueDTO] = Field(default_factory=list)
     first_morning_illustrations: list[IllustrationDTO] = Field(default_factory=list)
     entry_lines: list[str] = Field(default_factory=list)  # 진입 화면 3줄

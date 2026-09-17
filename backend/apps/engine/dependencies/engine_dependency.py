@@ -21,14 +21,18 @@ from apps.engine.adapter.outbound.repositories.game_repository import (
     RuleRepository,
 )
 from apps.engine.adapter.outbound.oauth.google_oauth_client import GoogleOAuthClient
-from apps.engine.adapter.outbound.repositories.scene_transaction import SceneTransaction
+from apps.engine.adapter.outbound.repositories.scene_transaction import (
+    AttemptTransaction,
+    NightTransaction,
+    SceneTransaction,
+)
 from apps.engine.adapter.outbound.repositories.user_repository import UserRepository
 from apps.engine.adapter.outbound.security.session_token_signer import SessionTokenSigner
 from apps.engine.app.dtos.auth_dto import DevAccountDTO
-from apps.engine.app.dtos.health_dto import HealthDTO, HealthModelsDTO
 from apps.engine.app.ports.input.auth_use_case import AuthUseCase
 from apps.engine.app.ports.input.event_log_use_case import EventLogUseCase
 from apps.engine.app.ports.input.health_use_case import HealthUseCase
+from apps.engine.app.use_cases.attempt_access_interactor import AttemptAccessInteractor
 from apps.engine.app.use_cases.auth_interactor import AuthInteractor
 from apps.engine.app.use_cases.event_log_interactor import EventLogInteractor
 from apps.engine.app.use_cases.health_interactor import HealthInteractor
@@ -68,6 +72,15 @@ def get_session_interactor(session: Session = Depends(get_session)):
     )
 
 
+def get_attempt_access(session: Session = Depends(get_session)):
+    return AttemptAccessInteractor(
+        attempts=AttemptRepository(session),
+        loops=LoopRepository(session),
+        nights=NightRepository(session),
+        users=UserRepository(session),
+    )
+
+
 def get_loop_interactor(session: Session = Depends(get_session)):
     s = get_settings()
     scenario = _scenario()
@@ -89,6 +102,7 @@ def get_loop_interactor(session: Session = Depends(get_session)):
         paw_reason_ab_on=s.paw_reason_ab == "on",
         loop_cls=LoopOrm, npc_state_cls=NpcStateOrm, rule_cls=RuleOrm,
         scene_transaction=SceneTransaction(session),
+        attempt_transaction=AttemptTransaction(session),
     )
 
 
@@ -106,6 +120,7 @@ def get_night_interactor(session: Session = Depends(get_session)):
         harness_on=s.system_harness == "on",
         cookie_ab_on=s.cookie_ab == "on",
         night_cls=NightOrm,
+        night_transaction=NightTransaction(session),
     )
 
 
@@ -128,14 +143,21 @@ def get_intervention_interactor(session: Session = Depends(get_session)):
         harness_on=s.system_harness == "on",
         rule_cls=RuleOrm,
         advisor_leads=bundle.advisor_leads,
-        rule_templates=[
-            {"target": opportunity.actor, "when_beat": opportunity.beat, "effect": "enforce",
-             "action": action, "label": f"{opportunity.actor}: {action}"}
-            for opportunity in bundle.scene_actions
-            for action in ([EXPLAIN_ACTION, SOURCE_ACTION, opportunity.action]
-                           if opportunity.known_source is not None else [EXPLAIN_ACTION, opportunity.action])
-        ],
+        advisor_ladder=bundle.advisor_ladder,
+        rule_templates=rule_templates(bundle),
+        night_transaction=NightTransaction(session),
     )
+
+
+def rule_templates(bundle) -> list[dict]:
+    """신의 개입 규칙 후보 — 원숭이손 소원 전용 행동(paw_only)은 플레이어 선택지에 올리지 않는다."""
+    return [
+        {"target": opportunity.actor, "when_beat": opportunity.beat, "effect": "enforce",
+         "action": action, "label": f"{opportunity.actor}: {action}"}
+        for opportunity in bundle.scene_actions if not opportunity.paw_only
+        for action in ([EXPLAIN_ACTION, SOURCE_ACTION, opportunity.action]
+                       if opportunity.known_source is not None else [EXPLAIN_ACTION, opportunity.action])
+    ]
 
 
 def get_inspector(session: Session = Depends(get_session)):
@@ -167,19 +189,8 @@ def get_auth_use_case(session: Session = Depends(get_session)) -> AuthUseCase:
 
 
 def get_health_use_case(session: Session = Depends(get_session)) -> HealthUseCase:
-    settings = get_settings()
-
     def db_ping() -> bool:
         session.execute(text("SELECT 1"))
         return True
 
-    return HealthInteractor(
-        scenario=_scenario(),
-        harness=settings.system_harness,
-        models=HealthModelsDTO(
-            npc=f"{settings.npc_llm_provider}:{settings.npc_llm_model}",
-            core=f"{settings.core_llm_provider}:{settings.core_llm_model}",
-            embedding=settings.embedding_provider,
-        ),
-        db_ping=db_ping,
-    )
+    return HealthInteractor(db_ping=db_ping)

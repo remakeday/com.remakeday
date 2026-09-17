@@ -52,6 +52,7 @@ def test_full_attempt_five_loops_to_doom(db_session, monkeypatch, logged_in):
             ).json()
             night_id = draft["night_id"]
             assert draft["claims"]
+            assert len(draft["is_question"]) == len(draft["claims"])  # 확인 화면 질문형 안내
 
             # 수정 1회만
             assert client.patch(f"/nights/{night_id}/claims", json={"claims": draft["claims"]}).status_code == 200
@@ -59,14 +60,15 @@ def test_full_attempt_five_loops_to_doom(db_session, monkeypatch, logged_in):
 
             result = client.post(f"/nights/{night_id}/submit").json()
             assert result["passed"] is False  # 폴백 판정은 전부 none
-            assert result["cell_feedback"]  # 실패한 밤 → 정성 문장
-            assert "비어 있다" in result["cell_feedback"]
+            assert result["cell_feedback"] is None  # 잡힌 칸이 없으면 진행 문장도 없다
+            assert result["empty_cells"] == ["cause", "motive"]  # 빈 칸은 코드로만 (정체 제외)
+            assert result["accepted_claims"] == []
             assert isinstance(result["wrong_claim_count"], int)
 
             if loop_n < 5:
                 assert result["intervention_available"]
                 q = client.post(f"/nights/{night_id}/questions", json={"text": "채연이 밥 남겼어?"}).json()
-                assert q["remaining"] == 2
+                assert (q["kind"], q["status"], q["remaining"], q["refunded"]) == ("answer", "unknown", 3, True)  # fake 모델 → unknown 환급
                 opts = client.get(f"/nights/{night_id}/options").json()["options"]
                 assert len(opts) == 3
                 rule = client.post(f"/nights/{night_id}/rule", json={"choice": "1"}).json()
@@ -80,11 +82,11 @@ def test_full_attempt_five_loops_to_doom(db_session, monkeypatch, logged_in):
 
         # 인스펙터는 토큰, 개발 회고는 5회차 완료 시 점수 무관
         assert client.get(f"/attempts/{attempt_id}/harness").status_code == 200
-        bad = client.get(f"/attempts/{attempt_id}/inspector", params={"token": "wrong"})
+        bad = client.get(f"/attempts/{attempt_id}/inspector", headers={"X-Inspector-Token": "wrong"})
         assert bad.status_code == 403
         from core.matrix.grid_keymaker_secret_manager import get_settings
         ok = client.get(
-            f"/attempts/{attempt_id}/inspector", params={"token": get_settings().inspector_token}
+            f"/attempts/{attempt_id}/inspector", headers={"X-Inspector-Token": get_settings().inspector_token}
         )
         assert ok.status_code == 200
         assert ok.json()["events"]

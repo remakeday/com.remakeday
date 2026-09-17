@@ -1,5 +1,6 @@
 """밤 채점 — 주장 매칭(인덱스 기반)·원인 체인 입력 필터 (FakeLLM 큐로 제어)."""
 
+import json
 import uuid
 from types import SimpleNamespace
 
@@ -38,14 +39,14 @@ _TRUTH = [SimpleNamespace(
 )]
 
 
-def draft_answer(source, notes=()):
+def draft_result(source, notes=()):
     loop = SimpleNamespace(
         id=uuid.uuid4(), attempt_id=uuid.uuid4(), loop_n=1, state="night_pending",
     )
     saved = []
     interactor = NightInteractor(
         attempts=None, loops=SimpleNamespace(get=lambda _: loop, save=lambda: None),
-        notes=SimpleNamespace(by_ids=lambda *_: [SimpleNamespace(text=t) for t in notes]),
+        notes=None,  # draft는 노트 원문을 읽지 않는다 — 고른 id만 기록
         rules=None, nights=SimpleNamespace(for_loop=lambda _: None, create=saved.append),
         event_log=_RecorderEvents(), scenario=None,
         core_llm=FakeLLM([{"claims": ["채연은 아픈 것을 숨겼다."]}]),
@@ -53,7 +54,12 @@ def draft_answer(source, notes=()):
         night_cls=lambda **kw: SimpleNamespace(id=uuid.uuid4(), **kw),
     )
     result = interactor.draft(loop.id, list(range(len(notes))), source)
-    return result["claims"], saved[0]
+    return result, saved[0]
+
+
+def draft_answer(source, notes=()):
+    result, night = draft_result(source, notes)
+    return result["claims"], night
 
 
 @pytest.mark.parametrize("source", [
@@ -71,14 +77,37 @@ def test_draft_keeps_facts_after_eighth_sentence():
     assert claims == ["하나.", "둘.", "셋.", "넷.", "다섯.", "여섯.", "일곱.", "여덟. 아홉. 우리는 돼지다."]
 
 
-def test_draft_keeps_selected_notes_without_free_text():
-    claims, _ = draft_answer("", ["소독약 냄새.", "트럭 소리."])
-    assert claims == ["소독약 냄새.", "트럭 소리."]
+def test_selected_notes_without_free_text_make_no_claims():
+    # 기록은 참고 목록일 뿐 채점 후보가 아니다 (테스터9 F17·테스터11 O1)
+    claims, night = draft_answer("", ["소독약 냄새.", "트럭 소리."])
+    assert claims == []
+    assert night.tapped_note_ids == [0, 1]  # 표시 상태는 다음 밤 복원용으로 남는다
 
 
-def test_draft_keeps_selected_notes_after_long_free_text():
+def test_selected_notes_are_not_appended_to_written_claims():
     claims, _ = draft_answer("하나. 둘. 셋. 넷. 다섯. 여섯. 일곱. 여덟.", ["관리자는 다른 종이다."])
-    assert claims[-1] == "여덟. 관리자는 다른 종이다."
+    assert claims[-1] == "여덟."
+    assert all("관리자는 다른 종이다" not in c for c in claims)
+
+
+def test_draft_flags_question_claims_in_claim_order():
+    result, _ = draft_result("채연은 아프다. 밥이 문제인가;;;\n왜 그런지 모르겠다", ["트럭 소리?"])
+    assert result["claims"] == ["채연은 아프다.", "밥이 문제인가;;;", "왜 그런지 모르겠다"]
+    assert result["is_question"] == [False, True, False]
+
+
+def test_edit_claims_returns_question_flags():
+    loop = SimpleNamespace(attempt_id=uuid.uuid4(), loop_n=1)
+    night = SimpleNamespace(id=uuid.uuid4(), loop_id=uuid.uuid4(), claims=["채연은 아픈가?"],
+                            edit_count=0, submitted=False, user_edited=False)
+    interactor = NightInteractor(
+        attempts=None, loops=SimpleNamespace(get=lambda _: loop), notes=None, rules=None,
+        nights=SimpleNamespace(get=lambda _: night, save=lambda: None),
+        event_log=_RecorderEvents(), scenario=None, core_llm=None,
+        harness_on=True, cookie_ab_on=False, night_cls=None,
+    )
+    result = interactor.edit_claims(night.id, ["채연은 아프다.", "왜 숨겼을까"])
+    assert result == {"claims": ["채연은 아프다.", "왜 숨겼을까"], "is_question": [False, True]}
 
 
 @pytest.mark.parametrize("source", [
@@ -218,7 +247,7 @@ def test_ratchet_normalizes_whitespace_and_edge_punctuation():
     assert out[0]["verdict"] == "confirmed"
 
 
-def _submit_env(judge_queue, prev_per_truth):
+def _submit_env(judge_queue, prev_per_truth, claims=None, truths=None):
     loop = SimpleNamespace(
         id=uuid.uuid4(), attempt_id=uuid.uuid4(), loop_n=2, state="night_draft",
         rumor_index=0, score=None, anomaly_count=0, side_effect_claims=None,
@@ -226,7 +255,7 @@ def _submit_env(judge_queue, prev_per_truth):
     )
     night = SimpleNamespace(
         id=uuid.uuid4(), loop_id=loop.id, submitted=False,
-        claims=["이송된 애들은 동물이야. 그래서 우리도 동물이야."],
+        claims=claims or ["이송된 애들은 동물이야. 그래서 우리도 동물이야."],
         free_text="", tapped_note_ids=[], per_truth_claim=None,
         cell_scores=None, total=None, passed=None,
     )
@@ -234,7 +263,7 @@ def _submit_env(judge_queue, prev_per_truth):
     events = _RecorderEvents()
     events.query = lambda *a, **k: []
     scenario = SimpleNamespace(
-        truth_claims=lambda: [SimpleNamespace(
+        truth_claims=lambda: truths or [SimpleNamespace(
             code="identity-1", cell="identity", text="이들은 동물이다",
             is_identity_word=True, world_outcomes=[],
         )],
@@ -270,6 +299,74 @@ def test_submit_ratchets_identity_downgrade_and_recomputes_wrong():
     assert result["wrong_claim_count"] == 1
     scored = next(e for e in events.recorded if e.__class__.__name__ == "AnswerScoredEvent")
     assert scored.per_truth_claim[0].ratcheted is True
+
+
+def test_submit_shows_accepted_sentence_and_empty_cell_codes_but_not_truth():
+    # 테스터10 F1 — 매 밤 인정된 내 문장과 빈 칸(원인·동기) 코드만. 진실 문장은 잠근다.
+    truths = [SimpleNamespace(code="cause-1", cell="cause", text="채연이 아프다",
+                              is_identity_word=False, world_outcomes=[])]
+    interactor, night, _ = _submit_env(
+        [{"verdict": "confirmed", "matched_index": 0}], [],
+        ["채연이는 열이 있다. 트럭 소리가 났다."], truths)
+    result = interactor.submit(night.id)
+
+    assert result["accepted_claims"] == ["채연이는 열이 있다."]
+    assert result["empty_cells"] == ["motive"]
+    assert result["cell_feedback"] == "원인은 잡혔다."
+    assert result["wrong_claim_count"] == 1
+    assert result["truth_reveal"] is None
+    assert "채연이 아프다" not in json.dumps(result, ensure_ascii=False)
+
+
+def test_submit_shows_only_matched_one_of_near_duplicate_claims():
+    # 리뷰 반영 — 정규화만 다른 두 후보 중 채점기가 0번만 지목 → 0번만 인정, 1번은 오답 수에 남는다
+    truths = [SimpleNamespace(code="cause-1", cell="cause", text="채연이 아프다",
+                              is_identity_word=False, world_outcomes=[])]
+    interactor, night, _ = _submit_env(
+        [{"verdict": "confirmed", "matched_index": 0}], [],
+        ["트럭 소리가 났다", "트럭 소리가 났다."], truths)
+    result = interactor.submit(night.id)
+
+    assert result["accepted_claims"] == ["트럭 소리가 났다"]
+    assert result["wrong_claim_count"] == 1
+
+
+def test_submit_counts_ratcheted_identity_sentence_without_naming_identity():
+    prev = [{"id": "identity-1", "verdict": "confirmed",
+             "matched_user_claim": "이송된 애들은 동물이야.", "cited": []}]
+    interactor, night, _ = _submit_env([{"verdict": "none", "matched_index": None}], prev)
+    result = interactor.submit(night.id)
+
+    assert result["accepted_claims"] == ["이송된 애들은 동물이야."]  # 칸 이름 없이
+    assert result["empty_cells"] == ["cause", "motive"]
+    assert result["cell_feedback"] is None  # "정체는 잡혔다"를 말하지 않는다
+    assert "정체" not in json.dumps(result, ensure_ascii=False)
+    assert "이들은 동물이다" not in json.dumps(result, ensure_ascii=False)
+
+
+_FRAGMENT = "오후 검진을 시작합니다."
+
+
+def test_fragment_matched_last_night_is_released_when_not_in_written_claims():
+    # 테스터9 F11 재정정: 이어받은 기록 조각이 무관한 명제로 인정됐다. 조각은 플레이어가 쓴
+    # 문장이 아니므로, 이번 글에 없으면 ratchet으로 붙잡지 않는다.
+    prev = [{"id": "identity-1", "verdict": "confirmed", "matched_user_claim": _FRAGMENT, "cited": []}]
+    claims, _ = draft_answer("채연은 검진을 피했다.", [_FRAGMENT])
+    interactor, night, _ = _submit_env([{"verdict": "none", "matched_index": None}], prev, claims)
+    interactor.submit(night.id)
+    item = night.per_truth_claim[0]
+    assert item["verdict"] == "none" and "ratcheted" not in item
+    assert item["matched_user_claim"] is None
+
+
+def test_fragment_copied_into_writing_keeps_ratchet():
+    prev = [{"id": "identity-1", "verdict": "confirmed", "matched_user_claim": _FRAGMENT, "cited": []}]
+    claims, _ = draft_answer(f"채연은 검진을 피했다. {_FRAGMENT}", [_FRAGMENT])
+    interactor, night, _ = _submit_env([{"verdict": "none", "matched_index": None}], prev, claims)
+    interactor.submit(night.id)
+    item = night.per_truth_claim[0]
+    assert item["verdict"] == "confirmed" and item["ratcheted"] is True
+    assert item["matched_user_claim"] == _FRAGMENT
 
 
 def test_chain_source_events_excludes_user_claims_and_meta():
