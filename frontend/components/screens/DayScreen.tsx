@@ -51,6 +51,23 @@ type Popup =
 let entrySeq = 0;
 const nextId = () => ++entrySeq;
 
+/**
+ * 장면 첫머리 파편 관찰(observation_id `…:fragment-<n>`)을 채팅 로그 항목으로 나눈다 (F23).
+ * `이름: "…"` 꼴에 actor가 있으면 그 사람의 흘린 말(ambient), 나머지는 서술(narration).
+ * 단서 기록 패널은 그대로 — 채팅창에도 보이게만 한다.
+ */
+function fragmentEntries(observations: Observation[], beat: number, loopId: string) {
+  const narration: Omit<ChatEntry, "id">[] = [];
+  const speech: Omit<ChatEntry, "id">[] = [];
+  for (const item of observations) {
+    if (item.beat !== beat || !item.observation_id.startsWith(`${loopId}:`) || !/:fragment-\d+$/.test(item.observation_id)) continue;
+    const quoted = item.actor ? item.text.match(/^(.+?):\s*["“](.+)["”]$/) : null;
+    if (quoted && quoted[1] === item.actor) speech.push({ role: "ambient", text: quoted[2], speaker: item.actor });
+    else narration.push({ role: "narration", text: item.text });
+  }
+  return { narration, speech };
+}
+
 /** 비트 경계 대기 중 순환하는 일시 연출 라인 — 로그에 남기지 않는다 */
 const BEAT_WAIT_LINES = [
   "스피커가 지직거린다…",
@@ -108,9 +125,12 @@ export function DayScreen({
     const first: ChatEntry[] = [
       { id: nextId(), role: "narration", text: initialNarration },
     ];
+    const fragments = fragmentEntries(initialObservations, initialBeat, loopId);
+    for (const entry of fragments.narration) first.push({ ...entry, id: nextId() });
     for (const line of initialAmbient?.lines ?? []) {
       first.push({ id: nextId(), role: "ambient", text: line.text, speaker: line.name });
     }
+    for (const entry of fragments.speech) first.push({ ...entry, id: nextId() });
     return first;
   });
   const [input, setInput] = useState("");
@@ -322,12 +342,16 @@ export function DayScreen({
           return [...byId.values()];
         });
         pushLog({ role: "narration", text: res.narration });
+        // 파편 — 서술은 narration 뒤, 대사는 ambient 뒤. 음성은 ambient.lines에서만 고른다
+        const fragments = fragmentEntries(res.observations ?? [], res.beat, loopId);
+        for (const entry of fragments.narration) pushLog(entry);
         // 백엔드가 새 필드를 아직 안 줄 수 있다 — undefined 안전 접근
         const ambient = res.ambient ?? null;
         ambientVoices.current = voicesForLines(ambient?.lines ?? []);
         for (const line of ambient?.lines ?? []) {
           pushLog({ role: "ambient", text: line.text, speaker: line.name });
         }
+        for (const entry of fragments.speech) pushLog(entry);
         const noteFound = res.note_found ?? null;
         if (noteFound) {
           pushLog({

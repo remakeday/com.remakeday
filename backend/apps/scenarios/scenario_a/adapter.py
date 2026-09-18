@@ -719,8 +719,8 @@ def build() -> StaticScenario:
             # 행동 파편은 scene_actions의 실제 실행 기록으로 적립한다.
             FragmentDTO(loop_n=3, beat=2, source_kind="statement", text="충식은 어제 이송됐다."),
             FragmentDTO(loop_n=3, beat=2, actor="준", witnesses=["민석"], source_kind="statement", text='준: "이 숫자 뭔지 알아?"'),
-            # 3~4회차 — 단어. 이상함을 눈치채는 시점
-            FragmentDTO(loop_n=3, beat=2, actor="준", witnesses=["민석"], source_kind="statement", text='"귀표"라는 단어를 준이 쓴다.'),
+            # 3~4회차 — 단어. 이상함을 눈치채는 시점. 행동 묘사가 아니라 준의 실제 대사로 둔다 — 채팅창에 말풍선으로 뜬다 (F23)
+            FragmentDTO(loop_n=3, beat=2, actor="준", witnesses=["민석"], source_kind="statement", text='준: "귀표. 이거 귀표라고 하던데."'),
             # 4~5회차 — 결정적. 그러나 확인할 상대가 없다
             FragmentDTO(loop_n=4, beat=6, world_outcome="truck", text='트럭 옆면 "○○축산".'),
             FragmentDTO(loop_n=5, text="7시 13분."),
