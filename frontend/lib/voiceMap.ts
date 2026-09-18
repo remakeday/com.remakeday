@@ -1,4 +1,4 @@
-/** 녹음 대본과 같은 발화만 재생한다. 주제·회차로 대사를 추측하지 않는다. */
+/** 서버 음성 ID 또는 녹음 대본과 같은 발화로 재생한다. 주제·회차로 대사를 추측하지 않는다. */
 export const VOICE_CLIPS = {
   CH01: { speaker: "채연", text: "배 안 고파. 너 먹어." },
   CH02: { speaker: "채연", text: "오늘도… 다 확인해?" },
@@ -31,6 +31,8 @@ export const VOICE_CLIPS = {
   MA10: { speaker: "관리자", text: "외관 확인은 담당자가 합니다. 각자 확인할 필요 없습니다." },
   MA11: { speaker: "관리자", text: "배급 물자가 도착했습니다. 포대의 표기는 관리 용도입니다. 읽을 필요 없습니다." },
   MA12: { speaker: "관리자", text: "출입문은 관리자가 개방합니다. 문에 손대지 마십시오." },
+  // 5회차 낮 끝 방송 — 소등 장면 끝, 마지막 밤 추리문 전(서버 day_end_broadcasts). 정본 docs/voice.md §10.2
+  MA13: { speaker: "관리자", text: "축산 차량이 출발합니다. 문이 닫힐 때까지 자리에서 움직이지 마십시오." },
   AD01: { speaker: "조언자", text: "오늘 있었던 일을 세 번 물을 수 있습니다. 그다음, 내일의 규칙 하나를 정하십시오." },
   EN01: { speaker: "회고", text: "당신은 다섯 번의 하루를 관찰하고, 그 이유를 설명했습니다." },
   EN02: { speaker: "회고", text: "하루에 걸었던 규칙은, 에이전트의 행동을 제한하는 하네스였습니다. 원숭이손은 한 가지를 바꾸면서 다른 결과를 만드는 변경이었습니다." },
@@ -52,7 +54,10 @@ export function voiceForLine(speaker: string | undefined, text: string): VoiceId
   return id && HELD_PREFIXES.some((prefix) => id.startsWith(prefix)) ? null : id;
 }
 
-export function voicesForLines(lines: { name: string; text: string }[]): VoiceId[] {
+export function voicesForLines(lines: { name: string; text: string }[], voiceId?: string | null): VoiceId[] {
+  if (voiceId != null && Object.prototype.hasOwnProperty.call(VOICE_CLIPS, voiceId)) {
+    return [voiceId as VoiceId];
+  }
   return lines.flatMap((line) => {
     const id = voiceForLine(line.name, line.text);
     return id ? [id] : [];

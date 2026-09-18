@@ -64,11 +64,13 @@ def test_full_attempt_five_loops_to_doom(db_session, monkeypatch, logged_in):
             assert result["empty_cells"] == ["cause", "motive"]  # 빈 칸은 코드로만 (정체 제외)
             assert result["accepted_claims"] == []
             assert isinstance(result["wrong_claim_count"], int)
+            assert isinstance(result["suggested_questions"], list)  # 신의 질문 추천(F19 방향 3)
 
             if loop_n < 5:
                 assert result["intervention_available"]
                 q = client.post(f"/nights/{night_id}/questions", json={"text": "채연이 밥 남겼어?"}).json()
                 assert (q["kind"], q["status"], q["remaining"], q["refunded"]) == ("answer", "unknown", 3, True)  # fake 모델 → unknown 환급
+                assert isinstance(q["suggested_questions"], list)
                 opts = client.get(f"/nights/{night_id}/options").json()["options"]
                 assert len(opts) == 3
                 rule = client.post(f"/nights/{night_id}/rule", json={"choice": "1"}).json()

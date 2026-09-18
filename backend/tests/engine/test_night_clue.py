@@ -59,7 +59,7 @@ def test_night_clue_follows_the_loop_table(db_session, loop_n):
 
 
 @pytest.mark.parametrize("loop_n, line", [
-    (1, "트럭 소리."), (4, '트럭 옆면 "○○축산".'), (2, None), (5, None),
+    (1, "트럭 소리."), (4, None), (2, None), (5, None),  # 4회차 읽힌 문자열 파편은 뺐다 — 5회차 낮 끝 MA13으로 (테스터9 F24)
 ])
 def test_truck_nights_append_the_existing_truck_fragment(db_session, loop_n, line):
     uc, _, loop = _night(db_session, loop_n, "truck")
@@ -91,12 +91,24 @@ def test_submit_returns_the_night_clue(db_session):
     assert result["night_clue"]["outcome_line"] == ("트럭 소리." if result["world_outcome"] == "truck" else None)
 
 
+def test_submit_suggests_lookup_questions_from_the_night_clue_it_just_disclosed(db_session):
+    from apps.engine.domain.entities.question_suggestions import BROADCAST_QUESTION, NIGHT_CLUE_QUESTION
+    uc, _, loop = _night(db_session, 1, None)
+    night = NightRepository(db_session).create(NightOrm(
+        loop_id=loop.id, free_text="상황을 이해했다.", claims=["상황을 이해했다."], tapped_note_ids=[]))
+    result = uc.submit(night.id)
+    assert result["suggested_questions"] == [BROADCAST_QUESTION, NIGHT_CLUE_QUESTION]
+    assert uc.submit(night.id)["suggested_questions"] == result["suggested_questions"]  # 저장 응답 재전송에도 붙는다
+
+
 def test_orphan_fragments_moved_from_day_to_night():
     bundle = build_a().bundle()
     day_texts = [f.text for f in bundle.fragments]
     assert not any(t in day_texts for t in MOVED_TO_NIGHT)
     # 발화자가 있는 전언과 4회차 아침의 시각은 낮에 남는다
-    assert "7시 13분." in day_texts and "충식은 어제 이송됐다." in day_texts
+    assert "7시 13분." in day_texts and any(t.startswith("같은 방에 있던 충식은 어제 이송됐다.") for t in day_texts)
+    assert not any("축산" in t for t in day_texts)  # 인물은 글자를 읽지 못한다 — 트럭 표기는 5회차 낮 끝 방송이 말한다 (F24)
+    assert [(b.loop_n, b.beat, b.voice_id, b.image_id) for b in bundle.day_end_broadcasts] == [(5, 6, "MA13", "P06")]
     assert [c.loop_n for c in bundle.night_clues] == [1, 2, 3, 4, 5]
     assert len({c.voice_id for c in bundle.night_clues}) == 5
 

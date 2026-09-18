@@ -303,6 +303,20 @@ def test_supported_fact_is_saved_as_confirmed_note(db_session):
     assert any(n.kind == "confirmed" and n.source_key == f"confirmed-{obs_id}" for n in notes)
 
 
+def test_answer_carries_suggested_lookup_questions_and_drops_the_one_just_asked(db_session):
+    """테스터9 F19 방향 3 — 추천은 오늘 기록에서 만든 찾기 질문이고, 같은 밤에 한 질문은 다시 권하지 않는다."""
+    inter, attempt, night = make_intervention(db_session, [])
+    observation = publish_record(inter, attempt, night)
+    inter._llm = FakeLLM(question_responses(model_assessment('supported', kind="lookup", detail=_FACT,
+                                                             evidence_ids=[observation.observation_id]), evidence_attempts=2))
+    first = inter.ask(night.id, "채연은 무슨 행동을 했어?")
+    assert first["suggested_questions"] == ["채연은 오늘 무엇을 했는가?"]
+    second = inter.ask(night.id, "채연은 오늘 무엇을 했는가?")
+    assert (second["status"], second["verdict"], second["suggested_questions"]) == ("supported", "", [])
+    # 안내 답도 같은 목록을 돌려준다 — 화면이 답마다 목록을 갈아 끼운다
+    assert inter.ask(night.id, "어떻게 질문해?")["suggested_questions"] == []
+
+
 def test_question_without_public_record_has_plain_unknown_fallback(db_session):
     inter, attempt, night = make_intervention(db_session, [])
     res = inter.ask(night.id, "누가 밥을 남겼어?")
@@ -326,9 +340,9 @@ _F10_HEDGED = [
      "밤에 트럭이 온다.",
      "밤에 트럭이 온다는 사실과 아침에 자리를 정돈한다는 방송 내용이 연결된다. "
      "트럭의 방문이 비어 있는 자리의 발생이나 이동과 관련될 가능성이 있다."),
-    ('트럭 옆면의 "○○축산"은 무엇을 하는 곳인가?', "proposition",
-     "트럭 옆면에 ○○축산이라고 적혀 있다.",
-     '트럭이 배급 물자를 운반하는 수단으로 사용된다. "○○축산"이라는 명칭이 구체적으로 어떤 사업을 하는지 알 수 없다.'),
+    ('방송에서 말한 "축산 차량"은 무엇을 하는 차량인가?', "proposition",
+     "축산 차량이 출발합니다. 문이 닫힐 때까지 자리에서 움직이지 마십시오.",
+     '트럭이 배급 물자를 운반하는 수단으로 사용된다. "축산 차량"이라는 명칭이 구체적으로 어떤 일을 하는지 알 수 없다.'),
     ("이곳에 있는 우리는 사람이 아니라 가축으로 관리되고 있는가?", "proposition",
      "관리자가 손목띠를 절대 풀지 말라고 한다.",
      "배급 트럭의 '축산' 명칭과 관리자의 엄격한 손목띠 착용 지시가 결합된 상황이다. "

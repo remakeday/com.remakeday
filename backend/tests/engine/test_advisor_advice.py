@@ -72,7 +72,7 @@ def test_advice_sentence_forms():
 
 def test_wh_question_detection():
     from apps.engine.app.use_cases.advisor_advice import is_wh_question
-    assert is_wh_question('트럭 옆면의 "○○축산"은 무엇을 하는 곳인가?')
+    assert is_wh_question('방송에서 말한 "축산 차량"은 무엇을 하는 차량인가?')
     assert is_wh_question("누가 밥을 남겼어?")
     assert is_wh_question("트럭은 언제 와?")
     assert not is_wh_question("채연이 오늘 배급을 남겼어?")

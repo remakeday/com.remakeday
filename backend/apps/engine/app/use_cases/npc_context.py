@@ -3,6 +3,7 @@
 import re
 
 from apps.engine.domain.entities.npc_memory import add_memory, visible_memories
+from apps.engine.app.use_cases.explanation_grounding import explanation_line
 from apps.engine.app.use_cases.question_replies import actions_occurred
 
 
@@ -74,7 +75,7 @@ def learn_scene(bundle, loop, states, observations):
                 source_ids=[f"{loop.id}:action-{r.beat}-{r.actor}-{r.action}" for r in account.required_actions]
                 if state.name == action.actor and account else [])
             if occurred:
-                spoken_details = {f"{action.actor}: {line}" for line in (action.known_source, action.explanation or action.narration) if line}
+                spoken_details = {f"{action.actor}: {line}" for line in (action.known_source, explanation_line(bundle, action)) if line}
                 for speech in current.values():
                     if (speech.source_kind != "statement" or not speech.rule_id
                             or speech.actor != action.actor or speech.text not in spoken_details

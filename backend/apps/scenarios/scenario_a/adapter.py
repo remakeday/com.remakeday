@@ -12,6 +12,7 @@ from apps.engine.app.dtos.scenario_dto import (
     BeatDTO,
     CharacterDTO,
     CookieTextDTO,
+    DayEndBroadcastDTO,
     FragmentDTO,
     IllustrationDTO,
     KnowledgeDTO,
@@ -265,6 +266,7 @@ def build() -> StaticScenario:
                 narration="준이 손목띠를 불빛에 비춰 본다.",
                 # 테스터9 F14 — 설명 규칙이 장면만 되풀이하지 않게 시작 기억(jun-before-start-band)을 담는다. 초안 — 시나리오 디렉터 확인 전
                 explanation="불빛에 비춰 봤어. 숫자 밑에 작은 글자가 하나 더 있어. 무슨 뜻인지는 몰라.",
+                explanation_knowledge=["jun-before-start-band"],
                 suppressed_narration="준은 손목띠를 건드리지 않고 앉아 있다.",
                 illustrations=[IllustrationDTO(image_id="clue-11", caption="준이 구멍 표식이 난 띠를 들여다본다.")]),
             SceneActionDTO(beat=2, actor="은상", action="소문을 낸다", witnesses=["준"],
@@ -717,16 +719,18 @@ def build() -> StaticScenario:
             FragmentDTO(loop_n=1, beat=6, world_outcome="truck", text="트럭 소리."),
             # 2~3회차 — 정황. 노트로 대조 가능
             # 행동 파편은 scene_actions의 실제 실행 기록으로 적립한다.
-            FragmentDTO(loop_n=3, beat=2, source_kind="statement", text="충식은 어제 이송됐다."),
+            # 이름만 나오는 충식의 첫 등장에 최소 맥락 (테스터9 F23 ③). 초안 — 시나리오 디렉터 확인 전
+            FragmentDTO(loop_n=3, beat=2, source_kind="statement", text="같은 방에 있던 충식은 어제 이송됐다. 아침에 그 자리는 깨끗하게 비어 있었다."),
             FragmentDTO(loop_n=3, beat=2, actor="준", witnesses=["민석"], source_kind="statement", text='준: "이 숫자 뭔지 알아?"'),
             # 3~4회차 — 단어. 이상함을 눈치채는 시점. 행동 묘사가 아니라 준의 실제 대사로 둔다 — 채팅창에 말풍선으로 뜬다 (F23)
             FragmentDTO(loop_n=3, beat=2, actor="준", witnesses=["민석"], source_kind="statement", text='준: "귀표. 이거 귀표라고 하던데."'),
             # 4~5회차 — 결정적. 그러나 확인할 상대가 없다
-            FragmentDTO(loop_n=4, beat=6, world_outcome="truck", text='트럭 옆면 "○○축산".'),
+            # 4회차 트럭 결말 파편 『트럭 옆면 "○○축산".』은 뺐다 — 인물은 글자를 읽지 못한다(테스터9 F24).
+            # 결정적 정체 단서는 5회차 낮 끝 관리자 방송 MA13(day_end_broadcasts)이 대신한다.
             FragmentDTO(loop_n=5, text="7시 13분."),
         ],
         # 밤단서 v2 P.1 — 밤 결말 전환: 관리자 밤 방송(출처) → 치지직 그림(흔적) → 캡션(잔류).
-        # 방송은 시설 안내만 하고 진실을 말하지 않는다. 트럭 결말 밤의 추가 한 줄은 위 world_outcome 파편이 붙는다.
+        # 방송은 시설 안내만 하고 진실을 말하지 않는다. 트럭 결말 밤의 추가 한 줄은 위 world_outcome 파편(1회차)이 붙는다.
         night_clues=[
             NightClueDTO(loop_n=1, image_ids=["P01"], voice_id="MA08",
                          broadcast="소독을 실시합니다. 바닥에서 떨어져 자리에 오르십시오.",
@@ -743,6 +747,13 @@ def build() -> StaticScenario:
             NightClueDTO(loop_n=5, image_ids=["P05"], voice_id="MA12",
                          broadcast="출입문은 관리자가 개방합니다. 문에 손대지 마십시오.",
                          caption="손이 없어서 문을 못 연다는 것을 문득 안다."),
+        ],
+        # 이미지제작서 원숭이손Q군 v2 Q2.4 — 5회차 낮 마지막 장면(소등 후) 끝, 마지막 밤 추리문 전.
+        # 결말과 무관하게 5회차마다 항상. 글자를 읽을 수 있는 관리자가 트럭을 이름으로 부른다 — 무엇을 싣는지·어디로 가는지는 말하지 않는다.
+        # 상호 "○○"는 쓰지 않는다(2026-09-17 확정). 대본은 초안 — 시나리오 디렉터 확인 전
+        day_end_broadcasts=[
+            DayEndBroadcastDTO(loop_n=5, beat=6, voice_id="MA13", image_id="P06",
+                               broadcast="축산 차량이 출발합니다. 문이 닫힐 때까지 자리에서 움직이지 마십시오."),
         ],
         # §4.1 진입 화면 3줄 (1회차에만 한 번)
         entry_lines=[

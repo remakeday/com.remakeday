@@ -132,6 +132,20 @@ class NightClueDTO(BaseModel):
     broadcast: str  # 방송 대본 (음원과 같은 발화)
 
 
+class DayEndBroadcastDTO(BaseModel):
+    """낮 끝 방송 — 특정 회차의 비트 끝에 관리자가 한 번 더 말한다 (이미지제작서 원숭이손Q군 v2 Q2.4, 테스터9 F24).
+
+    회차 공통인 BeatDTO.broadcast와 달리 회차별이며 결말 조건이 없다. 대사창 줄 맨 끝에 붙고 전언(statement)으로 저장한다."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    loop_n: int = Field(ge=1, le=5)
+    beat: int = Field(default=6, ge=1, le=6)
+    broadcast: str  # 방송 대본 (음원과 같은 발화)
+    voice_id: str  # 관리자 방송 음원 ID
+    image_id: str | None = None  # 이 줄에서 보여 줄 그림 (프론트 이미지 맵 ID)
+
+
 class ActionAccountDTO(BaseModel):
     """What the actor knows about this action under actual preceding events."""
     model_config = ConfigDict(extra="forbid")
@@ -150,6 +164,7 @@ class SceneActionDTO(BaseModel):
     illustrations: list[IllustrationDTO] = Field(default_factory=list)
     known_source: str | None = None
     explanation: str = ""  # Authored first-person account of this action, not an inferred outcome.
+    explanation_knowledge: list[str] = Field(default_factory=list)  # 설명 규칙이 반드시 드러낼 행위자 knowledge id — 장면이 보여 주지 않는 사실 (테스터9 F14)
     experience_accounts: list[ActionAccountDTO] = Field(default_factory=list)
     witnesses: list[str] = Field(default_factory=list)  # Display names of actual witnesses.
     illustration_participants: list[str] = Field(default_factory=list)
@@ -254,6 +269,7 @@ class ScenarioBundleDTO(BaseModel):
     action_vocab: list[str] = Field(default_factory=list)  # Planner·규칙 행동 어휘
     fragments: list[FragmentDTO] = Field(default_factory=list)
     night_clues: list[NightClueDTO] = Field(default_factory=list)  # 회차당 1행 — 밤 결말 전환의 단서
+    day_end_broadcasts: list[DayEndBroadcastDTO] = Field(default_factory=list)  # 회차별 낮 끝 방송 (5회차 MA13)
     scene_actions: list[SceneActionDTO] = Field(default_factory=list)
     advisor_leads: list[AdvisorLeadDTO] = Field(default_factory=list)
     advisor_ladder: list[AdvisorRungDTO] = Field(default_factory=list)  # 신의 질문 공개 사다리

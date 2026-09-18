@@ -31,6 +31,7 @@ from apps.engine.app.use_cases.game_support import record_harness, system_msg
 from apps.engine.app.use_cases.harness import run_with_harness
 from apps.engine.domain.entities.rule_rules import Rule, find_conflicts, player_visible
 from apps.engine.domain.entities.question_rules import is_question_action, report_question_rule
+from apps.engine.domain.entities.question_suggestions import suggest_questions
 from apps.engine.domain.entities.rule_grammar import SUPPRESS_RE, find_actions, wants_suppress
 from apps.engine.domain.value_objects.game_constants import QUESTIONS_PER_NIGHT
 
@@ -155,6 +156,7 @@ def question_evidence(text, observations, names, *, fallback=False):
         (("손목띠", "귀표"), ("손목띠", "귀표")),
         (("검진", "건강", "열이", "열나", "아프", "아픈"), ("검진", "이마", "건강", "열이", "열나")),
         (("트럭",), ("트럭",)),
+        (("축산",), ("축산",)),  # 5회차 낮 끝 방송 "축산 차량" — 방송 주제 낱말만으로는 그 기록이 걸리지 않는다 (F24)
         (("이송", "호송", "돌아오"), ("이송", "호송", "돌아오")),
         (("소문", "출처"), ("소문", "속닥", "출처")),
     )
@@ -169,9 +171,11 @@ def question_evidence(text, observations, names, *, fallback=False):
                  else (o.actor in actors if actors else True))]
 
 
-def advisor_context(text, observations, names, *, history_text=""):
+def advisor_context(text, observations, names, *, history_text="", today=None):
     """Bound recall by relevance, recency and distinct original wording."""
     requested_loops = {int(n) for n in re.findall(r"(\d+)\s*회차", text)}
+    if today is not None and "오늘" in text:  # "오늘 …"은 오늘 회차 기록을 먼저 — 추천 질문(question_suggestions)이 기댄다
+        requested_loops.add(today)
     text = history_text + " " + text
     topical = {o.observation_id for o in question_evidence(text, observations, names, fallback=True)}
     actors = named_targets(text, names)
@@ -299,7 +303,8 @@ class InterventionInteractor:
         history = answered[-2:]
         rungs = self._open_rungs(loop, text)
         relevant = rungs + advisor_context(text, observations, self._target_names,
-                                           history_text=" ".join(e.question for e in history))[:8 - len(rungs)]
+                                           history_text=" ".join(e.question for e in history),
+                                           today=loop.loop_n)[:8 - len(rungs)]
         answer, detail, status, evidence, model_failed = "", None, "unknown", [], False
         if relevant or self._world_context:
             records = "\n".join(
@@ -411,7 +416,8 @@ class InterventionInteractor:
             unlocked_note=None, refunded=refunded, model_failed=model_failed))
         return {"answer": answer, "verdict": verdict, "detail": detail, "remaining": night.questions_left,
                 "status": status, "evidence_ids": ids, "evidence": [o.model_dump() for o in evidence],
-                "next_observation": next_observation, "unlocked_note": None, "kind": "answer", "refunded": refunded}
+                "next_observation": next_observation, "unlocked_note": None, "kind": "answer", "refunded": refunded,
+                "suggested_questions": suggest_questions(observations, loop_n=loop.loop_n, asked=night.questions)}
 
     def _guide(self, night, loop, text: str, kind: str) -> dict:
         """게임 목적·사용법 질문 — 판정·모델 호출·노트·횟수 없이 고정 안내로 답한다 (테스터10 F5)."""
@@ -421,7 +427,10 @@ class InterventionInteractor:
             confirmed_note_id=None, status="unknown", kind="guide"))  # q_index 0 = 횟수에 들지 않는 질문
         return {"answer": answer, "verdict": "", "detail": None, "remaining": night.questions_left,
                 "status": "unknown", "evidence_ids": [], "evidence": [], "next_observation": None,
-                "unlocked_note": None, "kind": "guide", "refunded": False}
+                "unlocked_note": None, "kind": "guide", "refunded": False,
+                "suggested_questions": suggest_questions(
+                    public_observations(self._events, loop.attempt_id, through_loop=loop.loop_n),
+                    loop_n=loop.loop_n, asked=list(night.questions or []))}
 
     def _open_rungs(self, loop, text: str) -> list[ObservationDTO]:
         """공개 사다리 — 열린 칸 중 질문이 묻는 칸만 공개 기록과 같은 자격으로 조언자에게 준다 (기획서 §7.4: 세계가 흘린 공개 사실)."""

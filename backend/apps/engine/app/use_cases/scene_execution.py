@@ -2,6 +2,7 @@
 
 from apps.engine.app.dtos.event_log_dto import RuleExecutionEvent
 from apps.engine.app.dtos.line_dto import LineDTO
+from apps.engine.app.use_cases.explanation_grounding import explanation_line
 from apps.engine.app.use_cases.public_observations import disclose, public_observations
 from apps.engine.domain.entities.rule_rules import PAW_EFFECT_SOURCE
 
@@ -94,7 +95,7 @@ def execute_scene(event_log, loop, bundle, rules, on_action=None):
                 else:
                     # This action describes only the public opportunity the actor just experienced.
                     detail = (opportunity.known_source if rule.action == SOURCE_ACTION
-                              else opportunity.explanation or opportunity.narration)
+                              else explanation_line(bundle, opportunity))
                     if rule.action not in information_records:
                         line = f"{opportunity.actor}: {detail}"
                         information_records[rule.action] = disclose(

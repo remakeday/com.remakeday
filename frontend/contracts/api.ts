@@ -259,6 +259,8 @@ export interface SubmitRes {
   empty_cells: HintCell[];
   /** 밤 단서 시퀀스 — 결말 전환에서 방송 → 치지직 → 캡션 순서로 재생. 회차 표가 없는 시나리오는 null */
   night_clue: NightClue | null;
+  /** 신의 질문 추천(≤3) — 오늘 기록으로 답할 수 있는 찾기 질문(방송 → 소등 뒤 단서 → 인물 행동). 가설 없음. 질문 응답의 같은 필드로 갱신 */
+  suggested_questions: string[];
 }
 
 /**
@@ -299,6 +301,8 @@ export interface GodQuestionRes {
   kind: "answer" | "guide";
   /** "알 수 없다"라 횟수를 돌려받았다 (같은 밤 3회까지, 같은 질문 재입력은 제외). remaining에 이미 반영 */
   refunded: boolean;
+  /** 추천 질문(≤3) — 같은 밤에 이미 한 질문은 빠진다. 제출 응답의 목록을 이걸로 갈아 끼운다 */
+  suggested_questions: string[];
 }
 
 // ── 진실 공개·추리 여정 ───────────────────────────────

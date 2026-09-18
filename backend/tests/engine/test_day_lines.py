@@ -47,6 +47,34 @@ def test_next_beat_lines_put_fragments_after_ambient_and_keep_narration(db_sessi
     assert kinds[-1] == "system"
 
 
+def test_loop_five_lights_out_ends_with_the_truck_broadcast(db_session):
+    """5회차 소등 장면 끝에만 관리자 낮 끝 방송(MA13)이 마지막 줄로 붙는다 — 결말과 무관, 4회차엔 없다 (Q군 v2 Q2.4·F24)."""
+    day, _, attempt, info = make_day(db_session, [])
+    loop_id = info["loop_id"]
+    for _ in range(3):
+        close_loop(db_session, loop_id, 0.0)
+        loop_id = day.start_loop(attempt.id)["loop_id"]
+    for _ in range(5):
+        fourth = day.advance_beat(loop_id)
+    assert fourth["beat"] == 6 and [line["kind"] for line in fourth["lines"]].count("broadcast") == 1
+    close_loop(db_session, loop_id, 0.0)
+    fifth = day.start_loop(attempt.id)
+    assert fifth["loop_n"] == 5
+    for _ in range(5):
+        res = day.advance_beat(fifth["loop_id"])
+    lines = res["lines"]
+    assert res["beat"] == 6 and res["broadcast"] == "소등하겠습니다. 모두 자리에서 움직이지 않습니다."
+    in_world = [line for line in lines if line["kind"] != "system"]
+    assert in_world[-1] == {"kind": "broadcast", "speaker": "관리자", "image_id": "P06", "voice_id": "MA13",
+                            "text": "축산 차량이 출발합니다. 문이 닫힐 때까지 자리에서 움직이지 마십시오.",
+                            "observation_id": f"{fifth['loop_id']}:broadcast-6-end"}
+    assert [line["kind"] for line in lines].count("broadcast") == 2  # 소등 방송은 둘째 줄, 낮 끝 방송은 맨 끝
+    assert res["narration"] == narrated(lines)  # 방송은 서술에 섞이지 않는다
+    assert any(o["observation_id"] == in_world[-1]["observation_id"] and o["source_kind"] == "statement"
+               for o in res["observations"])
+    assert day.advance_beat(fifth["loop_id"])["day_done"]
+
+
 def test_day_done_response_has_no_lines(db_session):
     day, _, _, info = make_day(db_session, [])
     last = [day.advance_beat(info["loop_id"]) for _ in range(6)][-1]

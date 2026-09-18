@@ -597,8 +597,17 @@ class LoopInteractor:
                    for index, line in enumerate(ambient["lines"])] if ambient else [])
         fragments = [LineDTO(kind="fragment", speaker=o["actor"], text=o["text"], observation_id=o["observation_id"])
                      for o in observations if o["observation_id"].startswith(f"{loop.id}:fragment-")]
+        closing = self._day_end_broadcast(loop, beat)
+        ending = ([LineDTO(kind="broadcast", speaker="관리자", text=closing.broadcast, voice_id=closing.voice_id,
+                           image_id=closing.image_id, observation_id=f"{loop.id}:broadcast-{beat.n}-end")]
+                  if closing else [])
         found = [LineDTO(kind="system", text=NOTE_FOUND_LINE)] if note_found else []
-        return [line.model_dump() for line in [scene, *broadcast, *rest, *spoken, *fragments, *found]]
+        return [line.model_dump() for line in [scene, *broadcast, *rest, *spoken, *fragments, *ending, *found]]
+
+    def _day_end_broadcast(self, loop, beat):
+        """회차별 낮 끝 방송 — 이 회차·비트에 지정된 것만 (없으면 None)."""
+        return next((b for b in self._scenario.bundle().day_end_broadcasts
+                     if b.loop_n == loop.loop_n and b.beat == beat.n), None)
 
     def _make_ambient(self, loop, bundle) -> dict | None:
         """Play eligible authored scene speech without a model call or conversation cost."""
@@ -674,6 +683,10 @@ class LoopInteractor:
                 continue
             observations.append(disclose(self._events, loop, beat, key=f"fragment-{i}", text=fragment.text,
                                          actor=fragment.actor, source_kind=fragment.source_kind))
+        closing = self._day_end_broadcast(loop, beat)
+        if closing:
+            observations.append(disclose(self._events, loop, beat, key=f"broadcast-{beat.n}-end",
+                                         text=closing.broadcast, source_kind="statement"))
         observations = [o for o in public_observations(self._events, loop.attempt_id)
                         if o.loop_id == str(loop.id) and o.beat == loop.beat]
         first = None

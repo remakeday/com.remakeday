@@ -23,6 +23,7 @@ from apps.engine.app.use_cases.harness import run_with_harness
 from apps.engine.app.use_cases.public_observations import public_observations, disclose
 from apps.engine.domain.entities import scoring_rules
 from apps.engine.domain.entities.claim_rules import is_question_claim
+from apps.engine.domain.entities.question_suggestions import suggest_questions
 from apps.engine.domain.entities.rule_rules import Rule, narration_with_rule_note
 from apps.engine.domain.value_objects.event_type import EventType
 from apps.engine.domain.value_objects.game_constants import CELLS, LOOPS_PER_ATTEMPT
@@ -172,7 +173,7 @@ class NightInteractor:
             raise GameStateError("정리가 없다")
         loop = self._loops.get(night.loop_id)
         if night.submitted:
-            return self._stored_submit_response(loop)
+            return self._with_suggested_questions(loop, self._stored_submit_response(loop))
         attempt = self._attempts.get(loop.attempt_id)
 
         # 다음 아침의 변화 기록은 유지하되, 부작용을 답안으로 요구하지 않는다.
@@ -263,7 +264,12 @@ class NightInteractor:
             loop.state = "intervention"
 
         self._attempts.save()
-        return response
+        return self._with_suggested_questions(loop, response)
+
+    def _with_suggested_questions(self, loop, response: dict) -> dict:
+        """신의 질문 추천 — 저장 응답이 아니라 지금 공개된 기록(밤 단서 포함)에서 매번 만든다(테스터9 F19 방향 3)."""
+        observations = public_observations(self._events, loop.attempt_id, through_loop=loop.loop_n)
+        return {**response, "suggested_questions": suggest_questions(observations, loop_n=loop.loop_n, asked=[])}
 
     def _stored_submit_response(self, loop) -> dict:
         """이미 제출한 밤 — 저장된 제출 응답을 그대로 돌려준다(모델 호출 0). 저장 응답이 없는 과거 제출은 기존대로 409."""

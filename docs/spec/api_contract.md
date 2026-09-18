@@ -79,8 +79,10 @@ res: `{total: number, passed: boolean, loop_n: number, world_outcome: "truck"|"q
       ending_lines: string[]|null, cell_feedback: string|null, wrong_claim_count: number,
       accepted_claims: string[], empty_cells: ("cause"|"motive")[],
       night_clue: {loop_n: number, caption: string, image_ids: string[], voice_id: string,
-                   broadcast: string, outcome_line: string|null}|null}`
+                   broadcast: string, outcome_line: string|null}|null,
+      suggested_questions: string[]}`
 - `total`: 상황 70점(원인35 + 동기35) + 정체30점. 부작용은 채점하지 않는다.
+- `suggested_questions` (2026-09-18, 테스터9 F19 방향 3): 신의 개입 화면에 띄울 추천 질문 최대 3개. 오늘 회차의 공개 기록 중 답할 재료가 있는 것에서만 규칙으로 만든다(모델 호출 없음, 결정적) — 방송(낮·밤 방송 기록이 있으면) "오늘 방송에서 관리자는 무엇을 말했는가?" → 소등 뒤 단서(밤 단서 캡션·트럭 파편이 있으면) "오늘 소등 뒤에 무엇이 새로 드러났는가?" → 오늘 직접 관찰된 행동이 있는 인물 최대 2명(가장 최근에 움직인 인물부터) "{이름}은/는 오늘 무엇을 했는가?" 순서. 전부 기록 찾기 질문이며 가설을 넣지 않는다(F11 — 답을 가리키는 유도 질문 금지). 저장 응답 재전송(200)에도 붙는다. `POST /nights/{night_id}/questions` 응답의 같은 필드로 갱신한다.
 - 200 재제출 (2026-09-18, opus 리뷰 I2): 이미 제출한 밤에 다시 제출하면 처음 제출이 돌려준 응답을 그대로 돌려준다(채점 모델 호출·기록 없음). 게이트웨이 시간 초과·연결 끊김 뒤 재시도로 판을 잃지 않게 하려는 것이며, 값은 모두 제출 시점 기준이다(`intervention_available` 등도 그때 값). 저장 응답이 없는 과거 제출 밤(2026-09-18 이전)은 기존대로 409 `"이미 제출했다"`.
 - 409 `request_in_flight` (2026-09-18, 5b·opus 리뷰 I2): 같은 밤의 앞 제출이 채점 중이면 기다리지 않고 곧바로 `{"code": "request_in_flight", "detail": "제출한 답을 채점하는 중이다. 잠시 뒤 다시 시도해 주세요."}` — 채점 모델 호출이 없다. 화면은 오류 토스트의 재시도로 잠시 뒤 다시 보내면 채점이 끝난 뒤 저장 응답(200)을 받는다. 제출 판정·채점 기록·회차 종료는 한 트랜잭션이다.
 - `night_clue`: 밤 단서 시퀀스(밤단서 v2 P.1) — 결말 전환에서 관리자 밤 방송(`voice_id` MA08~12, 대본 `broadcast`) → 치지직 띠 안 `image_ids`(1~2장) → 바탕 위에 남는 `caption` 순서로 재생한다. 트럭 결말 밤에는 `outcome_line`(기존 트럭 파편)이 캡션 뒤에 한 줄 더 붙는다. 서버는 제출 시 `caption`을 「N회차 · 소등 후」 관찰(scene), `broadcast`를 전언(statement)으로 저장해 다음 밤의 근거로 탭할 수 있게 한다. 회차 표가 없는 시나리오는 null.
@@ -99,7 +101,7 @@ res: `{total: number, passed: boolean, loop_n: number, world_outcome: "truck"|"q
 ## 신의개입 (P3) — 멸망한 밤에만
 
 ### POST /nights/{night_id}/questions
-req: `{text: string}` → res: `{verdict: string, answer: string, detail: string|null, remaining: number, status: "supported"|"contradicted"|"unknown", evidence_ids: string[], evidence: Observation[], unlocked_note: null, next_observation: string|null, kind: "answer"|"guide", refunded: boolean}`
+req: `{text: string}` → res: `{verdict: string, answer: string, detail: string|null, remaining: number, status: "supported"|"contradicted"|"unknown", evidence_ids: string[], evidence: Observation[], unlocked_note: null, next_observation: string|null, kind: "answer"|"guide", refunded: boolean, suggested_questions: string[]}`
 - `verdict`: "맞다." / "아니다." / "그건 알 수 없다." / "왜인지는 내가 말할 수 없다. 그 전에 일어난 일은 말할 수 있다."(왜/이유/어떻게 질문만)
 - 판정은 3종으로 축소 — "그런 일은 없었다"는 기록 부재와 미발생을 혼동시킨다는 테스터1 소견(docs/review-verification/2026-09-09-first-play/tester1-findings.md)에 따라 제외.
 - `answer`: 한다체 문장. 첫 문장은 verdict 또는 그 요지. 최대 3문장
@@ -109,6 +111,7 @@ req: `{text: string}` → res: `{verdict: string, answer: string, detail: string
 - `refunded` (2026-09-18, 순서표 5번): `status="unknown"`인 답은 횟수를 차감하지 않는다(`remaining`에 반영). 단 같은 밤 환급 3회까지, 같은 밤에 이미 한 질문(공백·문장부호 무시)을 다시 물으면 차감한다. 모델 실패로 인한 unknown도 환급 대상이며, 모델이 답하지 못한 질문은 재입력 비교에서 빼고 환급 상한에는 센다(이벤트 `model_failed`). 한 밤 모델 호출은 최대 6회(재생성 포함 18회). 전에는 모든 답이 1회 차감.
 - `kind="guide"` (2026-09-18, 테스터10 F5): 게임 목적·사용법 질문("이 게임이 뭐야", "목적이 뭐야", "멸망한다는 게 뭔 소리야", "뭘 해야 돼", "너에게 뭘 물어")은 규칙 표로 분류해 고정 안내 답을 준다. 모델 호출·판정(`verdict=""`, `status="unknown"`)·근거·조언·노트·횟수 차감이 없고 환급 상한도 쓰지 않는다. 인물 이름이 들어간 질문은 안내로 분류하지 않는다. 안내 답은 원인·동기를 밝혀 쓰는 게임이라는 수준까지만 말한다(정체·부작용 칸 언급 없음, 기획서 §4.4⑤). 안내 문답은 조언자 입력의 최근 문답 2쌍과 회고 `questions_asked`에 들지 않는다. 전의 meta 경로("너에게 … 물어/질문" → "맞다." 판정)는 이 사용법 안내로 대체됐다. 분류 표는 `docs/superpowers/plans/2026-09-18-god-question-improvements.md` §3(b).
 - 공개 사다리 (2026-09-18): 시나리오 `advisor_ladder` 칸은 단계 `max(회차, 1 + 최고 총점의 25·50·75점 도달 수)` 이하일 때 열리고, 질문이 칸의 cue를 물을 때만 최대 2개가 조언자 입력에 공개 기록과 같은 자격으로 붙는다. 근거로 쓰이면 `evidence`에 `observation_id="ladder:{key}"`, `scene_title="세계에 알려진 사실"`, `beat=0`, `source_kind="scene"`인 Observation으로 나온다. 세계가 흘리는 공개 사실이며 숨은 진실·정답 주장·결말 문장이 아니다(기획서 §7.4). `status="unknown"` 답의 `evidence`·`detail`에는 사다리 칸을 넣지 않는다(판정 재료일 뿐 환급 답으로 원문을 주지 않는다). 화면은 사다리 근거를 회차·장면 없는 "세계에 알려진 사실" 카드로 따로 표시한다.
+- `suggested_questions` (2026-09-18, 테스터9 F19 방향 3): 제출 응답과 같은 규칙의 추천 질문(최대 3개)을 답마다 다시 만든다 — 같은 밤에 이미 한 질문(공백·문장부호 무시)은 빠지고 다음 후보가 올라온다. 안내 답(`kind="guide"`)에도 붙는다. 조언자는 "오늘"이 든 질문에 오늘 회차 기록을 먼저 고른다.
 - 409 `request_in_flight` (2026-09-18, opus 리뷰 C1·M3): 같은 밤의 앞 요청(질문·규칙 선택)이 처리 중이면 기다리지 않고 곧바로 409 `{"code": "request_in_flight", "detail": "앞 질문에 답하는 중이다. …"}`(규칙 선택은 `"앞 요청을 처리하는 중이다. …"`). 모델 호출·차감·기록이 없다. 남은 질문 0은 코드 없는 409.
 - 화면: 판정 배지 + 본문 첫 문장 먼저, `next_observation`은 "내일 해 볼 일" 블록으로 크게, 나머지 문장·판정 설명·근거 카드는 "자세히" 접기.
 
