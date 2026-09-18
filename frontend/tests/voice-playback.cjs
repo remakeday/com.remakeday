@@ -52,13 +52,13 @@ const path = require('node:path');
       else if (path.endsWith('/beats/next')) {
         beat++;
         const broadcast = beat === 4 ? '소등하겠습니다. 모두 자리에서 움직이지 않습니다.'
-          : beat === 5 ? '배급을 시작합니다. 식사 후에는 각자 자리에서 대기해 주십시오.' : null;
+          : beat === 5 ? '녹음 대본과 다른 차량 출발 안내입니다.' : null;
         const ambient = { lines: beat === 5 ? [] : beat === 4
           ? [{ code: 'eunsang', name: '은상', text: '혼자 깨어 있으면 무서워. 조금만 같이 있어 줘.' }]
           : [{ code: 'jun', name: '준', text: '민석아, 이 숫자 뭔지 알아?' }] };
         body = { beat, beat_title: '다음 장면', narration: '시간이 흐른다.', broadcast, ambient,
           lines: [line('scene', '시간이 흐른다.'),
-            ...(broadcast ? [line('broadcast', broadcast, { speaker: '관리자' })] : []),
+            ...(broadcast ? [line('broadcast', broadcast, { speaker: '관리자', voice_id: beat === 5 ? 'MA13' : null })] : []),
             ...ambient.lines.map(npc => line('npc', npc.text, { speaker: npc.name }))],
           day_done: false, observations: [], illustrations: [], budget_left: budget, paw_offer: null, note_found: null };
       } else throw new Error(`Unexpected API: ${path}`);
@@ -142,7 +142,9 @@ const path = require('node:path');
     await page.getByTestId('day-title').getByText('다음 장면', { exact: true }).waitFor();
     await page.getByTestId('day-title').getByText('장면 5/6', { exact: true }).waitFor();
     await readAll(page);
-    await playing('MA01');
+    // The server voice_id survives text drift from the recording script.
+    await playing('MA13');
+    assert.equal(await voice.getAttribute('src'), '/audio/voice/MA13.mp3', 'broadcast voice_id overrides unmatched text');
     const sceneVoice = await voice.elementHandle();
     await page.getByRole('button', { name: '다음 장면', exact: true }).click();
     await page.getByTestId('day-title').getByText('다음 장면', { exact: true }).waitFor();

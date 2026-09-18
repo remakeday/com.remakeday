@@ -35,6 +35,10 @@ const shot = (page, name) => uiTweaksOnly && !['12-entry-guide', '13-cards-names
   const log = (m) => console.log(`[shots] ${m}`);
   try {
     await page.goto('http://localhost:3500/', { waitUntil: 'networkidle' });
+    await page.getByRole('switch', { name: 'BGM 끄기', exact: true }).waitFor();
+    assert.equal(await page.locator('audio[src="/audio/game-bgm.mp3"]').count(), 1);
+    const login = await page.getByRole('link', { name: '로그인', exact: true }).elementHandle();
+    await page.waitForFunction(link => Number(getComputedStyle(link).opacity) > 0, login);
     await page.getByLabel('개발 계정 아이디').fill(devId);
     await page.getByLabel('개발 계정 비밀번호').fill(devPw);
     await page.getByRole('button', { name: '개발 로그인' }).click();

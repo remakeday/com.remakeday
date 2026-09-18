@@ -12,7 +12,7 @@ const NIGHT_CLUES = {
   1: { caption: '소독약 냄새. 발 아래 콘크리트가 차다.', image_ids: ['P01'], voice_id: 'MA08', broadcast: '소독을 실시합니다. 바닥에서 떨어져 자리에 오르십시오.', outcome_line: '트럭 소리.' },
   2: { caption: '트럭 소리.', image_ids: ['P02', 'clue-05'], voice_id: 'MA09', broadcast: '정리 작업이 있겠습니다. 비어 있는 자리는 아침에 정돈됩니다.', outcome_line: null },
   3: { caption: '거울이 없다.', image_ids: ['P03'], voice_id: 'MA10', broadcast: '외관 확인은 담당자가 합니다. 각자 확인할 필요 없습니다.', outcome_line: null },
-  4: { caption: '배급 포대에 글자가 있다.', image_ids: ['P04'], voice_id: 'MA11', broadcast: '배급 물자가 도착했습니다. 포대의 표기는 관리 용도입니다. 읽을 필요 없습니다.', outcome_line: '트럭 옆면 "○○축산".' },
+  4: { caption: '배급 포대에 글자가 있다.', image_ids: ['P04'], voice_id: 'MA11', broadcast: '배급 물자가 도착했습니다. 포대의 표기는 관리 용도입니다. 읽을 필요 없습니다.', outcome_line: null },
   5: { caption: '손이 없어서 문을 못 연다는 것을 문득 안다.', image_ids: ['P05'], voice_id: 'MA12', broadcast: '출입문은 관리자가 개방합니다. 문에 손대지 마십시오.', outcome_line: null },
 };
 // 원숭이손 ① chaeyeon-honest — 1회차에만: 2비트 제안 → 수락 즉시 소원 장면(Q03) → 3비트 반대 사건 (F11 스펙 §3)

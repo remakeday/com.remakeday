@@ -87,6 +87,9 @@ export function DayScreen({
   };
 
   const currentLine = todayLines[cursor];
+  const lineIllustration = currentLine?.image_id && !illustrations.some((item) => item.image_id === currentLine.image_id)
+    ? { image_id: currentLine.image_id, caption: currentLine.image_id === "P06" ? "트럭 옆면에도 글자가 있다." : currentLine.text }
+    : null;
   useEffect(() => {
     const index = illustrations.findIndex((item) => item.image_id === currentLine?.image_id);
     if (index >= 0) setIllustrationIndex(index);
@@ -95,7 +98,7 @@ export function DayScreen({
   // 관리자 방송만 현재 줄에 맞춰 재생한다. 인물 음성 보류는 그대로다.
   useEffect(() => {
     if (currentLine?.kind === "broadcast") {
-      playVoice(voicesForLines(currentLine.text.split("\n").map((text) => ({ name: "관리자", text }))));
+      playVoice(voicesForLines(currentLine.text.split("\n").map((text) => ({ name: "관리자", text })), currentLine.voice_id));
     }
     return () => stopVoice();
   }, [currentLine, playVoice, stopVoice]);
@@ -137,6 +140,8 @@ export function DayScreen({
   const questionUnresolved = pendingUtterance !== null;
   // 마지막 줄 판정은 한 곳에 둔다. 질문과 장면 이동이 같은 잠금을 쓴다.
   const atLastLine = cursor >= todayLines.length - 1;
+  const lastLineImageId = todayLines.at(-1)?.image_id;
+  const reviewingReveal = !atLastLine && lastLineImageId && !illustrations.some((item) => item.image_id === lastLineImageId);
   const controlsLocked = !atLastLine || mode.mode !== "dialogue" || mode.pawOpen || mutationBusy || questionUnresolved;
   const inputLocked = controlsLocked || dayDone || budgetLeft <= 0 || !npcsReady || selectedUttered || !selected;
 
@@ -255,7 +260,7 @@ export function DayScreen({
     : selectedNpc ? `${selectedNpc.name}에게 말한다` : "…";
   const stages = {
     intro: <SceneIntro beat={beat} damageLevel={damageLevel} illustrations={illustrations} index={illustrationIndex}
-      disabled={mutationBusy || mode.pawOpen} onSelect={setIllustrationIndex} />,
+      lineIllustration={lineIllustration} disabled={mutationBusy || mode.pawOpen} onSelect={setIllustrationIndex} />,
     dialogue: <DialogueStage npcs={npcs} selected={selected} ready={npcsReady} disabled={mutationBusy || questionUnresolved}
       dayDone={dayDone} budgetLeft={budgetLeft} onSelect={setSelected} />,
   };
@@ -277,7 +282,7 @@ export function DayScreen({
             </div>
           </div>
         </div>
-        <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto">{stages[mode.mode]}</div>
+        <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto">{stages[lineIllustration || reviewingReveal ? "intro" : mode.mode]}</div>
         {/* 화면 높이 안에서 그림만 스크롤하고, 대사창·입력줄은 하단에 남긴다. */}
         <div className="z-10 shrink-0 bg-paper pb-[env(safe-area-inset-bottom)]">
           <LineBox lines={todayLines} cursor={cursor} disabled={mutationBusy || mode.pawOpen}

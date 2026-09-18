@@ -14,6 +14,7 @@ export interface RecordAdvice {
 export function RecordLog({ observations, advice, loopN }: { observations: Observation[]; advice: RecordAdvice[]; loopN: number }) {
   const [detail, setDetail] = useState<Observation | null>(null);
   const [imageIndex, setImageIndex] = useState(0);
+  const [newOnly, setNewOnly] = useState(false);
   const returnFocus = useRef<string | null>(null);
   const listRef = useRef<HTMLOListElement | null>(null);
   const focusDetail = useCallback((node: HTMLButtonElement | null) => node?.focus({ preventScroll: true }), []);
@@ -34,19 +35,31 @@ export function RecordLog({ observations, advice, loopN }: { observations: Obser
       id: observation.observation_id, loop_n: observation.loop_n, beat: observation.beat,
       label: `${observation.loop_n}일째 · 장면 ${observation.beat}${observation.actor ? ` · ${observation.actor}` : ""}`,
       text: observation.text, observation,
+      isNew: observation.loop_n === loopN || (
+        observation.loop_n === loopN - 1 && /night-clue|outcome-fragment/.test(observation.observation_id)
+      ),
     })),
     // 조언은 관찰 API에 없으므로 신의 응답에서 받아 그날 기록 뒤에 둔다.
     ...advice.map((item) => ({
-      ...item, beat: Infinity, label: `${item.loop_n}일째 · 신의 조언`, observation: null,
+      ...item, beat: Infinity, label: `${item.loop_n}일째 · 신의 조언`, observation: null, isNew: false,
     })),
   ].sort((a, b) => a.loop_n - b.loop_n || a.beat - b.beat);
 
-  if (ordered.length === 0) return <p className="text-base text-ink/60">아직 기록된 단서가 없다.</p>;
+  const visible = newOnly ? ordered.filter((item) => item.isNew) : ordered;
 
   return (
     <>
+      <div hidden={detail !== null}>
+        <label className="mb-3 flex w-fit items-center gap-2 text-base">
+          <input type="checkbox" checked={newOnly} onChange={(event) => setNewOnly(event.target.checked)} />
+          새 단서만
+        </label>
+        {visible.length === 0 && <p className="text-base text-ink/60">
+          {newOnly ? "아직 새 단서가 없다." : "아직 기록된 단서가 없다."}
+        </p>}
+      </div>
       <ol ref={listRef} hidden={detail !== null} className="divide-y divide-ink/15">
-        {ordered.map((item) => {
+        {visible.map((item) => {
           const observation = item.observation;
           const illustrated = observation && observation.illustrations.length > 0;
           const fragment = /:fragment-\d+$/.test(item.id);
@@ -54,7 +67,7 @@ export function RecordLog({ observations, advice, loopN }: { observations: Obser
             <span className="mr-2 text-sm text-ink/60">
               {item.label}
             </span>
-            {item.loop_n === loopN && <span className="mr-2 border border-orange/40 px-1 text-xs text-orange">NEW</span>}
+            {item.isNew && <span className="mr-2 border border-orange/40 px-1 text-xs text-orange">NEW</span>}
             {fragment && <span className={`mr-2 text-sm ${lineStyles.fragment.className}`}>
               <span aria-hidden="true">{lineStyles.fragment.icon} </span>{lineStyles.fragment.label?.(null)}
             </span>}

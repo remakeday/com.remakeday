@@ -21,6 +21,14 @@ const intro = [
 const observations = [
   { observation_id: 'old', loop_n: 1, beat: 1, scene_title: '지난 배급', actor: null,
     source_kind: 'scene', verification: 'observed', text: '첫날의 배급 기록.', illustrations: [] },
+  { observation_id: 'previous-day', loop_n: 2, beat: 6, scene_title: '지난 낮', actor: null,
+    source_kind: 'scene', verification: 'observed', text: '어제 낮의 배급 기록.', illustrations: [] },
+  { observation_id: 'loop-1:night-clue', loop_n: 1, beat: 6, scene_title: '첫날 밤', actor: null,
+    source_kind: 'scene', verification: 'observed', text: '첫날 밤의 오래된 단서.', illustrations: [] },
+  { observation_id: 'loop-2:night-clue', loop_n: 2, beat: 6, scene_title: '어젯밤', actor: null,
+    source_kind: 'scene', verification: 'observed', text: '트럭 소리.', illustrations: [] },
+  { observation_id: 'loop-2:outcome-fragment-1', loop_n: 2, beat: 6, scene_title: '어젯밤', actor: null,
+    source_kind: 'scene', verification: 'observed', text: '정리 작업이 있겠습니다. 비어 있는 자리는 아침에 정돈됩니다.', illustrations: [] },
   { observation_id: 'current', loop_n: 3, beat: 1, scene_title: '아침 배급', actor: '민석',
     source_kind: 'rule_result', verification: 'observed', text: '민석이 남긴 양을 설명했다.', illustrations: [illustration] },
   { observation_id: 'vn:fragment-1', loop_n: 3, beat: 1, scene_title: '아침 배급', actor: null,
@@ -67,8 +75,10 @@ const observations = [
             beat++;
             for (const npc of npcs) npc.uttered = false;
             body = { beat, beat_title: '침상 사이', narration: '담요가 놓인 침상이 보인다.', broadcast: null,
-              lines: [line('scene', '담요가 놓인 침상이 보인다.'), line('action', '담요 아래에서 무언가 굴러온다.')],
-              illustrations: [], observations: [], budget_left: budget, day_done: beat > 2,
+              lines: beat > 2
+                ? [line('scene', '트럭이 문 앞에 멈춘다.'), line('broadcast', '축산 차량이 출발합니다.', { speaker: '관리자', voice_id: 'MA13', image_id: 'P06' })]
+                : [line('scene', '담요가 놓인 침상이 보인다.'), line('action', '담요 아래에서 무언가 굴러온다.')],
+              illustrations: beat === 2 ? [illustration] : [], observations: [], budget_left: budget, day_done: beat > 2,
               paw_offer: beat === 2 ? { offer_id: 'vn-paw', rule_label: '모두가 속마음을 말한다.', shown_reason: null } : null,
               ambient: null, note_found: null };
           } else if (path === '/loops/vn-loop/paw/respond') {
@@ -80,7 +90,7 @@ const observations = [
           else if (path === '/nights/vn-night/submit') body = {
             total: 40, passed: false, loop_n: 3, world_outcome: 'truck', is_final: false, closed_by: null,
             cells: null, cookie: null, intervention_available: true, ending_lines: null,
-            cell_feedback: null, wrong_claim_count: 0, accepted_claims: [], empty_cells: [],
+            cell_feedback: null, wrong_claim_count: 0, accepted_claims: [], empty_cells: [], suggested_questions: [],
             night_clue: { loop_n: 3, caption: '거울이 없다.', image_ids: ['P03'], voice_id: 'MA10', broadcast: null, outcome_line: null },
           };
           else { errors.push(`${width}: Unexpected API: ${path}`); return route.abort(); }
@@ -206,15 +216,37 @@ const observations = [
         await records.click();
         const panel = page.getByRole('dialog', { name: '기록', exact: true });
         assert.equal(await panel.getByRole('tab').count(), 0, 'record panel has no tabs');
-        assert.equal(await panel.getByText('NEW', { exact: true }).count(), 2);
+        const newOnly = panel.getByRole('checkbox', { name: '새 단서만', exact: true });
+        assert.equal(await newOnly.isChecked(), false);
+        assert.equal(await panel.locator('li').count(), observations.length);
+        assert.equal(await panel.getByText('NEW', { exact: true }).count(), 4);
         assert.equal(await panel.locator('li').filter({ hasText: '첫날의 배급 기록.' }).getByText('NEW', { exact: true }).count(), 0);
+        await newOnly.check();
+        const newTexts = [observations[3], observations[4], observations[5], observations[6]].map(item => item.text);
+        assert.equal(await panel.locator('li').count(), newTexts.length);
+        for (const text of newTexts) {
+          const row = panel.locator('li').filter({ hasText: text });
+          await row.waitFor();
+          assert.equal(await row.getByText('NEW', { exact: true }).count(), 1);
+        }
+        for (const item of observations.slice(0, 3)) {
+          assert.equal(await panel.getByText(item.text, { exact: true }).count(), 0);
+        }
+        await newOnly.uncheck();
+        assert.equal(await panel.locator('li').count(), observations.length, 'filter off restores all records');
+        await newOnly.check();
         await panel.getByRole('button', { name: /민석이 남긴 양을 설명했다/ }).click();
         const picture = panel.locator('img[src$="C01-breakfast-clue-v2.png"]');
         await picture.waitFor();
         await picture.evaluate(img => img.decode());
         assert.ok(await picture.evaluate(img => img.naturalWidth > 0));
         await panel.getByRole('button', { name: '기록으로 돌아간다', exact: true }).click();
+        assert.equal(await newOnly.isChecked(), true, 'picture detail preserves the filter');
         await panel.getByRole('button', { name: '기록 닫기', exact: true }).click();
+        await records.click();
+        assert.equal(await newOnly.isChecked(), false, 'reopening resets the filter');
+        assert.equal(await panel.locator('li').count(), observations.length);
+        await page.keyboard.press('Escape');
         await page.getByRole('button', { name: '안내', exact: true }).click();
         const guidePanel = page.getByRole('dialog', { name: '안내', exact: true });
         await guidePanel.getByRole('heading', { name: '플레이 안내', exact: true }).waitFor();
@@ -245,7 +277,22 @@ const observations = [
         await box.getByText('17 / 17', { exact: true }).waitFor();
         await nextScene.click();
         await page.getByRole('button', { name: '밤이 온다', exact: true }).waitFor();
-        await readAll(page);
+        const truckImage = page.locator('img[src*="P06"]');
+        const truckCaption = page.getByText('트럭 옆면에도 글자가 있다.', { exact: true });
+        await box.getByText('트럭이 문 앞에 멈춘다.', { exact: true }).waitFor();
+        assert.equal(await truckImage.count(), 0, 'truck is absent before its broadcast');
+        assert.equal(await truckCaption.count(), 0);
+        await next.click();
+        await box.getByText('축산 차량이 출발합니다.', { exact: true }).waitFor();
+        await truckImage.waitFor({ state: 'visible' });
+        await truckCaption.waitFor({ state: 'visible' });
+        await previous.click();
+        await box.getByText('트럭이 문 앞에 멈춘다.', { exact: true }).waitFor();
+        assert.equal(await truckImage.count(), 0, 'previous line hides the truck');
+        assert.equal(await truckCaption.count(), 0);
+        await page.getByRole('img', { name: illustration.caption, exact: true }).waitFor({ state: 'visible' });
+        await next.click();
+        await truckImage.waitFor({ state: 'visible' });
         await page.getByRole('button', { name: '밤이 온다', exact: true }).click();
         await page.getByPlaceholder('자유롭게 쓴다…').fill('배급량을 기록했다.');
         await hud.getByText('3일째 / 5일', { exact: true }).waitFor();

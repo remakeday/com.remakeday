@@ -98,6 +98,7 @@ export function GodScreen({
   firstVisit,
   total,
   hypothesis,
+  initialSuggestedQuestions,
   onAdvice,
   onRuleApplied,
 }: {
@@ -105,6 +106,7 @@ export function GodScreen({
   firstVisit: boolean;
   total: number;
   hypothesis: string;
+  initialSuggestedQuestions: string[];
   onAdvice: (text: string) => void;
   onRuleApplied: (label: string | null) => void;
 }) {
@@ -117,6 +119,7 @@ export function GodScreen({
   const [qas, setQas] = useState<QA[]>([]);
   const [remaining, setRemaining] = useState(3);
   const [question, setQuestion] = useState("");
+  const [suggestedQuestions, setSuggestedQuestions] = useState(initialSuggestedQuestions ?? []);
   const [options, setOptions] = useState<GodOption[] | null>(null);
   const [customText, setCustomText] = useState("");
   const [preview, setPreview] = useState<RulePreview | null>(null);
@@ -175,6 +178,7 @@ export function GodScreen({
           { question: text, answer: res.answer, verdict: res.verdict, detail: res.detail, status: res.status, evidence: res.evidence ?? [], nextObservation: res.next_observation, kind: res.kind, refunded: res.refunded },
         ]);
         setRemaining(res.remaining);
+        setSuggestedQuestions(res.suggested_questions ?? []);
         if (res.next_observation) onAdvice(res.next_observation);
       },
     );
@@ -316,6 +320,25 @@ export function GodScreen({
                 >
                   묻는다
                 </button>
+                {suggestedQuestions.length > 0 && (
+                  <div role="group" aria-label="예시 질문" className="flex w-full flex-wrap items-center gap-2 text-sm">
+                    <span className="opacity-60">예시:</span>
+                    {suggestedQuestions.map((suggestion) => (
+                      <button
+                        key={suggestion}
+                        type="button"
+                        disabled={askAction.busy}
+                        onClick={() => {
+                          setQuestion(suggestion);
+                          questionRef.current?.focus({ preventScroll: true });
+                        }}
+                        className="rounded-full border border-white/40 px-3 py-1 text-left hover:border-white focus-visible:outline focus-visible:outline-white disabled:opacity-30"
+                      >
+                        {suggestion}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             ) : (
               <p className="text-center text-lg opacity-60">

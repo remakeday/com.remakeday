@@ -108,6 +108,7 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
         cells: null, cookie: null, intervention_available: true, ending_lines: null,
         cell_feedback: '원인은 조금 잡혔다.', wrong_claim_count: 0,
         accepted_claims: ['민석은 남은 쟁반을 기록했다.'], empty_cells: ['motive'],
+        suggested_questions: ['오늘 방송에서 관리자는 무엇을 말했는가?', '오늘 소등 뒤에 무엇이 새로 드러났는가?'],
         night_clue: { loop_n: 2, caption: '트럭 소리.', image_ids: ['P02', 'clue-05'], voice_id: 'MA09', broadcast: '정리 작업이 있겠습니다. 비어 있는 자리는 아침에 정돈됩니다.', outcome_line: null },
       };
       else if (path === '/nights/night-2/questions') {
@@ -116,14 +117,15 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
           answer: '그건 알 수 없다. 아직 트럭이 도착한 장면은 보지 못했어. 다음 이송 방송이나 출입구를 살펴봐.', verdict: '그건 알 수 없다.', detail: '현재 기록에는 트럭의 도착 여부가 없다.', remaining: 2,
           status: 'unknown', evidence_ids: [], evidence: [], next_observation: '다음 이송 방송과 출입구를 확인한다.',
           unlocked_note: null, kind: 'answer', refunded: true,
+          suggested_questions: ['채연은 오늘 무엇을 했는가?'],
         } : questionCalls === 2 ? {
           answer: '맞다. 기록은 이렇다', verdict: '맞다.', detail: '은상이 그렇게 말했다는 사실만 기록됐다.', remaining: 1,
           status: 'supported', evidence_ids: ['obs-statement'], evidence: [observations[3]], next_observation: null,
-          unlocked_note: null, kind: 'answer', refunded: false,
+          unlocked_note: null, kind: 'answer', refunded: false, suggested_questions: [],
         } : {
           answer: '아니다. 틀리다', verdict: '아니다.', detail: '기록된 이동 시각과 질문의 시각이 다르다.', remaining: 0,
           status: 'contradicted', evidence_ids: ['obs-current'], evidence: [observations[2]], next_observation: null,
-          unlocked_note: null, kind: 'answer', refunded: false,
+          unlocked_note: null, kind: 'answer', refunded: false, suggested_questions: [],
         };
       }
       else if (path === '/nights/night-2/options') {
@@ -318,10 +320,17 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
 
     const questionInput = page.locator('input[placeholder^="예:"]');
     assert.match(await questionInput.getAttribute('placeholder'), /확인 화면에서 고친 최종 가설/, 'question example uses confirmed final claim');
+    const exampleRow = page.getByRole('group', { name: '예시 질문', exact: true });
+    await exampleRow.getByRole('button', { name: '오늘 방송에서 관리자는 무엇을 말했는가?', exact: true }).click();
+    assert.equal(await questionInput.inputValue(), '오늘 방송에서 관리자는 무엇을 말했는가?');
+    assert.equal(await questionInput.evaluate(element => element === document.activeElement), true, 'chip focuses the input');
+    assert.equal(questionCalls, 0, 'chip fills without sending');
     await questionInput.fill('트럭이 왔어?');
     await page.getByRole('button', { name: '묻는다', exact: true }).click();
     // 판정 배지 + 한 줄 답 먼저, 조언 블록은 펼치지 않아도 보이고, 나머지 문장·판정 설명은 "자세히" 안 (테스터9 F20 원칙 4)
     await page.getByText('아직 트럭이 도착한 장면은 보지 못했어.', { exact: true }).waitFor();
+    await exampleRow.getByRole('button', { name: '채연은 오늘 무엇을 했는가?', exact: true }).waitFor();
+    assert.equal(await exampleRow.getByRole('button').count(), 1, 'reply replaces the suggestions');
     await page.getByText('그건 알 수 없다', { exact: true }).waitFor();
     await page.getByText('횟수를 돌려받았다', { exact: true }).waitFor();
     await page.getByText('내일 해 볼 일', { exact: true }).waitFor();
@@ -338,6 +347,7 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
     await page.getByRole('button', { name: '묻는다', exact: true }).click();
     await page.getByText('기록은 이렇다', { exact: true }).waitFor();
     await page.getByText('맞다', { exact: true }).waitFor();
+    assert.equal(await exampleRow.count(), 0, 'empty suggestions hide the row while questions remain');
     await page.locator('summary').nth(1).click();
     await page.getByText('근거와 일치한다', { exact: true }).waitFor();
     await page.getByText('발언을 들음', { exact: true }).waitFor();

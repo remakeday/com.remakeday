@@ -50,7 +50,7 @@ const NIGHT_CLUES = {
   1: { caption: '소독약 냄새. 발 아래 콘크리트가 차다.', image_ids: ['P01'], voice_id: 'MA08', broadcast: null, outcome_line: '트럭 소리.' },
   2: { caption: '트럭 소리.', image_ids: ['P02'], voice_id: 'MA09', broadcast: null, outcome_line: null },
   3: { caption: '거울이 없다.', image_ids: ['P03'], voice_id: 'MA10', broadcast: null, outcome_line: null },
-  4: { caption: '배급 포대에 글자가 있다.', image_ids: ['P04'], voice_id: 'MA11', broadcast: null, outcome_line: '트럭 옆면 "○○축산".' },
+  4: { caption: '배급 포대에 글자가 있다.', image_ids: ['P04'], voice_id: 'MA11', broadcast: null, outcome_line: null },
   5: { caption: '손이 없어서 문을 못 연다는 것을 문득 안다.', image_ids: ['P05'], voice_id: 'MA12', broadcast: null, outcome_line: null },
 };
 

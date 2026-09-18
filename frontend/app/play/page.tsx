@@ -366,6 +366,7 @@ export default function PlayPage() {
           firstVisit={loop?.loop_n === 1}
           total={submitResult.total}
           hypothesis={night.claims[0] ?? ""}
+          initialSuggestedQuestions={submitResult.suggested_questions}
           onAdvice={(text) => {
             if (!loop) return;
             setAdvice((previous) => previous.some((item) => item.loop_n === loop.loop_n && item.text === text)
