@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import type { CellScores } from "@/contracts/api";
-import { GameplayGuide } from "@/components/GameplayGuide";
 import { CellResults } from "@/components/CellResults";
+import { GameplayGuide } from "@/components/GameplayGuide";
 import { ENTRY_IMAGE, npcImage } from "@/lib/imageMap";
 
 /**
@@ -53,17 +53,19 @@ function IntroCards() {
 export function EntryScreen({
   lines,
   priorCells,
+  loopN,
   loading,
   onBegin,
 }: {
   lines: string[] | null;
   priorCells: CellScores | null;
+  loopN: number;
   loading: boolean;
   onBegin: () => void;
 }) {
   const ready = lines !== null && !loading;
   return (
-    <div className="relative flex min-h-dvh w-full flex-col items-center justify-center overflow-hidden bg-void py-10 text-paper">
+    <div className="relative flex min-h-dvh w-full flex-col items-center justify-center bg-void py-6 text-paper sm:py-8">
       {/* 배경 A01 — 상·하단 1/3 비움, 텍스트가 주인공 */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
@@ -71,7 +73,7 @@ export function EntryScreen({
         alt=""
         className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-40"
       />
-      <div className="relative z-10 flex flex-col items-center gap-6 px-8 text-center">
+      <div className="relative z-10 flex w-full max-w-4xl flex-col items-center gap-6 px-4 text-center sm:px-8">
         {/* entry_lines는 랜딩이 보여준다 — 여기서는 반복하지 않는다. */}
         {priorCells && (
           <div className="entry-line mt-4 w-full max-w-xs" style={{ animationDelay: "0.6s" }}>
@@ -80,8 +82,12 @@ export function EntryScreen({
           </div>
         )}
         {!loading && (
-          <section className="w-full max-w-xl border border-paper/40 bg-void/80 p-5 text-left">
-            <GameplayGuide compact />
+          <section className="w-full border border-paper/40 bg-void/80 p-5 text-left">
+            {loopN === 1 ? (
+              <GameplayGuide />
+            ) : (
+              <p className="text-lg leading-relaxed">5일 동안 반복되는 하루를 살피고, 밤마다 세계가 왜 멸망하는지 밝혀 쓴다.</p>
+            )}
             <button type="button" onClick={onBegin} disabled={!ready} className="mt-5 w-full border border-paper px-6 py-2 text-lg hover:bg-paper hover:text-void disabled:opacity-40">
               시작
             </button>

@@ -23,9 +23,13 @@ const KIND_ORDER: NoteKind[] = ["fragment", "confirmed", "rule_observation"];
  */
 export function NightScreen({
   loopId,
+  observations,
+  observationsLoading,
   onDrafted,
 }: {
   loopId: string;
+  observations: Observation[];
+  observationsLoading: boolean;
   onDrafted: (nightId: string, claims: string[], isQuestion: boolean[]) => void;
 }) {
   const [notes, setNotes] = useState<Note[] | null>(null);
@@ -34,7 +38,6 @@ export function NightScreen({
   const [freeText, setFreeText] = useState("");
   const [previous, setPrevious] = useState<PreviousAnswer | null>(null);
   const [inheritedNoteIds, setInheritedNoteIds] = useState<number[]>([]);
-  const [observations, setObservations] = useState<Observation[] | null>(null);
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [previousReady, setPreviousReady] = useState(false);
   const galleryReturnFocus = useRef<HTMLElement | null>(null);
@@ -49,7 +52,6 @@ export function NightScreen({
   const notesAction = useApiAction();
   const draftAction = useApiAction();
   const previousAction = useApiAction();
-  const observationsAction = useApiAction();
 
   useEffect(() => {
     void previousAction.run(
@@ -231,13 +233,9 @@ export function NightScreen({
           )}
         </div>}
 
-        <button type="button" disabled={observationsAction.busy} onClick={() => {
+        <button type="button" disabled={observationsLoading} onClick={() => {
           galleryReturnFocus.current = document.activeElement as HTMLElement | null;
-          if (observations !== null) setGalleryOpen(true);
-          else void observationsAction.run(() => api.getObservations(loopId), (res) => {
-            setObservations(res.observations);
-            setGalleryOpen(true);
-          });
+          setGalleryOpen(true);
         }} aria-label="근거 그림 모아보기" className="mx-auto border border-paper/40 px-5 py-2 text-base hover:border-paper">
           근거 그림 모아보기
         </button>
@@ -255,15 +253,14 @@ export function NightScreen({
       )}
 
       <ErrorToast
-        failure={draftAction.failure ?? notesAction.failure ?? previousAction.failure ?? observationsAction.failure}
+        failure={draftAction.failure ?? notesAction.failure ?? previousAction.failure}
         onClose={() => {
           draftAction.clearFailure();
           notesAction.clearFailure();
           previousAction.clearFailure();
-          observationsAction.clearFailure();
         }}
       />
-      {galleryOpen && <EvidenceGallery observations={observations ?? []} onClose={() => setGalleryOpen(false)} returnFocus={galleryReturnFocus.current} />}
+      {galleryOpen && <EvidenceGallery observations={observations} onClose={() => setGalleryOpen(false)} returnFocus={galleryReturnFocus.current} />}
     </div>
   );
 }

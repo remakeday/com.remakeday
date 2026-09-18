@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { api, ApiError } from "@/contracts/api";
 import type {
   CreateSessionRes,
+  Observation,
   StartLoopRes,
   SubmitRes,
 } from "@/contracts/api";
@@ -22,6 +23,8 @@ import { DoomTransition } from "@/components/screens/DoomTransition";
 import { GodScreen } from "@/components/screens/GodScreen";
 import { ClearScreen } from "@/components/screens/ClearScreen";
 import { VoicePlayer, VoiceToggle } from "@/components/VoicePlayer";
+import { Hud } from "@/components/hud/Hud";
+import type { RecordAdvice } from "@/components/hud/RecordLog";
 
 /**
  * 한 판 = 상태 머신. /play 한 라우트 안에서 phase 전환.
@@ -90,6 +93,13 @@ export default function PlayPage() {
   const [dayLog, setDayLog] = useState<DialoguePair[]>([]);
   const [submitResult, setSubmitResult] = useState<SubmitRes | null>(null);
   const [guard, setGuard] = useState<{ kind: GuardKind; retryAfter?: number } | null>(null);
+  const [observations, setObservations] = useState<Observation[]>([]);
+  const [advice, setAdvice] = useState<RecordAdvice[]>([]);
+  const [activeRules, setActiveRules] = useState<string[]>([]);
+  const [observationsLoading, setObservationsLoading] = useState(false);
+  const [observationsError, setObservationsError] = useState<string | null>(null);
+  const observationsRequest = useRef(0);
+  const loopId = loop?.loop_id;
   const bgmRef = useRef<HTMLAudioElement>(null);
   const bgmButtonRef = useRef<HTMLButtonElement>(null);
   const bgmAutoStart = useRef(true);
@@ -98,6 +108,41 @@ export default function PlayPage() {
   const sessionAction = useApiAction();
   const loopAction = useApiAction();
   const retryAction = useApiAction();
+
+  const mergeObservations = useCallback((incoming: Observation[]) => {
+    setObservations((previous) => {
+      const byId = new Map(previous.map((item) => [item.observation_id, item]));
+      for (const item of incoming) byId.set(item.observation_id, item);
+      return [...byId.values()];
+    });
+  }, []);
+
+  const addActiveRule = useCallback((label: string) => {
+    setActiveRules((previous) => previous.includes(label) ? previous : [...previous, label]);
+  }, []);
+
+  // HUD와 밤 갤러리가 같은 목록을 쓴다. 지난 요청은 새 회차·판을 덮지 못한다.
+  const refreshObservations = useCallback(async () => {
+    if (!loopId) return;
+    const request = ++observationsRequest.current;
+    setObservationsLoading(true);
+    setObservationsError(null);
+    try {
+      const res = await api.getObservations(loopId);
+      if (request === observationsRequest.current) mergeObservations(res.observations);
+    } catch (error) {
+      if (request === observationsRequest.current) {
+        setObservationsError(error instanceof ApiError ? error.detail : "잠시 뒤 다시 시도한다.");
+      }
+    } finally {
+      if (request === observationsRequest.current) setObservationsLoading(false);
+    }
+  }, [loopId, mergeObservations]);
+
+  useEffect(() => {
+    void refreshObservations();
+    return () => { observationsRequest.current += 1; };
+  }, [refreshObservations]);
 
   // 화면이 바뀌면 창 스크롤을 맨 위로 — 긴 화면(신의 질문·밤)의 스크롤이 다음 화면에 남으면
   // 푸터 높이만큼 아래로 밀린 채 시작한다(테스터8 F1).
@@ -164,7 +209,10 @@ export default function PlayPage() {
     void loopAction.run(
       () => api.startLoop(attempt.attempt_id),
       (res) => {
+        observationsRequest.current += 1;
         setLoop(res);
+        mergeObservations(res.observations ?? []);
+        setActiveRules(res.active_rules ?? []);
         setNight(null);
         setDayLog([]);
         setSubmitResult(null);
@@ -190,8 +238,14 @@ export default function PlayPage() {
       retryAction.run,
       () => api.createSession({ prior_attempt_id: attempt.attempt_id }),
       (res) => {
+        observationsRequest.current += 1;
         setAttempt(res);
         setLoop(null);
+        setObservations([]);
+        setAdvice([]);
+        setActiveRules([]);
+        setObservationsError(null);
+        setObservationsLoading(false);
         setNight(null);
         setSubmitResult(null);
         setPhase("entry");
@@ -199,6 +253,11 @@ export default function PlayPage() {
       setGuard,
     );
   };
+
+  const audioControls = <>
+    <VoiceToggle />
+    <ToggleSwitch label="BGM" on={bgmPlaying} onClick={toggleBgm} buttonRef={bgmButtonRef} />
+  </>;
 
   return (
     <main className="game-reading">
@@ -212,16 +271,19 @@ export default function PlayPage() {
         onPause={() => setBgmPlaying(false)}
         onError={() => setBgmPlaying(false)}
       />
-      <div className="fixed top-2 right-3 z-50 flex items-center gap-5">
-        <VoiceToggle />
-        <ToggleSwitch label="BGM" on={bgmPlaying} onClick={toggleBgm} buttonRef={bgmButtonRef} />
-      </div>
+      {!guard ? <Hud key={attempt?.attempt_id ?? "entry"} loopN={loop?.loop_n ?? 1}
+        observations={observations} advice={advice} activeRules={activeRules} loading={observationsLoading}
+        error={observationsError} onRetry={() => { void refreshObservations(); }}>
+        {audioControls}
+      </Hud> : <div className="fixed top-2 right-3 z-50 flex items-center gap-5">{audioControls}</div>}
+      <div className={guard ? undefined : "pt-14 [&_.min-h-dvh]:min-h-[calc(100dvh-3.5rem)]"}>
       {guard && <GuardScreen kind={guard.kind} retryAfter={guard.retryAfter} />}
 
       {phase === "entry" && !guard && (
         <EntryScreen
           lines={attempt?.entry_lines ?? null}
           priorCells={attempt?.prior_cell_results ?? null}
+          loopN={loop?.loop_n ?? 1}
           loading={loopAction.busy}
           onBegin={startLoop}
         />
@@ -247,12 +309,11 @@ export default function PlayPage() {
           damageLevel={loop.damage_level}
           initialBeat={loop.beat}
           initialBeatTitle={loop.beat_title}
-          initialNarration={loop.narration}
-          initialBroadcast={loop.broadcast}
-          initialAmbient={loop.ambient ?? null}
+          initialLines={loop.lines}
           initialIllustrations={loop.illustrations ?? []}
-          initialObservations={loop.observations ?? []}
           initialBudget={loop.budget_left}
+          onObservationsChange={mergeObservations}
+          onRuleApplied={addActiveRule}
           onDayDone={(dialogue) => {
             setDayLog(dialogue);
             setPhase("night");
@@ -263,6 +324,8 @@ export default function PlayPage() {
       {phase === "night" && loop && !guard && (
         <NightScreen
           loopId={loop.loop_id}
+          observations={observations}
+          observationsLoading={observationsLoading}
           onDrafted={(nightId, claims, isQuestion) => {
             setNight({ nightId, claims, isQuestion });
             setPhase("confirm");
@@ -279,6 +342,7 @@ export default function PlayPage() {
           onSubmitted={(result, finalClaims) => {
             setNight((current) => current ? { ...current, claims: finalClaims } : current);
             setSubmitResult(result);
+            void refreshObservations();
             setPhase("score");
           }}
         />
@@ -302,7 +366,15 @@ export default function PlayPage() {
           firstVisit={loop?.loop_n === 1}
           total={submitResult.total}
           hypothesis={night.claims[0] ?? ""}
-          onRuleApplied={startLoop}
+          onAdvice={(text) => {
+            if (!loop) return;
+            setAdvice((previous) => previous.some((item) => item.loop_n === loop.loop_n && item.text === text)
+              ? previous : [...previous, { id: `${night.nightId}:advice-${previous.length}`, loop_n: loop.loop_n, text }]);
+          }}
+          onRuleApplied={(label) => {
+            if (label) addActiveRule(label);
+            startLoop();
+          }}
         />
       )}
 
@@ -314,6 +386,7 @@ export default function PlayPage() {
           retryBusy={retryAction.busy}
         />
       )}
+      </div>
 
       <ErrorToast
         failure={

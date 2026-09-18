@@ -98,13 +98,15 @@ export function GodScreen({
   firstVisit,
   total,
   hypothesis,
+  onAdvice,
   onRuleApplied,
 }: {
   nightId: string;
   firstVisit: boolean;
   total: number;
   hypothesis: string;
-  onRuleApplied: () => void;
+  onAdvice: (text: string) => void;
+  onRuleApplied: (label: string | null) => void;
 }) {
   const { play: playVoice, stop: stopVoice } = useVoice();
   useEffect(() => {
@@ -173,6 +175,7 @@ export function GodScreen({
           { question: text, answer: res.answer, verdict: res.verdict, detail: res.detail, status: res.status, evidence: res.evidence ?? [], nextObservation: res.next_observation, kind: res.kind, refunded: res.refunded },
         ]);
         setRemaining(res.remaining);
+        if (res.next_observation) onAdvice(res.next_observation);
       },
     );
   };
@@ -212,7 +215,7 @@ export function GodScreen({
       (res) => {
         if (res.ok) {
           setAppliedLabel(res.rule_label ?? "규칙");
-          onRuleApplied();
+          onRuleApplied(res.rule_label);
         } else {
           setRuleFailure({ reason: res.reason, conflicts: res.conflicts });
         }
