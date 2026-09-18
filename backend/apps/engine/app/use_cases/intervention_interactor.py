@@ -19,6 +19,7 @@ from apps.engine.app.dtos.llm_output_dto import (
     AdvisorOptionsOutput,
 )
 from apps.engine.app.use_cases import prompts
+from apps.engine.app.use_cases.alternative_rank import AlternativeRank, StemOverlapRank
 from apps.engine.app.use_cases.advisor_advice import (
     GUIDE_ANSWERS, advice_sentence, find_anchor, guide_kind, is_wh_question, is_why_question, ladder_stage,
     open_rungs, polite_register_check, refund_question, settle_status, strip_leading_verdict,
@@ -98,25 +99,19 @@ def select_lead(text: str, leads, used_keys: set[str], loop_n: int):
 
 
 def suggest_alternatives(text: str, targets: list[str], templates, max_n: int = 3,
-                         suppress: bool = False) -> list[str]:
+                         suppress: bool = False, rank: AlternativeRank | None = None) -> list[str]:
     """직접 쓰기 실패 시 대안 — 고정 스냅 대신 실행 가능한 (대상, 행동) 후보를 근접 순으로.
 
-    근접도 = 문장의 한글 토큰 어간(앞 2글자)과 행동 문구의 겹침. 후보가 없으면 설명 폴백.
-    금지를 원한 문장(suppress)에는 반대 뜻의 강제형 대신 금지형 대안을 준다.
+    근접도는 rank 전략이 정한다 — 기본은 어간 겹침(StemOverlapRank), 조립 루트가 임베딩 순위를 줄 수 있다.
+    후보가 없으면 설명 폴백. 금지를 원한 문장(suppress)에는 반대 뜻의 강제형 대신 금지형 대안을 준다.
     """
-    stems = {token[:2] for token in _HANGUL_TOKEN_RE.findall(text)}
     pool = [t for t in templates if t["target"] in targets] if targets else list(templates)
-    seen, ranked = set(), []
-    for template in pool:
-        pair = (template["target"], template["action"])
-        if pair in seen:
-            continue
-        seen.add(pair)
-        overlap = sum(stem in template["action"] for stem in stems)
-        ranked.append((-overlap, len(ranked), pair))
-    ranked.sort()
+    pairs = list(dict.fromkeys((t["target"], t["action"]) for t in pool))
+    actions = list(dict.fromkeys(action for _, action in pairs))
+    scores = dict(zip(actions, (rank or StemOverlapRank()).rank(text, actions)))
+    ranked = sorted(pairs, key=lambda pair: -scores[pair[1]])  # 동점은 템플릿 순서 유지(안정 정렬)
     suffix = " 금지" if suppress else ""
-    alternatives = [f"{target}은 {action}{suffix}" for _, _, (target, action) in ranked[:max_n]]
+    alternatives = [f"{target}은 {action}{suffix}" for target, action in ranked[:max_n]]
     if not alternatives:
         alternatives = [f"{name}은 {EXPLAIN_ACTION}{suffix}" for name in targets[:2]]
     return alternatives
@@ -253,6 +248,7 @@ class InterventionInteractor:
         question_rule_targets: list[str] | None = None,
         advisor_leads: list | None = None,
         advisor_ladder: list | None = None,
+        alternative_rank: AlternativeRank | None = None,
         night_transaction: SceneTransactionPort = nullcontext,
     ) -> None:
         self._attempts = attempts
@@ -271,6 +267,7 @@ class InterventionInteractor:
         self._question_rule_targets = question_rule_targets or []
         self._advisor_leads = advisor_leads or []
         self._advisor_ladder = advisor_ladder or []
+        self._alternative_rank = alternative_rank
         self._night_transaction = night_transaction
 
     def _night_loop(self, night_id: uuid.UUID):
@@ -493,7 +490,7 @@ class InterventionInteractor:
         conditional = any(word in custom_text for word in ("물으면", "물어보면", "질문하면", "질문할 때"))
         alternatives = ([] if spec or conditional
                         else suggest_alternatives(custom_text, names, self._templates,
-                                                  suppress=wants_suppress(custom_text)))
+                                                  suppress=wants_suppress(custom_text), rank=self._alternative_rank))
         preview = {"preview_id": str(uuid.uuid4()), "original_text": custom_text, "executable": spec is not None,
                    "interpretation": spec["label"] if spec else None,
                    "limitations": (["이미 공개된 본인의 관찰만 설명한다. 새로운 진실이나 숨은 이유는 알게 되지 않는다."]

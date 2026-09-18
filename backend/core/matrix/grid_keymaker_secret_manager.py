@@ -28,6 +28,8 @@ class Settings(BaseSettings):
     core_llm_model: str = "gemma4:12b"
     core_llm_think: str = "off"
     embedding_provider: str = "fake"
+    embedding_model: str = "bge-m3"  # 로컬 VRAM 예산 안(0.66GB)·Gemini와 가장 닮은 로컬 모델(A.21 §7·§8, 사용자 결정 2026-09-18)
+    embedding_dimensions: int = Field(default=2560, gt=0)  # 로컬 qwen3-embedding:4b 무절단 = Gemini 3072→2560 절단(사용자 확정 2026-09-18, A.21 §5)
     embedding_fallback: str = "qwen3-local"
     ollama_base_url: str = "http://localhost:11434"
 

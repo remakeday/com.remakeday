@@ -44,6 +44,7 @@ from apps.engine.app.use_cases.manager_interactor import ManagerInteractor
 from apps.engine.app.use_cases.night_interactor import NightInteractor
 from apps.engine.app.use_cases.session_interactor import SessionInteractor
 from apps.engine.dependencies.llm_factory import (
+    get_alternative_rank,
     get_core_llm,
     get_npc_llm,
 )
@@ -145,6 +146,7 @@ def get_intervention_interactor(session: Session = Depends(get_session)):
         advisor_leads=bundle.advisor_leads,
         advisor_ladder=bundle.advisor_ladder,
         rule_templates=rule_templates(bundle),
+        alternative_rank=get_alternative_rank(),
         night_transaction=NightTransaction(session),
     )
 

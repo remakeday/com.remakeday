@@ -60,3 +60,32 @@ def test_embedding_factory_switches():
     assert isinstance(build_embedding("fake"), FakeEmbedding)
     with pytest.raises(ValueError):
         build_embedding("no-such-provider")
+
+
+def test_ollama_embedding_factory_reads_model_and_dimensions(monkeypatch):
+    from types import SimpleNamespace
+
+    from apps.engine.adapter.outbound.embedding.ollama_embedding import OllamaEmbedding
+    from apps.engine.dependencies import llm_factory
+
+    monkeypatch.setattr(llm_factory, "get_settings", lambda: SimpleNamespace(
+        ollama_base_url=_OLLAMA, embedding_model="emb-test", embedding_dimensions=1536))
+    emb = build_embedding("ollama")
+    assert isinstance(emb, OllamaEmbedding) and emb._model == "emb-test" and emb._dimensions == 1536
+
+
+def test_alternative_rank_uses_stem_overlap_for_fake_embedding():
+    from apps.engine.adapter.outbound.embedding.fake_embedding import FakeEmbedding
+    from apps.engine.app.use_cases.alternative_rank import EmbeddingRank, StemOverlapRank
+    from apps.engine.dependencies.llm_factory import build_alternative_rank
+
+    assert isinstance(build_alternative_rank("fake", FakeEmbedding()), StemOverlapRank)
+    assert isinstance(build_alternative_rank("ollama", FakeEmbedding()), EmbeddingRank)
+
+
+def test_ollama_embedding_instruct_only_for_qwen3(monkeypatch):
+    from apps.engine.dependencies import llm_factory
+    from core.matrix.grid_keymaker_secret_manager import get_settings
+    for model, expected in (("qwen3-embedding:4b", llm_factory.QWEN3_QUERY_INSTRUCT), ("bge-m3", None)):
+        monkeypatch.setattr(get_settings(), "embedding_model", model)
+        assert llm_factory.build_embedding("ollama")._query_instruct == expected

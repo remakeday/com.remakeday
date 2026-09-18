@@ -2,10 +2,10 @@
 
 import hashlib
 
-from apps.engine.app.ports.output.embedding_port import EMBEDDING_DIM
+from apps.engine.app.ports.output.embedding_port import EMBEDDING_DIM, EmbeddingPort
 
 
-class FakeEmbedding:
+class FakeEmbedding(EmbeddingPort):
     def embed(self, texts: list[str]) -> list[list[float]]:
         return [self._vector(t) for t in texts]
 

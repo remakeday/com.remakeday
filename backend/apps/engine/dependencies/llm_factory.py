@@ -7,12 +7,14 @@ from functools import lru_cache
 
 from apps.engine.adapter.outbound.embedding.fake_embedding import FakeEmbedding
 from apps.engine.adapter.outbound.embedding.gemini_embedding import GeminiEmbedding
+from apps.engine.adapter.outbound.embedding.ollama_embedding import QWEN3_QUERY_INSTRUCT, OllamaEmbedding
 from apps.engine.adapter.outbound.llm.anthropic_llm import AnthropicLLM
 from apps.engine.adapter.outbound.llm.fake_llm import FakeLLM
 from apps.engine.adapter.outbound.llm.gemini_llm import GeminiLLM
 from apps.engine.adapter.outbound.llm.ollama_llm import OllamaLLM
 from apps.engine.app.ports.output.embedding_port import EmbeddingPort
 from apps.engine.app.ports.output.llm_port import LLMPort
+from apps.engine.app.use_cases.alternative_rank import AlternativeRank, EmbeddingRank, StemOverlapRank
 from core.matrix.grid_keymaker_secret_manager import get_settings
 
 
@@ -48,8 +50,22 @@ def build_embedding(provider: str) -> EmbeddingPort:
     if provider == "fake":
         return FakeEmbedding()
     if provider == "gemini":
-        return GeminiEmbedding(api_key=get_settings().gemini_api_key)
+        s = get_settings()
+        return GeminiEmbedding(api_key=s.gemini_api_key, dimensions=s.embedding_dimensions)
+    if provider == "ollama":
+        s = get_settings()
+        # Qwen3 지시문 접두는 그 계열에만 — bge-m3 등은 query를 그대로 보낸다
+        instruct = QWEN3_QUERY_INSTRUCT if s.embedding_model.startswith("qwen3-embedding") else None
+        return OllamaEmbedding(base_url=s.ollama_base_url, model=s.embedding_model,
+                               dimensions=s.embedding_dimensions, query_instruct=instruct)
     raise ValueError(f"알 수 없는 임베딩 provider: {provider}")
+
+
+def build_alternative_rank(provider: str, embedding: EmbeddingPort) -> AlternativeRank:
+    """직접 쓰기 대안 순위 — fake 임베딩은 해시 벡터라 유사도가 무의미하므로 어간 겹침을 쓴다."""
+    if provider == "fake":
+        return StemOverlapRank()
+    return EmbeddingRank(embedding)
 
 
 @lru_cache(maxsize=1)
@@ -67,3 +83,8 @@ def get_core_llm() -> LLMPort:
 @lru_cache(maxsize=1)
 def get_embedding() -> EmbeddingPort:
     return build_embedding(get_settings().embedding_provider)
+
+
+@lru_cache(maxsize=1)
+def get_alternative_rank() -> AlternativeRank:
+    return build_alternative_rank(get_settings().embedding_provider, get_embedding())
