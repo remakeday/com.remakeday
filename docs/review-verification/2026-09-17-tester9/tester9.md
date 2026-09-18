@@ -243,7 +243,7 @@
   - 같은 섹션의 "의도" 칸(`experiment.intent`)도 원문을 그대로 보여준다. 이 판 R2의 `intent`에는 규칙과 무관한 1회차 추리문 전문이 저장돼 있었다(이벤트 12197 `rule_applied.intent`). 표시 문제와 별개로 저장 값 자체 점검 필요.
   - 노출된 회차·판 uuid로 다른 API(`/loops/{id}/…`·`/nights/{id}/…`)에 접근할 때 소유자 확인이 있는지는 이번에 확인하지 않았다. 보안 영향이 있으면 A등급으로 별도 점검.
 - 관련: F20(문구 원칙 — 조립형·내부 문구 제거).
-- 조치: 반영 (2026-09-17 밤, 프론트 커밋 `b05ffc6`) — 회고의 관찰 근거를 uuid 대신 "장면 3 · 준의 행동: …" 라벨로 바꾸고 3건 이상이면 접음(신규 `frontend/lib/observationLabel.ts`, `Retrospective.tsx`). `intent` 저장 값 점검은 미착수. 판 API 소유자 확인은 F26으로 처리(반영됨).
+- 조치: 반영 (2026-09-17 밤, 프론트 커밋 `b05ffc6`) — 회고의 관찰 근거를 uuid 대신 "장면 3 · 준의 행동: …" 라벨로 바꾸고 3건 이상이면 접음(신규 `frontend/lib/observationLabel.ts`, `Retrospective.tsx`). `intent` 저장 값 점검 완료(2026-09-18) — DB 표본(포트 5435, `rule_applied` 167건) 확인 결과 이벤트 12197을 포함해 09-09~09-17 기록된 추천 규칙(`user_choice`) intent 전체가 옵션 라벨이 아니라 그날 밤 추리문 전문이었다(uuid는 아니고 잘못된 값). 원인은 당시 코드가 intent를 옵션 라벨과 다른 값으로 채우던 것; `intent`가 아예 없는 09-08 이전 기록은 필드 신설 전 레거시라 별도. 백엔드 커밋 `cf5a0b7`(2026-09-18 새벽, 본 브랜치 HEAD에 이미 포함)에서 `rule_intent()`/`_INTENT_BY_SOURCE`로 출처별 분리(추천 규칙=선택지 라벨, 직접 규칙=원문 그대로, 원숭이손=미기록)해 해결 — 관련 테스트 3건(`test_recommended_rule_intent_is_the_option_label_not_the_night_claims` 등) 통과 확인. 수정 이후 플레이가 아직 없어 DB에 정상값 표본은 없고 코드·테스트로 대체 확인. `monkey_paw`(원숭이손) 규칙은 intent를 아예 채우지 않아 회고에 "기록 없음"으로 뜨는데, 이는 내부 식별자 노출이 아니라 의도된 공백이라 추가 조치 불요. 판 API 소유자 확인은 F26으로 처리(반영됨).
 
 ## 백엔드/AI
 
