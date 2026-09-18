@@ -223,8 +223,9 @@ EVALUATOR_VERDICT_SYSTEM = """플레이어의 주장 목록과 정답 주장 하
 먼저 why에 근거를 쓴다: 어느 후보의 어느 표현이 정답의 어느 표현과 같은 뜻인지 한 문장.
 그런 표현 쌍을 적지 못하면 verdict는 none이다.
 후보는 아래 번호 목록이 전부다. 목록 밖은 고려하지 않는다.
-confirmed·partial이면 근거 후보의 번호를 matched_index(0부터)로 반환한다. 문장을 다시 쓰지 않는다.
-none이면 matched_index는 null.
+confirmed·partial이면 근거 후보 문장의 일부(6자 이상)를 한 글자도 고치지 않고 그대로 matched_quote에 옮겨 적고(따옴표·번호 없이 본문만),
+그 후보의 번호를 matched_index(0부터)에 쓴다. 문장을 다시 쓰지 않는다.
+none이면 matched_quote와 matched_index 모두 null.
 
 [정답 주장] {truth_claim}
 [플레이어 주장 후보]

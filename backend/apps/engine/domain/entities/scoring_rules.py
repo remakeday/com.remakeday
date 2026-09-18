@@ -1,5 +1,7 @@
 """채점·멸망 방식·판 종료 — 순수 함수 (기획서 §7.2, 모델정책 §5.4)."""
 
+import re
+
 from apps.engine.domain.value_objects.game_constants import (
     ANOMALY_CLOSURE,
     CELL_FULL_THRESHOLD,
@@ -143,6 +145,36 @@ def _candidate_index(claim: str, candidates: list[str]) -> int | None:
         return candidates.index(claim)
     key = _normalize_claim(claim)
     return next((j for j, c in enumerate(candidates) if _normalize_claim(c) == key), None)
+
+
+_QUOTE_MARKS = "\"'“”‘’「」『』"
+
+
+def _squash(text: str) -> str:
+    return "".join(text.split())
+
+
+def _quote_key(quote: str) -> str:
+    """인용 조각을 비교용으로 정리한다 — 공백 제거, 앞의 목록 번호("2. "), 양끝 따옴표·문장부호 제거."""
+    key = _squash(quote)
+    key = re.sub(r"^\d+\.", "", key)
+    return key.strip(_QUOTE_MARKS + _EDGE_PUNCT)
+
+
+def resolve_matched_index(candidates: list[str], quote: str | None, index: int | None) -> int | None:
+    """채점기가 인용한 후보 문장 조각으로 matched_index를 보정한다.
+
+    모델이 why·인용에서는 근거 문장을 맞게 짚으면서 번호는 하나 어긋나게 내는 사례가
+    실판 181건 중 38건이었다(항상 인용 후보 − 1). 인용을 공백 제거 후 4자 이상이고
+    정확히 한 후보에만 부분 문자열로 들어 있으면 그 후보의 번호를 index보다 우선한다.
+    인용이 없거나 짧거나 0개·2개 이상 후보에 들어 있으면 index를 그대로 돌려준다.
+    모델이 인용을 따옴표로 감싸거나 목록 번호를 함께 옮겨도 같은 후보로 본다.
+    """
+    key = _quote_key(quote or "")
+    if len(key) < 4:
+        return index
+    hits = [j for j, c in enumerate(candidates) if key in _squash(c)]
+    return hits[0] if len(hits) == 1 else index
 
 
 _ACCEPTED_VERDICTS = frozenset({"confirmed", "partial"})

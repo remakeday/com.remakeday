@@ -1789,9 +1789,41 @@ ollama가 `model predicted to exceed available memory, evicting`을 **두 번** 
 | 2026-09-17 | **제출 조합 확정.** Core `claude-sonnet-5` + NPC `claude-haiku-4-5` 조합 self-play 5회차 1판 확인(11.7→29.8, 261.5s, 폴백 0, planner 재생성 1, 메타 누설 0) — A.19 §2 끝. 사용자 지시로 이 조합을 제출용 `.env` 구성으로 고정(키는 제출 투입 전까지 제거 유지, 절차는 `docs/HANDOFF.md`). A.19 §2 gemma4 대조군 advisor 재생성 수 정정(3→2) |
 | 2026-09-18 | **임베딩 슬롯 — 부록 A.20 추가.** 로컬 vs 외부 비교를 하지 않은 이유를 기록: 채점 RAG용 임베딩 랭킹 경로가 **2026-09-06 채점 밸런스 조정에서 제거**됐다(top-3 절단이 저득점 원인 — 골든 세트 정답형 65.3→100.0). 코드·DB 실사로 확인 — `get_embedding()` 호출 0·`.embed()` 0·유사도 질의 0·`truth_claim_embeddings` 0행·`/health`에 표시 없음, `EMBEDDING_FALLBACK`은 읽히지 않는 설정. 두 번째 용도였던 `search_notes`는 미구현(`ask_npc`만 실재). **현재 운영 구성은 Core·NPC 2슬롯뿐**으로 정본화하고, 기획서 확정본 v9.0(§11.5·§11.6)·`AI_Agent_Evaluation PART1`(§5 Anchor)·팀원용 쉬운설명(§49)에 원문 수정 없이 같은 경위를 추가 기록. `apiscenario.md`의 "임베딩 무료 키 한도 제출 전 확인 필요" 과제는 전제가 틀려 정정 |
 | 2026-09-18 | **임베딩 부활 한 자리 + 5셀 비교 — 부록 A.21.** 사용자 결정으로 직접 쓰기 규칙 대안 순위에만 임베딩(Strategy·예외 시 어간 폴백, lifetutorial 방식). n=30 골든(에이전트 작성): stem top-1 0.300 / qwen@2560 0.933 / **qwen@1536 0.867** / bge 0.900 / gemini 0.967, top-3 임베딩 전 셀 1.000. 순위 일치도 qwen2560↔1536 τ 0.92(절단 무해), gemini↔qwen top-1 0.87~0.93·τ 0.33("같은 답, 다른 공간"). 프로덕션 provider는 사용자 결정 대기. 같은 날 A.19 후속 과제 닫음 — planner beats 절단(+advisor 2필드, 958 passed), 러너 3종 `--provider anthropic` |
+| 2026-09-18 | **채점기 매칭 문장 지목 오류 — 부록 A.22.** 테스터9 F11. 채점기(gemma4:12b, temperature 0)가 `why`에서는 맞는 후보를 인용하면서 `matched_index`는 하나 낮게 내는 사례가 실판 181건 중 38건(21%). 출력에 `matched_quote`(근거 후보 원문 일부)를 번호 앞에 두고, 인용이 유일하게 가리키는 후보로 번호를 결정적으로 보정(`scoring_rules.resolve_matched_index`). DB 249건 재판정: 번호 오류 옛 프롬프트 56/162(35%) → 새 프롬프트 원 번호 13/163 → 보정 뒤 **1/163**. 판정 분포는 옛·새 프롬프트가 같음(none 49 vs 50, 일치 230/249). 982 passed |
 
 ---
 
 > **측정하지 않은 것은 주장하지 않는다.**
 > **재현성은 정확도가 아니다.**
 > **그리고 선택 실험에 하나 더 — 이기는 모델을 찾는 것이 목적이 아니라, 지금 쓰는 모델을 바꿀 이유가 있는지 아는 것이 목적이다.**
+
+## A.22 2026-09-18 · 채점기 매칭 문장 지목 오류 — 인용으로 번호를 바로잡는다 (테스터9 F11)
+
+원문: `output/judge-index-replay-2026-09-18/`(`verdicts.json` DB 원본 249건, `replay_out.jsonl` 새 프롬프트, `replay_control.jsonl` 옛 프롬프트, 스크립트 2개 — gitignore, 이 부록이 정본) ·
+`docs/metrics.yml` `judge_index_replay` 2줄. 계획·리뷰: `docs/superpowers/plans/2026-09-18-f11-matched-quote.md`.
+
+**증상.** 테스터9 3일째 밤 motive-2(이송 규정)의 "내 주장" 표시가 "검진 방송에 따르면 … 이송된다."가 아니라 "검진 때도 담요를 끌어올린 채 …"로 기록됐다.
+harness_event 12935: 모델 `why`는 "후보 2의 '상태가 좋지 않은 사람은 별도 구역으로 이송된다'"인데 `matched_index`는 1. 판정(confirmed)은 맞고 번호만 하나 어긋났다.
+ratchet(`apply_ratchet`)이 매칭 문장을 키로 잠그므로 표시 오류에 그치지 않는다.
+
+**전수(09-09~09-17, `evaluator_verdict` 채택 출력 중 번호가 있는 249건).** `why`가 후보 문장을 따옴표로 인용한 181건 중 **38건(21%)** 이 인용과 다른 번호. 38건 전부 `번호 = 인용 후보 − 1`. 인용이 엉뚱한 후보를 가리킨 사례는 0.
+
+**변경.** `EvaluatorVerdictOutput`에 `matched_quote`(근거 후보 문장 일부, 6자 이상, 원문 그대로)를 `matched_index` 앞에 두고(필드 순서 = 생성 순서), `scoring_rules.resolve_matched_index(candidates, quote, index)`가 공백·양끝 따옴표·목록 번호를 뗀 인용이 **정확히 한 후보**에 들어 있으면 그 번호를 쓴다(0개·2개 이상이면 모델 번호). verdict none이면 보정하지 않는다(인용이 verdict보다 먼저 생성돼 남을 수 있음). 하네스 재시도로 풀지 않은 이유: temperature 0이라 같은 출력이 반복된다. 이벤트 스키마 변경 없음(원 출력은 harness_event에 남는다). 러너 `run_scoring_calibration.py`·`core_probes.py`도 같은 보정을 쓴다(`run_core_selection.py`는 원 번호 기록).
+
+### 재판정 (gemma4:12b think off, temperature 0, 같은 249건, 각 1회)
+
+정답 번호는 각 실행의 `why` 인용이 유일하게 가리키는 후보로 잡았다(판별 가능 건만).
+
+| 조건 | 판별 가능 | 번호 오류 | none | 저장 판정과 일치 |
+|---|---:|---:|---:|---:|
+| 옛 프롬프트(why→index→verdict) | 162 | **56 (35%)** | 49 | 193/249 |
+| 새 프롬프트 원 번호(보정 전) | 163 | 13 (8%) | 50 | 186/249 |
+| 새 프롬프트 + 인용 보정 | 163 | **1 (0.6%)** | 50 | — |
+
+- gemma4 기록 169건만: 옛 37/132(28%) → 새 원 번호 6/134 → 보정 뒤 1/134. none은 옛 6·새 9.
+- 판정 전이 옛→새: confirmed→confirmed 171, none→none 44, partial→confirmed 7, partial→partial 15, none→confirmed 4, confirmed→none 6, confirmed→partial 1, none→partial 1. **일치 230/249(92%)** — 인용 필드가 verdict 분포를 바꾸지 않는다. none 50건은 저장 판정 80건이 다른 모델(gemini 60·sonnet 14·opus 6)이었던 데서 온 차이로, 옛 프롬프트도 같은 모델에서 49건 none.
+- 옛 기록의 번호 오류 38건 중 32건이 보정 뒤 맞는 후보로 갔다(나머지 6건은 이번 실행에서 none 또는 인용 불일치). 옛 기록이 맞았던 135건 중 3건이 다른 후보로 갔는데, 2건은 인용이 다른 후보를 가리킨 것(모델 판단 차이), 1건은 인용을 못 찾아 원 번호로 폴백.
+- 인용 199/249 존재, 유일 일치 182, 불일치 11(모델이 후보를 살짝 고쳐 옮김 — "관리되고 있는" 등), 중복 6. 따옴표·번호 접두 형태는 0건(보정 로직은 대비해 둠).
+
+**남은 것.** 인용 불일치 11건(약 5%)은 원 번호로 떨어져 옛 오류율의 일부가 남을 수 있다. 옛 코드로 채점된 판의 잘못된 매칭 문장은 그대로이며(마이그레이션 없음), 다음 밤 ratchet이 그 문장을 다시 잠글 수 있다 — 제출 전 신규 판만 대상이라 수용.
+

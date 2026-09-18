@@ -154,6 +154,41 @@ def test_judge_renders_all_user_claims_as_candidates():
     assert "채연이 아픈 것 같다" not in wrong
 
 
+def test_matched_quote_corrects_off_by_one_index():
+    # 실판 38/181 — why·인용은 후보 2를 가리키는데 matched_index는 1로 나온 사례(event 12935)
+    interactor, _ = make_night_judge([{
+        "verdict": "confirmed", "matched_quote": "별도 구역으로 이송된다",
+        "matched_index": 1, "why": "",
+    }])
+    claims = [
+        "채연은 열이 나고 밥이 넘어가지 않는데도 괜찮은 척하며 배급을 남긴다.",
+        "검진 때도 담요를 끌어올린 채 기다리며 몸 상태를 드러내지 않는다.",
+        "검진 방송에 따르면 상태가 좋지 않은 사람은 별도 구역으로 이송된다.",
+    ]
+    per_truth, wrong = interactor._judge(_LOOP, _TRUTH, [], claims)
+    assert per_truth[0]["verdict"] == "confirmed"
+    assert per_truth[0]["matched_user_claim"] == claims[2]
+    assert per_truth[0]["matched_index"] == 2
+    assert claims[2] not in wrong
+    assert wrong == claims[:2]
+
+
+def test_matched_quote_absent_uses_index_as_before():
+    interactor, _ = make_night_judge(
+        [{"verdict": "confirmed", "matched_index": 1, "why": ""}]
+    )
+    claims = ["민석이 방송실 갔다", "채연이 아픈 것 같다"]
+    per_truth, wrong = interactor._judge(_LOOP, _TRUTH, [], claims)
+    assert per_truth[0]["matched_user_claim"] == "채연이 아픈 것 같다"
+    assert wrong == ["민석이 방송실 갔다"]
+
+
+def test_evaluator_verdict_schema_generates_quote_before_index():
+    from apps.engine.app.dtos.llm_output_dto import evaluator_verdict_output
+    props = evaluator_verdict_output(3).model_json_schema()["properties"]
+    assert list(props) == ["why", "matched_quote", "matched_index", "verdict"]
+
+
 def test_out_of_range_index_regenerates_then_falls_back():
     bad = {"verdict": "confirmed", "matched_index": 7, "why": ""}
     interactor, events = make_night_judge([bad, bad, bad])
@@ -387,3 +422,27 @@ def test_chain_source_events_excludes_user_claims_and_meta():
     ]
     kept = chain_source_events(events)
     assert [e.type for e in kept] == [EventType.UTTERANCE, EventType.RULE_APPLIED]
+
+
+def test_none_verdict_ignores_stray_quote():
+    # 인용이 verdict보다 먼저 생성되므로 none 판정에 인용이 남을 수 있다 — 매칭하지 않는다
+    interactor, _ = make_night_judge(
+        [{"verdict": "none", "matched_quote": "아픈 것 같다", "matched_index": None, "why": ""}]
+    )
+    claims = ["채연이 아픈 것 같다", "민석이 방송실 갔다"]
+    per_truth, wrong = interactor._judge(_LOOP, _TRUTH, [], claims)
+    assert per_truth[0]["matched_user_claim"] is None
+    assert per_truth[0]["matched_index"] is None
+    assert wrong == claims
+
+
+def test_partial_verdict_is_corrected_by_quote_too():
+    interactor, _ = make_night_judge(
+        [{"verdict": "partial", "matched_quote": "\"아픈 것 같다\"", "matched_index": 0, "why": ""}]
+    )
+    claims = ["민석이 방송실 갔다", "채연이 아픈 것 같다"]
+    per_truth, wrong = interactor._judge(_LOOP, _TRUTH, [], claims)
+    assert per_truth[0]["verdict"] == "partial"
+    assert per_truth[0]["matched_user_claim"] == "채연이 아픈 것 같다"
+    assert per_truth[0]["matched_index"] == 1
+    assert wrong == ["민석이 방송실 갔다"]

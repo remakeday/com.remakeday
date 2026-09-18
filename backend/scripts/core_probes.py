@@ -151,6 +151,7 @@ from apps.engine.app.dtos.llm_output_dto import (  # noqa: E402
     planner_output,
 )
 from apps.engine.app.use_cases import prompts  # noqa: E402
+from apps.engine.domain.entities import scoring_rules  # noqa: E402
 from apps.engine.app.use_cases.game_support import system_msg  # noqa: E402
 from apps.engine.app.use_cases.harness import action_vocab_check, run_with_harness  # noqa: E402
 
@@ -300,7 +301,8 @@ def evaluator_probe(llm, case):
     hit = (out.verdict in expect) if out else False
     return out, report, {"expected": sorted(expect), "got": out.verdict if out else None, "hit": hit,
                          "expected_matched": _idx,
-                         "got_matched": getattr(out, "matched_index", None) if out else None}
+                         "got_matched": scoring_rules.resolve_matched_index(
+                             claims, out.matched_quote, out.matched_index) if out and out.verdict != "none" else None}
 
 
 # planner — 규칙·손상 단계가 다른 3조건

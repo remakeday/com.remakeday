@@ -221,6 +221,9 @@ class EvaluatorSideEffectOutput(StrictModel):
 class EvaluatorVerdictOutput(StrictModel):
     # 필드 순서 = 생성 순서 (스키마 제약 디코딩) — 근거를 먼저 쓰게 해 판정을 안정화한다
     why: str = ""
+    # 고른 후보 문장의 일부를 한 글자도 고치지 않고 옮긴 것 — 번호보다 먼저 쓰게 하고,
+    # 인용이 유일하게 가리키는 후보로 matched_index를 보정한다(번호만 하나 어긋나는 사례 대응)
+    matched_quote: str | None = None
     matched_index: int | None = None  # 후보 목록의 0-기반 번호 — 문자열 인용 대신
     verdict: Literal["confirmed", "partial", "none"]
 

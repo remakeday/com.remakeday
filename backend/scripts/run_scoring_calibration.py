@@ -82,7 +82,9 @@ def judge_set(llm, truths, user_claims: list[str], *, top3: bool, verbose: bool 
         )
         verdicts_by_cell[t.cell].append(out.verdict if out else "none")
         if verbose:
-            m = candidates[out.matched_index] if out and out.matched_index is not None else None
+            idx = scoring_rules.resolve_matched_index(
+                candidates, out.matched_quote, out.matched_index) if out and out.verdict != "none" else None
+            m = candidates[idx] if idx is not None else None  # _judge와 같은 인용 보정
             print(f"    {t.code} [{out.verdict if out else 'none'}] ← {m}")
 
     cell_scores = {c: scoring_rules.cell_score(v) for c, v in verdicts_by_cell.items()}

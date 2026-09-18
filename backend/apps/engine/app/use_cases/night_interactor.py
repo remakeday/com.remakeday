@@ -315,7 +315,9 @@ class NightInteractor:
             )
 
             def index_check(o) -> str | None:
-                if o.matched_index is not None and not (0 <= o.matched_index < len(user_claims)):
+                # 인용이 후보를 유일하게 가리키면 번호가 틀려도 보정되므로 재생성하지 않는다
+                resolved = scoring_rules.resolve_matched_index(user_claims, o.matched_quote, o.matched_index)
+                if resolved is not None and not (0 <= resolved < len(user_claims)):
                     return f"matched_index: {o.matched_index} (후보 {len(user_claims)}개)"
                 return None
 
@@ -332,10 +334,16 @@ class NightInteractor:
             record_harness(self._events, loop.attempt_id, report, loop_n=loop.loop_n, beat=None)
             verdict = out.verdict if out else "none"
             match = index = None  # 이벤트 스키마는 문자열 유지 — 인덱스는 이번 밤 인정 문장 계산용
-            if out and out.matched_index is not None and 0 <= out.matched_index < len(user_claims):
-                index = out.matched_index
+            if out and out.verdict != "none":
+                # 인용이 유일하게 가리키는 후보가 번호보다 우선 — 원본 출력은 harness_event에 남는다.
+                # none 판정은 인용이 남아 있어도 매칭하지 않는다(인용이 verdict보다 먼저 생성된다)
+                index = scoring_rules.resolve_matched_index(
+                    user_claims, out.matched_quote, out.matched_index)
+            if index is not None and 0 <= index < len(user_claims):
                 match = user_claims[index]
                 matched.add(match)
+            else:
+                index = None
             per_truth.append({
                 **it, "verdict": verdict, "matched_user_claim": match, "matched_index": index,
                 "cited": list(user_claims),
