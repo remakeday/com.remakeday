@@ -65,13 +65,13 @@ export function EntryScreen({
 }) {
   const ready = lines !== null && !loading;
   return (
-    <div className="relative flex min-h-dvh w-full flex-col items-center justify-center bg-void py-6 text-paper sm:py-8">
-      {/* 배경 A01 — 상·하단 1/3 비움, 텍스트가 주인공 */}
+    <div className="relative flex min-h-dvh w-full flex-col items-center justify-center overflow-hidden bg-void py-6 text-paper sm:py-8">
+      {/* A01 PNG 상·하 여백을 잘라 모바일 세로 화면을 빈 띠 없이 채운다. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={ENTRY_IMAGE}
         alt=""
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-40"
+        className="pointer-events-none fixed inset-0 h-full w-full scale-[1.35] object-cover object-center opacity-40"
       />
       <div className="relative z-10 flex w-full max-w-4xl flex-col items-center gap-6 px-4 text-center sm:px-8">
         {/* entry_lines는 랜딩이 보여준다 — 여기서는 반복하지 않는다. */}
