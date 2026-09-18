@@ -201,7 +201,7 @@ const NIGHT_IMAGES = { P01: '/assets/P01.png', P02: '/assets/P02.png', P03: '/as
         if (n < 5) {
           await page.getByRole('button', { name: '규칙을 고른다', exact: true }).waitFor();
           if (n === 1) {
-            await page.getByText('가설을 넣어 물으면 맞다·아니다로 판정받고, 누가·무엇을 물으면 기록에서 찾아 준다.', { exact: true }).waitFor();
+            await page.getByText('가설을 넣어 물으면 맞다·아니다로 판정한다. 누가·무엇을 물으면 기록에서 찾아 준다.', { exact: true }).waitFor();
             assert.equal(await page.getByText('새 단서 — 노트에 적혔다').count(), 0);
           }
           if (n === 1) await page.waitForFunction(() => window.voiceStarts.includes('AD01.mp3'));

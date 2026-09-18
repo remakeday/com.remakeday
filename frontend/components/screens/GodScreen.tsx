@@ -238,12 +238,12 @@ export function GodScreen({
 
       {/* bg-void — 수평선(J01)이 콘텐츠 텍스트를 가로지르지 않게 뒤로 숨긴다 */}
       <div className="fade-in-slow relative z-10 flex w-full max-w-xl flex-col gap-6 bg-void px-4 py-4">
-        <p className="text-center text-lg leading-relaxed">
-          이해도 {Math.round(total)}%. 오늘의 세계는 멸망했습니다.
-          <br />낮 대화와 별도로 세 번 물을 수 있다. 알 수 없다는 답에는 횟수를 쓰지 않는다.
-        </p>
+        <div className="break-keep text-center text-lg leading-relaxed">
+          <p>이해도 {Math.round(total)}%. 오늘의 세계는 멸망했습니다.</p>
+          <p>낮 대화와 별도로 한 밤에 세 번 묻는다. 물을수록 신은 조금 더 알려 준다.</p>
+        </div>
         {firstVisit && (
-          <div className="text-center text-base leading-relaxed">
+          <div className="break-keep text-center text-base leading-relaxed">
             <p>{VOICE_CLIPS.AD01.text}</p>
             <VoiceReplay speaker="조언자" text={VOICE_CLIPS.AD01.text} />
           </div>
@@ -260,7 +260,6 @@ export function GodScreen({
                 <p className="text-lg opacity-60">— {qa.question}</p>
                 <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-lg">
                   {badge && <span className="border border-orange px-2 text-base text-orange">{badge}</span>}
-                  {qa.refunded && <span className="text-base opacity-80">횟수를 돌려받았다</span>}
                   {firstLine && <span className="w-full">{firstLine}</span>}
                 </p>
                 {qa.nextObservation && <AdviceBlock text={qa.nextObservation} />}
@@ -288,8 +287,8 @@ export function GodScreen({
           <>
             {remaining > 0 ? (
               <div className="flex flex-wrap items-center gap-2">
-                <p className="w-full text-base opacity-80">가설을 넣어 물으면 맞다·아니다로 판정받고, 누가·무엇을 물으면 기록에서 찾아 준다.</p>
-                <p className="w-full text-sm opacity-60">기록으로 알 수 없는 질문은 횟수를 쓰지 않는다 · 한 밤 세 번까지. 게임 방법을 물어도 된다.</p>
+                <p className="w-full break-keep text-base leading-relaxed opacity-80">가설을 넣어 물으면 맞다·아니다로 판정한다. 누가·무엇을 물으면 기록에서 찾아 준다.</p>
+                <p className="w-full break-keep text-base leading-relaxed opacity-80">게임 방법을 물으면 안내로 답한다. 남은 횟수는 쓰지 않는다.</p>
                 <span className="w-full text-base opacity-70">
                   남은 질문 {remaining}
                 </span>
@@ -341,7 +340,7 @@ export function GodScreen({
                 )}
               </div>
             ) : (
-              <p className="text-center text-lg opacity-60">
+              <p className="break-keep text-center text-lg leading-relaxed opacity-60">
                 더 물을 수 없다.
               </p>
             )}
@@ -358,12 +357,12 @@ export function GodScreen({
 
         {stage === "rule" && appliedLabel !== null && (
           <div className="fade-in flex flex-col items-center gap-3">
-            <p className="text-lg opacity-70">세계에 규칙이 걸렸다.</p>
+            <p className="break-keep text-lg leading-relaxed opacity-70">세계에 규칙이 걸렸다.</p>
             <p className="border border-white/40 px-4 py-3 text-lg leading-relaxed">
               {appliedLabel}
             </p>
             <WorldHintDrip />
-            <p className="animate-pulse text-base tracking-widest opacity-50">
+            <p className="animate-pulse break-keep text-base leading-relaxed tracking-widest opacity-50">
               규칙을 적용해 다음 하루를 준비하는 중…
             </p>
           </div>
@@ -371,11 +370,11 @@ export function GodScreen({
 
         {stage === "rule" && appliedLabel === null && (
           <div className="flex flex-col gap-4">
-            <p className="text-center text-lg opacity-70">
+            <p className="break-keep text-center text-lg leading-relaxed opacity-70">
               남은 모든 날에 규칙 하나를 건다.
             </p>
             {options === null ? (
-              <p className="text-center text-lg opacity-40">
+              <p className="break-keep text-center text-lg leading-relaxed opacity-40">
                 {optionsAction.failure ? (
                   <button
                     type="button"
@@ -411,8 +410,9 @@ export function GodScreen({
                   </button>
                 ))}
                 {options.length === 0 && (
-                  <div className="border border-white/30 p-3 text-lg opacity-70">
-                    <p>현재 근거에 맞는 실행 가능한 추천이 없다. 아래에서 직접 쓰거나 표현을 바꿔 본다.</p>
+                  <div className="break-keep border border-white/30 p-3 text-lg leading-relaxed opacity-70">
+                    <p>현재 근거에 맞는 실행 가능한 추천이 없다.</p>
+                    <p>아래에서 직접 쓰거나 표현을 바꿔 본다.</p>
                     <button type="button" onClick={loadOptions} disabled={optionsAction.busy} className="mt-2 underline disabled:opacity-30">후보 다시 확인</button>
                   </div>
                 )}
@@ -457,7 +457,7 @@ export function GodScreen({
               </>
             )}
             {ruleAction.busy && (
-              <p className="text-center text-base opacity-40">
+              <p className="break-keep text-center text-base leading-relaxed opacity-40">
                 세계에 규칙을 적용하는 중…
               </p>
             )}

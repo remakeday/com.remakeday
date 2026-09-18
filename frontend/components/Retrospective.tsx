@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   api,
   ApiError,
+  type CellScores,
   type HarnessRes,
   type JourneyRes,
   type Metric,
@@ -75,13 +76,50 @@ function OpportunityCard({ opportunity }: { opportunity: RuleOpportunity }) {
 }
 
 /** 개발 데이터 — 접힘 안에서만. 유저 회고의 본문은 여정이다. */
-function DevDetails({ data }: { data: HarnessRes }) {
+function DevDetails({ data, journey }: { data: HarnessRes; journey: JourneyRes }) {
   const s = data.harness_summary;
+  const finalCells: CellScores | undefined = journey.final?.cells;
+  const scoredCells = ["cause", "motive", "identity"] as const;
+  const sourceCounts = {
+    monkey_paw: data.rules.filter((rule) => rule.source === "monkey_paw" || rule.source === "paw_effect").length,
+    user_choice: data.rules.filter((rule) => rule.source === "user_choice").length,
+    user_custom: data.rules.filter((rule) => rule.source === "user_custom").length,
+  };
   const experiments = data.experiments ?? [];
   const metrics = data.metrics ? Object.entries(data.metrics) : [];
   const countOrRecordMissing = (value: number | null | undefined) => value === null || value === undefined ? "기록 없음" : `${value}회`;
   return (
     <div className="mt-4 space-y-8">
+      <section className="space-y-5 bg-paper p-4 text-ink" aria-label="개발 데이터 요약">
+        <div className="space-y-3">
+          <h3 className="text-base">회차별 이해도</h3>
+          {journey.loops.map((loop) => (
+            <div key={loop.loop_n} className="flex items-center gap-3">
+              <span className="w-12 shrink-0">{loop.loop_n}회차</span>
+              <div role="meter" aria-label={`${loop.loop_n}회차 이해도`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={loop.total} className="h-2 flex-1 bg-ink/15">
+                <div className="h-2 bg-ink/70" style={{ width: `${loop.total}%` }} />
+              </div>
+              <span className="w-12 shrink-0 text-right tabular-nums">{Math.round(loop.total)}%</span>
+            </div>
+          ))}
+        </div>
+        <div className="space-y-3">
+          <h3 className="text-base">최종 칸 점수</h3>
+          {finalCells ? scoredCells.map((cell) => (
+            <div key={cell} className="flex items-center gap-3">
+              <span className="w-12 shrink-0">{CELL_LABEL[cell]}</span>
+              <div role="meter" aria-label={`${CELL_LABEL[cell]} 점수`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={finalCells[cell]} className="h-2 flex-1 bg-ink/15">
+                <div className="h-2 bg-orange" style={{ width: `${finalCells[cell]}%` }} />
+              </div>
+              <span className="w-12 shrink-0 text-right tabular-nums">{Math.round(finalCells[cell])}%</span>
+            </div>
+          )) : <p className="opacity-60">기록 없음</p>}
+        </div>
+        <div className="space-y-2">
+          <h3 className="text-base">규칙 출처 분포</h3>
+          <p className="break-keep tabular-nums">원숭이손 {sourceCounts.monkey_paw}개 · 추천 {sourceCounts.user_choice}개 · 직접 {sourceCounts.user_custom}개</p>
+        </div>
+      </section>
       <section className="space-y-4">
         <h3 className="text-base">실험 기록 — 규칙이 실제로 걸렸는가</h3>
         <p>{VOICE_CLIPS.EN03.text}</p>
@@ -231,7 +269,7 @@ export function Retrospective({ attemptId }: { attemptId: string }) {
           <summary className="cursor-pointer text-base opacity-60">개발 데이터 — 규칙·검사·모델 동작이 궁금하다면</summary>
           <p className="mt-4">{VOICE_CLIPS.EN02.text}</p>
           <VoiceReplay speaker="회고" text={VOICE_CLIPS.EN02.text} />
-          <DevDetails data={harness} />
+          <DevDetails data={harness} journey={journey} />
         </details>
       )}
     </article>

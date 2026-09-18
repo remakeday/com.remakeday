@@ -116,7 +116,7 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
         body = questionCalls === 1 ? {
           answer: '그건 알 수 없다. 아직 트럭이 도착한 장면은 보지 못했어. 다음 이송 방송이나 출입구를 살펴봐.', verdict: '그건 알 수 없다.', detail: '현재 기록에는 트럭의 도착 여부가 없다.', remaining: 2,
           status: 'unknown', evidence_ids: [], evidence: [], next_observation: '다음 이송 방송과 출입구를 확인한다.',
-          unlocked_note: null, kind: 'answer', refunded: true,
+          unlocked_note: null, kind: 'answer', refunded: false,
           suggested_questions: ['채연은 오늘 무엇을 했는가?'],
         } : questionCalls === 2 ? {
           answer: '맞다. 기록은 이렇다', verdict: '맞다.', detail: '은상이 그렇게 말했다는 사실만 기록됐다.', remaining: 1,
@@ -315,7 +315,7 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
     await page.getByText('트럭 소리.', { exact: true }).waitFor();
     await page.getByRole('button', { name: '계속', exact: true }).click();
 
-    await page.getByText('가설을 넣어 물으면 맞다·아니다로 판정받고, 누가·무엇을 물으면 기록에서 찾아 준다.', { exact: true }).waitFor();
+    await page.getByText('가설을 넣어 물으면 맞다·아니다로 판정한다. 누가·무엇을 물으면 기록에서 찾아 준다.', { exact: true }).waitFor();
     assert.equal(await page.getByText('새 단서 — 노트에 적혔다').count(), 0);
 
     const questionInput = page.locator('input[placeholder^="예:"]');
@@ -332,7 +332,7 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
     await exampleRow.getByRole('button', { name: '채연은 오늘 무엇을 했는가?', exact: true }).waitFor();
     assert.equal(await exampleRow.getByRole('button').count(), 1, 'reply replaces the suggestions');
     await page.getByText('그건 알 수 없다', { exact: true }).waitFor();
-    await page.getByText('횟수를 돌려받았다', { exact: true }).waitFor();
+    assert.equal(await page.getByText('횟수를 돌려받았다', { exact: true }).count(), 0, 'no refund badge — questions are fixed at three per night (tester12 F5)');
     await page.getByText('내일 해 볼 일', { exact: true }).waitFor();
     assert.equal(await page.getByText('아직 확인되지 않았다', { exact: true }).isVisible(), false);
     assert.equal(await page.getByText('다음 이송 방송이나 출입구를 살펴봐.', { exact: true }).isVisible(), false);
