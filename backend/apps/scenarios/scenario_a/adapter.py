@@ -719,8 +719,9 @@ def build() -> StaticScenario:
             FragmentDTO(loop_n=1, beat=6, world_outcome="truck", text="트럭 소리."),
             # 2~3회차 — 정황. 노트로 대조 가능
             # 행동 파편은 scene_actions의 실제 실행 기록으로 적립한다.
-            # 이름만 나오는 충식의 첫 등장에 최소 맥락 (테스터9 F23 ③). 초안 — 시나리오 디렉터 확인 전
-            FragmentDTO(loop_n=3, beat=2, source_kind="statement", text="같은 방에 있던 충식은 어제 이송됐다. 아침에 그 자리는 깨끗하게 비어 있었다."),
+            # 이름만 나오는 충식의 첫 등장에 최소 맥락 (테스터9 F23 ③). 빈 자리는 준에게 물어야 나온다
+            # (jun-before-start-transfer) — 조각이 먼저 주지 않는다. 디렉터 확인 완료 2026-09-18.
+            FragmentDTO(loop_n=3, beat=2, source_kind="statement", text="같은 방에 있던 충식은 어제 이송됐다."),
             FragmentDTO(loop_n=3, beat=2, actor="준", witnesses=["민석"], source_kind="statement", text='준: "이 숫자 뭔지 알아?"'),
             # 3~4회차 — 단어. 이상함을 눈치채는 시점. 행동 묘사가 아니라 준의 실제 대사로 둔다 — 채팅창에 말풍선으로 뜬다 (F23)
             FragmentDTO(loop_n=3, beat=2, actor="준", witnesses=["민석"], source_kind="statement", text='준: "귀표. 이거 귀표라고 하던데."'),
