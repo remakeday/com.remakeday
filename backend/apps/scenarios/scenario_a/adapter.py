@@ -118,7 +118,7 @@ def build() -> StaticScenario:
                 ],
                 fallback_lines=["어느 걸 물은 거야? 다시 말해 줘.", "잠깐, 잘 못 들었어. 한 번 더 말해 줘."],
                 question_replies=[
-                    # 원숭이손 ③ broadcast-room을 받은 날 — 초안 — 시나리오 디렉터 확인 전
+                    # 원숭이손 ③ broadcast-room을 받은 날 — 디렉터 확인 완료 2026-09-18
                     QuestionReplyDTO(
                         action="보고를 물으면 자신이 한 일을 자세히 설명한다",
                         required_actions=[
@@ -203,7 +203,8 @@ def build() -> StaticScenario:
                 goal="궁금한 것을 친구와 함께 알아보기",
                 relations="상대와 편하게 이야기하고 발견을 나누고 싶다. 은상이 불안해하면 이야기를 들어준다.",
                 knowledge=[
-                    KnowledgeDTO(id="jun-before-start-band", kind="observed", text="손목띠 숫자 밑에 작은 글자가 하나 더 있는 것을 봤다. 무슨 뜻인지는 모른다."),
+                    # "작은 글자"는 규칙 행동 "가진 것을 보여준다" 서술에서만 드러난다(HANDOFF 10번) — 준의 기억은 "뭔가 더 있다"까지만.
+                    KnowledgeDTO(id="jun-before-start-band", kind="observed", text="손목띠를 불빛에 비춰 보면 구멍 말고 뭔가 더 있는 것 같았다. 잘 안 보였다."),
                     KnowledgeDTO(id="jun-before-start-ration", kind="observed", text="배급 포대가 트럭에서 내려오는 것을 봤다."),
                     KnowledgeDTO(id="jun-before-start-handle", kind="observed", text="문손잡이는 손이 닿지 않는 높이에 있다."),
                     KnowledgeDTO(id="jun-before-start-cough", kind="observed", text="충식이 이송되기 전 기침하는 것을 직접 봤다. 아파 보였다."),
@@ -265,8 +266,9 @@ def build() -> StaticScenario:
                 illustrations=[IllustrationDTO(image_id="clue-01", caption="음식이 남은 쟁반 하나가 비스듬히 놓여 있다.")]),
             SceneActionDTO(beat=2, actor="준", action="손목띠를 만진다", witnesses=["민석"],
                 narration="준이 손목띠를 불빛에 비춰 본다.",
-                # 테스터9 F14 — 설명 규칙이 장면만 되풀이하지 않게 시작 기억(jun-before-start-band)을 담는다. 초안 — 시나리오 디렉터 확인 전
-                explanation="불빛에 비춰 봤어. 숫자 밑에 작은 글자가 하나 더 있어. 무슨 뜻인지는 몰라.",
+                # 테스터9 F14 — 설명 규칙이 장면만 되풀이하지 않게 시작 기억(jun-before-start-band)을 담는다.
+                # "작은 글자"는 규칙 행동 "가진 것을 보여준다"에서만 드러낸다 — 기본 설명이 먼저 주면 규칙을 걸 이유가 없다(HANDOFF 10번, 디렉터 확인 완료 2026-09-18).
+                explanation="불빛에 비춰 봤어. 구멍 말고 뭔가 더 있는 것 같은데 잘 안 보여.",
                 explanation_knowledge=["jun-before-start-band"],
                 suppressed_narration="준은 손목띠를 건드리지 않고 앉아 있다.",
                 illustrations=[IllustrationDTO(image_id="clue-11", caption="준이 구멍 표식이 난 띠를 들여다본다.")]),
@@ -341,7 +343,7 @@ def build() -> StaticScenario:
                 explanation="포대 옆에 글자가 있길래 봤어. 못 읽겠어. 트럭 옆에 있던 거랑 비슷한데.",
                 suppressed_narration="준은 포대를 건드리지 않는다."),
             # ── 원숭이손 소원 전용 잠재 행동 (paw_only) — 소원 규칙이 걸린 날에만 일어난다 ──
-            # 서술·삽화 캡션은 스펙 §3 초안, 1인칭 설명(explanation)은 스펙에 없어 서술에서 옮긴 초안 — 시나리오 디렉터 확인 전
+            # 서술·삽화 캡션은 스펙 §3 초안, 1인칭 설명(explanation)은 스펙에 없어 서술에서 옮긴 디렉터 확인 완료 2026-09-18
             # ① chaeyeon-honest: 소원 장면(2) → 쟁반을 다 비운다(3) → 담요 두른 사람이 는다(5)
             SceneActionDTO(beat=2, actor="채연", action="속마음을 말한다", witnesses=["준"], dormant=True, paw_only=True,
                 narration='채연이 담요를 끌어올린 채 준에게 작게 말한다. "밥에서 소독약 냄새가 나."',
@@ -414,7 +416,7 @@ def build() -> StaticScenario:
                     SceneDialogueLineDTO(code="minseok", text="몰라. 손목띠 빼면 안 돼."),
                     SceneDialogueLineDTO(code="jun", text="안 빼. 그냥 궁금해서."),
                 ]),
-            # 원숭이손 반대 사건 대사 — 같은 비트 기본 대사보다 먼저 둔다. 초안 — 시나리오 디렉터 확인 전
+            # 원숭이손 반대 사건 대사 — 같은 비트 기본 대사보다 먼저 둔다. 디렉터 확인 완료 2026-09-18
             SceneDialogueDTO(beat=3,
                 required_actions=[SceneDialogueActionDTO(actor="채연", action="배급을 다 먹는다")],
                 lines=[
@@ -442,7 +444,7 @@ def build() -> StaticScenario:
                     SceneDialogueLineDTO(code="chaeyeon", text="이마 짚고 그냥 갔어. 이제 좀 쉬고 싶어."),
                     SceneDialogueLineDTO(code="eunsang", text="…나도 무서운데."),
                 ]),
-            # 원숭이손 ④ 반대 사건 대사 — 초안 — 시나리오 디렉터 확인 전
+            # 원숭이손 ④ 반대 사건 대사 — 디렉터 확인 완료 2026-09-18
             SceneDialogueDTO(beat=5,
                 required_actions=[SceneDialogueActionDTO(actor="은상", action="번호 소문을 낸다"),
                                   SceneDialogueActionDTO(actor="민석", action="방송실에 간다")],
@@ -458,7 +460,7 @@ def build() -> StaticScenario:
                     SceneDialogueLineDTO(code="minseok", text="이상한 건 알리랬잖아."),
                     SceneDialogueLineDTO(code="eunsang", text="내 얘기도 했어?"),
                 ]),
-            # 원숭이손 ② 반대 사건 대사 — 초안 — 시나리오 디렉터 확인 전
+            # 원숭이손 ② 반대 사건 대사 — 디렉터 확인 완료 2026-09-18
             SceneDialogueDTO(beat=6,
                 required_actions=[SceneDialogueActionDTO(actor="채연", action="밤에 기침한다")],
                 lines=[
@@ -684,7 +686,7 @@ def build() -> StaticScenario:
                 text="방송실에서는 이 구역과 옆 구역의 상태를 함께 점검한다."),
         ],
         # 원숭이손 소원 표 (스펙 §3 방식 A) — 사실이지만 원인 사슬 밖을 가리키고, 같은 날 뒤 비트에 반대 사건이 난다.
-        # 표 첫 줄이 1회차 고정 소원. 소원·제안 문구·관찰 문장은 초안 — 시나리오 디렉터 확인 전
+        # 표 첫 줄이 1회차 고정 소원. 소원·제안 문구·관찰 문장은 디렉터 확인 완료 2026-09-18
         paw_wishes=[
             PawWishDTO(key="chaeyeon-honest", target_cell="motive",
                 label="채연이 오늘은 밥을 왜 안 먹는지 솔직하게 말한다.",

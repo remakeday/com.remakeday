@@ -10,9 +10,9 @@ from apps.engine.domain.entities.rule_rules import Rule
 from apps.scenarios.scenario_a.adapter import build
 from tests.pure.test_review_failure_boundaries import Events, loop_at
 
-KNOWLEDGE = "손목띠 숫자 밑에 작은 글자가 하나 더 있는 것을 봤다. 무슨 뜻인지는 모른다."
+KNOWLEDGE = "손목띠를 불빛에 비춰 보면 구멍 말고 뭔가 더 있는 것 같았다. 잘 안 보였다."  # 실제 시나리오 jun-before-start-band와 같아야 한다
 REPEATS_SCENE = "불빛에 비춰 봤어. 숫자가 써 있잖아. 뭔지 궁금해서."  # 09-17 실제 대사
-CARRIES_KNOWLEDGE = "불빛에 비춰 봤어. 숫자 밑에 작은 글자가 하나 더 있어. 무슨 뜻인지는 몰라."
+CARRIES_KNOWLEDGE = "불빛에 비춰 봤어. 구멍 말고 뭔가 더 있는 것 같은데 잘 안 보여."
 
 
 def _bundle(explanation, knowledge_ids):
@@ -61,7 +61,7 @@ def test_explain_rule_statement_carries_knowledge_and_witness_remembers_the_same
     states = [NS(code=c.code, name=c.name, memory=[]) for c in bundle.characters if c.playable]
     learn_scene(bundle, loop, states, public_observations(events, loop.attempt_id))
     heard = next(m for s in states if s.name == "민석" for m in s.memory if m["id"] == statement.observation_id)
-    assert heard["kind"] == "들은 말" and "작은 글자" in heard["text"]
+    assert heard["kind"] == "들은 말" and "뭔가 더" in heard["text"]  # 준의 기억은 "뭔가 더"까지(HANDOFF 10번)
 
 
 def test_current_scenario_explanation_for_jun_band_passes_the_guard_unchanged():

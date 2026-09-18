@@ -57,7 +57,7 @@ def test_explanations_used_by_information_rules_add_what_the_actor_knows():
     bundle = build().bundle()
     action = {(a.actor, a.action): a for a in bundle.scene_actions}
     band = action[("준", "손목띠를 만진다")].explanation
-    assert "작은 글자" in band  # jun-before-start-band — 장면 서술만 되풀이하지 않는다.
+    assert "뭔가 더" in band and "작은 글자" not in band  # jun-before-start-band — 장면 서술만 되풀이하지 않되, "작은 글자"는 규칙 장면에서만(HANDOFF 10번).
     shown = action[("민석", "가진 것을 보여준다")].explanation
     assert "채연" in shown and "충식" not in shown  # 설명 문장은 소실 인물 필터를 거치지 않는다.
     # 테스터9 F14 — '문 앞까지 갔다'만 적힌 기억은 '방송실에 갔어?'에 안 갔다고 답하게 했다.
