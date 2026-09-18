@@ -65,3 +65,16 @@
 
 ### 테스터12(19:06~) 반영 — 사용자 본인 재측정
 점수 8.8→8.8→27.5×3, 3회차 이후 질문 미사용. F1 음성 보류·F3 푸터·F2 쟁반·F6 합성 파편·F5 3회 고정+점진 공개 반영. F4 안내 문구·F9 그래프 Codex. F7 전반 어색은 제출 후. F11: F5 뒤 점수 보고 판단(오르면 유지).
+
+## 최종 배포 절차 — 팀장 류준의 "최종 배포 준비" 신호 뒤 (2026-09-18 21:00 확정)
+
+전제: 팀원 프론트 커밋 완료, 새 Anthropic 키 준비. 순서대로, 각 단계 통과 확인 뒤 다음.
+
+1. **프론트 마감(컨트롤러)** — 팀원 커밋 확인 → EntryScreen 준 소개 "손목띠 숫자를" → "손목띠를"(HANDOFF 12번) → `tsc` → 헤드리스 10종(한 번에 하나) → 커밋 → `feat/coherence-chain` 푸시 → `main` ff 푸시 → Vercel 배포 success 확인(GitHub commit status).
+2. **키 교체(사용자/류준)** — `backend/.env`의 `ANTHROPIC_API_KEY`를 새 키로. 같은 파일에서 8~14행의 옛 `CORE_LLM_*`·`NPC_LLM_*`(ollama) 줄은 지워 중복을 없앤다(로더는 뒤 줄을 쓰지만 애매함 제거).
+3. **제출 전환(컨트롤러)** — 같은 `.env`에서 `USER_DAILY_ATTEMPTS=5`·`DAILY_ATTEMPT_CAP=200`·`TRUST_PROXY=true`. 값은 문서에 적지 않는다.
+4. **재기동** — `fuser -k 8500/tcp`로 끊고(패턴 pkill 금지 — 같은 줄의 시작 명령을 자기 자신으로 잡아 셸이 죽는다) 절대경로로 uvicorn 시작 → `/health` 200(로컬·터널) → `get_settings()`로 `anthropic claude-sonnet-5 | anthropic claude-haiku-4-5 | key set: True` 확인.
+5. **실서버 스모크** — 개발 로그인 → 판 생성 → 1회차 진입 → 다음 장면 1회(관리자 검사·계획 = Sonnet 호출) → NPC에게 질문 1회(Haiku 호출) → 응답 200·오류 0. 새 키가 실제로 통하는지 여기서 확인된다.
+6. **최종 선언(사용자)** — "최종 제출 완료". 이후 코드 동결.
+
+롤백(어느 단계든): provider 두 줄을 `ollama`, 모델을 `gemma4:12b`/`kanana1.5:8b-q4km`로, 한도는 테스트값으로 되돌리고 재기동.
