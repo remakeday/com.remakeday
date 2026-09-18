@@ -1693,7 +1693,7 @@ top-3는 임베딩 전 셀 1.000, 어간 겹침은 순서가 무의미(τ≈0). 
 (로컬 ±3ms, Gemini ±40ms 네트워크). bge p95 1.8s 이상치는 3회 모두 117~119ms로 **재현 안 됨** — 1차 실행 때의 1회성 모델 로드로 판단(확정 아님).
 원문 `rule-alternatives-rep{1,2,3}.json`.
 
-**서버 실경로.** `.env` 무수정, 환경변수 오버라이드로 8600 포트·`pigfarm_test` DB에 기동해 실제 HTTP `POST /nights/{id}/rule/preview`로 확인
+**서버 실경로.** `.env` 무수정, 환경변수 오버라이드로 별도 포트·테스트 DB에 기동해 실제 HTTP `POST /nights/{id}/rule/preview`로 확인
 (판은 실제 `/sessions`로 생성, 회차·밤 행은 fixture 방식으로 삽입 — 하루 플레이는 생략). "민석이 스피커실로 가게 해" → 임베딩 **방송실에 간다 1위**(어간은 3위),
 응답 233ms(행동 문구 17개 캐시 채움 포함) → 이후 85ms. ollama 차단(`OLLAMA_BASE_URL=127.0.0.1:9`) 상태에서 같은 문장 4회 전부 **200 + 어간 순위 + warning 1줄**
 (`임베딩 실패, 어간 겹침으로 폴백: [Errno 111] Connection refused`), 6ms. 500 없음.
@@ -1732,7 +1732,7 @@ ollama가 `model predicted to exceed available memory, evicting`을 **두 번** 
 
 §7의 "bge-m3면 14.1GB로 동주 가능"은 추정이었다. qwen에 했던 절차 그대로 실측했다.
 
-**서버 실경로**(8600·`pigfarm_test`, `EMBEDDING_PROVIDER=ollama EMBEDDING_MODEL=bge-m3`, Settings 기본 `dimensions=2560`):
+**서버 실경로**(별도 포트·테스트 DB, 임베딩 provider=ollama·모델=bge-m3, 차원 기본 2560):
 "채연이한테 밥 나눠주지 말라고 해" → 배급을 남긴다·검진을 받는다·관찰을 설명한다, "민석이 스피커실로 가게 해" → **방송실에 간다**·기록한다·가진 것을 보여준다 —
 서버 응답 = 로컬 `EmbeddingRank` 계산 완전 일치. 첫 호출 247/257ms(행동 문구 17개 캐시 채움), 이후 126/121ms. 서버→ollama 실제 본문을 로깅 프록시로 캡처:
 `{"model": "bge-m3", "input": ["채연이한테 밥 나눠주지 말라고 해"], "keep_alive": "2h", "dimensions": 2560}` → **Qwen3 지시문 없이 원문 그대로**, 응답 **1024차원**
