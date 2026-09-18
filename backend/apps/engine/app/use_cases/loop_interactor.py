@@ -667,8 +667,10 @@ class LoopInteractor:
     def _disclose_scene(self, loop, bundle, beat=None):
         beat = beat or bundle.beats[loop.beat - 1]
         observations = []
+        # 장면 관찰은 비트 원문 서술만 — execute_scene이 넘기는 beat.narration은 행동 서술을 이어 붙인 것이라
+        # 밤 기록에서 행동 한 줄들과 겹쳐 보인다(테스터12 F6). 행동은 각자 action-* 관찰로 남는다.
         scene = disclose(self._events, loop, beat, key=f"scene-{beat.n}",
-                         text=beat.narration, illustrations=beat.illustrations)
+                         text=bundle.beats[beat.n - 1].narration, illustrations=beat.illustrations)
         observations.append(scene)
         if beat.broadcast:
             observations.append(disclose(self._events, loop, beat, key=f"broadcast-{beat.n}",

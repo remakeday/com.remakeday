@@ -357,7 +357,7 @@ def build() -> StaticScenario:
                 illustrations=[IllustrationDTO(image_id="Q09", caption="채연의 쟁반이 비어 있다. 숟가락이 쟁반 위에 걸쳐 있다.")]),
             SceneActionDTO(beat=5, actor="은상", action="담요를 두른다", witnesses=["준"], dormant=True, paw_only=True,
                 world_effect="flag_actor",
-                narration="저녁, 담요를 두른 사람이 하나 늘었다. 은상도 담요를 벗지 않는다.",
+                narration="저녁, 담요를 두른 사람이 하나 늘었다. 은상도 담요를 벗지 않는다. 은상의 쟁반은 손도 대지 않은 채다.",
                 explanation="담요 두르고 있었어. 벗기 싫어.",
                 suppressed_narration="",
                 illustrations=[IllustrationDTO(image_id="Q02", caption="저녁, 담요를 두른 사람이 늘었다.")]),
