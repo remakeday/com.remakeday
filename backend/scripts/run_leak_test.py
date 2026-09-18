@@ -40,12 +40,15 @@ def main() -> None:
     rc.add_common_args(parser, default_n=2)
     parser.add_argument("--age7", choices=["on", "off"], default="on",
                         help="AGE7_POLICY (기본 on — 실게임 구성)")
+    parser.add_argument("--provider", choices=["ollama", "anthropic"], default="ollama",
+                        help="--model(NPC 후보) provider (기본 ollama)")
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args()
 
     base_url = args.ollama_url or rc.ollama_base_url()
-    rc.check_ollama(base_url, [args.model])
-    llm = rc.make_llm(args.model, base_url)
+    if args.provider == "ollama":
+        rc.check_ollama(base_url, [args.model])
+    llm = rc.make_provider_llm(args.provider, args.model, base_url)
 
     bundle = build_scenario().bundle()
     chars = {c.code: c for c in bundle.characters}
@@ -98,7 +101,7 @@ def main() -> None:
 
     path = rc.append_metric(
         args.out, "leak_test", args.model,
-        n=args.n, probes=len(PROBES), age7=args.age7,
+        provider=args.provider, n=args.n, probes=len(PROBES), age7=args.age7,
         leak_rate_on=on["leak_rate"], leak_rate_off=off["leak_rate"],
         leaks_on=on["leaks"], leaks_off=off["leaks"],
         harness_catches_on=on["harness_catches"],

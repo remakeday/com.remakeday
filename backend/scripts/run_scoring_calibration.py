@@ -95,12 +95,15 @@ def main() -> None:
     rc.add_common_args(parser, default_model=rc.DEFAULT_JUDGE_MODEL, default_n=2)
     parser.add_argument("--top3", action="store_true", help="조정 전 파이프라인 재현 — 후보를 앞 3개로 자른다")
     parser.add_argument("--sets", default=None, help="쉼표로 세트 이름 필터 (예: 오답형)")
+    parser.add_argument("--provider", choices=["ollama", "anthropic"], default="ollama",
+                        help="--model(Core 채점 모델) provider (기본 ollama)")
     parser.add_argument("-v", "--verbose", action="store_true", help="truth별 verdict·매칭 후보 출력")
     args = parser.parse_args()
 
     base_url = args.ollama_url or rc.ollama_base_url()
-    rc.check_ollama(base_url, [args.model])
-    llm = rc.make_llm(args.model, base_url)
+    if args.provider == "ollama":
+        rc.check_ollama(base_url, [args.model])
+    llm = rc.make_provider_llm(args.provider, args.model, base_url)
 
     truths = [t for t in build_scenario().bundle().truth_claims]
     mode = "top3(조정 전)" if args.top3 else "전수(조정 후)"
@@ -138,7 +141,7 @@ def main() -> None:
 
     path = rc.append_metric(
         args.out, "scoring_calibration", args.model,
-        n=args.n, candidates="top3" if args.top3 else "all",
+        provider=args.provider, n=args.n, candidates="top3" if args.top3 else "all",
         totals={k: v["totals"] for k, v in summary.items()},
         gate_pass=(ok_correct and ok_half and ok_wrong and ok_spread),
     )

@@ -81,6 +81,18 @@ def make_llm(model: str, base_url: str | None = None, think: bool | None = False
     return OllamaLLM(base_url=base_url or ollama_base_url(), model=model, think=think)
 
 
+def make_provider_llm(provider: str, model: str, base_url: str | None = None, think: bool | None = False):
+    """provider별 LLM 빌더. ollama는 make_llm과 동일하고, anthropic은 프로덕션 팩토리
+    (llm_factory.build_llm)를 그대로 쓴다 — run_core_selection·run_age7_check와 같은 경로.
+    anthropic은 thinking 제어가 없어 think를 무시한다(키는 .env ANTHROPIC_API_KEY)."""
+    if provider == "anthropic":
+        from apps.engine.dependencies.llm_factory import build_llm  # 지연 import — ollama 러너엔 영향 없음
+        return build_llm("anthropic", model, base_url or ollama_base_url())
+    if provider == "ollama":
+        return make_llm(model, base_url, think)
+    raise SystemExit(f"[에러] 알 수 없는 provider: {provider} (ollama/anthropic)")
+
+
 def sys_msg(content: str) -> MessageDTO:
     return MessageDTO(role="system", content=content)
 

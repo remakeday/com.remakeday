@@ -57,6 +57,8 @@ def eval_attempt(client: httpx.Client, attempt_id: str, token: str) -> list[dict
 def main() -> None:
     parser = argparse.ArgumentParser(description="원숭이손 수락/거부 후 점수 변화 (selfplay 로그 기반)")
     parser.add_argument("--model", default="-", help="기록용 모델 라벨 (계산에는 안 쓴다)")
+    parser.add_argument("--provider", choices=["ollama", "anthropic"], default="ollama",
+                        help="기록용 provider 라벨 (계산에는 안 쓴다 — attempt를 만든 selfplay의 Core provider)")
     parser.add_argument("--n", type=int, default=0, help="(미사용 — 데이터는 selfplay 로그가 결정)")
     parser.add_argument("--out", default=rc.DEFAULT_OUT,
                         help="metrics 파일 (프로젝트 루트 기준, 기본 docs/metrics.yml)")
@@ -111,7 +113,7 @@ def main() -> None:
 
     path = rc.append_metric(
         args.out, "paw_eval", args.model,
-        attempts=len(ids), offers=len(records),
+        provider=args.provider, attempts=len(ids), offers=len(records),
         accepted=acc_n, rejected=rej_n,
         avg_delta_accept=acc_avg, avg_delta_reject=rej_avg,
     )
