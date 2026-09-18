@@ -1528,6 +1528,238 @@ $10 상한은 넘지 않은 것으로 판단하나 근거는 문자수 상한 �
   로컬·Anthropic 공통 약점 · Sonnet이 "유저가"라는 메타 표현을 답변에 누출한 사례 1건(§4) · Gemini
   무료 키는 어떤 역할로도 운영 후보가 아니다(하루 20요청).
 
+## A.20 2026-09-18 · 임베딩 슬롯 — 모델 비교를 하지 않은 이유
+
+근거: `docs/design/P2-P5-mvp.md` §주요 설계 결정 1 · `docs/jekyll.md` 2026-09-06 "채점 밸런스 조정" ·
+`metrics.yml` `scoring_calibration` 5줄(2026-09-06) · 코드·DB 실사(2026-09-18).
+
+E7(Core)·E6(NPC)·A.19(외부 API) 어디에도 임베딩 슬롯의 로컬 vs 외부 비교가 없다. **빠뜨린 것이
+아니라 비교 대상이 2026-09-06에 사라졌다.** 경위는 3단계다.
+
+1. **P0 설계(09-06)** — 용도는 둘이었다: ① 채점의 정답 주장 검색(RAG) ② `search_notes` 도구의 노트
+   검색(기획서 v9.0 §11.5). 이를 위해 pgvector·`truth_claim_embeddings`(1,536차원)·`GeminiEmbedding`
+   (`gemini-embedding-001`) 어댑터를 깔았다. **②는 끝내 구현하지 않았다** — `tool_port.py`에 "search_notes는
+   P2" 주석만 남고 디스패치·유스케이스가 없어, 실제 도구는 `ask_npc` 하나다.
+2. **P2 설계 결정(같은 날)** — 문장이 양쪽 다 20개 이하라 DB 왕복이 과해 pgvector 질의를 파이썬
+   코사인으로 대체, 테이블은 **유지하되 실사용 보류**(`P2-P5-mvp.md` 결정 1). 이 시점부터 테이블은 빈 채다.
+3. **채점 밸런스 조정(같은 날) — 여기서 경로가 제거됐다.** 플레이테스트 8판의 "정답에 도달해도
+   21~42%" 문제를 진단한 결과 원인이 **RAG top-3 후보 절단**(유저 주장 최대 8개 중 임베딩 유사도 상위
+   3개만 심판에게 전달)이었다. `run_scoring_calibration.py` 골든 세트로 측정하니 절단을 없애고 8개를
+   전부 번호 목록으로 심판에게 넣는 쪽이 나았다 — **정답형 65.3 → 100.0, 오답형 25.7 → 19.4, 2회 반복
+   편차 0.0%p**. 그래서 `_judge`의 임베딩 랭킹·장애 폴백(`user_claims[:3]`) 경로와 `_cos`를 삭제했다.
+
+즉 두 용도 중 ①은 **채점 캘리브레이션 축에서 탈락**했고 ②는 **구현되지 않았다.** 어느 임베딩 모델이 더
+나은지는 물을 필요가 없었다 — 유사도 랭킹을 쓰지 않는 쪽이 채점에 더 정확했기 때문이다. `AI_Agent_Evaluation
+PART1` §5 Anchor 표가 계획했던 `gemini-embedding` vs `Qwen3-Embedding-4B` 비교가 실행되지 않은 이유가 이것이다.
+
+**코드·DB 실사(2026-09-18)** — 위 경위가 현재 코드와 일치하는지 확인했다.
+
+| 확인 항목 | 결과 |
+|---|---|
+| `get_embedding()` 호출처 | 0건 (`llm_factory.py:68`에 정의만 존재) |
+| `.embed(...)` 호출 | 0건 |
+| 벡터 유사도 질의(`<=>`·cosine·l2_distance) | 0건 — `Vector(1536)` 컬럼 선언만 남음 |
+| `truth_claim_embeddings` 행수 | **0행** (실 DB 조회) |
+| `/health` 응답 | `{"db":"ok"}` — 09-06 당시 "헬스체크용으로 존속"시킨 임베딩 표시도 이후 사라짐 |
+| `.env` `EMBEDDING_FALLBACK=qwen3-local` | `build_embedding()`이 `fake`/`gemini`만 받아 **읽히지 않는 설정**(`grid_keymaker_secret_manager.py:31`에 필드만 존재) |
+
+**그래서 하지 않는 것**: 임베딩 슬롯의 로컬(`qwen3-local`) vs 외부(`gemini-embedding-001`) 비교는
+제출 범위에서 측정하지 않는다. 호출이 0인 슬롯이라 게이트를 만들 대상이 없다.
+
+**정본 반영(2026-09-18)**: 아래 문서에 원문을 고치지 않고 같은 경위를 **추가 기록**으로 덧붙였다 —
+기획서 확정본 v9.0 §11.5(`search_notes` 미구현)·§11.6(모델 계층 3회 변경과 임베딩 계층 소멸),
+`AI_Agent_Evaluation PART1` §5 Anchor(임베딩 축만 미측정인 이유), 팀원용 쉬운설명 v9.0 §49(쉬운 말 요약).
+`docs/apiscenario.md`에 걸려 있던 "임베딩 무료 키 한도 제출 전 확인 필요"는 전제가 틀린 과제라 같은 날 정정했다.
+이 문서 §A.17 라이선스 점검과 09-14 변경 이력 줄의 "embedding gemini", `docs/HANDOFF.md`의 운영 구성
+2곳은 그 시점의 기록이라 그대로 둔다. 현재 구성은 **Core·NPC 2슬롯뿐**임을 이 부록이 정본으로 정한다.
+
+## A.21 2026-09-18 · 임베딩 부활(규칙 대안 순위 한 자리) — 5셀 비교·모델 간 순위 일치도
+
+원문: `output/rule-alternatives-2026-09-18/rule-alternatives-20260918T012519Z.json`(셀별 전체 순위·오답, gitignore — 이 부록이 정본) ·
+`docs/metrics.yml` `rule_alternatives_eval` 11줄. 러너: `backend/scripts/run_rule_alternatives_eval.py`, 골든: `backend/scripts/rule_alternatives_golden.yml`
+(**에이전트 작성·Scenario Director 미검수**, 30문장, 17개 (대상, 행동) 쌍 전부 2~3문장, 금지형·구어·오타 포함).
+
+**결정 경위.** A.20에서 임베딩 호출이 0임을 확인한 뒤 사용자 결정(2026-09-18)으로 **한 자리에만** 되살렸다:
+신의 개입 "직접 쓰기" 규칙이 거부됐을 때 주는 대안 3개의 순위(`intervention_interactor.suggest_alternatives`).
+어간 앞 2글자 겹침이던 것을 Strategy(`alternative_rank.py` — `StemOverlapRank`·`EmbeddingRank`)로 뽑고, 임베딩은
+어떤 예외든 어간으로 폴백한다. 플레이어가 고르는 추천이라 틀려도 게이트에 무해한 자리이고, 09-06의 교훈("임베딩으로
+결정하면 틀렸을 때 조용히 깎인다")대로 채점·NPC 기억·단서 해금에는 닿지 않는다. 구현은 자매 프로젝트
+`com.lifetutorial`의 임베딩 방식을 따랐다: 1536 = MRL 절단(로컬 `truncate_dim`/ollama `dimensions`, Gemini `output_dimensionality`),
+L2 정규화(ollama 응답 노름 1.000000 실측), 질의/문서 비대칭(Qwen3 지시문 접두는 query에만, Gemini `RETRIEVAL_QUERY`/`RETRIEVAL_DOCUMENT`),
+"다른 provider 벡터는 한 컬럼에 섞지 않는다"(lifetutorial은 `embedding`/`embedding_local` 컬럼 분리 — 우리는 테이블 미사용이라 포트 주석으로만).
+
+### 1. 셀 결과 (n=30, 각 1회, 지연은 `rank()` 1회 wall time — 행동 문구 캐시 후)
+
+| 셀 | dims | top-1 | top-3 | p50 ms | p95 ms | 오답(top-1) |
+|---|---:|---:|---:|---:|---:|---|
+| stem(현행 어간 겹침) | — | 0.300 | 0.833 | 0.0 | 0.0 | 21/30 |
+| ollama `qwen3-embedding:4b` | 2560 | 0.933 | 1.000 | 84.5 | 90.9 | 2 |
+| ollama `qwen3-embedding:4b` | **1536** | 0.867 | 1.000 | 85.8 | 94.7 | 4 |
+| ollama `bge-m3` | 1024 | 0.900 | 1.000 | 107.5 | 1,855.2* | 3 |
+| `gemini-embedding-001` | 1536 | **0.967** | 1.000 | 373.5 | 388.1 | 1 |
+
+\* bge p95는 첫 3건(1.8~2.0s)의 이상치 — 원인 미확정(동시에 돌던 다른 평가 작업의 ollama 사용으로 모델 축출·재로드 추정), 나머지 27건 ~100ms.
+Gemini 30/30 성공, 429 없음(lifetutorial 실측대로 429는 키 쿼터가 아니라 베이스 모델 전역 풀). 5셀 공통 오답 1건 "은상이 본 대로 얘기하게"(기대
+"설명한다" ↔ 모델 "들은 것을 그대로 전한다")은 골든 자체가 모호한 문장일 수 있다.
+
+### 2. 모델 간 순위 일치도 — 사용자 질문 "qwen@1536이 Gemini와 같은 결과를 내는가"
+
+벡터 코사인은 모델 간에 재지 않았다(**차원이 같아도 공간이 다르다**). 같은 문장에 대한 전체 템플릿 순위를 셀 쌍끼리 비교했다.
+
+| 쌍 | top-1 일치 | top-3 Jaccard | Kendall τ |
+|---|---:|---:|---:|
+| gemini ↔ qwen1536 | 0.867 | 0.627 | 0.342 |
+| gemini ↔ qwen2560 | 0.933 | 0.600 | 0.331 |
+| **qwen2560 ↔ qwen1536** | 0.933 | 0.967 | **0.918** |
+| gemini ↔ bge | 0.933 | 0.823 | 0.598 |
+| stem ↔ qwen1536 | 0.233 | 0.607 | −0.184 |
+| stem ↔ gemini | 0.333 | 0.597 | −0.011 |
+
+읽기: ① MRL 절단 2560→1536은 순위를 거의 바꾸지 않는다(τ 0.92) — 1536 호환 규격을 써도 잃는 게 없다. ② Gemini↔qwen은 **top-1은
+대체로 같지만(0.87~0.93) 하위 순위는 다르다(τ 0.33)** — "같은 답을 낸다"이지 "같은 공간"이 아니다. 추천 3개만 보여 주는 이 자리에서는
+top-3가 양쪽 다 1.000이라 플레이어가 보는 결과는 사실상 같다. ③ 어간 겹침은 임베딩 셀과 τ가 0 근처 — 순서가 무의미했다(top-1 0.300).
+
+### 3. 판정
+
+- 이 축의 게이트(신설): **top-3 ≥ 어간 기준 0.833(비열등) + 폴백 동작 확인.** 임베딩 4셀 전부 top-3 1.000으로 통과. 폴백은 잘못된
+  base_url로 실호출해 어간 결과와 동일함을 확인(warning 로그 1줄).
+- sonnet 최종 검토(B등급) — Critical 1: `EmbeddingRank.rank`의 캐시 조회가 `try` 밖이라 `embed_documents`가 후보보다 짧게 돌려주면
+  `KeyError`가 폴백을 우회해 `/preview_rule` 500 → `try` 안으로 이동, 회귀 테스트 추가. Major 1: 팩토리가 Qwen3 지시문을 모델 불문 붙임 →
+  `qwen3-embedding*`에만. 서버 기동은 어댑터가 죽어 있어도 실패하지 않음(요청 시점 생성, 실행 확인). 격리(채점·NPC·단서에 import 없음) 확인.
+  수정 후 **960 passed**.
+- **프로덕션 provider: Gemini@2560 · 로컬: bge-m3@1024** — 최종 판정은 §8(사용자 결정 2026-09-18). 후보: `ollama:qwen3-embedding:4b@1536`(top-1 0.867, 85ms, 비용 0, 외부 의존 없음 — 제출 후 Core·NPC가
+  Anthropic이라 GPU가 비어 있음) vs `gemini-embedding-001`(top-1 0.967, 373ms, 무료 키 — 일일 상한 미측정). 차이는 30문장 중 3문장이고
+  top-3는 동일. 현재 `.env`는 `EMBEDDING_PROVIDER=gemini`라 그대로 띄우면 Gemini 경로로 간다.
+
+### 4. 같은 날 닫은 것 — A.19 후속 과제
+
+- **planner `beats` maxItems 미시행(A.19 §5)** — 엔진 쪽 결정적 절단으로 닫음. `llm_output_dto.py`에 `cut_to_max_length` 헬퍼(필드의 `MaxLen`을
+  읽어 앞부터 절단)를 두고 `NpcPlan.beats`에 적용, **꽉 찬 계획일 때만** beat 번호를 위치로 재부여(어댑터가 `maximum`도 벗겨 `beat: 7`이
+  섞여 올 수 있다 — sonnet 검토 Major). 성긴 계획의 beat 번호는 규칙 `when_beat` 슬롯이라 손대지 않는다. 같은 결함 계열인
+  `AdvisorOptionsOutput.options`(max 3)·`AdvisorReplyOutput.evidence`(max 2)에도 같은 헬퍼 적용. 테스트 5건, 958 passed. 로컬(ollama) 경로는
+  스키마가 강제되어 no-op.
+- **러너 provider 경로** — `run_scoring_calibration.py`·`run_leak_test.py`에 `--provider anthropic`(`runner_common.make_provider_llm`, 프로덕션
+  `llm_factory.build_llm` 경유). `run_paw_eval.py`는 LLM을 부르지 않고 self-play 판을 읽는 러너라 라벨만. ollama 기본 경로 3건 실주행 동일 동작.
+  → 제출 조합(Sonnet/Haiku)의 채점 캘리브레이션·누설·원숭이손 측정은 이 경로로 같은 날 밤 실행 예정(A.22).
+
+### 5. 차원 상향 검토 (같은 날, 사용자 질문 "1536 말고 더 올릴 수 있나")
+
+올릴 수 있다. Gemini는 128~3072(기본 3072를 MRL 절단), qwen3-embedding:4b는 32~2560 — **둘이 같이 쓸 수 있는 최대는 2560.**
+`GeminiEmbedding`에 `dimensions` 인자를 열고 `Settings.embedding_dimensions` 한 값이 두 어댑터에 같이 들어가게 했다.
+
+| 셀 | dims | top-1 | top-3 | p50 ms | 비고 |
+|---|---:|---:|---:|---:|---|
+| gemini | 1536 | 0.967 | 1.000 | 364 | §1과 같은 셀 재실행 |
+| gemini | 2560 | 0.967 | 1.000 | 373 | 1차 실행은 15건에서 503(일시 장애)로 중단, 재실행 30/30 |
+| gemini | 3072 | 0.967 | 1.000 | 380 | 기본(무절단) |
+| qwen | 2560 | 0.933 | 1.000 | 84 | §1 재확인 |
+
+일치도: gemini3072↔gemini1536 top-1 1.000·τ 0.962, gemini3072↔gemini2560(n=15) τ 0.942 — **Gemini는 차원을 올려도 이 과제에서 아무것도
+바뀌지 않는다.** gemini2560↔qwen2560 top-1 0.933·τ 0.380(1536에서 0.867·0.342) — 두 모델을 같이 올리면 일치가 소폭 오른다.
+읽기: 이득이 있는 쪽은 qwen뿐(1536→2560 top-1 +2/30). 1536을 고집할 이유였던 "같은 컬럼" 제약은 테이블 미사용이라 지금은 없다.
+`EMBEDDING_DIMENSIONS=2560`이면 qwen은 무절단·Gemini는 3072→2560 절단으로 둘이 같은 차원이 된다. 단 pgvector `vector` 타입 HNSW/IVFFlat
+인덱스는 2,000차원 상한(그 이상은 `halfvec`)이라, 훗날 테이블을 살릴 때는 이 점을 본다.
+**사용자 확정(2026-09-18): 로컬·Gemini 둘 다 2560.** `Settings.embedding_dimensions` 기본값을 2560으로 바꿔 `.env` 없이도 이 값이며, 어댑터 기본값·테스트도 2560. 포트의 `EMBEDDING_DIM=1536`은 미사용 pgvector 컬럼 규격으로만 남긴다.
+
+### 6. 정본 수치 — Scenario Director 검수 골든(22문장) · 반복 n=3 · 서버 실경로 · VRAM 동주
+
+§1~§5는 에이전트 작성 골든 30문장(미검수)의 1차 수치다. E7·E6 기준(사전 통제·반복·실경로·동시 상주)에 맞추기 위해 같은 날 네 가지를 더 했다.
+
+**골든 검수(Scenario Director, 2026-09-18).** 기준은 "문장의 뜻이 행동과 같은가" — 형식이 아니라 맥락. 뜻이 다른 8문장 제외
+(1 "밥 나눠주지 마"≠배급을 남긴다 · 3 "병원 가서 진찰"(세계에 없음) · 5 오타 · 9 "건드리지 마"≠만진다 · 17(18이 맞음) · 19 "헛소문 못 내게"≠소문을 낸다 ·
+23 "쫓아가지 마"≠따라간다 · 26 "적어두게 하지 마"≠기록한다), 14·15는 "포대 안을 확인"이 아니라 **"포대 자체가 뭔지 본다"**는 뜻으로 교체. 22문장·17쌍 전부 커버.
+
+| 셀 | dims | top-1 | top-3 | p50 ms | top-1 오답 |
+|---|---:|---:|---:|---:|---|
+| stem(현행) | — | 0.364 | 0.818 | 0 | 14/22 |
+| ollama qwen3-embedding:4b | **2560** | **0.909** | 1.000 | 86 | 은상이 들은 말을 한 글자도 안 바꾸고 옮기게 · 은상이 본 대로 얘기하게 |
+| ollama qwen3-embedding:4b | 1536 | 0.818 | 1.000 | 84 | 채연이가 아는 거 털어놓게 · 준이 주머니에 든 걸 꺼내 보이게 · 은상이 들은 말을 한 글자도 안 바꾸고 옮기게 · 은상이 본 대로 얘기하게 |
+| ollama bge-m3 | 1024 | 0.909 | 1.000 | 109 | 준이 자루가 대체 뭔지 보게 해 · 은상이 본 대로 얘기하게 |
+| gemini-embedding-001 | 1536 | 0.955 | 1.000 | 418 | 은상이 본 대로 얘기하게 |
+| gemini-embedding-001 | **2560** | **0.955** | 1.000 | 407 | 은상이 본 대로 얘기하게 |
+
+| 쌍 | top-1 일치 | top-3 Jaccard | Kendall τ |
+|---|---:|---:|---:|
+| **gemini2560 ↔ qwen2560** | 0.909 | 0.582 | 0.358 |
+| gemini1536 ↔ qwen1536 | 0.818 | 0.641 | 0.312 |
+| qwen2560 ↔ qwen1536 | 0.909 | 0.909 | 0.900 |
+| gemini ↔ bge | 0.955 | 0.804 | 0.630 |
+| stem ↔ gemini | 0.409 | 0.577 | 0.051 |
+
+1차(30문장)와 결론이 같다: 로컬 최적은 qwen@2560(무절단), Gemini는 차원 무관(1536=2560 동일), 둘을 2560으로 맞출 때 서로 가장 비슷(top-1 0.909),
+top-3는 임베딩 전 셀 1.000, 어간 겹침은 순서가 무의미(τ≈0). 원문 `rule-alternatives-20260918T021836Z.json`.
+
+**반복 n=3(1차 골든, 조용한 GPU).** 6셀 전부 top-1·top-3·오답 문장 집합이 3회 **완전 동일** — 임베딩 순위는 결정론적이라 반복은 지연에만 의미가 있다
+(로컬 ±3ms, Gemini ±40ms 네트워크). bge p95 1.8s 이상치는 3회 모두 117~119ms로 **재현 안 됨** — 1차 실행 때의 1회성 모델 로드로 판단(확정 아님).
+원문 `rule-alternatives-rep{1,2,3}.json`.
+
+**서버 실경로.** `.env` 무수정, 환경변수 오버라이드로 8600 포트·`pigfarm_test` DB에 기동해 실제 HTTP `POST /nights/{id}/rule/preview`로 확인
+(판은 실제 `/sessions`로 생성, 회차·밤 행은 fixture 방식으로 삽입 — 하루 플레이는 생략). "민석이 스피커실로 가게 해" → 임베딩 **방송실에 간다 1위**(어간은 3위),
+응답 233ms(행동 문구 17개 캐시 채움 포함) → 이후 85ms. ollama 차단(`OLLAMA_BASE_URL=127.0.0.1:9`) 상태에서 같은 문장 4회 전부 **200 + 어간 순위 + warning 1줄**
+(`임베딩 실패, 어간 겹침으로 폴백: [Errno 111] Connection refused`), 6ms. 500 없음.
+
+**VRAM 동주 — 로컬 구성에서는 동주 불가.** RTX 5060 Ti 16GB: gemma4:12b 8.06GB + kanana1.5:8b 5.27GB 상주(13,402 MiB) 상태에서 임베딩 1회 호출 →
+ollama가 `model predicted to exceed available memory, evicting`을 **두 번** 내며 Core·NPC를 모두 축출, qwen3-embedding:4b(실상주 4.37GB — 파일 2.5GB보다 크다)만 남음(2/2 재현).
+다음 gemma4 호출 3.8s 재로드, kanana 6.5s. 세 모델 합 17.7GB > 16GB. **프로덕션(Core·NPC Anthropic)은 해당 없음.** 로컬 개발·롤백 구성에서 임베딩을 켜려면
+① `EMBEDDING_PROVIDER=gemini`(lifetutorial이 같은 이유로 08-27에 택한 길) 또는 ② 로컬 `bge-m3`(실상주 0.66GB, top-1 0.909로 qwen@2560과 동률, 13.4+0.66=14.1GB 상주 가능)
+중 하나다. 결정은 사용자.
+
+### 7. 로컬 VRAM 예산 구성의 쌍 — bge-m3 ↔ Gemini를 같은 차원(1024)으로 (사용자 요청)
+
+임베딩이 Gemini로 간 원래 이유가 로컬 VRAM 예산이고(§6), 그 예산 안에 들어가는 로컬 후보는 `bge-m3`(실상주 0.66GB)뿐이다. bge-m3는 1024 고정
+(MRL 없음 — 1536을 요청해도 1024로 온다)이라 **Gemini를 1024로 내려** 같은 차원으로 쌍 비교했다. 검수 골든 22문장.
+
+| 셀 | dims | top-1 | top-3 | p50 ms |
+|---|---:|---:|---:|---:|
+| ollama bge-m3 | 1024 | 0.909 | 1.000 | 106 |
+| gemini-embedding-001 | **1024** | 0.955 | 1.000 | 367 |
+| gemini-embedding-001 | 1536 (참고) | 0.955 | 1.000 | 363 |
+
+| 쌍 | top-1 일치 | top-3 Jaccard | Kendall τ |
+|---|---:|---:|---:|
+| **gemini1024 ↔ bge-m3** | **0.955** | 0.782 | **0.594** |
+| gemini1536 ↔ bge-m3 | 0.955 | 0.804 | 0.630 |
+| gemini1024 ↔ gemini1536 | 1.000 | 0.955 | 0.964 |
+| gemini1024 ↔ qwen2560 | 0.909 | 0.554 | 0.291 |
+
+읽기: ① Gemini는 1024까지 내려도 결과가 그대로다(1536과 top-1 1.000 일치·τ 0.96 — 128~3072 전 구간에서 이 과제는 차원 무관). ② **bge-m3가 Gemini와
+가장 닮은 로컬 모델이다** — τ 0.59~0.63으로 qwen(0.29~0.36)의 두 배, top-1 일치 0.955. 같은 차원으로 맞춰서 오른 게 아니라(1536 Gemini와도 0.63) 모델
+공간이 원래 더 가깝다. ③ 그래서 로컬 VRAM 예산 구성(Core·NPC 로컬 + 임베딩 로컬)에서는 **bge-m3@1024**가 답이고, 프로덕션 Gemini의 차원을 1024로
+내릴 필요는 없다(Gemini는 어느 차원이든 같은 순위). 정리하면 구성은 두 벌이다 — **프로덕션: Core·NPC Anthropic + 임베딩 Gemini@2560(또는 qwen@2560)**,
+**로컬 개발·롤백: Core gemma4 + NPC kanana + 임베딩 bge-m3@1024**(14.1GB 상주). 원문 `rule-alternatives-20260918T022248Z.json`.
+
+### 8. bge-m3 채택 전 실측 — qwen과 같은 두 축(서버 실경로·VRAM 동주)
+
+§7의 "bge-m3면 14.1GB로 동주 가능"은 추정이었다. qwen에 했던 절차 그대로 실측했다.
+
+**서버 실경로**(8600·`pigfarm_test`, `EMBEDDING_PROVIDER=ollama EMBEDDING_MODEL=bge-m3`, Settings 기본 `dimensions=2560`):
+"채연이한테 밥 나눠주지 말라고 해" → 배급을 남긴다·검진을 받는다·관찰을 설명한다, "민석이 스피커실로 가게 해" → **방송실에 간다**·기록한다·가진 것을 보여준다 —
+서버 응답 = 로컬 `EmbeddingRank` 계산 완전 일치. 첫 호출 247/257ms(행동 문구 17개 캐시 채움), 이후 126/121ms. 서버→ollama 실제 본문을 로깅 프록시로 캡처:
+`{"model": "bge-m3", "input": ["채연이한테 밥 나눠주지 말라고 해"], "keep_alive": "2h", "dimensions": 2560}` → **Qwen3 지시문 없이 원문 그대로**, 응답 **1024차원**
+(2560 요청을 bge가 무시, 오류 없음, L2 노름 1.000000). ollama 차단 시 4호출 전부 200 + 어간 순위 + warning 1줄, 6~21ms.
+
+**VRAM 동주**(gemma4 8.06GB + kanana 5.27GB 상주 13,402 MiB → bge-m3 1회):
+
+| 단계 | nvidia-smi | 상주 | 지연 |
+|---|---:|---|---:|
+| bge-m3 1회 | **14,187 MiB** | gemma4·kanana·bge-m3 **셋 다 온칩 100%** | 1,163ms(첫 로드) |
+| gemma4 재호출 | 14,187 | 유지 — 재로드 없음 | 355ms |
+| kanana 재호출 | 14,187 | 유지 | 170ms |
+| 임베딩 재호출 | 14,187 | 유지 | 109ms |
+
+2회 반복 동일, journal evict **0줄**, 여유 ~2.1GB. qwen(4.37GB, 둘 다 축출)과 대비된다.
+
+**판정 — bge-m3 채택.** 검수 골든 top-1 0.909(qwen@2560과 동률)·top-3 1.000·Gemini와 τ 0.6·반복 결정론·실경로·폴백·동주 전부 통과.
+`Settings.embedding_model` 기본값을 `bge-m3`로 바꿈(사용자 결정 2026-09-18). 최종 구성: **프로덕션 = Core·NPC Anthropic + 임베딩 Gemini@2560**,
+**로컬 개발·롤백 = gemma4 + kanana + bge-m3@1024**(`.env` `EMBEDDING_PROVIDER=ollama` 한 줄). qwen3-embedding:4b는 로컬 단독 최적 기록으로만 남긴다.
+
+### 측정의 한계
+
+- 골든 1차 30문장은 에이전트 작성·미검수(§1~§5), 정본은 Scenario Director 검수 22문장(§6). bge p95 이상치는 재현되지 않았고 원인은 미확정.
+- ollama GGUF `qwen3-embedding:4b`(2.5GB)는 lifetutorial의 sentence_transformers fp16(~8GB)과 **같은 모델·다른 양자화·서빙**이라 벡터가
+  동일하지 않다 — lifetutorial의 로컬 수치를 여기 옮겨 쓰지 않는다.
+- 일치도는 순위 기준이며 유사도 값의 분포(마진)는 비교하지 않았다.
+
 ---
 
 # 9. 변경 이력
@@ -1555,6 +1787,8 @@ $10 상한은 넘지 않은 것으로 판단하나 근거는 문자수 상한 �
 | 2026-09-14 | **AGE7 프롬프트 v2 + 대화 메모리 창 — 이후 7세 계열 측정은 새 기준.** 사용자 확정 7세 정의("몰라로 끝내지 않는다 — 본 것·하고 싶은 말을 붙인다")를 정책 2·3·7에 반영하고 인물별 "직접 본 것"을 페르소나에 추가. 1차 문구는 망각을 0.8→0.0으로 붕괴시켜(4턴 전 사실 회상) 문구 정밀화 + **정책 ON 시 메모리 마지막 두 교환만 제공하는 구조 절단**으로 교정. kanana 재측정(n=5·judge 1표): [0.6·1.0·**1.0**·1.0·1.0] 4/5 통과·누설 0. 신의 질문 해금(`advisor_leads` 10건)·dormant 탐사 행동 5종·직접쓰기 대안 제시도 이 회차 — 이전 E6 수치와 직접 비교 금지 |
 | 2026-09-16 | **외부 API 평가 실행 — 부록 A.19.** Core PCA·극성·eval 게이트는 Sonnet 5·Opus 5 둘 다 통과(n=1·n=3), 지연 게이트는 Sonnet이 n=1↔n=3 사이 경계에서 뒤집히고 Opus는 미달. self-play 완주·폴백은 Opus·gemma4 대조군 0, Sonnet은 planner의 `maxItems` 미시행 1건. NPC 대화 의미 품질은 Haiku·Sonnet 둘 다 로컬 대비 비열등 이상. NPC 7세 정책은 채점기를 gemma4:12b(think off)로 통일해 재측정한 뒤 kanana·Haiku·Sonnet 전부 4/5 통과(1차 gemma3 채점기 결과는 VRAM 경합 잡음으로 판단). Gemini 무료 키는 하루 20요청 상한으로 NPC 후보에서 제외. **권고: Core `claude-sonnet-5` · NPC `claude-haiku-4-5`**(최종 결정은 사용자 몫). 어댑터 결함 2건 수정(Haiku temperature `extra_body` 전송, gemma4 채점기 think 기본값 off). 상단 "측정 결과" 열·`metrics.yml` 병행 기록 |
 | 2026-09-17 | **제출 조합 확정.** Core `claude-sonnet-5` + NPC `claude-haiku-4-5` 조합 self-play 5회차 1판 확인(11.7→29.8, 261.5s, 폴백 0, planner 재생성 1, 메타 누설 0) — A.19 §2 끝. 사용자 지시로 이 조합을 제출용 `.env` 구성으로 고정(키는 제출 투입 전까지 제거 유지, 절차는 `docs/HANDOFF.md`). A.19 §2 gemma4 대조군 advisor 재생성 수 정정(3→2) |
+| 2026-09-18 | **임베딩 슬롯 — 부록 A.20 추가.** 로컬 vs 외부 비교를 하지 않은 이유를 기록: 채점 RAG용 임베딩 랭킹 경로가 **2026-09-06 채점 밸런스 조정에서 제거**됐다(top-3 절단이 저득점 원인 — 골든 세트 정답형 65.3→100.0). 코드·DB 실사로 확인 — `get_embedding()` 호출 0·`.embed()` 0·유사도 질의 0·`truth_claim_embeddings` 0행·`/health`에 표시 없음, `EMBEDDING_FALLBACK`은 읽히지 않는 설정. 두 번째 용도였던 `search_notes`는 미구현(`ask_npc`만 실재). **현재 운영 구성은 Core·NPC 2슬롯뿐**으로 정본화하고, 기획서 확정본 v9.0(§11.5·§11.6)·`AI_Agent_Evaluation PART1`(§5 Anchor)·팀원용 쉬운설명(§49)에 원문 수정 없이 같은 경위를 추가 기록. `apiscenario.md`의 "임베딩 무료 키 한도 제출 전 확인 필요" 과제는 전제가 틀려 정정 |
+| 2026-09-18 | **임베딩 부활 한 자리 + 5셀 비교 — 부록 A.21.** 사용자 결정으로 직접 쓰기 규칙 대안 순위에만 임베딩(Strategy·예외 시 어간 폴백, lifetutorial 방식). n=30 골든(에이전트 작성): stem top-1 0.300 / qwen@2560 0.933 / **qwen@1536 0.867** / bge 0.900 / gemini 0.967, top-3 임베딩 전 셀 1.000. 순위 일치도 qwen2560↔1536 τ 0.92(절단 무해), gemini↔qwen top-1 0.87~0.93·τ 0.33("같은 답, 다른 공간"). 프로덕션 provider는 사용자 결정 대기. 같은 날 A.19 후속 과제 닫음 — planner beats 절단(+advisor 2필드, 958 passed), 러너 3종 `--provider anthropic` |
 
 ---
 
