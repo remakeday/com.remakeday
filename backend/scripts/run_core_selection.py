@@ -659,10 +659,13 @@ def stage_loop(spec, base_url, timeout, out_dir):
         client = httpx.Client(base_url=f"http://localhost:{LOOP_PORT}", timeout=timeout * 3)
         t0 = time.monotonic()
         try:
-            health = _wait_health(client, 60)
-            row["health_core"] = health["models"]["core"]
-            if health["models"]["core"] != f"ollama:{model}":
-                raise RuntimeError(f"core 라벨 불일치: {health['models']['core']}")
+            _wait_health(client, 60)
+            # /health는 보안 정리(F26b)로 db 상태만 반환한다 — 모델 라벨은
+            # 러너 전용 /loop-debug(scripts/loop_app.py, 공개 서버엔 없음)에서 읽는다.
+            dbg = client.get("/loop-debug").json()
+            row["health_core"] = f"ollama:{dbg['core_model']}"
+            if dbg["core_model"] != model:
+                raise RuntimeError(f"core 라벨 불일치: {dbg['core_model']}")
             result = sp.play_game(client, player_llm, "성실", max_loops=1,
                                   rng=random.Random(42), verbose=True)
             row["attempt_id"] = result["attempt_id"]
