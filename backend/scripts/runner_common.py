@@ -86,6 +86,9 @@ def make_provider_llm(provider: str, model: str, base_url: str | None = None, th
     (llm_factory.build_llm)를 그대로 쓴다 — run_core_selection·run_age7_check와 같은 경로.
     anthropic은 thinking 제어가 없어 think를 무시한다(키는 .env ANTHROPIC_API_KEY)."""
     if provider == "anthropic":
+        # --model 기본값은 ollama 모델명이라 그대로 넘기면 Anthropic 404가 조용히 0점으로 집계된다(2026-09-18 실수).
+        if not model.startswith("claude-"):
+            raise SystemExit(f"[에러] --provider anthropic 에는 --model claude-… 를 함께 주세요 (받은 값: {model})")
         from apps.engine.dependencies.llm_factory import build_llm  # 지연 import — ollama 러너엔 영향 없음
         return build_llm("anthropic", model, base_url or ollama_base_url())
     if provider == "ollama":
