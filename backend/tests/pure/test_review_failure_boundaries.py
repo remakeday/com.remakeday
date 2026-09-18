@@ -7,7 +7,7 @@ from uuid import uuid4
 from apps.engine.app.use_cases.harness import run_with_harness
 from apps.engine.app.use_cases.night_interactor import NightInteractor
 from apps.engine.app.use_cases.scene_execution import EXPLAIN_ACTION, execute_scene
-from apps.engine.app.dtos.llm_output_dto import AmbientOutput
+from apps.engine.app.dtos.llm_output_dto import AdvisorOptionsOutput, AdvisorReplyOutput, AmbientOutput
 from apps.engine.domain.entities.rule_rules import Rule
 from apps.scenarios.scenario_a.adapter import build
 
@@ -82,3 +82,19 @@ def test_parallel_judge_retains_successful_siblings_and_provider_failure_report(
     assert sum(e.fallback_used for e in calls) == 1
     assert [p["verdict"] for p in per_truth].count("confirmed") == 2
     assert sum(len(e.call_records) for e in calls) == 3
+
+
+# Anthropic 구조화 출력은 maxItems를 벗겨 보내므로 core_llm 목록 필드는 초과분을 잘라 받는다(재생성 없음).
+
+
+def test_advisor_options_over_cap_are_cut_to_first_three():
+    option = {"target": "채연", "when_beat": "any", "effect": "suppress", "action": "혼자 있는다", "label": "L"}
+    raw = {"options": [{**option, "label": f"L{i}"} for i in range(4)]}
+    assert [o.label for o in AdvisorOptionsOutput.model_validate(raw).options] == ["L0", "L1", "L2"]
+
+
+def test_advisor_reply_evidence_over_cap_is_cut_to_first_two():
+    source = {"quote": "그대로", "relation": "supported"}
+    raw = {"question_kind": "lookup", "answer": "기록은 이렇다.",
+           "evidence": [{**source, "id": f"E{i}"} for i in range(3)]}
+    assert [e.id for e in AdvisorReplyOutput.model_validate(raw).evidence] == ["E0", "E1"]

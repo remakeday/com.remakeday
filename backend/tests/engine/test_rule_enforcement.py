@@ -134,6 +134,44 @@ def test_planner_fallback_still_enforces_rule(db_session):
     assert plan and any(b["action"] == "방송실에 간다" for b in plan)
 
 
+def test_planner_beats_over_cap_are_truncated_not_regenerated(db_session):
+    # Anthropic 어댑터는 maxItems를 벗기므로 비트 7개가 올 수 있다 — 재생성·폴백 없이 앞 6개만 받는다.
+    planner_out = {"plans": [{"npc": "채연", "beats": [
+        {"beat": n, "action": "혼자 있는다", "note": ""} for n in range(1, 8)
+    ]}]}
+    inter, scenario, attempt, info = make_day_with_rules(db_session, [], [planner_out])
+    plan = _plan_of(db_session, info["loop_id"], "chaeyeon")
+    assert [b["beat"] for b in plan] == [1, 2, 3, 4, 5, 6]
+    audit = [e for e in EventLogRepository(db_session).query(attempt.id)
+             if e.type == "harness_event" and e.role == "planner"]
+    assert audit[0].attempts == 1 and not audit[0].fallback_used
+
+
+def _planner_audit(db_session, attempt_id):
+    return [e for e in EventLogRepository(db_session).query(attempt_id)
+            if e.type == "harness_event" and e.role == "planner"]
+
+
+def test_planner_overflow_with_beat_7_inside_cap_is_renumbered_by_position(db_session):
+    # maximum도 벗겨지므로 앞 6개 안에 beat 7이 남을 수 있다 — 순서는 그대로, 번호만 위치로.
+    planner_out = {"plans": [{"npc": "채연", "beats": [
+        {"beat": n, "action": "혼자 있는다", "note": f"n{n}"} for n in (1, 2, 3, 4, 5, 7, 6)
+    ]}]}
+    inter, scenario, attempt, info = make_day_with_rules(db_session, [], [planner_out])
+    plan = _plan_of(db_session, info["loop_id"], "chaeyeon")
+    assert [b["beat"] for b in plan] == [1, 2, 3, 4, 5, 6]
+    assert [b["note"] for b in plan] == ["n1", "n2", "n3", "n4", "n5", "n7"]
+    audit = _planner_audit(db_session, attempt.id)
+    assert audit[0].attempts == 1 and not audit[0].fallback_used
+
+
+def test_planner_six_beats_pass_through_unchanged(db_session):
+    beats = [{"beat": n, "action": "혼자 있는다", "note": f"n{n}"} for n in range(1, 7)]
+    inter, scenario, attempt, info = make_day_with_rules(db_session, [], [{"plans": [{"npc": "채연", "beats": beats}]}])
+    assert _plan_of(db_session, info["loop_id"], "chaeyeon") == beats
+    assert _planner_audit(db_session, attempt.id)[0].attempts == 1
+
+
 # ── ③ 내레이션 보정 줄 ──
 
 

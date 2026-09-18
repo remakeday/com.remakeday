@@ -17,6 +17,18 @@ class StrictModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
+def max_length_of(model: type[BaseModel], field: str) -> int:
+    """Field(max_length=N)에 적힌 목록 상한 — 스키마 밖에 숫자를 따로 두지 않는다."""
+    return next(m.max_length for m in model.model_fields[field].metadata if hasattr(m, "max_length"))
+
+
+def cut_to_max_length(model: type[BaseModel], field: str, value):
+    """Anthropic 구조화 출력은 maxItems를 못 받아 목록이 상한을 넘겨 올 수 있다 — 재생성 대신 앞부터 상한까지만 받는다."""
+    if not isinstance(value, list):
+        return value
+    return value[:max_length_of(model, field)]
+
+
 class ToolCallSpec(StrictModel):
     name: Literal["ask_npc"]
     target: str
@@ -71,6 +83,16 @@ class PlanBeat(StrictModel):
 class NpcPlan(StrictModel):
     npc: str
     beats: list[PlanBeat] = Field(min_length=1, max_length=6)
+
+    @field_validator("beats", mode="before")
+    @classmethod
+    def _cut_to_max_beats(cls, value):
+        cut = cut_to_max_length(cls, "beats", value)
+        # 꽉 찬 계획은 목록 순서가 곧 일정이라 번호를 위치로 되돌린다(maximum도 벗겨져 beat 7이 섞여 올 수 있다).
+        # 성긴 계획의 beat 번호는 규칙 when_beat와 맞물리는 슬롯이므로 손대지 않는다.
+        if isinstance(cut, list) and len(cut) == max_length_of(cls, "beats"):
+            cut = [{**b, "beat": i + 1} if isinstance(b, dict) else b for i, b in enumerate(cut)]
+        return cut
 
 
 class PlannerOutput(StrictModel):
@@ -149,6 +171,11 @@ class AdvisorReplyOutput(StrictModel):
     evidence: list[AdvisorSourceAssessment] = Field(max_length=2)
     answer: str = Field(min_length=1, max_length=400, description="질문에 직접 답하는 짧은 한국어 2~3문장. 기록 목록을 나열하지 않는다.")
 
+    @field_validator("evidence", mode="before")
+    @classmethod
+    def _cut_to_max_evidence(cls, value):
+        return cut_to_max_length(cls, "evidence", value)
+
 
 class RuleOption(StrictModel):
     target: str
@@ -160,6 +187,11 @@ class RuleOption(StrictModel):
 
 class AdvisorOptionsOutput(StrictModel):
     options: list[RuleOption] = Field(min_length=3, max_length=3)
+
+    @field_validator("options", mode="before")
+    @classmethod
+    def _cut_to_max_options(cls, value):
+        return cut_to_max_length(cls, "options", value)
 
 
 class AdvisorMapOutput(StrictModel):
