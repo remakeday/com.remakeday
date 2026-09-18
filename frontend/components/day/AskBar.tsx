@@ -17,7 +17,7 @@ export function AskBar({ input, onInput, onAsk, onNext, inputLocked, nextLocked,
   onNight: () => void;
 }) {
   return (
-    <div className="shrink-0 border-t border-ink/20 px-3 py-2">
+    <div className="shrink-0 border-t border-ink/15 px-3 py-2">
       <p id="conversation-hint" className="mb-2 text-sm text-ink/75" role="status">{hint}</p>
       {failure && <p className="mb-2 text-base" role="alert">{failure}</p>}
       {onRetry && <button type="button" onClick={onRetry} className="mb-2 border border-ink px-3 py-2 text-base">같은 질문 다시 보내기</button>}

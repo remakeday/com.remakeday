@@ -180,7 +180,7 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
     await notebookOpener.click();
     const dayNotebook = page.getByRole('dialog', { name: '기록', exact: true });
     await dayNotebook.getByRole('region', { name: '기록 내용', exact: true }).waitFor();
-    const dayLine = page.locator('[data-line-kind]');
+    const dayLine = page.locator('[data-line-kind]').last(); // 누적 채팅이라 마지막 줄을 본다
     const lineBeforeNotebook = await dayLine.textContent();
     await dayNotebook.getByRole('region', { name: '기록 내용', exact: true }).focus();
     for (const key of ['Space', 'Enter', 'ArrowRight']) {

@@ -26,10 +26,12 @@ const files = {
   const report = { checks: [], errors: [] };
   try {
     for (const [width, outcome, mode] of [[1440, 'closure', 'new'], [390, 'truck', 'new'], [1440, 'quiet', 'legacy'], [1440, 'truck', 'unknown']]) {
-      const page = await browser.newPage({ viewport: { width, height: 900 }, reducedMotion: 'reduce' });
+      const page = await browser.newPage({ viewport: { width, height: 900 } });
       page.on('pageerror', e => report.errors.push(e.message));
       let beat = 1, nextCalls = 0;
-      const data = () => ({ lines: [line('scene', '주변을 살핀다.', { image_id: mode === 'new' ? scenes[beat]?.[0]?.image_id ?? null : null }), ...(beat === 4 ? [line('broadcast', '검진을 시작합니다.', { speaker: '관리자' })] : []), line('system', '장면을 살펴보았다.')], beat, beat_title: `시간 ${beat}`, narration: '주변을 살핀다.',
+      // 도입 타이핑 중에만 보이는 그림의 로딩과 전환을 확인할 시간을 확보한다.
+      const intro = '주변을 살핀다. 창문으로 들어온 빛이 바닥을 길게 가르고, 복도에서는 누군가 천천히 걸어가는 소리가 들린다. 사람들은 저마다 자리를 지킨 채 다음 안내를 기다리고 있다. 눈앞에 놓인 물건과 벽에 붙은 안내문을 차례로 살피며 아까 보았던 모습과 달라진 점을 찾아본다. 작은 흔적 하나도 놓치지 않으려고 잠시 발걸음을 멈춘다. 서둘러 말을 걸기보다는 이곳에 남아 있는 단서들을 충분히 살펴본 뒤 사람들의 이야기를 들어 보기로 한다.';
+      const data = () => ({ lines: [line('scene', intro, { image_id: mode === 'new' ? scenes[beat]?.[0]?.image_id ?? null : null }), ...(beat === 4 ? [line('broadcast', '검진을 시작합니다.', { speaker: '관리자' })] : []), line('system', '장면을 살펴보았다.')], beat, beat_title: `시간 ${beat}`, narration: intro,
         broadcast: beat === 4 ? '검진을 시작합니다.' : null,
         ...(mode === 'new' ? { illustrations: scenes[beat] || [] } :
           mode === 'unknown' ? { illustrations: [{ image_id: 'unknown-image', caption: '등록되지 않은 그림 설명' }] } : {}) });
@@ -72,10 +74,6 @@ const files = {
       for (let b = 1; b <= 6; b++) {
         await page.getByTestId('day-title').getByText(`시간 ${b}`, { exact: true }).waitFor();
         await page.getByTestId('day-title').getByText(`장면 ${b}/6`, { exact: true }).waitFor();
-        if (b === 4) {
-          await page.getByRole('button', { name: '다음', exact: true }).click();
-          await page.getByText('검진을 시작합니다.', { exact: true }).waitFor();
-        }
         const expected = mode === 'new' && files[b] ? `/assets/clues/${files[b]}` : `/assets/C0${b}.png`;
         await imageLoaded(expected);
         if (mode === 'unknown') assert.equal(await page.getByText('등록되지 않은 그림 설명').count(), 0);
@@ -92,6 +90,7 @@ const files = {
         }
         assert.equal(await page.locator('img[src*="clue-06"]').count(), 0, 'closure not revealed during day');
         await readAll(page);
+        if (b === 4) await page.getByText('검진을 시작합니다.', { exact: true }).waitFor();
         await page.getByRole('button', { name: '다음 장면', exact: true }).click();
       }
       await page.getByRole('button', { name: '밤이 온다', exact: true }).waitFor();

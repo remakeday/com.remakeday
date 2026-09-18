@@ -134,7 +134,7 @@ const { line, readAll, expectBudget } = require('./vn-helpers.cjs');
         const dialoguePanel = page.getByRole('region', { name: '대사창', exact: true });
         assert.ok((await dialoguePanel.boundingBox()).height <= height / 2, 'desktop dialogue does not dominate the viewport');
       }
-      await page.getByRole('button', { name: '다음', exact: true }).click();
+      await readAll(page);
       assert.equal(await page.getByText('오늘 식판은 네가 먼저 가져가.', { exact: true }).count(), 1, 'initial scene dialogue appears once');
       await guide.click();
       await panel.getByRole('heading', { name: '플레이 안내' }).waitFor();
@@ -166,8 +166,7 @@ const { line, readAll, expectBudget } = require('./vn-helpers.cjs');
       await page.getByTestId('day-title').getByText('복도', { exact: true }).waitFor();
       await page.getByTestId('day-title').getByText('장면 2/6', { exact: true }).waitFor();
       await expectBudget(page, 7);
-      await page.getByRole('button', { name: '이전', exact: true }).click();
-      await page.getByText('단서 기록에 새 내용을 저장했다.', { exact: true }).waitFor();
+      await page.getByRole('region', { name: '대사창' }).getByText('단서 기록에 새 내용을 저장했다.', { exact: true }).waitFor();
       assert.equal(await page.getByText('긴 기록 원문은 대화 로그에 다시 붙이지 않는다.').count(), 0);
       await readAll(page);
       await input.fill('누가 나갔어?');

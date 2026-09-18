@@ -4,6 +4,7 @@ import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { api } from "@/contracts/api";
 import type { DamageLevel, Illustration, Line, Npc, Observation, PawOffer } from "@/contracts/api";
 import { useApiAction } from "@/lib/useApiAction";
+import { playerLine, type DisplayLine } from "@/lib/lineStyles";
 import { voicesForLines } from "@/lib/voiceMap";
 import { ErrorToast } from "@/components/ErrorToast";
 import { useVoice } from "@/components/VoicePlayer";
@@ -30,7 +31,7 @@ export interface DialoguePair {
 
 const BEAT_WAIT_LINES = ["스피커가 지직거린다…", "복도 끝에서 발소리.", "형광등이 깜빡인다.", "누군가 자리를 옮긴다."];
 
-function systemLine(text: string): Line {
+function systemLine(text: string): DisplayLine {
   return { kind: "system", speaker: null, text, image_id: null, voice_id: null, observation_id: null };
 }
 
@@ -53,8 +54,9 @@ export function DayScreen({
 }) {
   const { play: playVoice, stop: stopVoice } = useVoice();
   const [mode, dispatchMode] = useReducer(dayModeReducer, initialDayMode);
-  const [todayLines, setTodayLines] = useState(initialLines);
-  const [cursor, setCursor] = useState(0);
+  const [todayLines, setTodayLines] = useState<DisplayLine[]>(initialLines);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [caughtUp, setCaughtUp] = useState(false);
   const [beat, setBeat] = useState(initialBeat);
   const [beatTitle, setBeatTitle] = useState(initialBeatTitle);
   const [illustrations, setIllustrations] = useState(initialIllustrations);
@@ -80,13 +82,13 @@ export function DayScreen({
   const npcRefreshId = useRef(0);
   const pawChoice = useRef(false);
 
-  const appendLines = (lines: Line[]) => {
+  const appendLines = (lines: DisplayLine[]) => {
     if (lines.length === 0) return;
+    setCaughtUp(false);
     setTodayLines((previous) => [...previous, ...lines]);
-    setCursor(todayLines.length); // 새 응답의 첫 줄부터 읽는다.
   };
 
-  const currentLine = todayLines[cursor];
+  const currentLine = todayLines[activeIndex];
   const lineIllustration = currentLine?.image_id && !illustrations.some((item) => item.image_id === currentLine.image_id)
     ? { image_id: currentLine.image_id, caption: currentLine.image_id === "P06" ? "트럭 옆면에도 글자가 있다." : currentLine.text }
     : null;
@@ -127,19 +129,18 @@ export function DayScreen({
   }, [beatAction.busy]);
 
   const reachedEnd = useCallback(() => {
+    setCaughtUp(true);
     dispatchMode({ type: "reached_end", hasPawOffer: pawOffer !== null });
   }, [pawOffer]);
-  const previousLine = useCallback(() => setCursor((index) => Math.max(0, index - 1)), []);
-  const nextLine = useCallback(() => setCursor((index) => Math.min(todayLines.length - 1, index + 1)), [todayLines.length]);
-  const showAll = useCallback(() => setCursor(Math.max(0, todayLines.length - 1)), [todayLines.length]);
+  const activeChange = useCallback((index: number) => setActiveIndex(index), []);
 
   const npcsReady = npcsBeat === beat;
   const selectedNpc = npcs.find((npc) => npc.code === selected);
   const selectedUttered = selectedNpc?.uttered ?? false;
   const mutationBusy = utterance.busy || beatAction.busy || pawAction.busy;
   const questionUnresolved = pendingUtterance !== null;
-  // 마지막 줄 판정은 한 곳에 둔다. 질문과 장면 이동이 같은 잠금을 쓴다.
-  const atLastLine = cursor >= todayLines.length - 1;
+  // 타이핑이 끝나야 질문·장면 이동이 열린다.
+  const atLastLine = caughtUp && todayLines.length > 0;
   const lastLineImageId = todayLines.at(-1)?.image_id;
   const reviewingReveal = !atLastLine && lastLineImageId && !illustrations.some((item) => item.image_id === lastLineImageId);
   const controlsLocked = !atLastLine || mode.mode !== "dialogue" || mode.pawOpen || mutationBusy || questionUnresolved;
@@ -163,7 +164,8 @@ export function DayScreen({
         if (acceptedUtterances.current.has(utteranceId)) return;
         acceptedUtterances.current.add(utteranceId);
         setHasAsked(true);
-        appendLines(res.lines);
+        // 질문도 대화창 말풍선으로 남기고, 답변 줄은 그 뒤에 이어 붙인다.
+        appendLines([playerLine(question.text), ...res.lines]);
         // 무의미 입력의 대체 문장은 system 줄로만 보이고, 밤의 인물 회상에는 넣지 않는다.
         if (!res.gated) dialogue.current.push({ q: question.text, npc: res.npc.name, a: res.reply });
         setBudgetLeft(res.budget_left);
@@ -244,7 +246,7 @@ export function DayScreen({
 
   const hint = beatAction.busy ? BEAT_WAIT_LINES[beatWaitIdx]
     : utterance.busy ? "답변을 기다리는 중…"
-    : !atLastLine ? "대사를 끝까지 읽거나 ‘모두 보기’를 누른다."
+    : !atLastLine ? "대사가 다 나올 때까지 기다리거나 대화창을 탭한다."
     : dayDone ? "하루가 끝났다. 밤에 오늘의 추리를 쓴다."
     : budgetLeft <= 0 ? "오늘 대화를 모두 썼다. 다음 장면은 계속 볼 수 있다."
     : questionUnresolved ? "보낸 질문의 답변을 확인한 뒤 이어서 대화할 수 있다."
@@ -252,27 +254,25 @@ export function DayScreen({
     : selectedUttered ? "이 인물과는 이 장면에서 대화했다. 다른 인물을 고르거나 다음 장면으로 간다."
     : loopN === 1 && !hasAsked ? "인물을 고르고 질문을 쓴다. 질문마다 대화 한 칸을 쓴다."
     : "한 장면에 인물마다 한 번 묻는다. 장면 이동은 무료다.";
-  const placeholder = !atLastLine ? "마지막 대사까지 읽는다"
+  const placeholder = !atLastLine ? "대사가 나오는 중이다"
     : dayDone ? "하루가 끝났다"
     : budgetLeft <= 0 ? "오늘은 더 말할 수 없다"
     : !npcsReady ? "인물 상태를 확인해야 한다"
     : selectedUttered ? "다른 인물을 고른다"
-    : selectedNpc ? `${selectedNpc.name}에게 말한다` : "…";
-  const stages = {
-    intro: <SceneIntro beat={beat} damageLevel={damageLevel} illustrations={illustrations} index={illustrationIndex}
-      lineIllustration={lineIllustration} disabled={mutationBusy || mode.pawOpen} onSelect={setIllustrationIndex} />,
-    dialogue: <DialogueStage npcs={npcs} selected={selected} ready={npcsReady} disabled={mutationBusy || questionUnresolved}
-      dayDone={dayDone} budgetLeft={budgetLeft} onSelect={setSelected} />,
-  };
+    : selectedNpc ? `${selectedNpc.name}에게 말한다` : "인물을 고른다";
+  const showPortrait = mode.mode === "dialogue" && !lineIllustration && !reviewingReveal;
+  const showIntro = lineIllustration || reviewingReveal || mode.mode === "intro";
 
   return (
     <div className="h-[calc(100dvh-3.5rem)] w-full overflow-hidden bg-paper text-ink">
       <div inert={mode.pawOpen ? true : undefined} aria-hidden={mode.pawOpen ? true : undefined}
         className="flex h-full min-h-0 flex-col" data-day-mode={mode.mode}>
-        <div className="shrink-0 px-4 py-1 leading-tight" data-testid="day-title">
-          <p className="text-base">{beatTitle}</p>
-          <p className="text-sm">장면 {beat}/6</p>
-          <div className="flex items-center gap-2 text-sm">
+        <div className="flex shrink-0 items-start justify-between gap-3 px-4 py-1 leading-tight" data-testid="day-title">
+          <div>
+            <p className="text-base">{beatTitle}</p>
+            <p className="text-sm">장면 {beat}/6</p>
+          </div>
+          <div className="flex shrink-0 items-center gap-2 text-sm">
             <span>남은 대화 횟수</span>
             <div role="meter" aria-label="남은 대화 횟수" aria-valuemin={0} aria-valuemax={initialBudget} aria-valuenow={budgetLeft}
               aria-valuetext={`${initialBudget}칸 중 ${budgetLeft}칸`} className="flex shrink-0 gap-1 py-1">
@@ -282,20 +282,31 @@ export function DayScreen({
             </div>
           </div>
         </div>
-        <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto">{stages[lineIllustration || reviewingReveal ? "intro" : mode.mode]}</div>
-        {/* 화면 높이 안에서 그림만 스크롤하고, 대사창·입력줄은 하단에 남긴다. */}
-        <div className="z-10 shrink-0 bg-paper pb-[env(safe-area-inset-bottom)]">
-          <LineBox lines={todayLines} cursor={cursor} disabled={mutationBusy || mode.pawOpen}
-            onPrevious={previousLine} onNext={nextLine} onShowAll={showAll} onReachedEnd={reachedEnd} />
-          <AskBar input={input} onInput={setInput} onAsk={send} onNext={advanceBeat}
-            inputLocked={inputLocked} nextLocked={controlsLocked}
-            waitingReply={utterance.busy} waitingBeat={beatAction.busy} hint={hint} placeholder={placeholder}
-            failure={utterance.failure?.message}
-            onRetry={pendingUtterance && !mutationBusy ? () => submitUtterance(pendingUtterance) : undefined}
-            dayDone={dayDone} onNight={() => {
-              // 5일째 트럭 방송 단서(9b)는 이 하루 끝 연결 지점 앞에 둔다.
-              if (dayDone && !controlsLocked) onDayDone(dialogue.current);
-            }} />
+        <div className="flex min-h-0 flex-1 flex-col">
+          <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto">
+            {showIntro && (
+              <SceneIntro beat={beat} damageLevel={damageLevel} illustrations={illustrations} index={illustrationIndex}
+                lineIllustration={lineIllustration} disabled={mutationBusy || mode.pawOpen} onSelect={setIllustrationIndex} />
+            )}
+          </div>
+          {/* 하단: 포트레이트 좌측 밀착 · 채팅 카드 가로 60% 우측 밀착 */}
+          <div className="flex shrink-0 items-end pb-[env(safe-area-inset-bottom)]">
+            {showPortrait && <DialogueStage npcs={npcs} selected={selected} ready={npcsReady}
+              disabled={mutationBusy || questionUnresolved} dayDone={dayDone} budgetLeft={budgetLeft} onSelect={setSelected} />}
+            <div className="z-10 ml-auto flex w-[60%] shrink-0 flex-col overflow-hidden border border-ink/30 border-r-0 bg-paper">
+              <LineBox lines={todayLines} disabled={mutationBusy || mode.pawOpen}
+                onActiveChange={activeChange} onCaughtUp={reachedEnd} />
+              <AskBar input={input} onInput={setInput} onAsk={send} onNext={advanceBeat}
+                inputLocked={inputLocked} nextLocked={controlsLocked}
+                waitingReply={utterance.busy} waitingBeat={beatAction.busy} hint={hint} placeholder={placeholder}
+                failure={utterance.failure?.message}
+                onRetry={pendingUtterance && !mutationBusy ? () => submitUtterance(pendingUtterance) : undefined}
+                dayDone={dayDone} onNight={() => {
+                  // 5일째 트럭 방송 단서(9b)는 이 하루 끝 연결 지점 앞에 둔다.
+                  if (dayDone && !controlsLocked) onDayDone(dialogue.current);
+                }} />
+            </div>
+          </div>
         </div>
       </div>
       {mode.pawOpen && pawOffer && <PawPopup offer={pawOffer} busy={mutationBusy} onRespond={respondPaw} />}

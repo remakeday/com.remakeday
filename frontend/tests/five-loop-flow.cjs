@@ -143,10 +143,16 @@ const NIGHT_IMAGES = { P01: '/assets/P01.png', P02: '/assets/P02.png', P03: '/as
           await page.getByText('대가 없이 굴러오는 것은 없다.', { exact: true }).waitFor();
           await page.getByRole('button', { name: '받는다', exact: true }).click();
           await page.getByText(`규칙이 걸렸다 — ${WISH.label}`, { exact: true }).waitFor();
-          await page.getByRole('button', { name: '다음', exact: true }).click();
+          await readAll(page);
           await page.getByText(WISH.narration, { exact: true }).waitFor();
-          await page.locator('img[src$="Q03-eunsang-silent-corner-v1.png"]').waitFor();
-          await page.getByText(WISH.illustration.caption, { exact: true }).waitFor();
+          await page.getByRole('button', { name: '기록', exact: true }).click();
+          const panel = page.getByRole('dialog', { name: '기록', exact: true });
+          await panel.waitFor();
+          await panel.locator('li').filter({ hasText: WISH.narration }).getByRole('button', { name: /그림 보기/ }).click();
+          await panel.locator('img[src$="Q03-eunsang-silent-corner-v1.png"]').waitFor();
+          await panel.getByText(WISH.illustration.caption, { exact: true }).waitFor();
+          await panel.getByRole('button', { name: '기록 닫기', exact: true }).click();
+          await panel.waitFor({ state: 'hidden' });
           await expectBudget(page, 9 - n); // 소원은 대화 횟수를 줄이지 않는다
           assert.equal(pawResponses, 1, 'accepting the paw sends one response');
           await readAll(page);
@@ -155,7 +161,7 @@ const NIGHT_IMAGES = { P01: '/assets/P01.png', P02: '/assets/P02.png', P03: '/as
           await page.getByTestId('day-title').getByText('장면 3/6', { exact: true }).waitFor();
           await readAll(page);
           await page.getByText(WISH.counter, { exact: true }).waitFor();
-          report.checks.push('paw: wish label, cost hint, immediate wish scene with Q03, counter event next scene, budget kept');
+          report.checks.push('paw: wish label, cost hint, wish scene Q03 via records, counter event next scene, budget kept');
         }
         await page.getByRole('button', { name: '다음 장면', exact: true }).click();
         await page.getByRole('button', { name: '밤이 온다', exact: true }).waitFor();

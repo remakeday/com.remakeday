@@ -6,13 +6,17 @@ const line = (kind, text, fields = {}) => ({
 });
 
 async function readAll(page) {
-  const button = page.getByRole('button', { name: '모두 보기', exact: true });
-  await button.waitFor();
-  const counter = page.getByRole('region', { name: '대사창', exact: true })
-    .locator('span').filter({ hasText: /^\d+ \/ \d+$/ });
-  const [current, total] = (await counter.innerText()).split(' / ').map(Number);
-  // A mutation may still be finishing: click waits for enabled instead of silently skipping it.
-  if (current < total) await button.click();
+  // 원숭이손 팝업이 열려 aria-hidden이 된 대사창도 찾는다.
+  const box = page.locator('[aria-label="대사창"]');
+  await box.waitFor();
+  // 모두 보기 버튼 대신 대화창 탭·스페이스로 타이핑을 건너뛴다.
+  if ((await box.getAttribute('data-typing')) === 'true') {
+    await box.click();
+  }
+  await page.waitForFunction(() => {
+    const region = document.querySelector('[aria-label="대사창"]');
+    return region instanceof HTMLElement && region.getAttribute('data-typing') === 'false';
+  });
 }
 
 async function expectBudget(page, remaining) {

@@ -1,79 +1,146 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import type { Line } from "@/contracts/api";
+import { useCallback, useEffect, useRef, useState } from "react";
+import type { DisplayLine } from "@/lib/lineStyles";
 import { lineStyles, lineText } from "@/lib/lineStyles";
 import { VoiceReplay } from "@/components/VoicePlayer";
 
-export function LineBox({ lines, cursor, disabled = false, onPrevious, onNext, onShowAll, onReachedEnd }: {
-  lines: Line[];
-  cursor: number;
+const CHAR_MS = 18;
+
+function prefersReducedMotion(): boolean {
+  if (typeof window === "undefined") return false;
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function ChatLine({ line, text, typing }: { line: DisplayLine; text: string; typing: boolean }) {
+  const style = lineStyles[line.kind];
+  const label = style.label?.(line.speaker ?? null);
+  const complete = text === lineText(line);
+  return (
+    <div className={`flex flex-col gap-0.5 ${style.frameClassName}`}>
+      {label && (
+        <p className="text-sm text-ink/70">
+          {style.icon && <span aria-hidden="true">{style.icon} </span>}
+          {label}
+        </p>
+      )}
+      <p data-line-kind={line.kind} data-typing={typing ? "true" : undefined}
+        className={`text-base leading-relaxed whitespace-pre-wrap sm:text-lg ${style.className}`}>
+        {text}
+        {typing && <span className="ml-0.5 inline-block animate-pulse" aria-hidden="true">▍</span>}
+      </p>
+      {complete && line.text.split("\n").map((chunk, index) => (
+        <VoiceReplay key={index} speaker={line.speaker ?? undefined} text={chunk} />
+      ))}
+    </div>
+  );
+}
+
+export function LineBox({ lines, disabled = false, onActiveChange, onCaughtUp }: {
+  lines: DisplayLine[];
   disabled?: boolean;
-  onPrevious: () => void;
-  onNext: () => void;
-  onShowAll: () => void;
-  onReachedEnd: () => void;
+  onActiveChange: (index: number) => void;
+  onCaughtUp: () => void;
 }) {
   const regionRef = useRef<HTMLElement>(null);
-  const textRef = useRef<HTMLDivElement>(null);
-  const line = lines[cursor];
-  const style = lineStyles[line?.kind ?? "system"];
-  const label = style.label?.(line?.speaker ?? null);
-  const atEnd = cursor >= lines.length - 1;
+  const logRef = useRef<HTMLDivElement>(null);
+  const [doneCount, setDoneCount] = useState(0);
+  const [typedChars, setTypedChars] = useState(0);
+  const caughtRef = useRef(false);
+  const linesRef = useRef(lines);
+  linesRef.current = lines;
+
+  const typing = doneCount < lines.length;
+  const activeIndex = lines.length === 0 ? 0 : typing ? doneCount : lines.length - 1;
+
+  const skipTyping = useCallback(() => {
+    const total = linesRef.current.length;
+    if (disabled || doneCount >= total) return;
+    setDoneCount(total);
+    setTypedChars(0);
+  }, [disabled, doneCount]);
 
   useEffect(() => {
-    if (atEnd && !disabled) onReachedEnd();
-  }, [atEnd, cursor, lines.length, disabled, onReachedEnd]);
+    onActiveChange(activeIndex);
+  }, [activeIndex, onActiveChange]);
 
   useEffect(() => {
-    if (textRef.current) textRef.current.scrollTop = 0;
-  }, [cursor]);
+    if (typing || lines.length === 0 || caughtRef.current || disabled) return;
+    caughtRef.current = true;
+    onCaughtUp();
+  }, [typing, lines.length, disabled, onCaughtUp]);
 
   useEffect(() => {
-    if (disabled) return;
+    if (doneCount < lines.length) caughtRef.current = false;
+  }, [lines.length, doneCount]);
+
+  useEffect(() => {
+    if (!typing || disabled) return;
+    if (prefersReducedMotion()) {
+      setDoneCount(lines.length);
+      setTypedChars(0);
+      return;
+    }
+    const line = lines[doneCount];
+    const full = line ? lineText(line) : "";
+    if (line?.kind === "user" || full.length === 0) {
+      setDoneCount((count) => count + 1);
+      setTypedChars(0);
+      return;
+    }
+    if (typedChars >= full.length) {
+      const pause = window.setTimeout(() => {
+        setDoneCount((count) => count + 1);
+        setTypedChars(0);
+      }, 220);
+      return () => window.clearTimeout(pause);
+    }
+    const tick = window.setTimeout(() => setTypedChars((count) => count + 1), CHAR_MS);
+    return () => window.clearTimeout(tick);
+  }, [typing, disabled, doneCount, typedChars, lines]);
+
+  useEffect(() => {
+    const log = logRef.current;
+    if (!log) return;
+    log.scrollTo({ top: log.scrollHeight });
+  }, [doneCount, typedChars, lines.length]);
+
+  useEffect(() => {
+    if (disabled || !typing) return;
     const handleKey = (event: KeyboardEvent) => {
       if (event.defaultPrevented || event.isComposing || event.repeat || event.altKey || event.ctrlKey || event.metaKey) return;
       const target = event.target;
-      // 질문 입력·기록 패널은 그대로 두고, 대사창 버튼에서도 화살표로 넘긴다.
       if (target instanceof HTMLElement) {
         if (target.closest('input, textarea, select, [contenteditable="true"], [role="dialog"]')) return;
-        if (target.closest("button, a") && (!["ArrowLeft", "ArrowRight"].includes(event.key) || !regionRef.current?.contains(target))) return;
       }
-      if ([" ", "Enter", "ArrowRight"].includes(event.key)) {
+      if ([" ", "Enter", "Escape"].includes(event.key)) {
         event.preventDefault();
-        if (!atEnd) onNext();
-      } else if (event.key === "ArrowLeft") {
-        event.preventDefault();
-        if (cursor > 0) onPrevious();
+        skipTyping();
       }
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [atEnd, cursor, disabled, onNext, onPrevious]);
+  }, [disabled, typing, skipTyping]);
+
+  const visible = lines.slice(0, Math.min(lines.length, doneCount + (typing ? 1 : 0)));
 
   return (
-    <section ref={regionRef} role="region" aria-label="대사창" tabIndex={0}
-      className="flex h-48 shrink-0 flex-col border-t border-ink/30 bg-paper py-2 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink sm:h-52"
+    <section ref={regionRef} role="region" aria-label="대사창" tabIndex={0} data-typing={typing ? "true" : "false"}
+      className="flex min-h-40 max-h-52 flex-1 flex-col bg-transparent py-2 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ink sm:min-h-44 sm:max-h-60"
       onClick={(event) => {
         if ((event.target as HTMLElement).closest("button") || window.getSelection()?.toString()) return;
-        if (!disabled && !atEnd) onNext();
+        if (!disabled && typing) skipTyping();
       }}>
-      <div ref={textRef} className="mx-auto min-h-0 w-full max-w-3xl flex-1 overflow-y-auto break-words px-4 sm:px-10" aria-live="polite" aria-atomic="true">
-        {label && <p className="mb-1 text-sm text-ink/70">{style.icon && <span aria-hidden="true">{style.icon} </span>}{label}</p>}
-        <p data-line-kind={line?.kind ?? "system"} className={`text-base leading-relaxed whitespace-pre-wrap sm:text-lg ${style.className}`}>
-          {line ? lineText(line) : "장면을 살핀다."}
-        </p>
-        {line?.text.split("\n").map((text, index) => <VoiceReplay key={index} speaker={line.speaker ?? undefined} text={text} />)}
-      </div>
-      <div className="mx-auto mt-1 flex w-full max-w-3xl shrink-0 items-center justify-between gap-2 px-4 text-sm sm:px-10">
-        <button type="button" aria-label="이전" disabled={disabled || cursor === 0} onClick={onPrevious}
-          className="border border-ink/30 px-3 py-1 disabled:opacity-30">◀ <span className="sr-only">이전</span></button>
-        <span className="text-ink/60">{lines.length ? cursor + 1 : 0} / {lines.length}</span>
-        <div className="flex gap-2">
-          <button type="button" disabled={disabled || atEnd} onClick={onShowAll}
-            className="px-3 py-1 underline underline-offset-2 disabled:opacity-30">모두 보기</button>
-          <button type="button" aria-label="다음" disabled={disabled || atEnd} onClick={onNext}
-            className="border border-ink/30 px-3 py-1 disabled:opacity-30">▶ <span className="sr-only">다음</span></button>
+      <div ref={logRef} className="mx-auto min-h-0 w-full max-w-3xl flex-1 overflow-y-auto px-4 sm:px-6" aria-live="polite" aria-atomic="false">
+        <div className="flex flex-col gap-3 py-1">
+          {visible.length > 0
+            ? visible.map((line, index) => {
+                const full = lineText(line);
+                const isTyping = typing && index === doneCount;
+                const text = isTyping ? full.slice(0, typedChars) : full;
+                return <ChatLine key={`${index}-${line.kind}-${line.text}`} line={line} text={text} typing={isTyping} />;
+              })
+            : <p data-line-kind="system" className="text-center text-base text-ink/60">장면을 살핀다.</p>}
         </div>
       </div>
     </section>

@@ -67,7 +67,6 @@ const path = require('node:path');
 
     await page.goto('http://localhost:3500/play');
     await page.getByRole('button', { name: '시작', exact: true }).click();
-    await page.getByRole('button', { name: '계속', exact: true }).click();
     const voice = page.locator('audio[data-audio="voice"]');
     const bgm = page.locator('audio[src="/audio/game-bgm.mp3"]');
     const playing = async id => page.waitForFunction(id => {
@@ -75,10 +74,12 @@ const path = require('node:path');
       return audio && audio.currentSrc.endsWith(`/${id}.mp3`) && !audio.paused && audio.currentTime > 0;
     }, id);
 
-    // Broadcast playback starts only when its VN line is visible.
-    await page.getByText('채연이 배급을 남긴다.', { exact: true }).waitFor();
+    // 누적 로그의 첫 줄이 완성될 때는 방송이 시작됐을 수 있어, 낮 도입 진입 전에 확인한다.
     assert.equal(await voice.evaluate(audio => audio.paused), true);
-    await page.getByRole('button', { name: '다음', exact: true }).click();
+    await page.getByRole('button', { name: '계속', exact: true }).click();
+    // 방송 줄까지 자연스럽게 타이핑되길 기다려 자동 재생을 검증한 뒤 readAll로 마친다.
+    await page.getByText('채연이 배급을 남긴다.', { exact: true }).waitFor();
+    await page.locator('[aria-label="대사창"] [data-line-kind="broadcast"][data-typing="true"]').waitFor();
     await playing('MA01');
     await page.waitForFunction(() => document.querySelector('audio[src="/audio/game-bgm.mp3"]').volume < 0.15);
     await readAll(page);
@@ -88,8 +89,7 @@ const path = require('node:path');
     assert.equal(await page.getByRole('button', { name: /(채연|민석|은상|준) 대사 다시 듣기/ }).count(), 0, 'character lines have no replay button');
     await page.waitForFunction(() => document.querySelector('audio[src="/audio/game-bgm.mp3"]').volume === 0.25);
 
-    await page.getByRole('button', { name: '이전', exact: true }).click();
-    await page.getByRole('button', { name: '이전', exact: true }).click();
+    await page.getByRole('region', { name: '대사창' }).getByText('배급을 시작합니다. 식사 후에는 각자 자리에서 대기해 주십시오.', { exact: true }).waitFor();
     await page.getByRole('button', { name: '관리자 대사 다시 듣기', exact: true }).first().click();
     await playing('MA01');
     const canceledVoice = await voice.elementHandle();
@@ -127,7 +127,7 @@ const path = require('node:path');
     await page.getByRole('button', { name: '다음 장면', exact: true }).click();
     await page.getByTestId('day-title').getByText('다음 장면', { exact: true }).waitFor();
     await page.getByTestId('day-title').getByText('장면 4/6', { exact: true }).waitFor();
-    await page.getByRole('button', { name: '다음', exact: true }).click();
+    // 실패 음원도 실제 재생을 시도하도록 방송 타이핑을 기다린 뒤 readAll로 마친다.
     await page.getByText('소등하겠습니다. 모두 자리에서 움직이지 않습니다.', { exact: true }).waitFor();
     await page.waitForFunction(() => {
       const audio = document.querySelector('audio[data-audio="voice"]');

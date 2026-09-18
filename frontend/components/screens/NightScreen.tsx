@@ -188,7 +188,7 @@ export function NightScreen({
           <p className="text-base opacity-60">기록은 참고용이다. 판정에는 위에 직접 쓴 글만 들어간다. 눈여겨볼 기록을 눌러 표시해 두면 다음 밤에도 표시가 남는다.</p>
           {notes === null && (
             <p className="text-center text-lg opacity-40">
-              {notesAction.failure ? "노트를 불러오지 못했습니다" : "…"}
+              {notesAction.failure ? "노트를 불러오지 못했습니다" : "노트를 불러오는 중…"}
             </p>
           )}
           {notesByKind !== null &&

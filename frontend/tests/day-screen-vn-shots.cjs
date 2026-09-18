@@ -60,10 +60,8 @@ const shot = (page, name) => uiTweaksOnly && !['12-entry-guide', '13-cards-names
     await lineBox.waitFor();
     await page.waitForTimeout(800);
     await shot(page, '02-day-intro-first-line'); log('intro first line');
-    const next = page.getByRole('button', { name: '다음', exact: true });
-    for (let i = 0; i < 2; i++) { if (await next.isEnabled()) await next.click(); await page.waitForTimeout(300); }
-    await shot(page, '03-day-intro-third-line'); log('intro 3rd line');
-    await page.getByRole('button', { name: '모두 보기', exact: true }).click();
+    const { readAll } = require('./vn-helpers.cjs');
+    await readAll(page);
     await page.waitForTimeout(600);
     // 원숭이손 팝업이 뜨면 거절하고 진행
     const paw = page.getByRole('dialog', { name: '원숭이손의 제안' });
@@ -91,12 +89,9 @@ const shot = (page, name) => uiTweaksOnly && !['12-entry-guide', '13-cards-names
     await page.getByRole('button', { name: '묻기', exact: true }).waitFor({ timeout: 180000 });
     await page.waitForTimeout(500);
     await shot(page, '06-after-question-reply-line'); log('reply line');
-    if (await next.isEnabled()) { await next.click(); await page.waitForTimeout(300); await shot(page, '07-reply-next-line'); }
-    await page.getByRole('button', { name: '이전', exact: true }).click();
-    await page.getByRole('button', { name: '이전', exact: true }).click();
+    await readAll(page);
     await page.waitForTimeout(300);
-    await shot(page, '08-back-through-today'); log('back');
-    await page.getByRole('button', { name: '모두 보기', exact: true }).click();
+    await shot(page, '08-after-reply-caught-up'); log('caught up');
     // HUD 기록과 안내 패널
     await page.getByRole('button', { name: '기록', exact: true }).click();
     await page.getByRole('dialog', { name: '기록', exact: true }).waitFor();

@@ -238,7 +238,7 @@ const deferred = () => {
     await retryQuestion('success');
     await expectBudget(page, 5);
     assert.equal(accepted.size, 3, 'retry keeps one accepted request');
-    await page.getByRole('region', { name: '대사창' }).getByText('9 / 9', { exact: true }).waitFor();
+    await readAll(page);
     assert.equal(await page.getByText('3번째 답: 먹은 양을 적어 두려고 봤어.', { exact: true }).count(), 1, 'retry adds one accepted reply');
     await page.getByRole('button', { name: '기록', exact: true }).click();
     assert.equal(await notebook.locator('ol > li').count(), 3, 'retry adds one record');
