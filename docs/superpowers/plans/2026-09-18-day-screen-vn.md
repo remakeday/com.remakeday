@@ -54,3 +54,4 @@
 
 ## astra 재구현 (사용자 결정 16:50 — 별도 브랜치에서 처음부터)
 워크트리 `/home/kimchungsik/projects/com.remakeday-astra`, 브랜치 `feat/day-screen-astra`(기준 `1be2dc3` = T1 백엔드까지), 프론트 dev 3510. Codex `-m gpt-6-astra`(reasoning high)로 A(구현: T2~T4 + 사용자 조정 전부 한 세션) → B(헤드리스 갱신·신규, `FRONTEND_URL` 환경변수) 순. 헤드리스 실행·스크린샷은 컨트롤러(3510). 백엔드 CORS가 3500만 허용해 실서버 스크린샷은 비교 시점에 3500을 잠시 astra 워크트리로 바꿔 찍는다. 완료 후 두 결과 비교는 사용자가 고른다.
+- 결과(17:25): 화면은 sol과 사실상 동일, 헤드리스 9/10(gameplay-clarity 1건), 코드 1,217줄(DialogShell·ConversationMeter 분리). **사용자 결정: astra 결과 폐기** — 워크트리·브랜치 삭제, 본진(sol) 유지. 비교 이미지는 `frontend/tests/.playwright-out/compare-sol-vs-astra/`(gitignore)에 남김.
