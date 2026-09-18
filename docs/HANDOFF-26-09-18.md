@@ -72,9 +72,9 @@
 
 1. **프론트 마감(컨트롤러)** — 팀원 커밋 확인 → EntryScreen 준 소개 "손목띠 숫자를" → "손목띠를"(HANDOFF 12번) → `tsc` → 헤드리스 10종(한 번에 하나) → 커밋 → `feat/coherence-chain` 푸시 → `main` ff 푸시 → Vercel 배포 success 확인(GitHub commit status).
 2. **키 교체(사용자/류준)** — `backend/.env`의 `ANTHROPIC_API_KEY`를 새 키로. 같은 파일에서 8~14행의 옛 `CORE_LLM_*`·`NPC_LLM_*`(ollama) 줄은 지워 중복을 없앤다(로더는 뒤 줄을 쓰지만 애매함 제거).
-3. **제출 전환(컨트롤러)** — 같은 `.env`에서 `USER_DAILY_ATTEMPTS=5`·`DAILY_ATTEMPT_CAP=200`·`TRUST_PROXY=true`. 값은 문서에 적지 않는다.
+3. **제출 전환(컨트롤러)** — 같은 `.env`에서 `DEV_LOGIN=off`(**구글 로그인만** — 백엔드가 개발 로그인을 거부하고 비로그인 `/sessions`는 401, 프로덕션 프론트엔 개발 로그인 폼이 없음) · `USER_DAILY_ATTEMPTS=5`(**한 계정 하루 5판**) · `DAILY_ATTEMPT_CAP=200` · `TRUST_PROXY=true`. 사용자 지시 2026-09-18 21:05.
 4. **재기동** — `fuser -k 8500/tcp`로 끊고(패턴 pkill 금지 — 같은 줄의 시작 명령을 자기 자신으로 잡아 셸이 죽는다) 절대경로로 uvicorn 시작 → `/health` 200(로컬·터널) → `get_settings()`로 `anthropic claude-sonnet-5 | anthropic claude-haiku-4-5 | key set: True` 확인.
-5. **실서버 스모크** — 개발 로그인 → 판 생성 → 1회차 진입 → 다음 장면 1회(관리자 검사·계획 = Sonnet 호출) → NPC에게 질문 1회(Haiku 호출) → 응답 200·오류 0. 새 키가 실제로 통하는지 여기서 확인된다.
+5. **실서버 스모크** — `DEV_LOGIN=off`라 개발 로그인은 401이어야 정상(확인 항목). 스모크는 구글 로그인 계정 쿠키로: 판 생성 → 1회차 진입 → 다음 장면 1회(관리자 검사·계획 = Sonnet 호출) → NPC에게 질문 1회(Haiku 호출) → 응답 200·오류 0. 새 키가 실제로 통하는지 여기서 확인된다.
 6. **최종 선언(사용자)** — "최종 제출 완료". 이후 코드 동결.
 
 롤백(어느 단계든): provider 두 줄을 `ollama`, 모델을 `gemma4:12b`/`kanana1.5:8b-q4km`로, 한도는 테스트값으로 되돌리고 재기동.
