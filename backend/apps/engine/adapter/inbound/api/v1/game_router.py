@@ -22,6 +22,7 @@ from apps.engine.app.use_cases.loop_interactor import GameStateError as LoopErro
 from apps.engine.app.ports.output.scene_transaction_port import RequestInFlight
 from apps.engine.app.use_cases.loop_interactor import DialogueUnavailable
 from apps.engine.app.use_cases.night_interactor import GameStateError as NightError
+from apps.engine.domain.value_objects.game_constants import MAX_CLAIMS
 from apps.engine.app.use_cases.session_interactor import DailyCapReached, UserDailyLimit
 from apps.engine.dependencies.engine_dependency import (
     get_inspector,
@@ -85,7 +86,7 @@ class DraftReq(BaseModel):
 
 
 class ClaimsReq(BaseModel):
-    claims: list[Annotated[str, StringConstraints(max_length=500)]] = Field(max_length=8)
+    claims: list[Annotated[str, StringConstraints(max_length=500)]] = Field(max_length=MAX_CLAIMS)
 
 
 class QuestionReq(BaseModel):

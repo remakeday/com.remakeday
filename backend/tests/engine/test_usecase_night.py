@@ -72,9 +72,10 @@ def test_draft_preserves_illness_and_motive_across_line_breaks(source):
 
 
 def test_draft_keeps_facts_after_eighth_sentence():
+    # 9번째 문장부터 한 칸에 뭉쳐 줄글로 보이던 것을 고쳤다 (사용자 실플레이 2026-09-19).
     source = "하나. 둘. 셋. 넷. 다섯. 여섯. 일곱. 여덟. 아홉. 우리는 돼지다."
     claims, _ = draft_answer(source)
-    assert claims == ["하나.", "둘.", "셋.", "넷.", "다섯.", "여섯.", "일곱.", "여덟. 아홉. 우리는 돼지다."]
+    assert claims == ["하나.", "둘.", "셋.", "넷.", "다섯.", "여섯.", "일곱.", "여덟.", "아홉.", "우리는 돼지다."]
 
 
 def test_selected_notes_without_free_text_make_no_claims():

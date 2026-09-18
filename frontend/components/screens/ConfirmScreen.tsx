@@ -7,6 +7,9 @@ import { useApiAction } from "@/lib/useApiAction";
 import { ErrorToast } from "@/components/ErrorToast";
 import type { DialoguePair } from "@/components/screens/DayScreen";
 
+// 서버의 주장 개수 제한과 맞춘다.
+const MAX_CLAIMS = 40;
+
 /** 밤 채점 대기 — 단계 텍스트 순환 (1.2초 간격) */
 const SUBMIT_STAGES = ["정리하고 있다…", "대조하고 있다…", "판정하고 있다…"];
 
@@ -85,7 +88,7 @@ export function ConfirmScreen({
       .split("\n")
       .map((s) => s.trim())
       .filter((s) => s.length > 0)
-      .slice(0, 8);
+      .slice(0, MAX_CLAIMS);
     if (next.length === 0) return;
     void patchAction.run(
       () => api.patchClaims(nightId, { claims: next }),
@@ -138,7 +141,7 @@ export function ConfirmScreen({
               className="w-full resize-y border border-paper/40 bg-transparent px-3 py-2 text-lg leading-relaxed outline-none focus:border-paper"
             />
             <p className="text-center text-base opacity-50">
-              한 줄이 주장 하나다. 최대 8줄.
+              한 줄이 주장 하나다. 최대 {MAX_CLAIMS}줄.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <button
@@ -192,7 +195,7 @@ export function ConfirmScreen({
             )}
             {!submitAction.busy && (
               <p className="text-center text-base opacity-50">
-                주장은 최대 8개까지만 세계에 닿는다.
+                문장 하나하나가 따로 판정된다.
               </p>
             )}
             <div className="flex flex-wrap justify-center gap-4">

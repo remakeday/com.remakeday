@@ -202,10 +202,11 @@ def test_free_text_length_limit(db_session, logged_in):
 
 
 def test_claims_count_limit(db_session, logged_in):
+    from apps.engine.app.use_cases.night_interactor import MAX_CLAIMS
     from main import app
     with TestClient(app) as c:
         _, night_id = _own_loop_and_night(c, db_session)
-        r = c.patch(f"/nights/{night_id}/claims", json={"claims": ["주장"] * 9})
+        r = c.patch(f"/nights/{night_id}/claims", json={"claims": ["주장"] * (MAX_CLAIMS + 1)})
         assert r.status_code == 422
 
 

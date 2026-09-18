@@ -26,7 +26,7 @@ from apps.engine.domain.entities.claim_rules import is_question_claim
 from apps.engine.domain.entities.question_suggestions import suggest_questions
 from apps.engine.domain.entities.rule_rules import Rule, narration_with_rule_note
 from apps.engine.domain.value_objects.event_type import EventType
-from apps.engine.domain.value_objects.game_constants import CELLS, LOOPS_PER_ATTEMPT
+from apps.engine.domain.value_objects.game_constants import CELLS, LOOPS_PER_ATTEMPT, MAX_CLAIMS
 
 
 class GameStateError(Exception):
@@ -38,10 +38,10 @@ class RequestInFlight(GameStateError, InFlight):
 
 
 def source_claims(free_text: str) -> list[str]:
-    """직접 쓴 원문을 보존해 분할한다. 8칸을 넘는 문장은 마지막 칸에 모은다."""
+    """직접 쓴 원문을 보존해 문장·줄 단위로 나눈다. 상한을 넘는 문장만 마지막 칸에 모은다."""
     claims = list(dict.fromkeys(s.strip() for s in re.split(r"(?<=[.!?])\s+|\n+", free_text) if s.strip()))
-    if len(claims) > 8:
-        return claims[:7] + [" ".join(claims[7:])]
+    if len(claims) > MAX_CLAIMS:
+        return claims[: MAX_CLAIMS - 1] + [" ".join(claims[MAX_CLAIMS - 1 :])]
     return claims
 
 

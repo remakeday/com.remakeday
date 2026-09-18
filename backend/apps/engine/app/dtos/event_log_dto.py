@@ -10,6 +10,7 @@ from typing import Annotated, Literal, Union
 from pydantic import BaseModel, ConfigDict, Field
 
 from apps.engine.domain.value_objects.event_type import EventType
+from apps.engine.domain.value_objects.game_constants import MAX_CLAIMS
 from apps.engine.app.dtos.observation_dto import ObservationDTO
 
 
@@ -126,7 +127,7 @@ class AnswerDraftEvent(EventBase):
 class AnswerNormalizedEvent(EventBase):
     type: Literal[EventType.ANSWER_NORMALIZED] = EventType.ANSWER_NORMALIZED
     loop_n: int
-    claims: list[str] = Field(max_length=8)
+    claims: list[str] = Field(max_length=MAX_CLAIMS)
     user_edited: bool
     edit_diff: str | None
 

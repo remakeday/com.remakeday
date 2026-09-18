@@ -32,3 +32,7 @@ PAW_DECLINE_LIMIT = 2  # 원숭이손: 같은 판 연속 거절 한도
 
 CELLS = ("cause", "motive", "side_effect", "identity")
 COOKIE_TIE_ORDER = ("cause", "motive", "side_effect", "identity")
+
+# 밤 제출문을 문장·줄 단위로 나눌 때의 칸 상한. 자유서술이 2000자 상한이라
+# 보통 길이 문장으로는 닿지 않는다 — 실제로 뭉치는 일이 없도록 두고 API 입력 상한으로만 쓴다.
+MAX_CLAIMS = 40

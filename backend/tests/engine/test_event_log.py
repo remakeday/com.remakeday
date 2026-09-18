@@ -163,8 +163,13 @@ def test_unknown_extra_field_is_rejected():
         )
 
 
-def test_claims_over_8_rejected():
+def test_claims_over_the_limit_rejected():
+    from apps.engine.domain.value_objects.game_constants import MAX_CLAIMS
+
+    e.AnswerNormalizedEvent(  # 상한까지는 받는다 — 9번째 문장부터 뭉치던 제약을 푼 뒤 (2026-09-19)
+        loop_n=1, claims=[f"c{i}" for i in range(MAX_CLAIMS)], user_edited=False, edit_diff=None
+    )
     with pytest.raises(ValidationError):
         e.AnswerNormalizedEvent(
-            loop_n=1, claims=[f"c{i}" for i in range(9)], user_edited=False, edit_diff=None
+            loop_n=1, claims=[f"c{i}" for i in range(MAX_CLAIMS + 1)], user_edited=False, edit_diff=None
         )

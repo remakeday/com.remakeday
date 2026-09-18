@@ -59,8 +59,8 @@ res: `{npcs: [{code, name, mood}]}` (대화 가능 인물만)
 
 ### POST /loops/{loop_id}/night/draft
 req: `{tapped_note_ids: number[], free_text: string}`
-res: `{night_id: string, claims: string[], is_question: boolean[]}` (≤8)
-- 자유서술(`free_text`)만 문장·줄 단위로 나눈다. 8개를 넘으면 나머지를 마지막 항목에 모아 보존한다.
+res: `{night_id: string, claims: string[], is_question: boolean[]}` (≤40)
+- 자유서술(`free_text`)만 문장·줄 단위로 나눈다. 40개를 넘으면 나머지를 마지막 항목에 모아 보존한다(2000자 상한이라 보통 길이 문장으로는 닿지 않는다).
 - 선택한 노트(`tapped_note_ids`)는 **채점 후보에 들어가지 않는다**(2026-09-17, 테스터9 F17·테스터11 O1). 저장만 되어 다음 밤 참고 목록의 표시 복원에 쓰인다. 기록 원문을 글에 직접 옮겨 적으면 그 문장은 주장이 된다.
 - `free_text`가 비면 `claims=[]`로 정리된다(거절하지 않음, 점수 0). 화면은 글이 비면 제출 버튼을 막는다.
 - `is_question`: `claims`와 같은 길이·순서. 질문형 문장(물음표, `~인가/~나/~까/~니/~냐/~는지` 어미) 표시용이며 채점에는 쓰지 않는다(테스터11 O2).
@@ -153,7 +153,7 @@ res: `{db}` — `db`는 `ok | error`. 공개 경로(api.remakeday.com)라 기동
 - **429** `{"detail": {"detail": "요청이 너무 잦다", "retry_after": number}}`, 헤더 `Retry-After: {retry_after}` — 속도 제한 버킷 초과(`IP_SESSIONS_PER_MINUTE`/`IP_ACTIONS_PER_MINUTE`, 기본 5/30 분당).
 - **503** `{"code": "daily_cap", "detail": "오늘 정원이 마감됐다."}` — 오늘 전역 판 생성 수가 `DAILY_ATTEMPT_CAP`(기본 200)에 도달. `POST /sessions`에서만 발생.
 - **413** `{"detail": "요청이 너무 크다"}` — 요청 본문이 262144바이트(256KiB)를 넘음. `Content-Length` 헤더만 보고 본문을 읽기 전에 거부한다(ASGI 미들웨어, `main.py`). `Content-Length`가 없는 요청은 통과시킨다.
-- **422** — 텍스트 상한 초과 시 FastAPI 기본 검증 에러(`detail`이 배열). 상한: `POST /loops/{loop_id}/utterances`·`POST /nights/{night_id}/questions`의 `text` 200자, `POST /loops/{loop_id}/night/draft`의 `free_text` 2000자, `PATCH /nights/{night_id}/claims`의 `claims` 배열 8개·각 500자, `POST /nights/{night_id}/rule`·`/rule/preview`의 `custom_text` 200자.
+- **422** — 텍스트 상한 초과 시 FastAPI 기본 검증 에러(`detail`이 배열). 상한: `POST /loops/{loop_id}/utterances`·`POST /nights/{night_id}/questions`의 `text` 200자, `POST /loops/{loop_id}/night/draft`의 `free_text` 2000자, `PATCH /nights/{night_id}/claims`의 `claims` 배열 40개·각 500자, `POST /nights/{night_id}/rule`·`/rule/preview`의 `custom_text` 200자.
 
 `attempts.user_id`: 판을 만든 사용자의 `users.id`(UUID). 세션의 `sub`(구글 sub, 개발 계정은 `dev:{id}`, `GUARD_AUTH=off`일 때는 `"dev"`)로 `users` 행을 찾아 그 `id`를 넣고, 판 주인 확인도 같은 경로(sub → `users.id` → `attempts.user_id`)로 맞춘다. 하루 판 수·전역 정원 집계의 기준. **FK 제약 없음** — 익명 구판(이 컬럼이 `null`인 기존 판) 호환을 위해 의도적으로 걸지 않았다.
 
