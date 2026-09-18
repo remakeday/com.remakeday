@@ -70,6 +70,8 @@
 
 전제: 팀원 프론트 커밋 완료, 새 Anthropic 키 준비. 순서대로, 각 단계 통과 확인 뒤 다음.
 
+**현재 서버 상태(21:25):** 8500은 **ollama(gemma4/kanana/bge)로 도는 중** — `.env`는 Anthropic 구성이지만 재기동 때 환경변수(`CORE_LLM_PROVIDER=ollama …`)로 덮어씀. 즉 **환경변수 없이 재기동하면 `.env`대로 Anthropic(평가용 키)로 돌아간다.** 류준 신호 전까지는 로컬로 두고, 신호 뒤 4번 재기동은 덮어쓰기 없이(새 키 `.env`).
+
 1. **프론트 마감(컨트롤러)** — 팀원 커밋 확인 → EntryScreen 준 소개 "손목띠 숫자를" → "손목띠를"(HANDOFF 12번) → **이탈 경고**: 판이 진행 중(진입 화면 이후~회고 전)일 때 새로고침·탭 닫기·뒤로가기에 브라우저 확인창(`beforeunload`, "나가면 이 판은 사라집니다" — 브라우저가 문구를 바꿔 보여줄 수 있음) → `tsc` → 헤드리스 10종(한 번에 하나) → 커밋 → `feat/coherence-chain` 푸시 → `main` ff 푸시 → Vercel 배포 success 확인(GitHub commit status).
 2. **키 교체(사용자/류준)** — `backend/.env`의 `ANTHROPIC_API_KEY`를 새 키로. 같은 파일에서 8~14행의 옛 `CORE_LLM_*`·`NPC_LLM_*`(ollama) 줄은 지워 중복을 없앤다(로더는 뒤 줄을 쓰지만 애매함 제거).
 3. **제출 전환 1단계(컨트롤러)** — `.env`에서 `USER_DAILY_ATTEMPTS=3`(**한 계정 하루 3판** — 사용자 결정 21:15: 이탈 경고가 있으면 3판이면 충분, 처음 하는 사람 3판 ≈ 1시간. `count_today`가 오늘 만든 판 수를 세므로 중도 포기 포함, 자정 초기화) · `DAILY_ATTEMPT_CAP=200` · `TRUST_PROXY=true`. `DEV_LOGIN`은 아직 `on`(스모크용). 값은 문서에 적지 않는다. 사용자 지시 2026-09-18 21:05.
