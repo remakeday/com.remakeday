@@ -2,6 +2,7 @@
 // NODE_PATH=/tmp/demo-image-browser/node_modules node frontend/tests/voice-playback.cjs
 const { chromium } = require('playwright');
 const assert = require('node:assert/strict');
+const { line, readAll } = require('./vn-helpers.cjs');
 const { readdirSync } = require('node:fs');
 const path = require('node:path');
 
@@ -34,6 +35,7 @@ const path = require('node:path');
       else if (path.endsWith('/loops')) body = {
         loop_id: 'voice-loop', loop_n: 1, morning_text: '아침이다.', damage_level: 0,
         budget_left: budget, beat, beat_title: '기상', narration: '채연이 배급을 남긴다.',
+        lines: [line('scene', '채연이 배급을 남긴다.'), line('broadcast', '배급을 시작합니다. 식사 후에는 각자 자리에서 대기해 주십시오.', { speaker: '관리자' }), line('npc', '이거 네 거잖아. 안 먹어?', { speaker: '준' }), line('npc', '배 안 고파. 너 먹어.', { speaker: '채연' })],
         broadcast: '배급을 시작합니다. 식사 후에는 각자 자리에서 대기해 주십시오.',
         aftermath: null, active_rules: [], observations: [], illustrations: [],
         ambient: { lines: [
@@ -41,18 +43,23 @@ const path = require('node:path');
           { code: 'chaeyeon', name: '채연', text: '배 안 고파. 너 먹어.' },
         ] },
       };
+      else if (path.endsWith('/observations')) body = { observations: [] };
       else if (path.endsWith('/npcs')) body = { npcs };
       else if (path.endsWith('/utterances')) body = {
         utterance_id: route.request().postDataJSON().request_id, npc: { ...npcs[0], uttered: true },
-        reply: '아프지는 않아. 오늘은 네가 먹어.', budget_left: --budget, beat, tool_used: false, observations: [],
+        reply: '아프지는 않아. 오늘은 네가 먹어.', lines: [line('npc', '아프지는 않아. 오늘은 네가 먹어.', { speaker: '채연' })], budget_left: --budget, beat, tool_used: false, observations: [],
       };
       else if (path.endsWith('/beats/next')) {
         beat++;
-        body = { beat, beat_title: '다음 장면', narration: '시간이 흐른다.',
-          broadcast: beat === 4 ? '소등하겠습니다. 모두 자리에서 움직이지 않습니다.' : null,
-          ambient: { lines: beat === 4
-            ? [{ code: 'eunsang', name: '은상', text: '혼자 깨어 있으면 무서워. 조금만 같이 있어 줘.' }]
-            : [{ code: 'jun', name: '준', text: '민석아, 이 숫자 뭔지 알아?' }] },
+        const broadcast = beat === 4 ? '소등하겠습니다. 모두 자리에서 움직이지 않습니다.'
+          : beat === 5 ? '배급을 시작합니다. 식사 후에는 각자 자리에서 대기해 주십시오.' : null;
+        const ambient = { lines: beat === 5 ? [] : beat === 4
+          ? [{ code: 'eunsang', name: '은상', text: '혼자 깨어 있으면 무서워. 조금만 같이 있어 줘.' }]
+          : [{ code: 'jun', name: '준', text: '민석아, 이 숫자 뭔지 알아?' }] };
+        body = { beat, beat_title: '다음 장면', narration: '시간이 흐른다.', broadcast, ambient,
+          lines: [line('scene', '시간이 흐른다.'),
+            ...(broadcast ? [line('broadcast', broadcast, { speaker: '관리자' })] : []),
+            ...ambient.lines.map(npc => line('npc', npc.text, { speaker: npc.name }))],
           day_done: false, observations: [], illustrations: [], budget_left: budget, paw_offer: null, note_found: null };
       } else throw new Error(`Unexpected API: ${path}`);
       return route.fulfill({ json: body, headers: { 'access-control-allow-origin': 'http://localhost:3500', 'access-control-allow-credentials': 'true' } });
@@ -68,20 +75,28 @@ const path = require('node:path');
       return audio && audio.currentSrc.endsWith(`/${id}.mp3`) && !audio.paused && audio.currentTime > 0;
     }, id);
 
-    // A missing or overlapping voice queue fails these checks.
+    // Broadcast playback starts only when its VN line is visible.
+    await page.getByText('채연이 배급을 남긴다.', { exact: true }).waitFor();
+    assert.equal(await voice.evaluate(audio => audio.paused), true);
+    await page.getByRole('button', { name: '다음', exact: true }).click();
     await playing('MA01');
     await page.waitForFunction(() => document.querySelector('audio[src="/audio/game-bgm.mp3"]').volume < 0.15);
-    await page.getByRole('button', { name: '…', exact: true }).click();
+    await readAll(page);
     // 인물 대사 음원은 재생 보류(테스터6 F1) — 자막만 보이고 다시 듣기 버튼도 없다.
     await page.getByText('배 안 고파. 너 먹어.', { exact: true }).waitFor();
     await page.waitForFunction(() => { const audio = document.querySelector('audio[data-audio="voice"]'); return audio.paused && !audio.getAttribute('src'); });
     assert.equal(await page.getByRole('button', { name: /(채연|민석|은상|준) 대사 다시 듣기/ }).count(), 0, 'character lines have no replay button');
     await page.waitForFunction(() => document.querySelector('audio[src="/audio/game-bgm.mp3"]').volume === 0.25);
 
+    await page.getByRole('button', { name: '이전', exact: true }).click();
+    await page.getByRole('button', { name: '이전', exact: true }).click();
     await page.getByRole('button', { name: '관리자 대사 다시 듣기', exact: true }).first().click();
     await playing('MA01');
     const canceledVoice = await voice.elementHandle();
+    await readAll(page);
     await page.getByRole('button', { name: '다음 장면', exact: true }).click();
+    await page.getByText('다음 장면 · 장면 2/6', { exact: true }).waitFor();
+    await readAll(page);
     await page.getByText('민석아, 이 숫자 뭔지 알아?', { exact: true }).waitFor();
     await canceledVoice.evaluate(audio => {
       audio.dispatchEvent(new Event('ended'));
@@ -95,26 +110,42 @@ const path = require('node:path');
     assert.equal(await voice.evaluate(audio => audio.paused), true);
     await page.waitForFunction(() => document.querySelector('audio[src="/audio/game-bgm.mp3"]').volume === 0.25);
     await page.getByRole('button', { name: '다음 장면', exact: true }).click();
+    await page.getByText('다음 장면 · 장면 3/6', { exact: true }).waitFor();
+    await readAll(page);
     assert.equal(await voice.evaluate(audio => audio.paused), true, 'new scene preserves voice-off choice');
     await page.getByRole('switch', { name: '음성 켜기', exact: true }).click();
 
     // A similar LLM response must never trigger an unrelated fixed recording.
     await page.getByRole('textbox', { name: '인물에게 질문', exact: true }).fill('왜 안 먹어?');
-    await page.getByRole('button', { name: '말한다', exact: true }).click();
+    await page.getByRole('button', { name: '묻기', exact: true }).click();
     await page.getByText('아프지는 않아. 오늘은 네가 먹어.', { exact: true }).waitFor();
     assert.equal(await voice.evaluate(audio => audio.paused), true, 'unrecorded dialogue remains text only');
 
     // A missing recording must not block the next line or keep BGM ducked.
     await page.getByRole('button', { name: '다음 장면', exact: true }).click();
+    await page.getByText('다음 장면 · 장면 4/6', { exact: true }).waitFor();
+    await page.getByRole('button', { name: '다음', exact: true }).click();
     await page.getByText('소등하겠습니다. 모두 자리에서 움직이지 않습니다.', { exact: true }).waitFor();
     await page.waitForFunction(() => {
       const audio = document.querySelector('audio[data-audio="voice"]');
       return !audio.getAttribute('src') && audio.paused;
     });
     await page.waitForFunction(() => document.querySelector('audio[src="/audio/game-bgm.mp3"]').volume === 0.25);
-    await page.getByRole('button', { name: '…', exact: true }).click();
+    await readAll(page);
     await page.getByText('혼자 깨어 있으면 무서워. 조금만 같이 있어 줘.', { exact: true }).waitFor();
     assert.equal(await voice.evaluate(audio => audio.paused), true, 'held character recording stays text only');
+    // A broadcast that ends an intro may still be playing when scene movement unlocks.
+    await page.getByRole('button', { name: '다음 장면', exact: true }).click();
+    await page.getByText('다음 장면 · 장면 5/6', { exact: true }).waitFor();
+    await readAll(page);
+    await playing('MA01');
+    const sceneVoice = await voice.elementHandle();
+    await page.getByRole('button', { name: '다음 장면', exact: true }).click();
+    await page.getByText('다음 장면 · 장면 6/6', { exact: true }).waitFor();
+    assert.equal(await sceneVoice.evaluate(audio => audio.paused), true, 'scene movement stops a playing broadcast');
+    await sceneVoice.evaluate(audio => { audio.dispatchEvent(new Event('ended')); audio.dispatchEvent(new Event('error')); });
+    await readAll(page);
+    await page.waitForFunction(() => { const audio = document.querySelector('audio[data-audio="voice"]'); return audio.paused && !audio.getAttribute('src'); });
     await page.getByRole('switch', { name: 'BGM 끄기', exact: true }).click();
     assert.equal(await bgm.evaluate(audio => audio.paused), true, 'music-off choice holds');
     failLightsOut = false;

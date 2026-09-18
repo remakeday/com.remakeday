@@ -2,6 +2,7 @@
 // NODE_PATH=/tmp/demo-image-browser/node_modules node tests/connected-investigation.cjs
 const { chromium } = require('playwright');
 const assert = require('node:assert/strict');
+const { line, readAll, expectBudget } = require('./vn-helpers.cjs');
 const fs = require('node:fs');
 
 const out = process.env.TEST_ARTIFACT_DIR || '/tmp/demo-connected-frontend';
@@ -64,7 +65,7 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
       if (path === '/sessions') body = { attempt_id: 'connected', attempt_n: 1, entry_lines: ['세계가 이상하다.', '오늘이 지나면 멸망한다.', '다섯 번 관찰한다.'], prior_cell_results: null };
       else if (path === '/sessions/connected/loops') body = {
         loop_id: 'loop-3', loop_n: 3, morning_text: '7시 12분. 눈을 뜬다.', damage_level: 0,
-        budget_left: 5, beat: 6, beat_title: '침상 사이', narration: '준이 소매를 살핀다.', broadcast: null,
+        budget_left: 5, beat: 6, beat_title: '침상 사이', narration: '준이 소매를 살핀다.', lines: [line('scene', '준이 소매를 살핀다.', { image_id: 'clue-11' }), line('fragment', observations[2].text, { speaker: '준', observation_id: 'obs-current' })], broadcast: null,
         illustrations: [seenIllustration], aftermath: null, active_rules: [], observations: [observations[2]],
       };
       else if (path === '/loops/loop-3/npcs') body = { npcs: [
@@ -75,7 +76,7 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
       ] };
       else if (path === '/loops/loop-3/observations') body = { observations };
       else if (path === '/loops/loop-3/beats/next') body = {
-        beat: 6, beat_title: '저녁 배급', narration: '소등 시간이 왔다.', broadcast: null,
+        beat: 6, beat_title: '저녁 배급', narration: '소등 시간이 왔다.', lines: [line('scene', '소등 시간이 왔다.'), line('system', '하루가 끝났다.')], broadcast: null,
         illustrations: [seenIllustration], paw_offer: null, day_done: true, ambient: null, note_found: null,
         observations: [observations[2], observations[3]], budget_left: 4,
       };
@@ -173,43 +174,61 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
     await page.getByRole('button', { name: '시작', exact: true }).click();
     await page.getByRole('button', { name: '계속', exact: true }).click();
 
-    const notebookOpener = page.getByRole('button', { name: '단서 기록 열기', exact: true });
+    const notebookOpener = page.getByRole('button', { name: '기록·안내', exact: true });
     await notebookOpener.click();
-    const dayNotebook = page.getByRole('dialog', { name: '단서 기록' });
-    await page.getByText('본 행동과 들은 말을 다시 살펴보고, 밤의 추리에 단서로 사용한다.').waitFor();
-    await page.getByText('발언을 들음', { exact: true }).waitFor();
-    await page.getByText('3회차 · 소문', { exact: true }).waitFor();
+    const dayNotebook = page.getByRole('dialog', { name: '기록·안내' });
+    await dayNotebook.getByRole('tab', { name: '단서 기록', exact: true }).waitFor();
+    const dayLine = page.locator('[data-line-kind]');
+    const lineBeforeNotebook = await dayLine.textContent();
+    await dayNotebook.getByRole('tabpanel').focus();
+    for (const key of ['Space', 'Enter', 'ArrowRight']) {
+      await page.keyboard.press(key);
+      assert.equal(await dayLine.textContent(), lineBeforeNotebook, `${key} in records does not advance dialogue`);
+    }
+    const statement = dayNotebook.locator('li').filter({ hasText: observations[3].text });
+    await statement.getByText('3일째 · 장면 6 · 은상', { exact: true }).waitFor();
+    await statement.getByText(observations[3].text, { exact: true }).waitFor();
     assert.equal(await page.locator('img[src*="clue-12"]').count(), 0, 'unseen branch art stays hidden');
-    const daySourceOpener = dayNotebook.getByRole('button', { name: '아침 배급 원본 장면 열기' });
+    const daySourceOpener = dayNotebook.getByRole('button', { name: /민석이 남은 쟁반을 기록했다/ });
     await daySourceOpener.click();
-    const daySourceDetail = page.getByRole('dialog', { name: '아침 배급 원본 장면' });
-    assert.equal(await page.getByRole('button', { name: '원본 장면 닫기', exact: true }).evaluate(element => element === document.activeElement), true, 'source detail receives focus');
+    const daySourceDetail = dayNotebook.getByRole('region', { name: '아침 배급 그림' });
+    await daySourceDetail.locator('img[src$="clue-08-minseok-tray-record-v1.png"]').waitFor();
+    assert.equal(await daySourceDetail.getByRole('button', { name: '기록으로 돌아간다', exact: true }).evaluate(element => element === document.activeElement), true, 'source detail receives focus');
     await page.keyboard.press('Tab');
-    assert.equal(await daySourceDetail.evaluate((element) => element.contains(document.activeElement)), true, 'source detail traps focus');
-    await page.keyboard.press('Escape');
+    assert.equal(await dayNotebook.evaluate((element) => element.contains(document.activeElement)), true, 'picture keeps focus inside the records panel');
+    assert.equal(await dayNotebook.getByRole('button', { name: '기록·안내 닫기', exact: true }).evaluate(element => element === document.activeElement), true, 'Tab from picture wraps to the first control');
+    await page.keyboard.press('Shift+Tab');
+    assert.equal(await daySourceDetail.getByRole('button', { name: '기록으로 돌아간다', exact: true }).evaluate(element => element === document.activeElement), true, 'Shift+Tab wraps back to the last visible control');
+    await daySourceDetail.getByRole('button', { name: '기록으로 돌아간다', exact: true }).click();
     await daySourceDetail.waitFor({ state: 'hidden' });
+    await page.waitForFunction(observationId => document.activeElement?.tagName === 'BUTTON' && document.activeElement.getAttribute('data-observation-id') === observationId, observations[0].observation_id);
     assert.equal(await daySourceOpener.evaluate(element => element === document.activeElement), true, 'source detail restores its opener');
     for (let i = 0; i < 8; i++) {
       await page.keyboard.press('Tab');
-      assert.equal(await page.evaluate(() => document.querySelector('[role="dialog"][aria-label="단서 기록"]')?.contains(document.activeElement)), true, 'notebook traps focus');
+      assert.equal(await page.evaluate(() => document.querySelector('[role="dialog"][aria-labelledby="records-title"]')?.contains(document.activeElement)), true, 'notebook traps focus');
     }
     await page.keyboard.press('Escape');
     await dayNotebook.waitFor({ state: 'hidden' });
-    await page.waitForFunction(() => document.activeElement?.getAttribute('aria-label') === '단서 기록 열기');
+    await page.waitForFunction(() => document.activeElement?.textContent?.trim() === '기록·안내');
     assert.equal(await notebookOpener.evaluate(element => element === document.activeElement), true, 'notebook restores opener focus');
-    await page.getByText('오늘 남은 대화 5회', { exact: true }).waitFor();
+    await expectBudget(page, 5);
+    await readAll(page);
     for (const [name, src] of [['채연', 'E01'], ['민석', 'E04'], ['은상', 'E07'], ['준', 'E10']]) {
-      const portrait = page.getByRole('button', { name: new RegExp(name) }).locator('img');
+      const card = page.getByRole('button', { name: new RegExp(`^${name} ·`) });
+      assert.equal(await card.locator('img').count(), 0, `${name} card shows only name and status`);
+      await card.click();
+      const portrait = page.getByRole('img', { name: `${name} 초상`, exact: true });
       assert.ok((await portrait.getAttribute('src')).includes(src), `${name} uses stable portrait`);
     }
-    for (const control of [page.locator('input[placeholder$="에게 말한다"]'), page.getByRole('button', { name: '말한다', exact: true }), page.getByRole('button', { name: '다음 장면', exact: true })]) {
+    for (const control of [page.locator('input[placeholder$="에게 말한다"]'), page.getByRole('button', { name: '묻기', exact: true }), page.getByRole('button', { name: '다음 장면', exact: true })]) {
       const bounds = await control.boundingBox();
       assert.ok(bounds && bounds.x >= 0 && bounds.x + bounds.width <= 390, 'day chat control remains inside 390px viewport');
     }
     report.checks.push('day notebook is free, sourced, seen-only; portraits are stable');
 
     await page.getByRole('button', { name: '다음 장면', exact: true }).click();
-    await page.getByText('오늘 남은 대화 4회', { exact: true }).waitFor();
+    await expectBudget(page, 4);
+    await readAll(page);
     const beforeNightReads = { ...reads };
     await page.getByRole('button', { name: '밤이 온다', exact: true }).click();
     const draft = page.getByPlaceholder('자유롭게 쓴다…');

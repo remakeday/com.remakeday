@@ -3,6 +3,7 @@
 // API fixtures only; the parent task owns the single headless browser process.
 const { chromium } = require('playwright');
 const assert = require('node:assert/strict');
+const { line, readAll, expectBudget } = require('./vn-helpers.cjs');
 const fs = require('node:fs');
 const path = require('node:path');
 
@@ -76,9 +77,9 @@ async function testRestartGuard(browser) {
       }
     } else if (p === '/sessions/test/loops') {
       loopN++;
-      body = { loop_id: `loop-${loopN}`, loop_n: loopN, morning_text: '7시 12분. 눈을 뜬다.', damage_level: Math.min(3, loopN - 1), budget_left: 9 - loopN, beat: 6, beat_title: '소등 후', narration: '불이 꺼진다.', broadcast: null, aftermath: null, active_rules: [], observations: [] };
+      body = { loop_id: `loop-${loopN}`, loop_n: loopN, morning_text: '7시 12분. 눈을 뜬다.', damage_level: Math.min(3, loopN - 1), budget_left: 9 - loopN, beat: 6, beat_title: '소등 후', narration: '불이 꺼진다.', lines: [line('scene', '불이 꺼진다.'), line('system', '하루를 돌아본다.')], broadcast: null, aftermath: null, active_rules: [], observations: [] };
     } else if (p.endsWith('/npcs')) body = { npcs: [{ code: 'chaeyeon', name: '채연', mood: 'calm', uttered: false }] };
-    else if (p.endsWith('/beats/next')) body = { beat: 6, beat_title: '소등 후', narration: '불이 꺼진다.', broadcast: null, day_done: true, paw_offer: null, note_found: null, ambient: null, observations: [], budget_left: 9 - loopN };
+    else if (p.endsWith('/beats/next')) body = { beat: 6, beat_title: '소등 후', narration: '불이 꺼진다.', lines: [line('scene', '불이 꺼진다.'), line('system', '하루를 돌아본다.')], broadcast: null, day_done: true, paw_offer: null, note_found: null, ambient: null, observations: [], budget_left: 9 - loopN };
     else if (p.endsWith('/observations')) body = { observations: [] };
     else if (p.endsWith('/night/previous')) body = { previous_answer: null };
     else if (p.endsWith('/notes')) body = { notes: [] };
@@ -113,8 +114,11 @@ async function testRestartGuard(browser) {
   for (let n = 1; n <= 5; n++) {
     await page.getByText(`오늘 남은 대화 ${9 - n}회`, { exact: true }).waitFor();
     await page.getByRole('button', { name: '계속', exact: true }).click();
-    await page.getByText(`오늘 남은 대화 ${9 - n}회`, { exact: true }).waitFor();
+    await expectBudget(page, 9 - n);
+    await readAll(page);
     await page.getByRole('button', { name: '다음 장면', exact: true }).click();
+    await page.getByRole('button', { name: '밤이 온다', exact: true }).waitFor();
+    await readAll(page);
     await page.getByRole('button', { name: '밤이 온다', exact: true }).click();
     await page.getByPlaceholder('자유롭게 쓴다…').fill('상황과 정체에 대한 이해');
     await page.getByRole('button', { name: '이렇게 이해했다', exact: true }).click();

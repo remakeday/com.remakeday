@@ -2,6 +2,7 @@
 // One headless browser; mocked game API, real audio except explicit failure injection.
 const { chromium } = require('playwright');
 const assert = require('node:assert/strict');
+const { line, readAll } = require('./vn-helpers.cjs');
 
 (async () => {
   const browser = await chromium.launch({ executablePath: '/usr/bin/google-chrome', headless: true, args: ['--autoplay-policy=no-user-gesture-required'] });
@@ -39,9 +40,9 @@ const assert = require('node:assert/strict');
           if (url.port !== '8500') return route.continue();
           let body;
           if (path === '/sessions') body = { attempt_id: 'voice', attempt_n: 1, entry_lines: ['아침이다.'], prior_cell_results: null };
-          else if (path.endsWith('/loops')) body = { loop_id: 'loop', loop_n: 1, morning_text: '아침이다.', damage_level: 0, budget_left: 8, beat: 6, beat_title: '소등 후', narration: '불이 꺼진다.', broadcast: null, aftermath: null, active_rules: [], observations: [] };
+          else if (path.endsWith('/loops')) body = { loop_id: 'loop', loop_n: 1, morning_text: '아침이다.', damage_level: 0, budget_left: 8, beat: 6, beat_title: '소등 후', narration: '불이 꺼진다.', lines: [line('scene', '불이 꺼진다.'), line('system', '하루를 돌아본다.')], broadcast: null, aftermath: null, active_rules: [], observations: [] };
           else if (path.endsWith('/npcs')) body = { npcs: [{ code: 'chaeyeon', name: '채연', mood: 'calm', uttered: false }] };
-          else if (path.endsWith('/beats/next')) body = { beat: 6, beat_title: '소등 후', narration: '불이 꺼진다.', broadcast: null, day_done: true, paw_offer: null, note_found: null, ambient: null, observations: [], budget_left: 8 };
+          else if (path.endsWith('/beats/next')) body = { beat: 6, beat_title: '소등 후', narration: '불이 꺼진다.', lines: [line('scene', '불이 꺼진다.'), line('system', '하루를 돌아본다.')], broadcast: null, day_done: true, paw_offer: null, note_found: null, ambient: null, observations: [], budget_left: 8 };
           else if (path.endsWith('/observations')) body = { observations: [] };
           else if (path.endsWith('/night/previous')) body = { previous_answer: null };
           else if (path.endsWith('/notes')) body = { notes: [] };
@@ -71,7 +72,12 @@ const assert = require('node:assert/strict');
         } else {
           await page.goto('http://localhost:3500/play');
           if (mode === 'muted') await page.getByRole('switch', { name: '음성 끄기', exact: true }).click();
-          for (const name of ['시작', '계속', '다음 장면', '밤이 온다']) await page.getByRole('button', { name, exact: true }).click();
+          for (const name of ['시작', '계속']) await page.getByRole('button', { name, exact: true }).click();
+          await readAll(page);
+          await page.getByRole('button', { name: '다음 장면', exact: true }).click();
+          await page.getByRole('button', { name: '밤이 온다', exact: true }).waitFor();
+          await readAll(page);
+          await page.getByRole('button', { name: '밤이 온다', exact: true }).click();
           await page.getByPlaceholder('자유롭게 쓴다…').fill('상황을 이해했다.');
           for (const name of ['이렇게 이해했다', '맞아, 제출한다', '계속']) await page.getByRole('button', { name, exact: true }).click();
           const guide = page.getByRole('button', { name: '규칙을 고른다', exact: true });

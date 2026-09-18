@@ -2,6 +2,7 @@
 // Real frontend and assets; game API mocked to avoid creating player records.
 const { chromium } = require('playwright');
 const assert = require('node:assert/strict');
+const { line, readAll } = require('./vn-helpers.cjs');
 const fs = require('node:fs');
 const out = process.env.TEST_ARTIFACT_DIR || '/tmp/demo-scene-illustrations';
 fs.mkdirSync(out, { recursive: true });
@@ -28,7 +29,7 @@ const files = {
       const page = await browser.newPage({ viewport: { width, height: 900 }, reducedMotion: 'reduce' });
       page.on('pageerror', e => report.errors.push(e.message));
       let beat = 1, nextCalls = 0;
-      const data = () => ({ beat, beat_title: `시간 ${beat}`, narration: '주변을 살핀다.',
+      const data = () => ({ lines: [line('scene', '주변을 살핀다.', { image_id: mode === 'new' ? scenes[beat]?.[0]?.image_id ?? null : null }), ...(beat === 4 ? [line('broadcast', '검진을 시작합니다.', { speaker: '관리자' })] : []), line('system', '장면을 살펴보았다.')], beat, beat_title: `시간 ${beat}`, narration: '주변을 살핀다.',
         broadcast: beat === 4 ? '검진을 시작합니다.' : null,
         ...(mode === 'new' ? { illustrations: scenes[beat] || [] } :
           mode === 'unknown' ? { illustrations: [{ image_id: 'unknown-image', caption: '등록되지 않은 그림 설명' }] } : {}) });
@@ -69,9 +70,10 @@ const files = {
           'scene image stays inside the viewport after controls receive focus');
       }
       for (let b = 1; b <= 6; b++) {
+        await page.getByText(`시간 ${b} · 장면 ${b}/6`, { exact: true }).waitFor();
         if (b === 4) {
+          await page.getByRole('button', { name: '다음', exact: true }).click();
           await page.getByText('검진을 시작합니다.', { exact: true }).waitFor();
-          await page.getByRole('button', { name: '…', exact: true }).click();
         }
         const expected = mode === 'new' && files[b] ? `/assets/clues/${files[b]}` : `/assets/C0${b}.png`;
         await imageLoaded(expected);
@@ -88,8 +90,11 @@ const files = {
           await page.screenshot({ path: `${out}/checkup-${width}.png`, animations: 'disabled' });
         }
         assert.equal(await page.locator('img[src*="clue-06"]').count(), 0, 'closure not revealed during day');
+        await readAll(page);
         await page.getByRole('button', { name: '다음 장면', exact: true }).click();
       }
+      await page.getByRole('button', { name: '밤이 온다', exact: true }).waitFor();
+      await readAll(page);
       await page.getByRole('button', { name: '밤이 온다', exact: true }).click();
       await page.getByPlaceholder('자유롭게 쓴다…').fill('관찰한 내용을 정리했다.');
       await page.getByRole('button', { name: '이렇게 이해했다', exact: true }).click();

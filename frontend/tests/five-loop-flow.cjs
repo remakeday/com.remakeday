@@ -2,6 +2,7 @@
 // NODE_PATH=/tmp/demo-review-Hewzkn/node_modules node tests/five-loop-flow.cjs
 const { chromium } = require('playwright');
 const assert = require('node:assert/strict');
+const { line, readAll, expectBudget } = require('./vn-helpers.cjs');
 const fs = require('node:fs');
 const out = process.env.TEST_ARTIFACT_DIR || '/tmp/demo-five-loop-browser';
 fs.mkdirSync(out, { recursive: true });
@@ -55,17 +56,17 @@ const NIGHT_IMAGES = { P01: '/assets/P01.png', P02: '/assets/P02.png', P03: '/as
         } else if (path === '/sessions/test/loops') {
           loopN++;
           beatCalls = 0;
-          body = { loop_id: `loop-${loopN}`, loop_n: loopN, morning_text: '7시 12분. 눈을 뜬다.', damage_level: Math.min(3, loopN - 1), budget_left: 9 - loopN, beat: loopN === 1 ? 1 : 6, beat_title: loopN === 1 ? '기상 — 7:12' : '소등 후', narration: loopN === 1 ? '스피커가 켜지고 배급 줄이 생긴다.' : '불이 꺼진다.', broadcast: null, aftermath: null, active_rules: [], observations: [] };
+          body = { loop_id: `loop-${loopN}`, loop_n: loopN, morning_text: '7시 12분. 눈을 뜬다.', damage_level: Math.min(3, loopN - 1), budget_left: 9 - loopN, beat: loopN === 1 ? 1 : 6, beat_title: loopN === 1 ? '기상 — 7:12' : '소등 후', narration: loopN === 1 ? '스피커가 켜지고 배급 줄이 생긴다.' : '불이 꺼진다.', broadcast: null, aftermath: null, active_rules: [], observations: [], lines: [line('scene', loopN === 1 ? '스피커가 켜지고 배급 줄이 생긴다.' : '불이 꺼진다.'), line('system', '주변을 살핀다.')] };
         } else if (path.endsWith('/npcs')) body = { npcs: [{ code: 'chaeyeon', name: '채연', mood: 'calm', uttered: false }] };
         else if (path.endsWith('/beats/next')) {
           beatCalls++;
           const scene = { broadcast: null, day_done: false, paw_offer: null, note_found: null, ambient: null, observations: [], illustrations: [], budget_left: 9 - loopN };
-          if (loopN === 1 && beatCalls === 1) body = { ...scene, beat: 2, beat_title: '오전 — 자유 시간', narration: '할 일이 없는 시간. 채연이 담요를 쓰고 벽 쪽을 본다.', paw_offer: { offer_id: 'paw-1', rule_label: WISH.label, shown_reason: null } };
-          else if (loopN === 1 && beatCalls === 2) body = { ...scene, beat: 3, beat_title: '정오 — 배급', narration: WISH.counter };
-          else body = { ...scene, beat: 6, beat_title: '소등 후', narration: '불이 꺼진다.', day_done: true };
+          if (loopN === 1 && beatCalls === 1) body = { ...scene, beat: 2, beat_title: '오전 — 자유 시간', narration: '할 일이 없는 시간. 채연이 담요를 쓰고 벽 쪽을 본다.', lines: [line('scene', '할 일이 없는 시간.'), line('action', '채연이 담요를 쓰고 벽 쪽을 본다.')], paw_offer: { offer_id: 'paw-1', rule_label: WISH.label, shown_reason: null } };
+          else if (loopN === 1 && beatCalls === 2) body = { ...scene, beat: 3, beat_title: '정오 — 배급', narration: WISH.counter, lines: [line('scene', '정오 배급이 나온다.'), line('paw_effect', WISH.counter)] };
+          else body = { ...scene, beat: 6, beat_title: '소등 후', narration: '불이 꺼진다.', lines: [line('scene', '불이 꺼진다.'), line('system', '하루가 끝났다.')], day_done: true };
         } else if (path.endsWith('/paw/respond')) {
           pawResponses++;
-          body = { applied: true, rule_label: WISH.label, narration: WISH.narration, illustrations: [WISH.illustration],
+          body = { applied: true, rule_label: WISH.label, narration: WISH.narration, lines: [line('rule_result', WISH.narration, { image_id: 'Q03' }), line('system', '단서 기록에 새 내용을 저장했다.')], illustrations: [WISH.illustration],
                    observations: [{ observation_id: 'loop-1:action-2-채연-속마음을 말한다', attempt_id: 'test', loop_id: 'loop-1', loop_n: 1, beat: 2, scene_id: 'loop-1:beat-2', scene_title: '오전 — 자유 시간', actor: '채연', text: WISH.narration, source_kind: 'rule_result', verification: 'observed', illustrations: [WISH.illustration], rule_id: 'R1' }] };
         }
         else if (path.endsWith('/observations')) body = { observations: [] };
@@ -123,29 +124,42 @@ const NIGHT_IMAGES = { P01: '/assets/P01.png', P02: '/assets/P02.png', P03: '/as
           await page.getByRole('switch', { name: 'BGM 끄기', exact: true }).waitFor();
         }
         await page.getByRole('button', { name: '계속', exact: true }).click();
+        await page.getByRole('region', { name: '대사창', exact: true }).waitFor();
+        assert.deepEqual(report.errors, [], 'day entry must not crash before testing BGM identity');
         assert.equal(await bgmHandle.evaluate(audio => audio === document.querySelector('audio[src="/audio/game-bgm.mp3"]')), true, 'scene changes preserve the audio element');
         assert.equal(await bgm.evaluate(audio => audio.paused), false, 'music continues in daytime');
         assert.ok(await bgm.evaluate(audio => audio.currentTime >= 15), 'scene changes preserve the playback position');
         assert.equal(await page.getByRole('heading', { name: '플레이 안내' }).count(), 0, 'tutorial does not block repeat days');
-        await page.getByText(`오늘 남은 대화 ${9 - n}회`, { exact: true }).waitFor();
+        await expectBudget(page, 9 - n);
+        await readAll(page);
+        assert.equal(await bgmHandle.evaluate(audio => audio === document.querySelector('audio[src="/audio/game-bgm.mp3"]')), true, 'intro to dialogue preserves the audio element');
         if (n === 1) {
           // 원숭이손 — 팝업 소원 문장, 대가 암시, 수락 즉시 소원 장면(서술·삽화), 다음 장면의 반대 사건
           await page.getByRole('button', { name: '다음 장면', exact: true }).click();
+          await page.getByText('오전 — 자유 시간 · 장면 2/6', { exact: true }).waitFor();
+          await readAll(page);
           await page.getByText(WISH.label, { exact: true }).waitFor();
           await page.getByText('대가 없이 굴러오는 것은 없다.', { exact: true }).waitFor();
           await page.getByRole('button', { name: '받는다', exact: true }).click();
           await page.getByText(`규칙이 걸렸다 — ${WISH.label}`, { exact: true }).waitFor();
+          await page.getByRole('button', { name: '다음', exact: true }).click();
           await page.getByText(WISH.narration, { exact: true }).waitFor();
           await page.locator('img[src$="Q03-eunsang-silent-corner-v1.png"]').waitFor();
           await page.getByText(WISH.illustration.caption, { exact: true }).waitFor();
-          await page.getByText(`오늘 남은 대화 ${9 - n}회`, { exact: true }).waitFor(); // 소원은 대화 횟수를 줄이지 않는다
+          await expectBudget(page, 9 - n); // 소원은 대화 횟수를 줄이지 않는다
           assert.equal(pawResponses, 1, 'accepting the paw sends one response');
+          await readAll(page);
           await page.getByRole('button', { name: '다음 장면', exact: true }).click();
+          await page.getByText('정오 — 배급 · 장면 3/6', { exact: true }).waitFor();
+          await readAll(page);
           await page.getByText(WISH.counter, { exact: true }).waitFor();
           report.checks.push('paw: wish label, cost hint, immediate wish scene with Q03, counter event next scene, budget kept');
         }
         await page.getByRole('button', { name: '다음 장면', exact: true }).click();
+        await page.getByRole('button', { name: '밤이 온다', exact: true }).waitFor();
+        await readAll(page);
         await page.getByRole('button', { name: '밤이 온다', exact: true }).click();
+        assert.equal(await bgmHandle.evaluate(audio => audio === document.querySelector('audio[src="/audio/game-bgm.mp3"]')), true, 'day to night preserves the audio element');
         await page.getByPlaceholder('자유롭게 쓴다…').fill('상황과 정체에 대한 이해');
         await page.getByRole('button', { name: '이렇게 이해했다', exact: true }).click();
         await page.getByRole('button', { name: '맞아, 제출한다', exact: true }).click();
