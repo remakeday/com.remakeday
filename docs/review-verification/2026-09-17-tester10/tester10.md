@@ -38,7 +38,7 @@
 - 코드 위치: `frontend/components/screens/ScoreScreen.tsx`(총점·`cell_feedback`·"N개의 주장은 세계와 닿지 않았다."만 표시), `backend/apps/engine/domain/entities/scoring_rules.py` `cell_feedback()`(3단계 문장)·`truth_reveal()`, `backend/apps/engine/app/use_cases/night_interactor.py:235`(`truth_reveal`을 `is_final`일 때만 응답). 인정 문장 표시는 매 밤 응답에 `matched_user_claim` 목록을 싣는 백엔드 변경이 필요하다(진실 전문은 계속 잠금).
 - 설계 시 확인: 인정 문장만 보여 줄지(진실 문장은 숨김), 빈 칸 힌트의 강도(칸 이름만 vs "채연이 무언가를 숨긴다" 수준), 힌트가 채점 난이도에 주는 영향.
 - 관련: 테스터9 F11(난이도·가이드를 게임 안으로), F19(신의 질문 "알 수 없다" 편중), F17(근거 고르기와 채점 후보).
-- 조치: 미착수 (기록만)
+- 조치: 반영 (2026-09-18, 설계 문서 `docs/superpowers/plans/2026-09-17-night-confirmation-signal.md`, 커밋 `b05ffc6`) — `backend/apps/engine/app/use_cases/night_interactor.py`가 매 밤 응답에 `accepted_claims`·`empty_cells`를 싣고, `backend/apps/engine/domain/entities/scoring_rules.py`의 `accepted_claims()`·`empty_hint_cells()`가 이를 계산한다. `frontend/components/screens/ScoreScreen.tsx`가 "인정된 내 문장" 목록과 `EMPTY_CELL_HINT`로 빈 칸 힌트를 보여 준다. 진실 문장 전문(`truth_reveal`)은 그대로 `is_final`(마지막 밤)일 때만 공개된다.
 
 ### F2 — 플레이가 정답 쪽으로 흘러가지 않아 너무 불친절함 (상위 원칙) (2026-09-17)
 
@@ -60,7 +60,7 @@
 - 코드 위치: `frontend/components/GameplayGuide.tsx`(목표 문장·안내 항목), `frontend/components/screens/ScoreScreen.tsx`(밤 피드백), `backend/apps/engine/domain/entities/scoring_rules.py` `cell_feedback()`, 신의 질문 판정·`next_observation` 생성(백엔드 intervention 흐름).
 - 설계 시 확인: 목표를 "원인·동기·정체 세 가지를 밝힌다"처럼 채점 구조로 먼저 알려 줄지, 회차가 지날수록 힌트를 단계적으로 강하게 할지(1회차 칸 이름 → 3회차 인물·단서 지목), 빈 칸을 겨냥한 신의 질문 제안, 난이도 하락 폭.
 - 관련: F1, 테스터9 F11(난이도·가이드를 게임 안으로)·F16(신의 질문 사용법)·F19("알 수 없다" 편중)·F20(덩어리 텍스트).
-- 조치: 미착수 (기록만)
+- 조치: 부분 반영 (2026-09-18, 커밋 `b05ffc6`) — `frontend/components/GameplayGuide.tsx` 첫 줄이 "밤마다 세계가 왜 멸망하는지 그 원인과 동기를 밝혀 쓴다"로 바뀌어 채점 칸(원인·동기)을 안내에서 알려 준다. 확인 신호 3종(F1 인정 문장, F3 거부 사유, F5 사용 가능한 답)과 신의 개입 추천 질문(`question_suggestions`, 테스터9 F19-3)도 함께 반영됐다. 남은 것: 회차별 단계 힌트.
 
 ### F4 — 원숭이손 등 기믹이 전부 숨겨져 있어 만든 의도·플레이 경험이 전달되지 않음 (2026-09-17)
 
@@ -79,7 +79,7 @@
 - 코드 위치: `frontend/components/screens/DayScreen.tsx`(원숭이손 팝업, L726~), `frontend/components/Retrospective.tsx`(대가 공개 L93~104), `frontend/components/GameplayGuide.tsx`("특별한 규칙의 대가로 그날의 대화 횟수가 더 줄어들 수 있다." 한 줄), `backend/apps/scenarios/scenario_a/adapter.py` `morning_lines`(손상 단계 문장), `backend/apps/engine/domain/entities/scoring_rules.py` `world_outcome()`.
 - 설계 시 확인: 원숭이손 팝업에 대가의 존재·방향을 암시할지(예: "무언가를 잃는다" 수준), 대가가 실제로 발생한 순간 표시할지, 손상 단계 변화를 아침에 분명한 연출로 보여 줄지, 결말 분기 조건의 암시 수준, 제작 의도를 첫 진입·결말에서 어떻게 전달할지.
 - 관련: F2(불친절 상위 원칙), 테스터9 F21(규칙 누적·대가 반복 안내), 테스터6 F11(원숭이손 부작용 불분명).
-- 조치: 미착수 (기록만)
+- 조치: 일부 반영 (2026-09-18, 커밋 `b05ffc6`) — `frontend/components/day/PawPopup.tsx`에 "대가 없이 굴러오는 것은 없다." 한 줄을 넣어 대가의 존재를 암시했다. 남은 것 3건: ① 대가가 실제 발생한 순간 표시 ② 손상 단계 상승 연출 ③ 결말 분기 암시.
 
 ## 백엔드/AI
 
@@ -106,7 +106,7 @@
 - 코드 위치: `backend/apps/engine/app/use_cases/intervention_interactor.py` `_map_custom()`(대상 1명·행동 글자 일치·부정어 목록), 거부 문구 상수 `_REJECT_*`(L113~115), `named_targets()`; 행동 목록 `backend/apps/scenarios/scenario_a/adapter.py` `action_vocab`(L490~).
 - 설계 시 확인: 행동 목록을 선택형 UI(인물 → 행동 → 강제/금지 → 장면)로 보여 줄지, 활용형·부정형("안 한다", "-지 못하게") 인식 확장, 여러 인물("서로", "모두") 규칙 허용 여부, 대안에 금지형 포함, 거부 문구를 실제 원인별로 분리.
 - 관련: F2(불친절 상위 원칙), 테스터9 F21(규칙 누적 적용 안내 부재).
-- 조치: 미착수 (기록만)
+- 조치: 대부분 반영 (2026-09-18, 커밋 `cf5a0b7`) — `intervention_interactor.py`의 `_REJECT_MANY_TARGETS`·`_REJECT_GROUP_TARGET`("서로"·"모두"를 정확한 사유로 거부)·`_REJECT_NO_TARGET`·`_REJECT_MANY_ACTIONS`·`_REJECT_DOUBLE_NEGATION`, `_REJECT_UNKNOWN_ACTION` 뒤에 `self._usable_actions(target)`로 쓸 수 있는 행동 목록을 함께 보여 준다. `rule_grammar.py`의 `SUPPRESS_RE`에 "안 한다·안 하기·포기한다·포기·않는다"를 추가했다. 표의 5건은 `backend/tests/pure/test_custom_rule_grammar.py`로 재현·검증했다(2026-09-18 `.venv/bin/python -m pytest` 46 passed): "서로의 역할을…"·"서로 무엇을…" 2건은 이제 "그런 사람은 여기 없다"가 아니라 "한 사람에게만" + "'서로'"라는 정확한 사유를 낸다. "은상이는 귓속말 금지"는 "행동 목록에 없다"와 함께 은상이 쓸 수 있는 행동("소문을 낸다" 등)을 보여 주고 금지형 대안을 제시한다. "민석이는 기록하기를 안한다."·"민석은 기록하는걸 포기한다." 2건은 이제 거부되지 않고 (민석, 기록한다, suppress) 규칙으로 실행된다. 남은 것: 선택형 UI(인물→행동→강제/금지→장면)는 미착수.
 
 ### F5 — 신의 질문 답이 전부 "알 수 없다"라 쓸모가 없음 (2026-09-17)
 
@@ -127,4 +127,4 @@
 - 원인·해결 방향: 테스터9 F19 분석과 같다(조언자는 공개 기록 안에서만 답함 → 필요한 질문일수록 unknown). 이번 판으로 누적 표본은 36문항 중 29개(81%) unknown. 이번 판에서 추가로 확인된 점: 게임 목적·사용법 질문도 신의 질문으로 들어오므로, 이런 질문에는 판정 대신 사용법·목표 안내로 답하는 경로가 필요하다.
 - 코드 위치: `backend/apps/engine/app/use_cases/intervention_interactor.py`(답변·status·조언 조립), `backend/apps/engine/app/use_cases/advisor_advice.py`, 표시 `frontend/components/screens/GodScreen.tsx`.
 - 관련: F2(목표를 모름), F3(규칙 막힌 이유), 테스터9 F16(신의 질문 사용법)·F19("알 수 없다" 편중).
-- 조치: 미착수 (기록만)
+- 조치: 부분 반영 (2026-09-18, 커밋 `cf5a0b7`) — `intervention_interactor.py`의 `_guide()`가 게임 목적·사용법 질문을 모델 호출·판정 없이 `GUIDE_ANSWERS` 고정 안내로 답한다. `_open_rungs()`·`advisor_advice.py`의 `ladder_stage()`·`open_rungs()`가 회차·최고 점수로 공개 사다리 8칸(시나리오 `advisor_ladder`, 1~4단계 각 2칸)을 열어 조언자 판정 재료로 준다. "알 수 없다"로 판정되면 `refund_question()`으로 질문 횟수를 환급한다(한 밤 `QUESTIONS_PER_NIGHT=3`회 상한). 실제 모델 스모크에서 unknown이 10/10 → 7/10으로 줄었다(`docs/jekyll.md`, `docs/superpowers/plans/2026-09-18-god-question-improvements.md`).
