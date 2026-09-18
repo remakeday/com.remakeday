@@ -1,7 +1,13 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { LEGAL } from "@/lib/legal";
 
 export function SiteFooter() {
+  const pathname = usePathname();
+  if (pathname.startsWith("/play")) return null;
+
   return (
     <footer className="border-t border-paper/10 bg-void px-6 py-10 text-paper">
       <div className="mx-auto flex max-w-3xl flex-col items-center gap-2.5 text-center">

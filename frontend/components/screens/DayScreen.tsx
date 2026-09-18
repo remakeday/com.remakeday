@@ -57,6 +57,7 @@ export function DayScreen({
   const [todayLines, setTodayLines] = useState<DisplayLine[]>(initialLines);
   const [activeIndex, setActiveIndex] = useState(0);
   const [caughtUp, setCaughtUp] = useState(false);
+  const [voiceHold, setVoiceHold] = useState(false);
   const [beat, setBeat] = useState(initialBeat);
   const [beatTitle, setBeatTitle] = useState(initialBeatTitle);
   const [illustrations, setIllustrations] = useState(initialIllustrations);
@@ -100,10 +101,11 @@ export function DayScreen({
   // 관리자 방송만 현재 줄에 맞춰 재생한다. 인물 음성 보류는 그대로다.
   useEffect(() => {
     if (currentLine?.kind === "broadcast") {
-      playVoice(voicesForLines(currentLine.text.split("\n").map((text) => ({ name: "관리자", text })), currentLine.voice_id));
+      setVoiceHold(true);
+      playVoice(voicesForLines(currentLine.text.split("\n").map((text) => ({ name: "관리자", text })), currentLine.voice_id),
+        () => setVoiceHold(false));
     }
-    return () => stopVoice();
-  }, [currentLine, playVoice, stopVoice]);
+  }, [currentLine, playVoice]);
 
   const refreshNpcs = useCallback((forBeat: number) => {
     const refreshId = ++npcRefreshId.current;
@@ -140,7 +142,7 @@ export function DayScreen({
   const mutationBusy = utterance.busy || beatAction.busy || pawAction.busy;
   const questionUnresolved = pendingUtterance !== null;
   // 타이핑이 끝나야 질문·장면 이동이 열린다.
-  const atLastLine = caughtUp && todayLines.length > 0;
+  const atLastLine = caughtUp && !voiceHold && todayLines.length > 0;
   const lastLineImageId = todayLines.at(-1)?.image_id;
   const reviewingReveal = !atLastLine && lastLineImageId && !illustrations.some((item) => item.image_id === lastLineImageId);
   const controlsLocked = !atLastLine || mode.mode !== "dialogue" || mode.pawOpen || mutationBusy || questionUnresolved;
@@ -294,7 +296,7 @@ export function DayScreen({
             {showPortrait && <DialogueStage npcs={npcs} selected={selected} ready={npcsReady}
               disabled={mutationBusy || questionUnresolved} dayDone={dayDone} budgetLeft={budgetLeft} onSelect={setSelected} />}
             <div className="z-10 ml-auto flex w-[60%] shrink-0 flex-col overflow-hidden border border-ink/30 border-r-0 bg-paper">
-              <LineBox lines={todayLines} disabled={mutationBusy || mode.pawOpen}
+              <LineBox lines={todayLines} disabled={mutationBusy || mode.pawOpen} hold={voiceHold}
                 onActiveChange={activeChange} onCaughtUp={reachedEnd} />
               <AskBar input={input} onInput={setInput} onAsk={send} onNext={advanceBeat}
                 inputLocked={inputLocked} nextLocked={controlsLocked}

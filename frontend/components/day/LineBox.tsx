@@ -12,7 +12,7 @@ function prefersReducedMotion(): boolean {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-function ChatLine({ line, text, typing }: { line: DisplayLine; text: string; typing: boolean }) {
+function ChatLine({ line, text, typing, hold }: { line: DisplayLine; text: string; typing: boolean; hold: boolean }) {
   const style = lineStyles[line.kind];
   const label = style.label?.(line.speaker ?? null);
   const complete = text === lineText(line);
@@ -29,16 +29,17 @@ function ChatLine({ line, text, typing }: { line: DisplayLine; text: string; typ
         {text}
         {typing && <span className="ml-0.5 inline-block animate-pulse" aria-hidden="true">▍</span>}
       </p>
-      {complete && line.text.split("\n").map((chunk, index) => (
+      {complete && !hold && line.text.split("\n").map((chunk, index) => (
         <VoiceReplay key={index} speaker={line.speaker ?? undefined} text={chunk} />
       ))}
     </div>
   );
 }
 
-export function LineBox({ lines, disabled = false, onActiveChange, onCaughtUp }: {
+export function LineBox({ lines, disabled = false, hold = false, onActiveChange, onCaughtUp }: {
   lines: DisplayLine[];
   disabled?: boolean;
+  hold?: boolean;
   onActiveChange: (index: number) => void;
   onCaughtUp: () => void;
 }) {
@@ -56,19 +57,24 @@ export function LineBox({ lines, disabled = false, onActiveChange, onCaughtUp }:
   const skipTyping = useCallback(() => {
     const total = linesRef.current.length;
     if (disabled || doneCount >= total) return;
+    // 음성 보류 중에는 현재 줄까지만 완성한다(방송 줄을 넘기지 않는다). 아니면 남은 줄을 전부 보인다.
+    if (hold) {
+      setTypedChars(lineText(linesRef.current[doneCount]).length);
+      return;
+    }
     setDoneCount(total);
     setTypedChars(0);
-  }, [disabled, doneCount]);
+  }, [disabled, doneCount, hold]);
 
   useEffect(() => {
     onActiveChange(activeIndex);
   }, [activeIndex, onActiveChange]);
 
   useEffect(() => {
-    if (typing || lines.length === 0 || caughtRef.current || disabled) return;
+    if (typing || hold || lines.length === 0 || caughtRef.current || disabled) return;
     caughtRef.current = true;
     onCaughtUp();
-  }, [typing, lines.length, disabled, onCaughtUp]);
+  }, [typing, hold, lines.length, disabled, onCaughtUp]);
 
   useEffect(() => {
     if (doneCount < lines.length) caughtRef.current = false;
@@ -76,19 +82,14 @@ export function LineBox({ lines, disabled = false, onActiveChange, onCaughtUp }:
 
   useEffect(() => {
     if (!typing || disabled) return;
-    if (prefersReducedMotion()) {
-      setDoneCount(lines.length);
-      setTypedChars(0);
-      return;
-    }
     const line = lines[doneCount];
     const full = line ? lineText(line) : "";
-    if (line?.kind === "user" || full.length === 0) {
-      setDoneCount((count) => count + 1);
-      setTypedChars(0);
+    // 방송 중에는 현재 줄을 완성해서 표시하되, 다음 줄로 넘기지 않는다.
+    if (hold || (prefersReducedMotion() && typedChars < full.length)) {
+      setTypedChars(full.length);
       return;
     }
-    if (typedChars >= full.length) {
+    if (line?.kind === "user" || typedChars >= full.length) {
       const pause = window.setTimeout(() => {
         setDoneCount((count) => count + 1);
         setTypedChars(0);
@@ -97,7 +98,7 @@ export function LineBox({ lines, disabled = false, onActiveChange, onCaughtUp }:
     }
     const tick = window.setTimeout(() => setTypedChars((count) => count + 1), CHAR_MS);
     return () => window.clearTimeout(tick);
-  }, [typing, disabled, doneCount, typedChars, lines]);
+  }, [typing, disabled, hold, doneCount, typedChars, lines]);
 
   useEffect(() => {
     const log = logRef.current;
@@ -136,9 +137,9 @@ export function LineBox({ lines, disabled = false, onActiveChange, onCaughtUp }:
           {visible.length > 0
             ? visible.map((line, index) => {
                 const full = lineText(line);
-                const isTyping = typing && index === doneCount;
+                const isTyping = typing && !hold && index === doneCount;
                 const text = isTyping ? full.slice(0, typedChars) : full;
-                return <ChatLine key={`${index}-${line.kind}-${line.text}`} line={line} text={text} typing={isTyping} />;
+                return <ChatLine key={`${index}-${line.kind}-${line.text}`} line={line} text={text} typing={isTyping} hold={hold} />;
               })
             : <p data-line-kind="system" className="text-center text-base text-ink/60">장면을 살핀다.</p>}
         </div>

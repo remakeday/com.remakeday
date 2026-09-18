@@ -77,9 +77,9 @@ const path = require('node:path');
     // 누적 로그의 첫 줄이 완성될 때는 방송이 시작됐을 수 있어, 낮 도입 진입 전에 확인한다.
     assert.equal(await voice.evaluate(audio => audio.paused), true);
     await page.getByRole('button', { name: '계속', exact: true }).click();
-    // 방송 줄까지 자연스럽게 타이핑되길 기다려 자동 재생을 검증한 뒤 readAll로 마친다.
+    // 방송 줄이 나타나면 음성이 끝날 때까지 타이핑이 그 줄에서 멈춘다(테스터12 F1) — 그 사이 자동 재생을 검증한 뒤 readAll로 마친다.
     await page.getByText('채연이 배급을 남긴다.', { exact: true }).waitFor();
-    await page.locator('[aria-label="대사창"] [data-line-kind="broadcast"][data-typing="true"]').waitFor();
+    await page.locator('[aria-label="대사창"] [data-line-kind="broadcast"]').waitFor();
     await playing('MA01');
     await page.waitForFunction(() => document.querySelector('audio[src="/audio/game-bgm.mp3"]').volume < 0.15);
     await readAll(page);
