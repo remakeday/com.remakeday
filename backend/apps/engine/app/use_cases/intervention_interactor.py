@@ -22,7 +22,7 @@ from apps.engine.app.use_cases import prompts
 from apps.engine.app.use_cases.alternative_rank import AlternativeRank, StemOverlapRank
 from apps.engine.app.use_cases.advisor_advice import (
     GUIDE_ANSWERS, advice_sentence, find_anchor, guide_kind, is_wh_question, is_why_question, ladder_stage,
-    open_rungs, polite_register_check, refund_question, settle_status, strip_leading_verdict,
+    open_rungs, polite_register_check, settle_status, strip_leading_verdict,
     unbacked_confirmation_check, verdict_prefix,
 )
 from apps.engine.app.use_cases.public_observations import public_observations
@@ -284,7 +284,7 @@ class InterventionInteractor:
         return night, loop
 
     def ask(self, night_id: uuid.UUID, text: str) -> dict:
-        # 잔여·환급 판정부터 차감·기록까지 밤 행 잠금 안에서 — 동시 요청이 환급 상한 3·한 밤 모델 호출 6을 넘지 못한다.
+        # 잔여 판정부터 차감·기록까지 밤 행 잠금 안에서 — 동시 요청이 한 밤 질문 상한 3을 넘지 못한다.
         # 모델 호출도 잠금 안이다: 같은 밤의 다른 요청은 기다리지 않고 409를 받는다(opus 리뷰 C1).
         with one_request_per_row(self._night_transaction, night_id, RequestInFlight, "앞 질문에 답하는 중이다. 답을 받은 뒤 다시 물어라."):
             return self._ask(night_id, text)
@@ -301,7 +301,7 @@ class InterventionInteractor:
         answered = [e for e in self._events.query(loop.attempt_id, loop_n=loop.loop_n)
                     if e.type == "intervention_question" and e.kind == "answer"]
         history = answered[-2:]
-        rungs = self._open_rungs(loop, text)
+        rungs = self._open_rungs(loop, night, text)
         relevant = rungs + advisor_context(text, observations, self._target_names,
                                            history_text=" ".join(e.question for e in history),
                                            today=loop.loop_n)[:8 - len(rungs)]
@@ -398,15 +398,11 @@ class InterventionInteractor:
                 next_observation = advice_sentence(lead, anchor)
                 self._notes.upsert(loop.attempt_id, kind="advice", text=next_observation,
                                    loop_n=loop.loop_n, source_key=f"advisor-lead-{lead.key}")
-        # 환급 — "알 수 없다"는 헛걸음이 아니다. 같은 밤 상한·같은 질문 재입력은 차감 (계획서 2026-09-18 §1)
-        # 모델이 답하지 못한 질문은 재입력 비교에서 뺀다 — 상한 집계(refunds_used)에는 그대로 든다
+        # 신의 질문은 한 밤 3회 고정 — "알 수 없다"도 차감한다. 환급 없음 (환급 철회 2026-09-18, 테스터12 F5)
         asked = list(night.questions or [])
-        refunds_used = len(asked) - (QUESTIONS_PER_NIGHT - night.questions_left)
-        refunded = refund_question(status, text, [e.question for e in answered if not e.model_failed],
-                                   refunds_used=refunds_used)
-        if not refunded:
-            night.questions_left -= 1
+        night.questions_left -= 1
         night.questions = asked + [text]
+        refunded = False
         self._nights.save()
         ids = [o.observation_id for o in evidence]
         self._events.record(loop.attempt_id, ev.InterventionQuestionEvent(
@@ -432,13 +428,17 @@ class InterventionInteractor:
                     public_observations(self._events, loop.attempt_id, through_loop=loop.loop_n),
                     loop_n=loop.loop_n, asked=list(night.questions or []))}
 
-    def _open_rungs(self, loop, text: str) -> list[ObservationDTO]:
-        """공개 사다리 — 열린 칸 중 질문이 묻는 칸만 공개 기록과 같은 자격으로 조언자에게 준다 (기획서 §7.4: 세계가 흘린 공개 사실)."""
+    def _open_rungs(self, loop, night, text: str) -> list[ObservationDTO]:
+        """공개 사다리 — 열린 칸 중 질문이 묻는 칸만 공개 기록과 같은 자격으로 조언자에게 준다 (기획서 §7.4: 세계가 흘린 공개 사실).
+
+        같은 밤 이미 쓴 질문 수만큼 단계를 더 올려 준다 — 물을수록 조금씩 더 드러낸다 (테스터12 F5, 2026-09-18 결정 §2).
+        """
         if not self._advisor_ladder:
             return []
         totals = [e.total for e in self._events.query(loop.attempt_id)
                   if e.type == "answer_scored" and e.loop_n <= loop.loop_n]
-        stage = ladder_stage(loop.loop_n, max(totals, default=0.0))
+        asked_this_night = QUESTIONS_PER_NIGHT - night.questions_left
+        stage = ladder_stage(loop.loop_n, max(totals, default=0.0)) + asked_this_night
         return [ObservationDTO(observation_id=f"{_LADDER_ID_PREFIX}{rung.key}", attempt_id=str(loop.attempt_id),
                                loop_id=str(loop.id), loop_n=loop.loop_n, beat=0, scene_id="ladder",
                                scene_title=LADDER_SCENE_TITLE, text=rung.text, source_kind="scene")

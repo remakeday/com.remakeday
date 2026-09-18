@@ -84,15 +84,15 @@ def test_original_spelling_reason_time_and_execution_reach_evidence_unchanged(or
 def test_provider_failure_keeps_cost_and_partial_record():
     result, model, night, events, source = ask(RuntimeError("unavailable"), {}, "채연의 검진 결과는?")
     assert result["status"] == "unknown" and result["evidence"][0]["text"] == source.text
-    # 모델 실패도 unknown이라 환급된다 — 같은 밤 환급 상한(3회)이 호출 비용을 묶는다 (순서표 5번)
-    assert len(model.calls) == 1 and night.questions_left == 3 and result["refunded"]
+    # 모델 실패도 unknown이니 그대로 차감한다 (환급 철회 2026-09-18, 테스터12 F5)
+    assert len(model.calls) == 1 and night.questions_left == 2 and not result["refunded"]
     assert next(e for e in events.rows if e.type == "harness_event").fallback_used
 
 
 def test_invalid_rewrite_is_rejected_with_feedback_and_original_context():
     bad = {"question_kind": "proposition", "claim": "열리면 죽는다."}
     result, model, night, events, source = ask(bad, {"relation": "unknown"}, "열이나면 죽나?", first_attempts=[bad, interpretation()])
-    assert result["status"] == "unknown" and len(model.calls) == 2 and night.questions_left == 3  # unknown 환급
+    assert result["status"] == "unknown" and len(model.calls) == 2 and night.questions_left == 2  # unknown도 차감
     retry = "\n".join(m.content for m in model.calls[1][0])
     assert "schema:" in retry and source.text in retry and source.observation_id in retry
     assert "열이나면 죽나?" in model.calls[1][0][0].content

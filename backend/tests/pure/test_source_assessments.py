@@ -61,8 +61,8 @@ def test_reported_source_can_confirm_instruction_speech():
 def test_invalid_or_conflicting_source_retries_without_promotion(extra, error):
     result, model, events, night = ask("검진 결과가 공개되었어?", RECORDS,
         [assessment("checkup", CHECKUP, "contradicted"), extra])
-    # 재시도는 한 질문으로 한 번만 센다 — unknown이라 그 한 번도 환급된다 (순서표 5번)
-    assert result["status"] == "unknown" and len(model.calls) == 3 and night.questions_left == 3 and result["refunded"]
+    # 재시도는 한 질문으로 한 번만 센다 — unknown이어도 그 한 번은 차감된다 (환급 철회 2026-09-18, 테스터12 F5)
+    assert result["status"] == "unknown" and len(model.calls) == 3 and night.questions_left == 2 and not result["refunded"]
     audit = [e for e in events.rows if e.type == "harness_event"][-1]
     assert audit.fallback_used and error in str(audit.call_records[0]["checks"])
     assert error in model.calls[1][0][-1].content
@@ -97,7 +97,7 @@ def test_lookup_contradiction_is_not_an_answer():
 def test_second_receives_original_why_condition_without_first_rewrite():
     original = "열이나면 왜 검진 결과를 공개하지 않아?"
     result, model, events, night = ask(original, RECORDS, [assessment("checkup", CHECKUP, "unknown")], "lookup")
-    assert result["status"] == "unknown" and night.questions_left == 3  # unknown 환급 (순서표 5번)
+    assert result["status"] == "unknown" and night.questions_left == 2  # unknown도 차감 (환급 철회 2026-09-18)
     assert set(model.calls[0][1]["properties"]) == {"question_kind", "evidence", "answer"}
     assert original in model.calls[0][0][0].content
     assert [e.question for e in events.rows if e.type == "intervention_question"] == [original]

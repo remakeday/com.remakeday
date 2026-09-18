@@ -2,7 +2,7 @@
 
 import re
 
-from apps.engine.domain.value_objects.game_constants import LADDER_SCORE_STEPS, QUESTION_REFUNDS_PER_NIGHT
+from apps.engine.domain.value_objects.game_constants import LADDER_SCORE_STEPS
 
 _WHY_CUES = ("왜", "이유", "어떻게", "어째서", "뭐 때문")
 _POLITE_RE = re.compile(r"(습니다|합니다|입니다)")
@@ -88,7 +88,7 @@ GUIDE_ANSWERS = {
                 "밤마다 무슨 일이 원인이었는지, 누가 왜 그렇게 했는지 써라. "
                 "낮에는 사람들에게 묻고, 밤에는 나에게 기록을 확인하고, 규칙 하나로 다음 하루를 실험해라."),
     "usage": ("가설을 넣어 물으면 맞다·아니다로 판정한다. 누가·무엇을 물으면 기록에서 찾아 준다. "
-              "기록으로 판단할 수 없으면 알 수 없다고 답하고, 그 질문은 한 밤 세 번까지 횟수에서 빼 준다."),
+              "기록으로 판단할 수 없으면 알 수 없다고 답한다. 질문은 한 밤 세 번까지다."),
 }
 _LEAD_IN = r"^(?:그래서|그럼|근데|이제)?\s*"
 # "뭘 해야/하면" 뒤에는 짧은 어미·문장 끝만 — "뭘 하면 이송돼?"처럼 세계 사건이 오면 판정 질문이다 (opus 리뷰 I1)
@@ -122,22 +122,6 @@ def guide_kind(text: str, names: list[str]) -> str | None:
     if any(_mentions(question, name) for name in names):
         return None
     return next((kind for kind, pattern in _GUIDE_TABLE if pattern.search(question)), None)
-
-
-# ── 환급 — "알 수 없다"는 헛걸음으로 만들지 않는다 (테스터9 F19) ──
-_QUESTION_NOISE_RE = re.compile(r"[\s.,!?~…\"'「」]")
-
-
-def _same_question_key(text: str) -> str:
-    return _QUESTION_NOISE_RE.sub("", text)
-
-
-def refund_question(status: str, text: str, previous_questions: list[str], *, refunds_used: int,
-                    cap: int = QUESTION_REFUNDS_PER_NIGHT) -> bool:
-    """unknown이고, 같은 밤 상한 안이고, 같은 밤에 이미 한 질문(공백·문장부호 무시)이 아니면 환급한다."""
-    key = _same_question_key(text)
-    return (status == "unknown" and refunds_used < cap
-            and all(_same_question_key(q) != key for q in previous_questions))
 
 
 # ── 공개 사다리 — 회차 바닥 + 점수로 한 칸씩 앞당김, 열린 칸은 닫히지 않는다 ──

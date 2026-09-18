@@ -109,7 +109,7 @@ def test_wh_question_supported_has_no_yes_no_verdict():
     assert verdict_prefix("supported", True, wh=True) == "왜인지는 내가 말할 수 없다. 그 전에 일어난 일은 말할 수 있다."
 
 
-# 순서표 5번 — 안내 질문 분류(규칙 표), 환급, 공개 사다리 단계
+# 순서표 5번 — 안내 질문 분류(규칙 표), 공개 사다리 단계
 NAMES = ["채연", "민석", "은상", "준"]
 
 
@@ -193,21 +193,6 @@ def test_guide_answers_stay_within_cause_and_motive():
     for answer in GUIDE_ANSWERS.values():
         assert not any(word in answer for word in ("정체", "부작용", "돼지", "사람이 아니", "점수", "%"))
         assert not polite_register_check(NS(answer=answer))
-
-
-def test_refund_only_for_unknown_new_question_within_cap():
-    from apps.engine.app.use_cases.advisor_advice import refund_question
-    assert refund_question("unknown", "트럭이 왔어?", [], refunds_used=0)
-    assert not refund_question("supported", "트럭이 왔어?", [], refunds_used=0)
-    assert not refund_question("contradicted", "트럭이 왔어?", [], refunds_used=0)
-    assert not refund_question("unknown", "트럭이 왔어?", [], refunds_used=3)
-    assert refund_question("unknown", "트럭이 왔어?", [], refunds_used=2)
-
-
-def test_refund_is_denied_for_the_same_question_ignoring_spacing_and_punctuation():
-    from apps.engine.app.use_cases.advisor_advice import refund_question
-    assert not refund_question("unknown", "트럭이  왔어!", ["트럭이 왔어?"], refunds_used=1)
-    assert refund_question("unknown", "트럭이 언제 왔어?", ["트럭이 왔어?"], refunds_used=1)
 
 
 @pytest.mark.parametrize("loop_n, best_total, stage", [

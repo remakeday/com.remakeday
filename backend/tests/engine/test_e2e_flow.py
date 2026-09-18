@@ -69,7 +69,7 @@ def test_full_attempt_five_loops_to_doom(db_session, monkeypatch, logged_in):
             if loop_n < 5:
                 assert result["intervention_available"]
                 q = client.post(f"/nights/{night_id}/questions", json={"text": "채연이 밥 남겼어?"}).json()
-                assert (q["kind"], q["status"], q["remaining"], q["refunded"]) == ("answer", "unknown", 3, True)  # fake 모델 → unknown 환급
+                assert (q["kind"], q["status"], q["remaining"], q["refunded"]) == ("answer", "unknown", 2, False)  # fake 모델 → unknown도 차감
                 assert isinstance(q["suggested_questions"], list)
                 opts = client.get(f"/nights/{night_id}/options").json()["options"]
                 assert len(opts) == 3

@@ -19,7 +19,7 @@ NIGHT_CLUE_QUESTION = "오늘 소등 뒤에 무엇이 새로 드러났는가?"
 ACTOR_QUESTION = "{name} 오늘 무엇을 했는가?"
 ACTORS_PER_NIGHT = 2
 
-# 같은 질문 판정 — advisor_advice._same_question_key와 같은 기준(공백·문장부호 무시)
+# 같은 질문 판정 — 공백·문장부호 무시 기준
 _NOISE_RE = re.compile(r"[\s.,!?~…\"'「」]")
 
 

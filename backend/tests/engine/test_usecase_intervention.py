@@ -106,12 +106,12 @@ def test_question_uses_public_observation_when_chain_is_missing(db_session):
     assert inter.ask(night.id, "채연은 무슨 행동을 했어?")["status"] == "supported"
 
 
-def test_question_without_public_record_is_unknown_and_refunds_the_question(db_session):
-    """순서표 5번 — "알 수 없다"는 횟수를 쓰지 않는다 (전: 1회 차감)."""
+def test_question_without_public_record_is_unknown_and_still_charges(db_session):
+    """환급 철회(2026-09-18, 테스터12 F5) — "알 수 없다"도 횟수를 쓴다."""
     inter, attempt, night = make_intervention(db_session, [])
     answer = inter.ask(night.id, "누가 밥을 남겼어?")
     assert answer["status"] == "unknown"
-    assert (answer["remaining"], answer["refunded"], answer["kind"]) == (3, True, "answer")
+    assert (answer["remaining"], answer["refunded"], answer["kind"]) == (2, False, "answer")
     assert inter._llm.calls == []
 
 
@@ -520,23 +520,21 @@ def test_custom_rule_intent_keeps_player_original_text(db_session):
     assert _applied_intent(inter, attempt) == "채연은 기록한다 금지"
 
 
-# 순서표 5번 — 환급 규칙 · 안내 질문 · 공개 사다리
+# 순서표 5번 — 질문 횟수 고정(환급 없음) · 안내 질문 · 공개 사다리
 def _events_of(inter, attempt):
     return [e for e in inter._events.query(attempt.id) if e.type == "intervention_question"]
 
 
-def test_unknown_refunds_stop_after_three_in_one_night(db_session):
+def test_unknown_answers_still_charge_and_a_fourth_question_is_refused(db_session):
+    """환급 철회(2026-09-18, 테스터12 F5) — "알 수 없다"도 차감한다. 한 밤 3회 고정, 4번째는 거부."""
+    from apps.engine.app.use_cases.intervention_interactor import GameStateError
     inter, attempt, night = make_intervention(db_session, [])
-    results = [inter.ask(night.id, q) for q in ("트럭이 왔어?", "방송은 몇 번 나와?", "충식은 어디 갔어?", "문은 잠겨 있어?")]
-    assert [(r["refunded"], r["remaining"]) for r in results] == [(True, 3), (True, 3), (True, 3), (False, 2)]
-    assert [(e.q_index, e.refunded) for e in _events_of(inter, attempt)] == [(1, True), (2, True), (3, True), (4, False)]
-
-
-def test_same_question_asked_again_is_not_refunded(db_session):
-    inter, attempt, night = make_intervention(db_session, [])
-    first = inter.ask(night.id, "트럭이 왔어?")
-    again = inter.ask(night.id, "트럭이  왔어")
-    assert (first["refunded"], again["refunded"], again["remaining"]) == (True, False, 2)
+    results = [inter.ask(night.id, q) for q in ("트럭이 왔어?", "방송은 몇 번 나와?", "충식은 어디 갔어?")]
+    assert [(r["status"], r["refunded"], r["remaining"]) for r in results] == \
+        [("unknown", False, 2), ("unknown", False, 1), ("unknown", False, 0)]
+    assert [(e.q_index, e.refunded) for e in _events_of(inter, attempt)] == [(1, False), (2, False), (3, False)]
+    with pytest.raises(GameStateError, match="질문을 다 썼다"):
+        inter.ask(night.id, "문은 잠겨 있어?")
 
 
 @pytest.mark.parametrize("question, kind", [("이 게임이 뭔지 이해가 안되 목적이뭐야?", "purpose"),
@@ -555,8 +553,8 @@ def test_guide_question_answers_without_verdict_model_call_notes_or_count(db_ses
     assert NoteRepository(db_session).list(attempt.id) == []
     assert night.questions == []
     assert [e.kind for e in _events_of(inter, attempt)] == ["guide"]
-    # 안내 질문은 환급 상한도 쓰지 않는다
-    assert [inter.ask(night.id, q)["refunded"] for q in ("트럭이 왔어?", "문은 잠겨 있어?", "충식은 어디 갔어?")] == [True] * 3
+    # 안내 질문은 횟수를 쓰지 않는다 — 뒤이은 실제 질문은 환급 없이 차감된다
+    assert [inter.ask(night.id, q)["refunded"] for q in ("트럭이 왔어?", "문은 잠겨 있어?", "충식은 어디 갔어?")] == [False] * 3
 
 
 _PAPER = "오후 검진 뒤 종이에 적힌 이름은 저녁에 방송실로 전달된다."
@@ -606,12 +604,26 @@ def test_night_score_opens_the_next_rung_early(db_session):
     assert res["status"] == "supported"
 
 
+def test_second_and_third_question_in_a_night_open_higher_rungs(db_session):
+    """2026-09-18 결정 §2 — 물을수록 조금씩 더 드러낸다: 같은 밤 2번째 질문은 한 단계, 3번째는 두 단계 위 칸까지 연다."""
+    low, mid, high = _rung(stage=1, key="low"), _rung(stage=2, key="mid"), _rung(stage=3, key="high")
+    inter, _, night = make_intervention(db_session, [], advisor_ladder=[low, mid, high])
+    loop = inter._loops.get(night.loop_id)
+    text = "검진 뒤 적힌 이름은 방송실로 가?"
+    night.questions_left = 3  # 1번째 질문 — 가산 없음
+    assert [o.observation_id for o in inter._open_rungs(loop, night, text)] == ["ladder:low"]
+    night.questions_left = 2  # 2번째 질문 — 한 단계 위까지
+    assert [o.observation_id for o in inter._open_rungs(loop, night, text)] == ["ladder:mid", "ladder:low"]
+    night.questions_left = 1  # 3번째 질문 — 두 단계 위까지
+    assert [o.observation_id for o in inter._open_rungs(loop, night, text)] == ["ladder:high", "ladder:mid"]
+
+
 def test_unknown_answer_never_shows_rung_text_as_a_confirmed_record(db_session):
-    """opus 리뷰 I2 — 사다리 칸은 판정 재료다. 판정이 서지 않은(환급되는) 답의 폴백 근거로 원문을 보여 주지 않는다."""
+    """opus 리뷰 I2 — 사다리 칸은 판정 재료다. 판정이 서지 않은(unknown) 답의 폴백 근거로 원문을 보여 주지 않는다."""
     reply = [{"question_kind": "proposition", "answer": "기록으로는 판단할 수 없다.", "evidence": []}]
     inter, attempt, night = make_intervention(db_session, reply, advisor_ladder=[_rung()])
     res = inter.ask(night.id, "검진 결과는 어디로 가?")
-    assert (res["status"], res["refunded"]) == ("unknown", True)
+    assert (res["status"], res["refunded"]) == ("unknown", False)
     assert _PAPER not in (res["detail"] or "") and _PAPER not in res["answer"]
     assert not any(i.startswith("ladder:") for i in res["evidence_ids"])
     assert _PAPER not in (_events_of(inter, attempt)[-1].detail or "")
@@ -626,15 +638,17 @@ def test_unknown_answer_drops_a_rung_the_model_cited(db_session):
     assert _PAPER not in (res["detail"] or "") and res["evidence_ids"] == []
 
 
-def test_same_question_after_a_model_failure_is_refunded_again_within_the_cap(db_session):
-    """모델 실패로 답하지 못한 질문은 "같은 질문 재입력"으로 치지 않는다 — 환급 상한 집계에는 든다."""
+def test_same_question_repeated_after_a_model_failure_still_charges_each_time(db_session):
+    """모델 실패도 unknown이라 매번 차감한다 — 환급 철회(2026-09-18, 테스터12 F5)로 재입력 비교는 필요 없다."""
+    from apps.engine.app.use_cases.intervention_interactor import GameStateError
     inter, attempt, night = make_intervention(db_session, [], advisor_ladder=[_rung()])  # 빈 응답 → 모델 실패
     first = inter.ask(night.id, "검진 결과는 어디로 가?")
     again = inter.ask(night.id, "검진 결과는 어디로 가?")
     third = inter.ask(night.id, "검진 결과는 어디로 가?")
-    fourth = inter.ask(night.id, "검진 결과는 어디로 가?")
-    assert [(r["refunded"], r["remaining"]) for r in (first, again, third, fourth)] == \
-        [(True, 3), (True, 3), (True, 3), (False, 2)]
+    assert [(r["refunded"], r["remaining"]) for r in (first, again, third)] == \
+        [(False, 2), (False, 1), (False, 0)]
+    with pytest.raises(GameStateError, match="질문을 다 썼다"):
+        inter.ask(night.id, "검진 결과는 어디로 가?")
 
 
 def test_same_question_after_an_answered_unknown_is_still_charged(db_session):
@@ -642,7 +656,7 @@ def test_same_question_after_an_answered_unknown_is_still_charged(db_session):
     inter, attempt, night = make_intervention(db_session, [dict(reply), dict(reply)], advisor_ladder=[_rung()])
     first = inter.ask(night.id, "검진 결과는 어디로 가?")
     again = inter.ask(night.id, "검진 결과는 어디로 가?")
-    assert (first["refunded"], again["refunded"], again["remaining"]) == (True, False, 2)
+    assert (first["refunded"], again["refunded"], again["remaining"]) == (False, False, 1)
 
 
 def test_guide_question_is_not_part_of_the_recent_conversation(db_session):
@@ -714,7 +728,7 @@ def _while_first_is_held(db_session, first, second, *, entered, release):
 def test_question_while_the_same_night_is_answering_is_409_without_waiting(db_session):
     from apps.engine.app.use_cases.intervention_interactor import GameStateError
     night = _concurrent_night(db_session, questions_left=1,
-                              questions=["하나", "둘", "셋", "넷", "다섯"])  # 환급 3회 다 씀, 남은 1
+                              questions=["하나", "둘", "셋", "넷", "다섯"])  # 이미 쓴 질문 기록 5건, 남은 1 (임의 상태)
     model = _HeldModel()
 
     def ask(text):
@@ -732,8 +746,9 @@ def test_question_while_the_same_night_is_answering_is_409_without_waiting(db_se
     assert (saved.questions_left, len(saved.questions)) == (0, 6)
 
 
-def test_refund_cap_holds_when_a_second_question_arrives_during_an_answer(db_session):
-    night = _concurrent_night(db_session, questions_left=3, questions=["앞 질문 하나", "앞 질문 둘"])  # 환급 2회 사용
+def test_concurrent_requests_each_charge_the_night_once(db_session):
+    """환급 철회(2026-09-18, 테스터12 F5) — 동시 요청도 잠금으로 직렬화되어 한 번씩만 차감된다."""
+    night = _concurrent_night(db_session, questions_left=3, questions=[])
     model = _HeldModel()
 
     def ask(text):
@@ -743,12 +758,12 @@ def test_refund_cap_holds_when_a_second_question_arrives_during_an_answer(db_ses
         return work
     outcome = _while_first_is_held(db_session, ask("트럭은 언제 와?"), ask("문은 잠겨 있어?"),
                                    entered=model.entered, release=model.release)
-    assert outcome["first"]["refunded"] is True  # 세 번째 환급
+    assert outcome["first"]["refunded"] is False and outcome["first"]["remaining"] == 2
     again = _in_own_session(db_session, ask("문은 잠겨 있어?"))  # 409를 받은 질문을 다시 보낸다
-    assert again["refunded"] is False  # 상한 3
+    assert again["refunded"] is False and again["remaining"] == 1
     db_session.expire_all()
     saved = NightRepository(db_session).get(night.id)
-    assert (saved.questions_left, len(saved.questions)) == (2, 4)
+    assert (saved.questions_left, len(saved.questions)) == (1, 2)
     assert {"트럭은 언제 와?", "문은 잠겨 있어?"} <= set(saved.questions)
 
 
@@ -782,7 +797,7 @@ def test_rule_choice_while_another_choice_is_applying_is_409_and_one_rule_applie
 
 
 def _last_question_night(db_session):
-    return _concurrent_night(db_session, questions_left=1, questions=["하나", "둘", "셋", "넷", "다섯"])  # 환급 소진, 남은 1
+    return _concurrent_night(db_session, questions_left=1, questions=["하나", "둘", "셋", "넷", "다섯"])  # 남은 질문 1 (임의 상태)
 
 
 class _CountingModel:

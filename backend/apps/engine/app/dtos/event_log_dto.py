@@ -169,7 +169,7 @@ class InterventionQuestionEvent(EventBase):
     next_observation: str | None = None
     unlocked_note: str | None = None  # 질문 보상으로 해금된 관찰 (advisor_leads)
     kind: Literal["answer", "guide"] = "answer"  # guide = 게임 목적·사용법 안내 답 (판정·횟수 없음)
-    refunded: bool = False  # "알 수 없다"라 횟수를 돌려받음
+    refunded: bool = False  # 환급 철회(2026-09-18, 테스터12 F5) — 항상 False, 필드는 프론트 호환용으로 유지
     model_failed: bool = False  # 모델이 답을 내지 못함 — 같은 질문 재입력 비교에서 뺀다
 
 

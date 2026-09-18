@@ -15,8 +15,7 @@ MANAGER_CHECK_BEATS = (2, 4, 6)  # 관리자 점검이 도는 비트 (매 비트
 MISMATCH_SPEAKER_SUSPICION = 12  # 거짓 출처 발각 시 발화 NPC의 대유저 의심
 ASK_TARGET_SUSPICION = 6  # ask_npc 대상 의심 상승
 
-QUESTIONS_PER_NIGHT = 3  # 신의개입 질문
-QUESTION_REFUNDS_PER_NIGHT = 3  # "알 수 없다" 답의 횟수 환급 — 같은 밤 상한
+QUESTIONS_PER_NIGHT = 3  # 신의개입 질문 — 고정, "알 수 없다"도 차감한다 (환급 철회 2026-09-18, 테스터12 F5)
 LADDER_SCORE_STEPS = (25.0, 50.0, 75.0)  # 신의 질문 공개 사다리 — 점수로 한 칸씩 앞당기는 기준
 CLAIMS_MAX = 8
 
