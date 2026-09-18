@@ -146,6 +146,7 @@ const deferred = () => {
     gatedQuestion.release('gated');
     await page.getByText('무슨 말인지 모르겠다는 얼굴이다.', { exact: true }).waitFor();
     await expectBudget(page, 8);
+    await page.waitForFunction(el => !el.disabled, await input.elementHandle(), { timeout: 5000 });
     assert.equal(await input.isEnabled(), true, 'gated reply does not lock the NPC for this scene');
     assert.equal(await minseok.getAttribute('aria-label'), '민석 · 대화 가능', 'gated reply keeps the NPC from being marked scene-complete');
 
