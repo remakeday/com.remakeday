@@ -72,6 +72,19 @@ export interface Illustration {
   caption: string;
 }
 
+/** 대사창 한 줄 — 서버가 응답 조립 때 계산한다(낮 화면 VN 설계 §3). 저장하지 않는다. */
+export type LineKind =
+  | "scene" | "action" | "rule_result" | "statement" | "broadcast"
+  | "npc" | "paw_effect" | "fragment" | "system";
+export interface Line {
+  kind: LineKind;
+  speaker: string | null; // 인물 이름·"관리자"·null
+  text: string;
+  image_id: string | null; // 이 줄에서 바꿔 보여 줄 장면 그림
+  voice_id: string | null; // 음성이 있는 줄만 — 지금은 항상 null(프론트 voiceForLine이 고른다)
+  observation_id: string | null; // 단서 기록과 연결(NEW·그림 열기)
+}
+
 export interface Observation {
   observation_id: string;
   attempt_id: string;
@@ -118,6 +131,8 @@ export interface StartLoopRes {
   /** 오늘 세계에 걸린 규칙 — 유저용 문구. 없으면 빈 배열 */
   active_rules: string[];
   observations: Observation[];
+  /** 대사창 줄 — 장면 서술 → 방송 → 행동·규칙 → 혼잣말 → 단서 조각 → 기록 알림 */
+  lines: Line[];
 }
 
 export interface UtteranceReq {
@@ -135,6 +150,8 @@ export interface UtteranceRes {
   observations: Observation[];
   /** 무의미한 입력이라 인물의 반응이 아닌 대체 문장을 돌려줬을 때만 true. */
   gated?: boolean;
+  /** 답변을 문장 단위로 나눈 npc 줄. gated면 system 줄 하나 */
+  lines: Line[];
 }
 
 export interface BeatNextRes {
@@ -150,6 +167,8 @@ export interface BeatNextRes {
   observations: Observation[];
   /** 현재 장면 처리 후 발화 예산. 구버전 응답에서는 없을 수 있다. */
   budget_left?: number;
+  /** 대사창 줄. day_done이면 빈 배열 */
+  lines: Line[];
 }
 
 export interface PawRespondReq {
@@ -163,6 +182,8 @@ export interface PawRespondRes {
   narration: string | null;
   illustrations: Illustration[];
   observations: Observation[];
+  /** 수락 즉시 장면에서 새로 생긴 줄만. 아니면 빈 배열 */
+  lines: Line[];
 }
 
 export interface NotesRes {

@@ -10,15 +10,17 @@ res: `{attempt_id: string, attempt_n: number, entry_lines: string[3], prior_cell
 - `prior_attempt_id`는 요청 사용자의 판일 때만 이어진다. 남의 판 ID는 없는 판처럼 무시한다 — 에러 없이 200, 새 판은 `attempt_n: 1`, `prior_cell_results: null` (F26).
 
 ### POST /sessions/{attempt_id}/loops
-res: `{loop_id: string, loop_n: number, morning_text: string, damage_level: 0|1|2|3, budget_left: number, beat: 1, beat_title: string, narration: string, broadcast: string|null, illustrations: Illustration[], aftermath: string|null}`
+res: `{loop_id: string, loop_n: number, morning_text: string, damage_level: 0|1|2|3, budget_left: number, beat: 1, beat_title: string, narration: string, broadcast: string|null, illustrations: Illustration[], aftermath: string|null, lines: Line[]}`
 - 회차 1..5 순서 강제. 이전 회차가 안 닫혔으면 409
 - 409 `request_in_flight` (2026-09-18, 5b): 같은 판의 회차 시작이 처리 중(planner 모델 응답 대기)이면 기다리지 않고 곧바로 `{"code": "request_in_flight", "detail": "하루를 준비하는 중이다. …"}`. 모델 호출·회차 생성이 없다.
 - `aftermath`: 전날 걸린 규칙이 부작용을 만들었을 때만 — "어제는 없던 일이 있었다" 톤 한 줄 (내용은 밝히지 않는다)
+- `lines`: 대사창 줄 목록(2026-09-18, 낮 화면 VN). 순서는 장면 서술 → 방송 → 행동·규칙 결과·설명·부작용 → 인물 혼잣말(`ambient`) → 단서 조각 → 기록 알림(`system`). `narration`은 `scene`·`action`·`rule_result`·`statement`·`paw_effect` 줄의 `text`를 공백으로 이은 것과 같다. 기존 `narration`·`broadcast`·`ambient`는 그대로 둔다.
 - `Illustration`: `{image_id: string, caption: string}`. 시나리오가 지정한 현재 비트의 관찰 이미지 목록. `image_id`는 프론트의 허용된 이미지 매핑 키이며 URL·LLM 출력이 아니다. 이미지 없는 비트는 빈 배열. 프론트는 필드가 없는 구버전 응답과 알 수 없는 ID에 기존 비트 배경을 사용한다.
 
 ### POST /loops/{loop_id}/utterances
 req: `{target: string(code), text: string, request_id?: string(UUID)}`
-res: `{utterance_id: string(UUID), reply: string, npc: {code: string, name: string, mood: "calm"|"uneasy"|"wary", uttered: boolean}, budget_left: number, beat: number, tool_used: boolean, observations: Observation[], gated?: boolean}`
+res: `{utterance_id: string(UUID), reply: string, npc: {code: string, name: string, mood: "calm"|"uneasy"|"wary", uttered: boolean}, budget_left: number, beat: number, tool_used: boolean, observations: Observation[], gated?: boolean, lines: Line[]}`
+- `lines`: 답변을 문장 단위로 나눈 `npc` 줄(따옴표 안 마침표는 나누지 않음, `observation_id`는 답변 관찰). `gated=true`면 대체 문장 하나가 `system` 줄이다.
 - 한 장면에서 NPC마다 성공한 대화는 1회만 가능하다. `uttered=true`인 NPC에게 새로운 질문을 보내면 409이며 예산은 줄지 않는다. 다른 NPC는 대화 가능하고, 다음 장면에서 다시 말을 걸 수 있다. 성공한 질문마다 예산 1회를 쓰며 장면은 이동하지 않는다.
 - `gated=true`: 무의미한 입력이라 판단해 인물의 실제 반응 대신 대체 문장(`reply`)을 돌려준 응답. `npc.uttered`는 항상 `false`라 이 비트의 재발화 잠금이 걸리지 않는다. `observations`는 빈 배열이다. 예산은 같은 비트의 첫 무의미 입력에서는 차감되지 않고, 두 번째부터 차감된다(`budget_left` 반영). `gated` 필드가 없으면 구버전 응답이거나 정상 발화로 취급한다.
 - 같은 회차의 같은 `request_id`/대상/질문은 장면당 1회 제한과 무관하게 저장된 성공 응답을 반환하고 추가로 차감하지 않는다. 다른 질문에 ID를 재사용하면 409. ID 생략 요청은 각각 새 발화다.
@@ -29,7 +31,8 @@ res: `{utterance_id: string(UUID), reply: string, npc: {code: string, name: stri
 ### POST /loops/{loop_id}/beats/next
 res: `{beat: number, beat_title: string, narration: string, broadcast: string|null, illustrations: Illustration[], paw_offer: {offer_id: string, rule_label: string, shown_reason: string|null}|null, day_done: boolean,
       ambient: {lines: {code: string, name: string, text: string}[]}|null,
-      note_found: {id: number, kind: string, text: string}|null}`
+      note_found: {id: number, kind: string, text: string}|null, lines: Line[]}`
+- `lines`: 회차 시작과 같은 순서의 대사창 줄. `day_done=true`면 빈 배열.
 - day_done=true면 이후 발화·비트 넘기기 409, 밤으로
 - 같은 회차의 앞 요청이 처리 중이면 곧바로 409 `request_in_flight` (발화 절과 같은 잠금). 원숭이손 응답도 같다.
 - `illustrations`: 현재 비트만 전달하며 낮 종료 시 빈 배열. 장면 넘겨 보기는 발화 예산·비트 진행에 영향을 주지 않는다. 폐쇄 이미지는 이 목록에 넣지 않고 밤의 `world_outcome=closure`에서만 표시한다.
@@ -38,7 +41,8 @@ res: `{beat: number, beat_title: string, narration: string, broadcast: string|nu
 
 ### POST /loops/{loop_id}/paw/respond
 req: `{offer_id: string, accept: boolean}`
-res: `{applied: boolean, rule_label: string|null, narration: string|null, illustrations: Illustration[], observations: Observation[]}`
+res: `{applied: boolean, rule_label: string|null, narration: string|null, illustrations: Illustration[], observations: Observation[], lines: Line[]}`
+- `lines`: 수락 즉시 장면에서 새로 생긴 줄만(`narration`과 같은 내용). 뒤 비트 소원이거나 거절이면 빈 배열.
 - `paw_offer.rule_label`(beats/next)과 수락 응답의 `rule_label`은 시나리오 소원 문장이다(예: "채연이 오늘은 밥을 왜 안 먹는지 솔직하게 말한다."). `shown_reason`은 관리자 제안 문구(A/B로 null 가능).
 - 수락하면 보이는 규칙 1개(`source=monkey_paw`)와 숨은 규칙(`source=paw_effect`)이 판 단위로 저장된다. 숨은 규칙은 `start_loop.active_rules`에 나오지 않는다.
 - 수락 즉시 장면: 소원 장면 비트가 현재 비트면 그 장면을 바로 실행하고 새로 생긴 서술·삽화·관찰만 `narration`/`illustrations`/`observations`에 싣는다. 뒤 비트 소원이거나 거절이면 `narration=null`, 빈 배열. 이미 공개된 장면 관찰·노트는 중복되지 않는다. 지나가는 대사는 재생하지 않는다.
@@ -208,6 +212,13 @@ res: `{db}` — `db`는 `ok | error`. 공개 경로(api.remakeday.com)라 기동
 
 ## 타입
 CellScores = `{cause: number, motive: number, side_effect: number, identity: number}`
+
+Line = `{kind: "scene"|"action"|"rule_result"|"statement"|"broadcast"|"npc"|"paw_effect"|"fragment"|"system", speaker: string|null, text: string, image_id: string|null, voice_id: string|null, observation_id: string|null}` (2026-09-18, 낮 화면 VN 설계 §3)
+- `speaker`: 인물 이름·"관리자"·null. `statement`·`fragment` 줄의 `text`는 `이름: …` 꼴을 그대로 둔다 — 프론트가 그린다.
+- `image_id`: 이 줄에서 바꿔 보여 줄 장면 그림(장면 줄은 비트 첫 그림, 행동 줄은 그 행동의 첫 삽화). 없으면 null.
+- `voice_id`: 지금은 항상 null — 낮 방송 음원은 프론트 `voiceForLine`이 문구로 고른다.
+- `observation_id`: 단서 기록과 연결. `system` 줄만 null.
+- 줄 목록은 응답 조립 때 계산하고 저장하지 않는다.
 
 2026-09-08 이후 제출의 side_effect는 저장 호환용 0이다. 화면은 상황(원인·동기 평균)과 정체를 각 100% 기준으로 보여주며 총점 반영 비중은 70:30이다. 기존 제출 기록은 재채점하지 않는다.
 

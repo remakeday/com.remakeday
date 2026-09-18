@@ -7,6 +7,7 @@ from contextlib import nullcontext
 from itertools import takewhile
 
 from apps.engine.app.dtos import event_log_dto as ev
+from apps.engine.app.dtos.line_dto import LineDTO
 from apps.engine.app.dtos.llm_output_dto import (
     AgentOutput,
     AskNpcOutput,
@@ -45,6 +46,7 @@ from apps.engine.domain.entities.npc_memory import (
 from apps.engine.domain.entities.question_rules import is_question_action, question_matches
 from apps.engine.domain.entities.cookie_rules import ab_assign, paw_should_offer
 from apps.engine.domain.entities.paw_rules import choose_wish
+from apps.engine.domain.entities.sentence_rules import split_sentences
 from apps.engine.domain.entities.utterance_rules import is_nonsense
 from apps.engine.domain.entities.rule_rules import (
     Rule,
@@ -63,6 +65,7 @@ from apps.engine.domain.value_objects.game_constants import (
 
 MORNING_FIRST = "7시 12분. 눈을 뜬다."
 MORNING_SHIFTED = "7시 13분. 눈을 뜬다."
+NOTE_FOUND_LINE = "단서 기록에 새 내용을 저장했다."  # note_found의 대사창 줄 — 프론트 문구와 같다
 
 # suppress 치환용 중립 행동 후보 — 시나리오 vocab에 있는 것을 고른다
 _NEUTRAL_ACTION_CANDIDATES = ("혼자 있는다", "쉰다", "말을 아낀다")
@@ -217,6 +220,7 @@ class LoopInteractor:
             "observations": observations,
             "note_found": note_found,
             "ambient": ambient,
+            "lines": self._scene_lines(loop, beat1, observations, ambient, note_found),
             "active_rules": [
                 r.shown_reason
                 or f"{r.target}: {r.action} {'금지' if r.effect == 'suppress' else '강제'}"
@@ -407,6 +411,9 @@ class LoopInteractor:
             "budget_left": loop.budget_left,
             "beat": loop.beat,
             "tool_used": tool_used,
+            "lines": [LineDTO(kind="npc", speaker=char.name, text=sentence,
+                              observation_id=observation.observation_id).model_dump()
+                      for sentence in split_sentences(reply)],
         }
         self._events.record(loop.attempt_id, ev.UtteranceEvent(
             loop_n=loop.loop_n, beat=loop.beat, target=char.name, text=text,
@@ -432,6 +439,7 @@ class LoopInteractor:
             "utterance_id": utterance_id, "observations": [], "reply": reply,
             "npc": {"code": char.code, "name": char.name, "mood": "calm", "uttered": False},
             "budget_left": loop.budget_left, "beat": loop.beat, "tool_used": False, "gated": True,
+            "lines": [LineDTO(kind="system", text=reply).model_dump()],
         }
         self._events.record(loop.attempt_id, ev.UtteranceEvent(
             loop_n=loop.loop_n, beat=loop.beat, target=char.name, text=text, reply=reply,
@@ -554,7 +562,7 @@ class LoopInteractor:
             self._loops.save()
             return {"beat": loop.beat, "beat_title": "", "narration": "", "broadcast": None,
                     "paw_offer": None, "day_done": True, "ambient": None, "note_found": None,
-                    "illustrations": [], "observations": [], "budget_left": loop.budget_left}
+                    "illustrations": [], "observations": [], "budget_left": loop.budget_left, "lines": []}
 
         bundle = self._scenario.bundle()
         if loop.beat in MANAGER_CHECK_BEATS:
@@ -575,7 +583,22 @@ class LoopInteractor:
             "broadcast": beat.broadcast, "paw_offer": paw_offer, "day_done": False,
             "illustrations": [i.model_dump() for i in beat.illustrations],
             "ambient": ambient, "note_found": note_found, "observations": observations,
+            "lines": self._scene_lines(loop, beat, observations, ambient, note_found),
         }
+
+    def _scene_lines(self, loop, beat, observations, ambient, note_found) -> list[dict]:
+        """대사창 줄 — 장면 서술 → 방송 → 행동·규칙·설명·부작용 → 혼잣말 → 단서 조각 → 기록 알림 (설계 §2).
+        응답 조립 때만 계산하고 저장하지 않는다. observation_id 키는 공개 지점(_disclose_scene·_make_ambient)과 같다."""
+        scene, *rest = beat.lines
+        broadcast = ([LineDTO(kind="broadcast", speaker="관리자", text=beat.broadcast,
+                              observation_id=f"{loop.id}:broadcast-{beat.n}")] if beat.broadcast else [])
+        spoken = ([LineDTO(kind="npc", speaker=line["name"], text=line["text"],
+                           observation_id=f"{loop.id}:ambient-{beat.n}-{index}")
+                   for index, line in enumerate(ambient["lines"])] if ambient else [])
+        fragments = [LineDTO(kind="fragment", speaker=o["actor"], text=o["text"], observation_id=o["observation_id"])
+                     for o in observations if o["observation_id"].startswith(f"{loop.id}:fragment-")]
+        found = [LineDTO(kind="system", text=NOTE_FOUND_LINE)] if note_found else []
+        return [line.model_dump() for line in [scene, *broadcast, *rest, *spoken, *fragments, *found]]
 
     def _make_ambient(self, loop, bundle) -> dict | None:
         """Play eligible authored scene speech without a model call or conversation cost."""
@@ -762,7 +785,7 @@ class LoopInteractor:
         if wish is None:
             raise GameStateError("유효한 원숭이손 오퍼가 없다")
         rule_id = self._rules.next_rule_id(loop.attempt_id)
-        scene = {"narration": None, "illustrations": [], "observations": []}
+        scene = {"narration": None, "illustrations": [], "observations": [], "lines": []}
         if accept:
             self._store_wish_rules(loop, wish, rule_id, paw["shown_reason"] if paw["show_reason"] else None)
             self._events.record(loop.attempt_id, ev.RuleAppliedEvent(
@@ -806,10 +829,13 @@ class LoopInteractor:
         self._disclose_scene(loop, bundle, beat)
         new = [o for o in public_observations(self._events, loop.attempt_id) if o.observation_id not in before]
         spoken = [o for o in new if o.source_kind != "image"]  # 삽화는 행동 관찰에 이미 붙어 있다
+        # 장면·방송·조각은 이 비트에서 이미 공개됐으니 새 관찰은 전부 beat.lines의 행동·규칙·설명·부작용 줄이다
+        new_ids = {o.observation_id for o in spoken}
         return {
             "narration": " ".join(o.text for o in spoken) or None,
             "illustrations": [i.model_dump() for o in spoken for i in o.illustrations],
             "observations": [o.model_dump() for o in new],
+            "lines": [line.model_dump() for line in beat.lines if line.observation_id in new_ids],
         }
 
     def _world_effect(self, loop):

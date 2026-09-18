@@ -1,6 +1,7 @@
 """Execute finite public scene actions and audit actual rule opportunities."""
 
 from apps.engine.app.dtos.event_log_dto import RuleExecutionEvent
+from apps.engine.app.dtos.line_dto import LineDTO
 from apps.engine.app.use_cases.public_observations import disclose, public_observations
 from apps.engine.domain.entities.rule_rules import PAW_EFFECT_SOURCE
 
@@ -26,15 +27,22 @@ def _wish_fulfilled(bundle, rules, outcomes, observation):
     return True
 
 
+def _scene_line(loop, beat, illustrations):
+    """첫 줄은 장면 서술 — observation_id 키는 _disclose_scene의 scene-{n}과 같다."""
+    return LineDTO(kind="scene", text=beat.narration, observation_id=f"{loop.id}:scene-{beat.n}",
+                   image_id=illustrations[0].image_id if illustrations else None)
+
+
 def execute_scene(event_log, loop, bundle, rules, on_action=None):
-    """on_action(opportunity): 억제되지 않은 행동의 관찰이 이번 호출에서 처음 생겼을 때만 호출된다."""
+    """on_action(opportunity): 억제되지 않은 행동의 관찰이 이번 호출에서 처음 생겼을 때만 호출된다.
+    돌려주는 beat의 lines가 대사창 줄 레코드, narration은 그 text를 이어 붙인 것."""
     beat = bundle.beats[loop.beat - 1]
     if not bundle.scene_actions:
-        return beat
-    narration = [beat.narration]
+        return beat.model_copy(update={"lines": [_scene_line(loop, beat, beat.illustrations)]})
     illustrations = list(beat.illustrations)
     if loop.loop_n == 1 and beat.n == 1 and not any(c.playable and c.lost for c in bundle.characters):
         illustrations.extend(bundle.first_morning_illustrations)
+    lines = [_scene_line(loop, beat, illustrations)]
     outcomes = {(e.rule_id, e.beat): (e.result, e.actual_action)
                 for e in event_log.query(loop.attempt_id, loop_n=loop.loop_n) if e.type == "rule_execution"}
     executed = set(outcomes)
@@ -57,7 +65,6 @@ def execute_scene(event_log, loop, bundle, rules, on_action=None):
         suppressed = winner is not None and winner.effect == "suppress"
         actual = None if suppressed else opportunity.action
         text = opportunity.suppressed_narration if suppressed else opportunity.narration
-        narration.append(text)
         images = [] if suppressed else list(opportunity.illustrations)
         if loop.damage_level >= 3 and any(c.lost and c.name in opportunity.illustration_participants
                                          for c in bundle.characters):
@@ -67,6 +74,8 @@ def execute_scene(event_log, loop, bundle, rules, on_action=None):
             key=f"action-{beat.n}-{opportunity.actor}-{opportunity.action}", text=text,
             actor=opportunity.actor, illustrations=images,
             source_kind="rule_result" if winner else "scene", rule_id=winner.rule_id if winner else None)
+        lines.append(LineDTO(kind="rule_result" if winner else "action", text=text,
+                             image_id=images[0].image_id if images else None, observation_id=observation.observation_id))
         if on_action is not None and not suppressed and observation.observation_id not in disclosed:
             disclosed.add(observation.observation_id)
             on_action(opportunity)
@@ -88,10 +97,11 @@ def execute_scene(event_log, loop, bundle, rules, on_action=None):
                               else opportunity.explanation or opportunity.narration)
                     if rule.action not in information_records:
                         line = f"{opportunity.actor}: {detail}"
-                        narration.append(line)
                         information_records[rule.action] = disclose(
                             event_log, loop, beat, key=f"rule-{beat.n}-{same_action[-1].rule_id}",
                             text=line, actor=opportunity.actor, source_kind="statement", rule_id=same_action[-1].rule_id)
+                        lines.append(LineDTO(kind="statement", speaker=opportunity.actor, text=line,
+                                             observation_id=information_records[rule.action].observation_id))
                     info = information_records[rule.action]
                     evidence.append(info.observation_id)
                     action = rule.action
@@ -105,11 +115,12 @@ def execute_scene(event_log, loop, bundle, rules, on_action=None):
                 side_effect = rule.hidden_side_effect
                 revealed = disclose(event_log, loop, beat, key=f"paw-effect-{beat.n}-{rule.rule_id}",
                                 text=side_effect, source_kind="rule_result", rule_id=rule.rule_id)
-                narration.append(side_effect)
+                lines.append(LineDTO(kind="paw_effect", text=side_effect, observation_id=revealed.observation_id))
                 evidence.append(revealed.observation_id)
             event_log.record(loop.attempt_id, RuleExecutionEvent(
                 loop_n=loop.loop_n, beat=beat.n, rule_id=rule.rule_id,
                 condition=f"{opportunity.actor}: {opportunity.action} 기회", actual_action=action,
                 result=result, observation_ids=evidence, side_effect=side_effect))
             executed.add((rule.rule_id, beat.n))
-    return beat.model_copy(update={"narration": " ".join(narration), "illustrations": illustrations})
+    return beat.model_copy(update={"narration": " ".join(line.text for line in lines),
+                                  "illustrations": illustrations, "lines": lines})

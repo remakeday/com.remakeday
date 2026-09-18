@@ -7,6 +7,8 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from apps.engine.app.dtos.line_dto import LineDTO
+
 
 class QuestionReplyActionDTO(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -70,6 +72,7 @@ class BeatDTO(BaseModel):
     morning_text: str = ""
     broadcast: str | None = None  # 이 비트 진입 시 관리자 방송 문구 (없으면 null)
     illustrations: list[IllustrationDTO] = Field(default_factory=list)
+    lines: list[LineDTO] = Field(default_factory=list)  # execute_scene이 채우는 줄 레코드 — 시나리오 데이터에는 없다
 
 
 class TruthClaimDTO(BaseModel):

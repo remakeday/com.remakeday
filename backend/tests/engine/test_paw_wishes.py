@@ -205,7 +205,7 @@ def test_declined_day_has_no_wish_scene_counter_event_or_observation(db_session)
     RuleRepository(db_session).add(RuleOrm(attempt_id=attempt.id, rule_id="R1", source="user_choice",
                                            target="민석", action=REPORT_RULE, effect="enforce", created_loop=1))
     res = day.respond_paw(loop_id, offer["offer_id"], False)
-    assert res == {"applied": False, "rule_label": None, "narration": None, "illustrations": [], "observations": []}
+    assert res == {"applied": False, "rule_label": None, "narration": None, "illustrations": [], "observations": [], "lines": []}
     assert day.utter(loop_id, "minseok", "무슨 보고를 했어?")["reply"] != "은상이 이상한 소리를 퍼뜨린다고 알렸어. 오늘은 수첩에 못 적었어."
     text = " ".join(r["narration"] for r in advance(day, loop_id, 4))
     for action in scenario.bundle().scene_actions:
