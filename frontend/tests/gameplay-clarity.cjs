@@ -146,7 +146,7 @@ const { line, readAll, expectBudget } = require('./vn-helpers.cjs');
       const reply = page.getByText('오늘 아침 보고는 아직 하지 않았어.', { exact: true });
       await reply.waitFor();
       assert.equal(await input.isDisabled(), true, 'a successful question completes this NPC for the scene');
-      assert.equal(await page.getByRole('button', { name: '민석 · 이 장면 대화 완료' }).getAttribute('aria-pressed'), 'true');
+      assert.equal(await page.getByRole('button', { name: '민석 · 대화 완료' }).getAttribute('aria-pressed'), 'true');
       const styles = await reply.evaluate(el => {
         const css = getComputedStyle(el);
         const ancestors = [];

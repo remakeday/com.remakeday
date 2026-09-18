@@ -20,10 +20,10 @@ export function SceneIntro({ beat, damageLevel, illustrations, index, lineIllust
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img key={`${beat}-${illustration?.image_id ?? index}`} src={src ?? beatImage(beat)} alt={src ? illustration.caption : ""}
           style={lineIllustration ? { animationIterationCount: 11 } : undefined}
-          className={`${lineIllustration ? "cookie-glitch" : "fade-in"} mx-auto h-full w-full object-contain py-1 ${damageClass(damageLevel)} ${damageLevel >= 3 ? "opacity-80" : ""}`} />
+          className={`${lineIllustration ? "cookie-glitch" : "fade-in"} h-full w-full object-contain object-top ${damageClass(damageLevel)} ${damageLevel >= 3 ? "opacity-80" : ""}`} />
       </div>
       {src && (
-        <div className="shrink-0 border-t border-ink/10 px-4 py-2 text-center">
+        <div className="shrink-0 border-t border-ink/10 bg-paper/90 px-4 py-2 text-center backdrop-blur-sm">
           <p className="text-base leading-relaxed sm:text-lg" aria-live="polite">{illustration.caption}</p>
           {!lineIllustration && illustrations.length > 1 && (
             <div className="mt-1 flex items-center justify-center gap-4 text-sm">

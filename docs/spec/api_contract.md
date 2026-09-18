@@ -149,7 +149,7 @@ res: `{db}` — `db`는 `ok | error`. 공개 경로(api.remakeday.com)라 기동
 `GUARD_AUTH`가 `off`가 아니면(기본 `on`, `On` 같은 값도 켜짐) 로그인 쿠키(`rd_session`)를 요구한다. 로컬 개발·러너는 `--dev-login`을 쓴다. `GUARD_AUTH=off`는 8500이 아닌 포트로 띄운 러너 프로세스의 환경변수로만 주고 `backend/.env`에는 넣지 않는다(8500은 cloudflared로 공개돼 있다). Cloudflare를 거친 요청(`CF-Connecting-IP` 헤더 있음)은 off에서도 **403** `{"detail": "인증 우회 모드는 외부 요청을 받지 않는다"}`로 거부하고 `GuardEvent(layer="auth", reason="guard_auth_off_via_proxy")`를 남긴다.
 
 - **401** — 로그인 필요. 요구 라우트에 `rd_session` 쿠키가 없거나 무효. 본문 `{"detail": "로그인이 필요하다"}`.
-- **403** `{"code": "daily_attempt_limit", "detail": "오늘은 여기까지. 내일 다시 시작할 수 있다."}` — 이 사용자의 오늘 판 생성 수가 `USER_DAILY_ATTEMPTS`(기본 5)에 도달. `POST /sessions`에서만 발생.
+- **403** `{"code": "daily_attempt_limit", "detail": "오늘은 여기까지. 내일 다시 시작할 수 있다."}` — 이 사용자의 오늘 판 생성 수가 `USER_DAILY_ATTEMPTS`(기본 3)에 도달. `POST /sessions`에서만 발생.
 - **429** `{"detail": {"detail": "요청이 너무 잦다", "retry_after": number}}`, 헤더 `Retry-After: {retry_after}` — 속도 제한 버킷 초과(`IP_SESSIONS_PER_MINUTE`/`IP_ACTIONS_PER_MINUTE`, 기본 5/30 분당).
 - **503** `{"code": "daily_cap", "detail": "오늘 정원이 마감됐다."}` — 오늘 전역 판 생성 수가 `DAILY_ATTEMPT_CAP`(기본 200)에 도달. `POST /sessions`에서만 발생.
 - **413** `{"detail": "요청이 너무 크다"}` — 요청 본문이 262144바이트(256KiB)를 넘음. `Content-Length` 헤더만 보고 본문을 읽기 전에 거부한다(ASGI 미들웨어, `main.py`). `Content-Length`가 없는 요청은 통과시킨다.

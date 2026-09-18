@@ -20,7 +20,7 @@ const INTRO_CARDS: { code: string | null; name: string; desc: string }[] = [
   { code: "chaeyeon", name: "채연", desc: "요즘 밥을 반쯤 남긴다. 말수가 줄었다." },
   { code: "minseok", name: "민석", desc: "규정을 지킨다. 이상한 일은 방송실에 알린다." },
   { code: "eunsang", name: "은상", desc: "들은 얘기를 옮긴다. 소문은 대부분 은상을 거친다." },
-  { code: "jun", name: "준", desc: "궁금한 게 많다. 손목띠 숫자를 자꾸 들여다본다." },
+  { code: "jun", name: "준", desc: "궁금한 게 많다. 손목띠를 자꾸 들여다본다." },
 ];
 
 function IntroCards() {

@@ -263,51 +263,254 @@ export function DayScreen({
     : selectedUttered ? "다른 인물을 고른다"
     : selectedNpc ? `${selectedNpc.name}에게 말한다` : "인물을 고른다";
   const showPortrait = mode.mode === "dialogue" && !lineIllustration && !reviewingReveal;
-  const showIntro = lineIllustration || reviewingReveal || mode.mode === "intro";
+  const portraitColumnRef = useRef<HTMLDivElement>(null);
+  const portraitRailRef = useRef<HTMLDivElement>(null);
+  const sceneStageRef = useRef<HTMLDivElement>(null);
+  const bottomRowRef = useRef<HTMLDivElement>(null);
+  const chatCardRef = useRef<HTMLDivElement>(null);
+  const portraitInRef = useRef(false);
+  const enterAnimatingRef = useRef(false);
+  const wasShowingPortrait = useRef(false);
+  const sceneFromRef = useRef(0);
+  const [portraitMounted, setPortraitMounted] = useState(false);
+  const [portraitIn, setPortraitIn] = useState(false);
+  const [enterAnimating, setEnterAnimating] = useState(false);
+  const [chatHeightPx, setChatHeightPx] = useState<number | null>(null);
+  /** 포트레이트 마운트 전 장면 높이. 마운트 직후 레이아웃이 훔치기 전에 잠근다. */
+  const [sceneLockPx, setSceneLockPx] = useState<number | null>(null);
+  const [enterMetrics, setEnterMetrics] = useState<{
+    sceneFrom: number;
+    sceneTo: number;
+    chatFrom: number;
+    chatTo: number;
+    bottomPad: number;
+  } | null>(null);
+
+  const compactChatPx = () => {
+    const root = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    return Math.round(17.55 * root);
+  };
+
+  // 미노출 → 노출: 장면 높이를 먼저 스냅샷·잠근 뒤 포트레이트를 올린다.
+  useEffect(() => {
+    if (showPortrait && !wasShowingPortrait.current) {
+      const from = Math.round(sceneStageRef.current?.getBoundingClientRect().height ?? 0);
+      sceneFromRef.current = from;
+      portraitInRef.current = false;
+      enterAnimatingRef.current = false;
+      setSceneLockPx(from > 0 ? from : null);
+      setPortraitMounted(true);
+      setPortraitIn(false);
+      setEnterAnimating(false);
+      setChatHeightPx(null);
+      setEnterMetrics(null);
+    } else if (!showPortrait) {
+      portraitInRef.current = false;
+      enterAnimatingRef.current = false;
+      sceneFromRef.current = 0;
+      setPortraitMounted(false);
+      setPortraitIn(false);
+      setEnterAnimating(false);
+      setChatHeightPx(null);
+      setEnterMetrics(null);
+      setSceneLockPx(null);
+    }
+    wasShowingPortrait.current = showPortrait;
+  }, [showPortrait]);
+
+  useEffect(() => {
+    if (!portraitMounted) return;
+    const column = portraitColumnRef.current;
+    const rail = portraitRailRef.current;
+    const scene = sceneStageRef.current;
+    const bottom = bottomRowRef.current;
+    if (!column || !rail || !scene || !chatCardRef.current) return;
+
+    const measure = () => ({
+      width: Math.round(column.offsetWidth),
+      height: Math.round(column.offsetHeight),
+    });
+
+    const settle = (height: number) => {
+      portraitInRef.current = true;
+      enterAnimatingRef.current = false;
+      setEnterAnimating(false);
+      setPortraitIn(true);
+      setChatHeightPx(height);
+      setSceneLockPx(null);
+      setEnterMetrics((prev) => prev
+        ? { ...prev, chatTo: height }
+        : { sceneFrom: 0, sceneTo: 0, chatFrom: height, chatTo: height, bottomPad: 0 });
+    };
+
+    const startEnter = () => {
+      if (portraitInRef.current || enterAnimatingRef.current) return true;
+      const { width, height } = measure();
+      if (width <= 0 || height <= 0) return false;
+
+      const compact = compactChatPx();
+      // 마운트 전 스냅샷을 쓴다. 지금 재측정하면 하단이 이미 커져 from≈to가 된다.
+      const fromScene = sceneFromRef.current > 0
+        ? sceneFromRef.current
+        : Math.round(scene.getBoundingClientRect().height);
+      const shell = scene.parentElement;
+      const padY = bottom
+        ? (parseFloat(getComputedStyle(bottom).paddingTop) || 0)
+          + (parseFloat(getComputedStyle(bottom).paddingBottom) || 0)
+        : 0;
+      const shellH = shell ? Math.round(shell.getBoundingClientRect().height) : fromScene + compact + padY;
+      const toScene = Math.min(fromScene, Math.max(0, shellH - height - padY));
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (reduce || toScene >= fromScene) {
+        settle(height);
+        return true;
+      }
+
+      enterAnimatingRef.current = true;
+      setSceneLockPx(fromScene);
+      setEnterMetrics({
+        sceneFrom: fromScene,
+        sceneTo: toScene,
+        chatFrom: compact,
+        chatTo: height,
+        bottomPad: Math.round(padY),
+      });
+      setEnterAnimating(true);
+      return true;
+    };
+
+    startEnter();
+
+    const observer = new ResizeObserver(() => {
+      const { width, height } = measure();
+      if (height > 0 && width > 0 && !portraitInRef.current && !enterAnimatingRef.current) startEnter();
+      else if (height > 0 && portraitInRef.current && !enterAnimatingRef.current) {
+        setChatHeightPx(height);
+        setEnterMetrics((prev) => (prev ? { ...prev, chatTo: height } : prev));
+      }
+    });
+    observer.observe(column);
+    return () => observer.disconnect();
+  }, [portraitMounted]);
+
+  useEffect(() => {
+    if (!enterAnimating || !enterMetrics) return;
+    const rail = portraitRailRef.current;
+    if (!rail) return;
+    const height = enterMetrics.chatTo;
+
+    const finish = () => {
+      if (!enterAnimatingRef.current) return;
+      enterAnimatingRef.current = false;
+      portraitInRef.current = true;
+      setEnterAnimating(false);
+      setPortraitIn(true);
+      setChatHeightPx(height);
+      setSceneLockPx(null);
+    };
+
+    const onEnd = (event: AnimationEvent) => {
+      if (event.target !== rail) return;
+      finish();
+    };
+    rail.addEventListener("animationend", onEnd);
+    const timer = window.setTimeout(finish, 700);
+    return () => {
+      rail.removeEventListener("animationend", onEnd);
+      window.clearTimeout(timer);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- enterAnimating rising edge
+  }, [enterAnimating]);
+
+  const sceneEntering = enterAnimating && enterMetrics != null;
+  const sceneLocked = sceneLockPx != null && !portraitIn;
+  // 등장 중 하단을 흐름에서 빼 최종 높이를 확보 → 장면이 줄어들며 전체가 드러난다(잘림 없음).
+  const bottomOverlay = sceneEntering || (sceneLocked && portraitMounted);
 
   return (
     <div className="h-[calc(100dvh-3.5rem)] w-full overflow-hidden bg-paper text-ink">
       <div inert={mode.pawOpen ? true : undefined} aria-hidden={mode.pawOpen ? true : undefined}
-        className="flex h-full min-h-0 flex-col" data-day-mode={mode.mode}>
-        <div className="flex shrink-0 items-start justify-between gap-3 px-4 py-1 leading-tight" data-testid="day-title">
-          <div>
-            <p className="text-base">{beatTitle}</p>
-            <p className="text-sm">장면 {beat}/6</p>
-          </div>
-          <div className="flex shrink-0 items-center gap-2 text-sm">
-            <span>남은 대화 횟수</span>
-            <div role="meter" aria-label="남은 대화 횟수" aria-valuemin={0} aria-valuemax={initialBudget} aria-valuenow={budgetLeft}
-              aria-valuetext={`${initialBudget}칸 중 ${budgetLeft}칸`} className="flex shrink-0 gap-1 py-1">
-              {Array.from({ length: initialBudget }, (_, index) => (
-                <span key={index} aria-hidden="true" className={`h-5 w-2.5 origin-bottom border border-ink transition-[background-color,opacity,transform] duration-300 motion-reduce:transition-none ${index < budgetLeft ? "scale-y-100 bg-ink opacity-100" : "scale-y-75 bg-transparent opacity-30"}`} />
-              ))}
+        className={`flex h-full min-h-0 flex-col ${bottomOverlay ? "relative" : ""}`} data-day-mode={mode.mode}>
+        {/* 상황 이미지 — 포트레이트 등장과 같은 0.55s로 축소 */}
+        <div
+          ref={sceneStageRef}
+          className={`day-scene-stage relative z-[1] min-h-0 overflow-hidden ${
+            sceneEntering ? "is-entering" : sceneLocked ? "day-scene-stage-fixed" : "flex-1"
+          }`}
+          style={sceneEntering && enterMetrics
+            ? {
+                ["--day-scene-from" as string]: `${enterMetrics.sceneFrom}px`,
+                ["--day-scene-to" as string]: `${enterMetrics.sceneTo}px`,
+              }
+            : sceneLocked
+              ? { height: sceneLockPx, flex: "0 0 auto" }
+              : undefined}
+        >
+          <SceneIntro beat={beat} damageLevel={damageLevel} illustrations={illustrations} index={illustrationIndex}
+            lineIllustration={lineIllustration} disabled={mutationBusy || mode.pawOpen} onSelect={setIllustrationIndex} />
+          <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-start justify-between gap-3 bg-gradient-to-b from-paper/95 via-paper/70 to-transparent px-4 pb-8 pt-1 leading-tight" data-testid="day-title">
+            <div>
+              <p className="text-base">{beatTitle}</p>
+              <p className="text-sm">장면 {beat}/6</p>
+            </div>
+            <div className="pointer-events-auto flex shrink-0 items-center gap-2 text-sm">
+              <span>남은 대화 횟수</span>
+              <div role="meter" aria-label="남은 대화 횟수" aria-valuemin={0} aria-valuemax={initialBudget} aria-valuenow={budgetLeft}
+                aria-valuetext={`${initialBudget}칸 중 ${budgetLeft}칸`} className="flex shrink-0 gap-1 py-1">
+                {Array.from({ length: initialBudget }, (_, index) => (
+                  <span key={index} aria-hidden="true" className={`h-5 w-2.5 border border-ink transition-[background-color,opacity] duration-300 motion-reduce:transition-none ${index < budgetLeft ? "bg-ink opacity-100" : "bg-transparent opacity-30"}`} />
+                ))}
+              </div>
             </div>
           </div>
         </div>
-        <div className="flex min-h-0 flex-1 flex-col">
-          <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto">
-            {showIntro && (
-              <SceneIntro beat={beat} damageLevel={damageLevel} illustrations={illustrations} index={illustrationIndex}
-                lineIllustration={lineIllustration} disabled={mutationBusy || mode.pawOpen} onSelect={setIllustrationIndex} />
-            )}
-          </div>
-          {/* 하단: 포트레이트 좌측 밀착 · 채팅 카드 가로 60% 우측 밀착 */}
-          <div className="flex shrink-0 items-end pb-[env(safe-area-inset-bottom)]">
-            {showPortrait && <DialogueStage npcs={npcs} selected={selected} ready={npcsReady}
-              disabled={mutationBusy || questionUnresolved} dayDone={dayDone} budgetLeft={budgetLeft} onSelect={setSelected} />}
-            <div className="z-10 ml-auto flex w-[60%] shrink-0 flex-col overflow-hidden border border-ink/30 border-r-0 bg-paper">
-              <LineBox lines={todayLines} disabled={mutationBusy || mode.pawOpen} hold={voiceHold}
-                onActiveChange={activeChange} onCaughtUp={reachedEnd} />
-              <AskBar input={input} onInput={setInput} onAsk={send} onNext={advanceBeat}
-                inputLocked={inputLocked} nextLocked={controlsLocked}
-                waitingReply={utterance.busy} waitingBeat={beatAction.busy} hint={hint} placeholder={placeholder}
-                failure={utterance.failure?.message}
-                onRetry={pendingUtterance && !mutationBusy ? () => submitUtterance(pendingUtterance) : undefined}
-                dayDone={dayDone} onNight={() => {
-                  // 5일째 트럭 방송 단서(9b)는 이 하루 끝 연결 지점 앞에 둔다.
-                  if (dayDone && !controlsLocked) onDayDone(dialogue.current);
-                }} />
+        {/* 하단: 포트레이트+버튼 / 대화창 */}
+        <div
+          ref={bottomRowRef}
+          className={`day-bottom-row flex shrink-0 items-start overflow-hidden px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 ${
+            bottomOverlay ? "absolute inset-x-0 bottom-0 z-0" : ""
+          }`}
+          style={sceneEntering && enterMetrics
+            ? { height: enterMetrics.chatTo + enterMetrics.bottomPad }
+            : sceneLocked
+              ? { height: "calc(17.55rem + 1.5rem)" }
+              : undefined}
+        >
+          {portraitMounted && (
+            <div
+              ref={portraitRailRef}
+              className={`day-portrait-rail ${enterAnimating ? "is-entering" : ""} ${portraitIn ? "is-in" : ""}`}
+            >
+              <div ref={portraitColumnRef} className="day-portrait-inner">
+                <DialogueStage npcs={npcs} selected={selected} ready={npcsReady}
+                  disabled={mutationBusy || questionUnresolved} dayDone={dayDone} budgetLeft={budgetLeft} onSelect={setSelected} />
+              </div>
             </div>
+          )}
+          <div
+            ref={chatCardRef}
+            className={`day-chat-card relative z-0 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-ui border border-ink/30 bg-paper ${enterAnimating ? "is-entering" : ""}`}
+            style={enterAnimating && enterMetrics
+              ? {
+                  ["--day-chat-from" as string]: `${enterMetrics.chatFrom}px`,
+                  ["--day-chat-to" as string]: `${enterMetrics.chatTo}px`,
+                }
+              : chatHeightPx != null
+                ? { height: chatHeightPx, maxHeight: chatHeightPx }
+                : { minHeight: "17.55rem", maxHeight: "17.55rem" }}
+          >
+            <LineBox lines={todayLines} disabled={mutationBusy || mode.pawOpen} hold={voiceHold}
+              onActiveChange={activeChange} onCaughtUp={reachedEnd} />
+            <AskBar input={input} onInput={setInput} onAsk={send} onNext={advanceBeat}
+              inputLocked={inputLocked} nextLocked={controlsLocked}
+              waitingReply={utterance.busy} waitingBeat={beatAction.busy} hint={hint} placeholder={placeholder}
+              failure={utterance.failure?.message}
+              onRetry={pendingUtterance && !mutationBusy ? () => submitUtterance(pendingUtterance) : undefined}
+              dayDone={dayDone} onNight={() => {
+                // 5일째 트럭 방송 단서(9b)는 이 하루 끝 연결 지점 앞에 둔다.
+                if (dayDone && !controlsLocked) onDayDone(dialogue.current);
+              }} />
           </div>
         </div>
       </div>

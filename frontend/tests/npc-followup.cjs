@@ -153,10 +153,11 @@ const deferred = () => {
     await assertPendingLocks();
     question1.release('success');
     await expectBudget(page, 7);
+    await readAll(page);
     assert.equal(await input.isDisabled(), true, 'a successful question locks the same NPC for this scene');
     assert.equal(await send.isDisabled(), true, 'the completed NPC cannot receive another question');
     assert.equal(await minseok.getAttribute('aria-pressed'), 'true', 'selected NPC stays selected');
-    assert.equal(await minseok.getAttribute('aria-label'), '민석 · 이 장면 대화 완료');
+    assert.equal(await minseok.getAttribute('aria-label'), '민석 · 대화 완료');
     assert.match(await input.getAttribute('placeholder'), /다른 인물|다음 장면/);
     assert.match(await page.locator('#conversation-hint').innerText(), /다른 인물.*다음 장면/);
     await chaeyeon.click();
@@ -166,6 +167,7 @@ const deferred = () => {
     await assertPendingLocks();
     question2.release('success');
     await expectBudget(page, 6);
+    await readAll(page);
     assert.equal(await chaeyeon.getAttribute('aria-pressed'), 'true');
     assert.equal(advanceCalls, 0, 'answers never automatically advance the scene');
     assert.equal(question1.request.target, 'minseok');
@@ -283,6 +285,7 @@ const deferred = () => {
       question.release('legacy-response');
       await expectBudget(page, remaining);
       await page.getByText(`${8 - remaining}번째 답: 먹은 양을 적어 두려고 봤어.`, { exact: true }).waitFor();
+      await readAll(page);
       assert.equal(await input.isDisabled(), true, 'legacy response also completes the NPC for the scene');
     }
     const sixthSceneNpcs = await beginAdvance();
@@ -291,6 +294,7 @@ const deferred = () => {
     const lastQuestion = await beginQuestion('마지막 장면에서 본 건 뭐야?');
     lastQuestion.release('legacy-response');
     await expectBudget(page, 0);
+    await readAll(page);
     assert.equal(await input.isDisabled(), true, 'zero budget locks input');
     assert.equal(await send.isDisabled(), true, 'zero budget locks send');
     assert.equal(await advance.isEnabled(), true, 'zero budget still permits free scene movement');

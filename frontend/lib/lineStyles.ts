@@ -23,7 +23,7 @@ interface LineStyle {
 /** 줄 종류의 표시는 이 표에서만 정한다. 예전 채팅 말풍선 형태를 유지한다. */
 export const lineStyles: Record<DisplayLineKind, LineStyle> = {
   user: {
-    className: "border border-ink bg-ink px-3 py-2 text-paper",
+    className: "rounded-ui border border-ink bg-ink px-3 py-2 text-paper",
     frameClassName: "max-w-[85%] self-end",
   },
   scene: {
@@ -36,33 +36,33 @@ export const lineStyles: Record<DisplayLineKind, LineStyle> = {
   },
   rule_result: {
     label: () => "규칙이 작용했다",
-    className: "border-l-4 border-orange bg-orange/10 px-3 py-2 text-ink",
+    className: "rounded-ui border-l-4 border-orange bg-orange/10 px-3 py-2 text-ink",
     frameClassName: "w-full",
     icon: "│",
   },
   statement: {
     label: (speaker) => speaker ?? "",
-    className: "border border-ink/30 px-3 py-2 italic text-ink before:content-['“'] after:content-['”']",
+    className: "rounded-ui border border-ink/30 px-3 py-2 italic text-ink before:content-['“'] after:content-['”']",
     frameClassName: "max-w-[85%] self-start",
   },
   broadcast: {
     label: () => "관리자",
-    className: "border border-ink bg-ink px-3 py-2 font-mono text-paper",
+    className: "rounded-ui border border-ink bg-ink px-3 py-2 font-mono text-paper",
     frameClassName: "w-full",
   },
   npc: {
     label: (speaker) => speaker ?? "",
-    className: "border border-ink/30 px-3 py-2 text-ink",
+    className: "rounded-ui border border-ink/30 px-3 py-2 text-ink",
     frameClassName: "max-w-[85%] self-start",
   },
   paw_effect: {
     label: () => "원숭이손",
-    className: "border border-orange/40 bg-orange/10 px-3 py-2 text-ink",
+    className: "rounded-ui border border-orange/40 bg-orange/10 px-3 py-2 text-ink",
     frameClassName: "w-full",
   },
   fragment: {
     label: (speaker) => speaker ? `단서 · ${speaker}` : "단서",
-    className: "border border-dashed border-ink/30 px-3 py-2 text-ink/80",
+    className: "rounded-ui border border-dashed border-ink/30 px-3 py-2 text-ink/80",
     frameClassName: "max-w-[85%] self-start opacity-80",
     icon: "◇",
   },

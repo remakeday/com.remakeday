@@ -25,6 +25,7 @@ import { ClearScreen } from "@/components/screens/ClearScreen";
 import { VoicePlayer, VoiceToggle } from "@/components/VoicePlayer";
 import { Hud } from "@/components/hud/Hud";
 import type { RecordAdvice } from "@/components/hud/RecordLog";
+import { useLeaveWarning } from "@/lib/useLeaveWarning";
 
 /**
  * 한 판 = 상태 머신. /play 한 라우트 안에서 phase 전환.
@@ -108,6 +109,9 @@ export default function PlayPage() {
   const sessionAction = useApiAction();
   const loopAction = useApiAction();
   const retryAction = useApiAction();
+
+  // 진입·회고(clear)를 제외한 진행 중 — 새로고침·탭 닫기 확인. 이어받기는 없다.
+  useLeaveWarning(phase !== "entry" && phase !== "clear");
 
   const mergeObservations = useCallback((incoming: Observation[]) => {
     setObservations((previous) => {

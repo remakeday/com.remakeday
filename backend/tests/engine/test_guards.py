@@ -150,14 +150,13 @@ def test_sessions_require_login(db_session, monkeypatch):
         assert c.post("/sessions", json={}).status_code == 401
 
 
-def test_user_daily_limit_is_five(db_session, monkeypatch, logged_in):
+def test_user_daily_limit_is_three(db_session, monkeypatch, logged_in):
     from main import app
     from core.matrix import grid_keymaker_secret_manager as cfg
-    # IP 분당 버킷(기본 5)이 하루 5판 한도와 같은 수라 6번째 호출에서 충돌한다 —
-    # 이 테스트는 사용자 하루 한도만 겨냥하므로 IP 버킷은 넉넉히 풀어둔다.
+    # IP 분당 버킷(기본 5)이 하루 판 한도보다 커서, 이 테스트는 사용자 하루 한도만 겨냥한다.
     monkeypatch.setattr(cfg.get_settings(), "ip_sessions_per_minute", 1000)
     with TestClient(app) as c:
-        for _ in range(5):
+        for _ in range(3):
             assert c.post("/sessions", json={}).status_code == 200
         r = c.post("/sessions", json={})
         assert r.status_code == 403 and r.json()["code"] == "daily_attempt_limit"

@@ -59,14 +59,14 @@ const files = {
       await page.goto('http://localhost:3500/play');
       await page.getByRole('button', { name: '시작', exact: true }).click();
       await page.getByRole('button', { name: '계속', exact: true }).click();
-      async function imageLoaded(src) {
+      async function imageLoaded(src, fit = 'contain') {
         const img = page.locator(`img[src="${src}"]`);
         await img.waitFor({ state: 'visible', timeout: 5000 });
         await page.waitForFunction(src => {
           const img = document.querySelector(`img[src="${src}"]`);
           return img && img.complete && img.naturalWidth > 0;
         }, src);
-        assert.equal(await img.evaluate(el => getComputedStyle(el).objectFit), 'contain');
+        assert.equal(await img.evaluate(el => getComputedStyle(el).objectFit), fit);
         const bounds = await img.boundingBox();
         assert.ok(bounds.x >= 0 && bounds.x + bounds.width <= width,
           'scene image stays inside the viewport after controls receive focus');
@@ -101,7 +101,7 @@ const files = {
       await page.getByRole('button', { name: '맞아, 제출한다', exact: true }).click();
       await page.getByRole('button', { name: '계속', exact: true }).click();
       if (outcome === 'closure') {
-        await imageLoaded('/assets/clues/clue-06-zone-closure-broadcast-v1.png');
+        await imageLoaded('/assets/clues/clue-06-zone-closure-broadcast-v1.png', 'contain');
         await page.screenshot({ path: `${out}/closure.png` });
       } else {
         await page.locator(`img[src="/assets/${outcome === 'truck' ? 'H01' : 'H02'}.png"]`).waitFor();

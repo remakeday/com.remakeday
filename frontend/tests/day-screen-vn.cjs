@@ -187,13 +187,14 @@ const observations = [
         await box.getByText('답변 1: 남긴 양을 적었어.', { exact: true }).waitFor();
         await box.getByText('답변 1: 내일도 확인해 봐.', { exact: true }).waitFor();
         await expectBudget(page, 5);
-        const chaeyeon = page.getByRole('button', { name: '채연 · 이 장면 대화 완료', exact: true });
+        const chaeyeon = page.getByRole('button', { name: '채연 · 대화 완료', exact: true });
         assert.equal(await chaeyeon.getAttribute('aria-pressed'), 'true');
         assert.equal(await chaeyeon.locator('img').count(), 0);
         assert.equal(await chaeyeon.evaluate(card => getComputedStyle(card).filter), 'grayscale(1)');
         assert.equal(await chaeyeon.evaluate(card => getComputedStyle(card).opacity), '0.55');
         const portrait = page.getByRole('img', { name: '채연 초상', exact: true });
-        assert.equal(await portrait.evaluate(img => getComputedStyle(img).filter), 'grayscale(1)');
+        assert.equal(await portrait.evaluate(img => getComputedStyle(img).filter), 'none');
+        assert.equal(await portrait.evaluate(img => getComputedStyle(img).opacity), '1');
         await page.getByRole('button', { name: '민석 · 대화 가능', exact: true }).click();
         await input.fill('두 번째 질문');
         assert.equal(await input.inputValue(), '두 번째 질문', 'prepared question stays while chat is caught up');

@@ -5,6 +5,7 @@
   --paper: #ede8dc;
   --orange: #c8722e;
   --void: #000;
+  --ui-radius: 0.8rem;
 }
 
 @theme inline {
@@ -12,6 +13,7 @@
   --color-paper: var(--paper);
   --color-orange: var(--orange);
   --color-void: var(--void);
+  --radius-ui: var(--ui-radius);
 }
 
 html,
@@ -23,6 +25,13 @@ body {
 body {
   color: var(--ink);
   font-family: var(--font-serif), "Noto Serif KR", serif;
+}
+
+/* 공통 UI 곡률 — rounded-full 등 명시적 예외는 그대로 둔다. */
+@layer base {
+  :where(button, input, textarea, select, [role="dialog"], [role="meter"]):not(.rounded-full) {
+    border-radius: var(--ui-radius);
+  }
 }
 
 /* Reading stays steady across days, including dialogs and notebook overlays. */
@@ -174,5 +183,113 @@ body {
     animation-duration: 0.01ms;
     animation-iteration-count: 1;
     opacity: 1;
+  }
+  .day-portrait-rail,
+  .day-portrait-inner,
+  .day-chat-card,
+  .day-scene-stage-fixed {
+    transition: none !important;
+  }
+}
+
+/* 도입 → 대화 등장(0.55s). 레일 너비는 콘텐츠(포트레이트)에 맞추고, 폭 애니메이션은 쓰지 않는다. */
+.day-portrait-rail {
+  position: relative;
+  z-index: 11;
+  flex-shrink: 0;
+  overflow: hidden;
+  width: max-content;
+  max-width: 17.55rem;
+  margin-right: 0;
+  opacity: 0;
+}
+.day-portrait-rail.is-entering {
+  animation: dayRailIn 0.55s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+.day-portrait-rail.is-in {
+  width: max-content;
+  max-width: 17.55rem;
+  margin-right: 0.75rem;
+  opacity: 1;
+  animation: none;
+}
+.day-portrait-inner {
+  width: max-content;
+  max-width: 17.55rem;
+  transform: translateX(-110%);
+}
+.day-portrait-rail.is-entering .day-portrait-inner {
+  animation: dayPortraitSlide 0.55s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+.day-portrait-rail.is-in .day-portrait-inner {
+  transform: translateX(0);
+  animation: none;
+}
+.day-scene-stage-fixed {
+  flex: 0 0 auto;
+}
+.day-scene-stage.is-entering {
+  flex: 0 0 auto;
+  animation: daySceneShrink 0.55s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+.day-chat-card.is-entering {
+  animation: dayChatGrow 0.55s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+@keyframes dayRailIn {
+  from {
+    opacity: 0;
+    margin-right: 0;
+  }
+  to {
+    opacity: 1;
+    margin-right: 0.75rem;
+  }
+}
+@keyframes dayPortraitSlide {
+  from { transform: translateX(-110%); }
+  to { transform: translateX(0); }
+}
+@keyframes daySceneShrink {
+  from { height: var(--day-scene-from, 50vh); }
+  to { height: var(--day-scene-to, 30vh); }
+}
+@keyframes dayChatGrow {
+  from {
+    height: var(--day-chat-from, 17.55rem);
+    max-height: var(--day-chat-from, 17.55rem);
+  }
+  to {
+    height: var(--day-chat-to, 17.55rem);
+    max-height: var(--day-chat-to, 17.55rem);
+  }
+}
+
+/* 캐릭터 선택 시 초상 교체 — 둘 다 겹친 채 opacity만 바꿔 빈 프레임이 없게 한다. */
+.day-portrait-face.is-in {
+  animation: dayPortraitFaceIn 0.28s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+.day-portrait-face.is-out {
+  animation: dayPortraitFaceOut 0.28s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+@keyframes dayPortraitFaceIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes dayPortraitFaceOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .day-portrait-rail.is-entering,
+  .day-portrait-rail.is-entering .day-portrait-inner,
+  .day-scene-stage.is-entering,
+  .day-chat-card.is-entering {
+    animation-duration: 0.01ms !important;
+  }
+  .day-portrait-face.is-in,
+  .day-portrait-face.is-out {
+    animation: none !important;
   }
 }
