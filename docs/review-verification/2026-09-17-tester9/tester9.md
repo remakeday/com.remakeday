@@ -55,7 +55,7 @@
 - 해석: 도움말(플레이 안내)과 기록(단서 기록)이 화면 위·가운데로 흩어져 있어 찾기 어렵다. 두 진입점을 한 위치(예: 고정 메뉴 영역)로 모으고 시각적으로 강조한다.
 - 코드 위치: `frontend/components/screens/DayScreen.tsx` — 상단 `<details>` "플레이 안내"(`GameplayGuide`)와 그림 아래 "단서 기록 열기" 버튼.
 - 관련: 테스터6 F8(단서 기록 열기의 발견성).
-- 조치: 미착수 (기록만)
+- 조치: 반영 (2026-09-18 오후, 낮 화면 재구성 — 계획 `docs/superpowers/plans/2026-09-18-day-screen-vn.md`, 설계 `specs/2026-09-17-day-screen-vn-design.md`, 프론트는 Codex CLI) — 상단 HUD [기록·안내] 버튼 하나로 단서 기록·플레이 안내(+걸린 규칙) 두 탭. 옛 접힘 안내와 '단서 기록 열기' 버튼 제거. 1일째 진입 화면에는 안내 4줄을 펼쳐서 표시(사용자 요청으로 축약).
 
 ### F5 — 인물 대사를 채팅창 대신 비주얼노벨 문법으로 (2026-09-17)
 
@@ -69,7 +69,7 @@
 - 해석: 대화 기록이 쌓이는 채팅 로그 대신, 풀스크린 일러스트 위에 현재 대사 한 개를 보여주는 대사창을 두고 그 아래에 입력창을 붙인다. 한 번에 여러 줄로 오는 응답(NPC 대사·관리자 방송·시스템 문구)은 줄 단위로 나눠 대사창에서 클릭·키 입력으로 한 줄씩 넘긴다. 일반 비주얼노벨과 달리 앞으로만 넘기지 않고, 이전 줄로 되돌아가 지난 대사를 다시 볼 수 있어야 한다(대사창 안에서 앞·뒤 이동).
 - 코드 위치: `frontend/components/screens/DayScreen.tsx` — 대화 로그·입력 영역(하단 `grid` 입력 줄 포함).
 - 설계 시 확인: 줄을 나누는 기준(개행 vs 문장 부호), 마지막 줄까지 넘기기 전 입력창 잠금 여부, 줄별 음성(`voiceForLine`) 재생과의 맞물림, 뒤로 이동할 수 있는 범위(현재 응답 안 vs 같은 인물과의 이전 대화·다른 인물 대화까지), 뒤로 간 상태에서 새 입력 시 최신 줄로 복귀 여부.
-- 조치: 미착수 (기록만) — 대사창 뒤로 이동이 대화 이력 열람을 맡으므로, 단서 기록에 대화 이력을 따로 둘지는 설계 때 결정 필요
+- 조치: 반영 (2026-09-18 오후, 낮 화면 재구성 — 계획 `docs/superpowers/plans/2026-09-18-day-screen-vn.md`, 설계 `specs/2026-09-17-day-screen-vn-design.md`, 프론트는 Codex CLI) — 인물 대사를 채팅 로그 대신 대사창(`LineBox`)에 한 줄씩. 인물 카드 4칸(이름만)·선택 인물 큰 초상, ◀로 오늘 하루 전체 줄 거슬러 보기, 마지막 줄까지 봐야 입력 열림. 대화 이력은 대사창 ◀와 기록 패널로.
 
 ### F6 — 한 화면 정보량 과다: 장면 그림은 처음에만 보여주고 이후 화면은 인물 상호작용만 (2026-09-17)
 
@@ -79,7 +79,7 @@
 - 해석: 장면(beat) 진입 시 그림을 먼저 단독으로 보여주고, 넘기면 그림은 단서 기록에서 다시 볼 수 있게 보관한다. 다음 화면은 인물 선택·대화만 남긴다.
 - 코드 위치: `frontend/components/screens/DayScreen.tsx` — 상단 장면 그림·일러스트 캡션 넘김 영역과 인물 선택·대화 영역.
 - 관련: F5(비주얼노벨 대사창)와 한 화면 구성으로 묶어 설계해야 한다. 테스터7 F2(장면에 없는 NPC 딤)·F3(NPC 선택 2×2 배열)과도 같은 화면이다.
-- 조치: 미착수 (기록만)
+- 조치: 반영 (2026-09-18 오후, 낮 화면 재구성 — 계획 `docs/superpowers/plans/2026-09-18-day-screen-vn.md`, 설계 `specs/2026-09-17-day-screen-vn-design.md`, 프론트는 Codex CLI) — 장면 그림은 도입(`SceneIntro`)에서만 크게, 대화 모드는 인물·대사창만. 기록 패널의 줄에서 그림 다시 보기.
 
 ### F7 — 단서 기록을 카드 대신 한 줄씩 로그 형식으로 (2026-09-17)
 
@@ -89,7 +89,7 @@
 - 해석: 현재 넓은 화면에서 2열 카드 격자라 카드 폭이 좁아 문장이 여러 번 줄바꿈된다. 카드 격자 대신 기록 한 건을 한 줄로 쌓는 로그 목록으로 바꿔 읽기 쉽게 한다.
 - 코드 위치: `frontend/components/screens/DayScreen.tsx` — 단서 기록 대화상자의 `grid gap-3 sm:grid-cols-2` 안 `ObservationCard compact` 목록. 항목을 누르면 여는 원본 장면(`openObservation`) 상세는 별도.
 - 관련: F4(플레이 안내·단서 기록 한 곳에)·F6(장면 그림을 단서 기록에 보관)과 같은 대화상자를 바꾸므로 함께 설계. 밤 화면 근거 목록(`NightScreen.tsx`)도 같은 `ObservationCard`를 쓰는지는 설계 때 확인.
-- 조치: 미착수 (기록만)
+- 조치: 반영 (2026-09-18 오후, 낮 화면 재구성 — 계획 `docs/superpowers/plans/2026-09-18-day-screen-vn.md`, 설계 `specs/2026-09-17-day-screen-vn-design.md`, 프론트는 Codex CLI) — 단서 기록을 카드 격자 대신 한 줄 로그(`RecordLog`: '1일째 · 장면 1 · 채연' 라벨 + 문장, 그림 있으면 '그림 보기').
 
 ### F8 — "오늘 남은 대화 N회"·"N일째"를 화면 상단 HUD에 체력 바처럼 표시 (2026-09-17)
 
@@ -103,7 +103,7 @@
 - 코드 위치: `frontend/components/screens/DayScreen.tsx` 입력부 상단 `오늘 남은 대화 {budgetLeft}회`, 아침 화면 `frontend/components/screens/MorningScreen.tsx`의 같은 문구. 최대치는 회차마다 다르다 — `backend/apps/engine/domain/entities/loop_rules.py` `initial_budget(loop_n) = 9 - loop_n`(1회차 8 → 5회차 4).
 - 설계 시 확인: 게이지 최대치를 회차별 시작값으로 둘지(현재 API는 `budget_left`만 내려줌 — 시작값은 `loopN`으로 계산 가능), 스크린리더용 `aria-live` 텍스트 유지.
 - 관련: F5·F6(낮 화면 재구성)과 같은 화면이라 HUD 위치를 함께 정한다.
-- 조치: 미착수 (기록만)
+- 조치: 반영 (2026-09-18 오후, 낮 화면 재구성 — 계획 `docs/superpowers/plans/2026-09-18-day-screen-vn.md`, 설계 `specs/2026-09-17-day-screen-vn-design.md`, 프론트는 Codex CLI) — 모든 화면 상단 HUD에 'N일째 / 5일'. 대화 횟수는 장면 제목 아래 '남은 대화 횟수' 칸 게이지(▮▮▮▯)로, 차감 시 칸이 꺼진다(사용자 요청으로 HUD 대신 제목 아래).
 
 ### F9 — 신의 개입 조언("내일 ○○에게 … 물어봐라")을 모아 보기, 또는 플레이어 메모장 (2026-09-17)
 
@@ -115,7 +115,7 @@
   - 안 B — 플레이어가 직접 적는 메모장을 제공한다.
 - 코드 위치: 조언 문장 생성 `backend/apps/engine/app/use_cases/advisor_advice.py`(`내일 {lead.target}에게 {lead.ask} 물어봐라.`), 표시 `frontend/components/screens/GodScreen.tsx`.
 - 관련: F4(플레이 안내·단서 기록 한 곳에) — 모아 보기 위치를 같은 메뉴에 둘지 함께 정한다.
-- 조치: 미착수 (기록만)
+- 조치: 부분 반영 (2026-09-18) — 신의 조언은 기록 패널 '단서 기록'에 'N일째 · 신의 조언' 줄로 시간순 표시(별도 탭·메모장은 두지 않기로 설계 결정).
 
 ### F12 — 이 장면에서 대화를 마친 인물은 회색 처리 등으로 비활성 상태를 강조 (2026-09-17)
 
@@ -139,7 +139,7 @@
 - 해석: 무엇이 원래 장면이고 무엇이 규칙 결과·대가인지 구분이 안 되고, 대화 횟수가 왜 줄었는지도 문단 속에 묻힌다. 줄 단위로 나눠 보여주고, 규칙 결과·대가 문구는 시각적으로 구분(예: 규칙 표시·HUD 차감 연출)한다.
 - 코드 위치: 서버가 `backend/apps/engine/app/use_cases/scene_execution.py`에서 장면 설명·규칙 결과·대가 문구를 `" ".join(narration)`으로 한 문자열로 합쳐 내려주고, `frontend/components/screens/DayScreen.tsx`가 `role: "narration"` 한 줄로 채팅 로그에 넣는다. 구분 표시를 하려면 응답에 줄 목록·종류를 함께 내려주는 백엔드 변경이 필요할 수 있다.
 - 관련: F5(대사 줄 단위 넘기기)·F8(남은 대화 HUD — 차감 연출).
-- 조치: 미착수 (기록만)
+- 조치: 반영 (2026-09-18 오후, 낮 화면 재구성 — 계획 `docs/superpowers/plans/2026-09-18-day-screen-vn.md`, 설계 `specs/2026-09-17-day-screen-vn-design.md`, 프론트는 Codex CLI) — 서버가 종류가 붙은 줄 목록(`lines`: scene·action·rule_result·statement·broadcast·npc·paw_effect·fragment·system)을 보내고 대사창이 한 줄씩, 종류별 스타일(`lineStyles.ts`)로 보여 준다. 규칙 결과·원숭이손 부작용·방송이 서로 다른 모양.
 
 ### F15 — 장면 전환 대기 문구에 효과음 추가 (freesound.org) (2026-09-17)
 
@@ -176,7 +176,7 @@
   2. 신의 질문 화면에서도 단서 기록을 열어 이전 기록을 보며 질문을 쓸 수 있게 한다.
 - 코드 위치: 신의 개입 `frontend/components/screens/GodScreen.tsx`(근거 카드 223행), 결말 연출 `frontend/components/screens/DoomTransition.tsx`, 단서 기록 대화상자 `frontend/components/screens/DayScreen.tsx`. "새 단서" 판정은 관찰의 `loop_n`·`beat`·`observation_id`(예: `night-clue`·`outcome-fragment-*`)로 가능해 보이나, 플레이어가 이미 본 것인지(읽음 여부)는 현재 저장하지 않는다.
 - 관련: F4(플레이 안내·단서 기록 한 곳에 — 모든 화면 공통 진입점), F7(단서 기록 로그 형식), F9(조언 모아 보기), 테스터6 F6(이전 회차 중복 기록 제외).
-- 조치: 미착수 (기록만)
+- 조치: 부분 반영 (2026-09-18) — 기록 패널 줄에 NEW 배지(현재 회차 관찰), 신의 개입 화면에서도 HUD [기록·안내]로 기록 열람 가능. '새 단서만 모아 보기' 필터는 미착수.
 
 ### F20 — 게임 전반에 덩어리 텍스트·줄글이 많아 머리에 안 들어옴 (상위 원칙) (2026-09-17)
 
@@ -203,7 +203,7 @@
 - 우선순위: 효과 최대는 1·2(낮 화면 비주얼노벨 전환 F5·F6·F13 묶음). 구조 변경 없이 바로 가능한 것은 4·5(신의 질문 답·규칙 선택지 접기와 문구 축소).
 - 코드 위치: `frontend/components/screens/DayScreen.tsx`·`GodScreen.tsx`(답 로그 205-232행, 선택지 "이유 ·"/"확인 ·" 333-334행)·`NightScreen.tsx`, `frontend/components/GameplayGuide.tsx`, 서버 문단 합치기 `backend/apps/engine/app/use_cases/scene_execution.py`, 선택지 문구 `expected_observation` 생성(`intervention_interactor`).
 - 관련(하위 항목): F4·F5·F6·F7·F8·F9·F12·F13·F16·F18, 백엔드/AI F19.
-- 조치: 미착수 (기록만)
+- 조치: 반영 (2026-09-18 오후, 낮 화면 재구성 — 계획 `docs/superpowers/plans/2026-09-18-day-screen-vn.md`, 설계 `specs/2026-09-17-day-screen-vn-design.md`, 프론트는 Codex CLI) — 덩어리 텍스트를 줄 단위로 나눠 한 줄씩 넘기게 하고(대사창), 안내는 4줄로 축약, 기록은 한 줄 로그. 조립형 내부 문구 정리는 계속 과제.
 
 ### F21 — 규칙이 이후 모든 날에 누적 적용되고 원숭이손 대가도 매일 반복된다는 사실이 안내되지 않음 (2026-09-17)
 

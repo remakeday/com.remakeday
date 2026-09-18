@@ -51,6 +51,18 @@ A등급 셋 중 F26(판 주인 확인)·F17(노트 비채점, 안 B)은 밤에 �
 - **사용자 결정(14:45)** — 채점 엄격도는 그대로, "귀표" 대사 문장 그대로, 커밋 진행.
 - **남은 것** — F11 난이도 목표 점수대, F14 추가 사례 2(설명 규칙이 장면 행동 반복), F19 3(추천 질문 생성), F23 ③ 충식 첫 등장 맥락·④ NEW 표시(F18), 나머지 UI 묶음(F3~F9·F13·F15·F18·F20·F24). 리서치 사이트 스냅샷은 미실행. 커밋은 아직.
 
+### 오후~저녁 — 낮 화면 재구성: 비주얼노벨 대사창·공통 HUD (B등급, 14:50~16:35)
+
+09-17 승인 설계(`specs/2026-09-17-day-screen-vn-design.md`)를 사용자 지시("프론트 작업해줘")로 착수. 사용자 지시로 **프론트엔드는 Codex CLI**가 맡았다(`codex exec`, 워크스페이스 쓰기 샌드박스). 장부 `plans/2026-09-18-day-screen-vn.md`.
+
+- **T1 서버 `lines`(Claude)** — `execute_scene`이 문자열 대신 줄 레코드를 쌓고 `narration`은 그 텍스트를 이어 붙인다. 네 응답(회차 시작·다음 장면·원숭이손 응답·발화)에 `lines: Line[]`, NPC 답변은 순수 함수 `sentence_rules.split_sentences`로 문장 분할(따옴표 안 마침표 보존). `voice_id`는 서버에 음원 ID 개념이 없어 None, 프론트 문구 매칭 유지. 테스트 +26, **1008 passed**.
+- **T2~T4(Codex)** — `lineStyles.ts` 표 하나로 9종 줄 스타일, `dayMode.ts` 모드 reducer(intro↔dialogue), `LineBox`(◀▶·모두 보기·마지막 줄 도달 시 입력 해제), `SceneIntro`·`DialogueStage`·`AskBar`·`PawPopup`. `DayScreen.tsx` 854→305줄. 공통 HUD("N일째 / 5일" + [기록·안내])를 `page.tsx`에 한 번, 기록 패널 두 탭(`RecordLog` 한 줄 로그·NEW·그림 보기 / 안내·걸린 규칙). 관찰 상태를 page.tsx로 올려 HUD·밤 갤러리가 공유.
+- **사용자 요청 반영(T6~T8, T11)** — 플레이 안내를 1일째 진입 화면에 펼쳐 표시하고 4줄로 축약("명시되지 않으면 알 수 없는 것만"), 인물 카드는 이름만, 남은 대화 게이지를 장면 제목 아래 "남은 대화 횟수"로, "장면 1/6" 표기, 대사창 좌우 패딩.
+- **헤드리스** — Codex 샌드박스가 Chrome 소켓을 막아 실행은 컨트롤러가 맡았다(Playwright는 스크래치 디렉터리에 설치, `NODE_PATH`). 8종 기대값 갱신 + `day-screen-vn.cjs`(390/1440px) 신규. 첫 실행 2종 실패 → `RecordsPanel` 포커스 트랩 부재(실제 접근성 결함)·opener 포커스 복귀(요소 참조 → `data-observation-id` 재조회)·테스트 타이밍(body의 textContent가 본문을 포함해 조기 통과) 수정 후 **10종 전부 통과**. five-loop-flow의 BGM 요소 동일성 단언도 통과(회귀 아님).
+- **스크린샷(PC 1440)** — `frontend/tests/day-screen-vn-shots.cjs`(실서버, 개발 로그인) → `frontend/tests/.playwright-out/day-screen-vn/` 14장. 사용자 요청으로 모바일은 찍지 않음.
+- **리뷰** — sonnet 전체 1회: Critical/Major 없음, Minor 3(기록만).
+- **남은 것** — 9b 트럭 방송 연결(5회차 하루 끝), EntryScreen 2일째 문구 소스 정리, 문장 분할기 「」 따옴표, 테스터9 F3·F15 소리, F18 새 단서 모아 보기 필터.
+
 ### 검증 (커밋 전)
 - 백엔드 940 passed(실패 0), import 계약 4 kept, 프론트 타입 검사 0, 헤드리스 9종 전부 통과, 실서버 스모크(로그인→판→회차→다음 장면) 200. 새 원숭이손 소원이 실제 판에서 제안되는 것을 확인했다.
 
