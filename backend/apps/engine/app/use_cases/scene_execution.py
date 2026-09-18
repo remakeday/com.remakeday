@@ -20,6 +20,9 @@ def _wish_fulfilled(bundle, rules, outcomes, observation):
     if wish is None:
         return False
     for effect in wish.effects:
+        # 소원 장면(reveal)보다 앞선 비트의 억제(예: ① 아침 배급 억제)는 받는 날엔 실행될 수 없다 — 공개 판정에서 뺀다.
+        if effect.beat < wish.reveal.beat:
+            continue
         rule = next((r for r in rules if r.source == PAW_EFFECT_SOURCE and r.target == effect.actor
                      and r.action == effect.action and r.when_beat == effect.beat and r.effect == effect.effect), None)
         expected = ("obeyed", _INTENDED_ACTION[effect.effect](effect))

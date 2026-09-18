@@ -17,7 +17,9 @@ def test_paw_wish_table_is_backed_by_scene_actions():
             # enforce 대상은 소원 전용 잠재 행동, suppress 대상은 평소 행동
             assert (action.paw_only and action.dormant) == (rule.effect == "enforce"), (wish.key, rule)
         assert wish.reveal.effect == "enforce"
-        assert all(e.beat > wish.reveal.beat >= 2 for e in wish.effects), wish.key
+        # 공개 비트보다 앞선 효과는 억제뿐(① 아침 배급) — 받는 날엔 실행되지 않고 다음 날부터 건다
+        assert all(e.beat > wish.reveal.beat >= 2 or e.effect == "suppress" for e in wish.effects), wish.key
+        assert wish.reveal.beat >= 2
         assert wish.effects[-1].beat == max(e.beat for e in wish.effects), wish.key
         assert wish.observation and wish.label and wish.default_reason
 

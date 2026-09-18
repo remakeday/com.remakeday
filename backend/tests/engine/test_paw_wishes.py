@@ -84,10 +84,11 @@ def test_chaeyeon_honest_is_first_offer_and_runs_the_whole_chain(db_session):
     rules = RuleRepository(db_session).list(attempt.id)
     assert [(r.source, r.target, r.action, r.effect, r.when_beat) for r in rules] == [
         ("monkey_paw", "채연", "속마음을 말한다", "enforce", 2),
+        ("paw_effect", "채연", "배급을 남긴다", "suppress", 1),
         ("paw_effect", "채연", "배급을 남긴다", "suppress", 3),
         ("paw_effect", "채연", "배급을 다 먹는다", "enforce", 3),
         ("paw_effect", "은상", "담요를 두른다", "enforce", 5)]
-    assert [r.hidden_side_effect for r in rules] == [None, None, None, wish.observation]
+    assert [r.hidden_side_effect for r in rules] == [None, None, None, None, wish.observation]
 
     third, fourth, fifth, sixth = advance(day, loop_id, 4)
     assert "쟁반이 빈다" in third["narration"] and "채연이 쟁반을 밀어낸다" not in third["narration"]
@@ -274,7 +275,7 @@ def test_inspector_lists_hidden_paw_rules(db_session):
     day.respond_paw(info["loop_id"], offer["offer_id"], True)
     view = InspectorInteractor(attempts=AttemptRepository(db_session), rules=RuleRepository(db_session),
                                event_log=EventLogRepository(db_session), inspector_token="t").inspector_view(attempt.id, "t")
-    assert [r["source"] for r in view["paw_rules"]] == ["monkey_paw", "paw_effect", "paw_effect", "paw_effect"]
+    assert [r["source"] for r in view["paw_rules"]] == ["monkey_paw", "paw_effect", "paw_effect", "paw_effect", "paw_effect"]
     assert view["paw_rules"][-1]["hidden_side_effect"] == wish_of(scenario, "chaeyeon-honest").observation
 
 

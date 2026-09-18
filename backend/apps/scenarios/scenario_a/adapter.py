@@ -692,7 +692,9 @@ def build() -> StaticScenario:
                 label="채연이 오늘은 밥을 왜 안 먹는지 솔직하게 말한다.",
                 default_reason="채연이 왜 밥을 남기는지 직접 들을 수 있다.",
                 reveal=PawRuleDTO(actor="채연", action="속마음을 말한다", effect="enforce", beat=2),
-                effects=[PawRuleDTO(actor="채연", action="배급을 남긴다", effect="suppress", beat=3),
+                # 아침(1비트)도 억제 — 안 그러면 2일째부터 "어제 다 먹었다더니 아침엔 또 반을 남긴다"가 매일 반복된다(테스터12, 디렉터 결정 2026-09-18).
+                effects=[PawRuleDTO(actor="채연", action="배급을 남긴다", effect="suppress", beat=1),
+                         PawRuleDTO(actor="채연", action="배급을 남긴다", effect="suppress", beat=3),
                          PawRuleDTO(actor="채연", action="배급을 다 먹는다", effect="enforce", beat=3),
                          PawRuleDTO(actor="은상", action="담요를 두른다", effect="enforce", beat=5)],
                 observation="채연이 배급 얘기를 한 날, 정오에 쟁반을 다 비웠다. 저녁에 담요를 두른 사람이 하나 늘었다."),
