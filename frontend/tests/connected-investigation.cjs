@@ -174,13 +174,13 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
     await page.getByRole('button', { name: '시작', exact: true }).click();
     await page.getByRole('button', { name: '계속', exact: true }).click();
 
-    const notebookOpener = page.getByRole('button', { name: '기록·안내', exact: true });
+    const notebookOpener = page.getByRole('button', { name: '기록', exact: true });
     await notebookOpener.click();
-    const dayNotebook = page.getByRole('dialog', { name: '기록·안내' });
-    await dayNotebook.getByRole('tab', { name: '단서 기록', exact: true }).waitFor();
+    const dayNotebook = page.getByRole('dialog', { name: '기록', exact: true });
+    await dayNotebook.getByRole('region', { name: '기록 내용', exact: true }).waitFor();
     const dayLine = page.locator('[data-line-kind]');
     const lineBeforeNotebook = await dayLine.textContent();
-    await dayNotebook.getByRole('tabpanel').focus();
+    await dayNotebook.getByRole('region', { name: '기록 내용', exact: true }).focus();
     for (const key of ['Space', 'Enter', 'ArrowRight']) {
       await page.keyboard.press(key);
       assert.equal(await dayLine.textContent(), lineBeforeNotebook, `${key} in records does not advance dialogue`);
@@ -196,7 +196,7 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
     assert.equal(await daySourceDetail.getByRole('button', { name: '기록으로 돌아간다', exact: true }).evaluate(element => element === document.activeElement), true, 'source detail receives focus');
     await page.keyboard.press('Tab');
     assert.equal(await dayNotebook.evaluate((element) => element.contains(document.activeElement)), true, 'picture keeps focus inside the records panel');
-    assert.equal(await dayNotebook.getByRole('button', { name: '기록·안내 닫기', exact: true }).evaluate(element => element === document.activeElement), true, 'Tab from picture wraps to the first control');
+    assert.equal(await dayNotebook.getByRole('button', { name: '기록 닫기', exact: true }).evaluate(element => element === document.activeElement), true, 'Tab from picture wraps to the first control');
     await page.keyboard.press('Shift+Tab');
     assert.equal(await daySourceDetail.getByRole('button', { name: '기록으로 돌아간다', exact: true }).evaluate(element => element === document.activeElement), true, 'Shift+Tab wraps back to the last visible control');
     await daySourceDetail.getByRole('button', { name: '기록으로 돌아간다', exact: true }).click();
@@ -205,11 +205,11 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
     assert.equal(await daySourceOpener.evaluate(element => element === document.activeElement), true, 'source detail restores its opener');
     for (let i = 0; i < 8; i++) {
       await page.keyboard.press('Tab');
-      assert.equal(await page.evaluate(() => document.querySelector('[role="dialog"][aria-labelledby="records-title"]')?.contains(document.activeElement)), true, 'notebook traps focus');
+      assert.equal(await dayNotebook.evaluate(element => element.contains(document.activeElement)), true, 'notebook traps focus');
     }
     await page.keyboard.press('Escape');
     await dayNotebook.waitFor({ state: 'hidden' });
-    await page.waitForFunction(() => document.activeElement?.textContent?.trim() === '기록·안내');
+    await page.waitForFunction(() => document.activeElement?.textContent?.trim() === '기록');
     assert.equal(await notebookOpener.evaluate(element => element === document.activeElement), true, 'notebook restores opener focus');
     await expectBudget(page, 5);
     await readAll(page);

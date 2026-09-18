@@ -174,12 +174,12 @@ const deferred = () => {
     assert.match(question1.request.request_id, uuid);
     assert.match(question2.request.request_id, uuid);
     assert.notEqual(question1.request.request_id, question2.request.request_id);
-    await page.getByRole('button', { name: '기록·안내', exact: true }).click();
-    const notebook = page.getByRole('dialog', { name: '기록·안내', exact: true });
+    await page.getByRole('button', { name: '기록', exact: true }).click();
+    const notebook = page.getByRole('dialog', { name: '기록', exact: true });
     assert.equal(await notebook.locator('ol > li').count(), 2, 'two accepted questions produce separate records');
     await notebook.getByText('민석의 1번째 발언 기록', { exact: true }).waitFor();
     await notebook.getByText('채연의 2번째 발언 기록', { exact: true }).waitFor();
-    await notebook.getByRole('button', { name: '기록·안내 닫기', exact: true }).first().click();
+    await notebook.getByRole('button', { name: '기록 닫기', exact: true }).first().click();
 
     const beginAdvance = async () => {
       beatArrived = deferred();
@@ -189,7 +189,8 @@ const deferred = () => {
       await assertPendingLocks();
       const nextBeat = beat + 1;
       nextScene.release();
-      await page.getByText(`침상 사이 · 장면 ${nextBeat}/6`, { exact: true }).waitFor();
+      await page.getByTestId('day-title').getByText('침상 사이', { exact: true }).waitFor();
+      await page.getByTestId('day-title').getByText(`장면 ${nextBeat}/6`, { exact: true }).waitFor();
       await readAll(page);
       return npcsArrived.promise;
     };
@@ -239,9 +240,9 @@ const deferred = () => {
     assert.equal(accepted.size, 3, 'retry keeps one accepted request');
     await page.getByRole('region', { name: '대사창' }).getByText('9 / 9', { exact: true }).waitFor();
     assert.equal(await page.getByText('3번째 답: 먹은 양을 적어 두려고 봤어.', { exact: true }).count(), 1, 'retry adds one accepted reply');
-    await page.getByRole('button', { name: '기록·안내', exact: true }).click();
+    await page.getByRole('button', { name: '기록', exact: true }).click();
     assert.equal(await notebook.locator('ol > li').count(), 3, 'retry adds one record');
-    await notebook.getByRole('button', { name: '기록·안내 닫기', exact: true }).click();
+    await notebook.getByRole('button', { name: '기록 닫기', exact: true }).click();
 
     assert.equal(await input.isDisabled(), true, 'an accepted retry completes this NPC for the scene');
     await chaeyeon.click();
@@ -260,7 +261,7 @@ const deferred = () => {
     await failedNpcResponse;
     assert.equal(await input.isDisabled(), true, 'failed refresh keeps stale NPC flags unavailable');
     assert.equal(await advance.isEnabled(), true, 'unavailable NPC flags still permit free scene movement');
-    assert.equal(await page.getByRole('button', { name: '기록·안내', exact: true }).isEnabled(), true);
+    assert.equal(await page.getByRole('button', { name: '기록', exact: true }).isEnabled(), true);
     const refreshedNpcs = await beginAdvance();
     refreshedNpcs.release();
     await minseok.click();
@@ -293,7 +294,7 @@ const deferred = () => {
     assert.equal(await input.isDisabled(), true, 'zero budget locks input');
     assert.equal(await send.isDisabled(), true, 'zero budget locks send');
     assert.equal(await advance.isEnabled(), true, 'zero budget still permits free scene movement');
-    assert.equal(await page.getByRole('button', { name: '기록·안내', exact: true }).isEnabled(), true);
+    assert.equal(await page.getByRole('button', { name: '기록', exact: true }).isEnabled(), true);
     assert.equal(advanceCalls, 5, 'only the explicit advances moved the scene');
     assert.deepEqual(errors, []);
     console.log(JSON.stringify({ checks: ['gated reply keeps budget and NPC unlocked', 'one successful question per NPC per scene', 'another NPC remains available', 'next scene unlocks', 'pending and failed NPC refresh locks', '8 → 7 → 6 budget', 'separate observations', 'selection retained', 'no auto advance', '503 and lost-response retry ID', 'one accepted chat entry per request', 'terminal rejection correction', 'pending mutation locks', 'legacy response IDs', 'zero budget'], requests: requests.length }, null, 2));

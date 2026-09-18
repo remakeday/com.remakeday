@@ -70,7 +70,8 @@ const files = {
           'scene image stays inside the viewport after controls receive focus');
       }
       for (let b = 1; b <= 6; b++) {
-        await page.getByText(`시간 ${b} · 장면 ${b}/6`, { exact: true }).waitFor();
+        await page.getByTestId('day-title').getByText(`시간 ${b}`, { exact: true }).waitFor();
+        await page.getByTestId('day-title').getByText(`장면 ${b}/6`, { exact: true }).waitFor();
         if (b === 4) {
           await page.getByRole('button', { name: '다음', exact: true }).click();
           await page.getByText('검진을 시작합니다.', { exact: true }).waitFor();

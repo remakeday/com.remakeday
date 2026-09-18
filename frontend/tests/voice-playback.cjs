@@ -95,7 +95,8 @@ const path = require('node:path');
     const canceledVoice = await voice.elementHandle();
     await readAll(page);
     await page.getByRole('button', { name: '다음 장면', exact: true }).click();
-    await page.getByText('다음 장면 · 장면 2/6', { exact: true }).waitFor();
+    await page.getByTestId('day-title').getByText('다음 장면', { exact: true }).waitFor();
+    await page.getByTestId('day-title').getByText('장면 2/6', { exact: true }).waitFor();
     await readAll(page);
     await page.getByText('민석아, 이 숫자 뭔지 알아?', { exact: true }).waitFor();
     await canceledVoice.evaluate(audio => {
@@ -110,7 +111,8 @@ const path = require('node:path');
     assert.equal(await voice.evaluate(audio => audio.paused), true);
     await page.waitForFunction(() => document.querySelector('audio[src="/audio/game-bgm.mp3"]').volume === 0.25);
     await page.getByRole('button', { name: '다음 장면', exact: true }).click();
-    await page.getByText('다음 장면 · 장면 3/6', { exact: true }).waitFor();
+    await page.getByTestId('day-title').getByText('다음 장면', { exact: true }).waitFor();
+    await page.getByTestId('day-title').getByText('장면 3/6', { exact: true }).waitFor();
     await readAll(page);
     assert.equal(await voice.evaluate(audio => audio.paused), true, 'new scene preserves voice-off choice');
     await page.getByRole('switch', { name: '음성 켜기', exact: true }).click();
@@ -123,7 +125,8 @@ const path = require('node:path');
 
     // A missing recording must not block the next line or keep BGM ducked.
     await page.getByRole('button', { name: '다음 장면', exact: true }).click();
-    await page.getByText('다음 장면 · 장면 4/6', { exact: true }).waitFor();
+    await page.getByTestId('day-title').getByText('다음 장면', { exact: true }).waitFor();
+    await page.getByTestId('day-title').getByText('장면 4/6', { exact: true }).waitFor();
     await page.getByRole('button', { name: '다음', exact: true }).click();
     await page.getByText('소등하겠습니다. 모두 자리에서 움직이지 않습니다.', { exact: true }).waitFor();
     await page.waitForFunction(() => {
@@ -136,12 +139,14 @@ const path = require('node:path');
     assert.equal(await voice.evaluate(audio => audio.paused), true, 'held character recording stays text only');
     // A broadcast that ends an intro may still be playing when scene movement unlocks.
     await page.getByRole('button', { name: '다음 장면', exact: true }).click();
-    await page.getByText('다음 장면 · 장면 5/6', { exact: true }).waitFor();
+    await page.getByTestId('day-title').getByText('다음 장면', { exact: true }).waitFor();
+    await page.getByTestId('day-title').getByText('장면 5/6', { exact: true }).waitFor();
     await readAll(page);
     await playing('MA01');
     const sceneVoice = await voice.elementHandle();
     await page.getByRole('button', { name: '다음 장면', exact: true }).click();
-    await page.getByText('다음 장면 · 장면 6/6', { exact: true }).waitFor();
+    await page.getByTestId('day-title').getByText('다음 장면', { exact: true }).waitFor();
+    await page.getByTestId('day-title').getByText('장면 6/6', { exact: true }).waitFor();
     assert.equal(await sceneVoice.evaluate(audio => audio.paused), true, 'scene movement stops a playing broadcast');
     await sceneVoice.evaluate(audio => { audio.dispatchEvent(new Event('ended')); audio.dispatchEvent(new Event('error')); });
     await readAll(page);

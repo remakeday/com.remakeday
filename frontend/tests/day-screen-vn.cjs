@@ -120,13 +120,18 @@ const observations = [
         const meter = page.getByRole('meter', { name: '남은 대화 횟수', exact: true });
         const expectGaugeUnderTitle = async (mode) => {
           await page.locator(`[data-day-mode="${mode}"]`).waitFor();
-          const title = page.getByText('아침 배급 · 장면 1/6', { exact: true });
+          const titleBlock = page.getByTestId('day-title');
+          const title = titleBlock.getByText('아침 배급', { exact: true });
+          const scene = titleBlock.getByText('장면 1/6', { exact: true });
           const label = page.getByText('남은 대화 횟수', { exact: true });
           const titleBounds = await visibleBounds(title);
+          const sceneBounds = await visibleBounds(scene);
           const labelBounds = await visibleBounds(label);
           const gaugeBounds = await visibleBounds(meter);
+          assert.equal(sceneBounds.x, titleBounds.x, 'scene row aligns with the beat title');
+          assert.ok(sceneBounds.y >= titleBounds.y + titleBounds.height, 'scene row is below the beat title');
           assert.equal(labelBounds.x, titleBounds.x, 'gauge row aligns with the scene title');
-          assert.ok(labelBounds.y >= titleBounds.y + titleBounds.height, 'gauge row is below the title');
+          assert.ok(labelBounds.y >= sceneBounds.y + sceneBounds.height, 'gauge row is below the scene row');
           assert.ok(gaugeBounds.x >= labelBounds.x + labelBounds.width, 'visible label precedes the gauge');
           assert.ok(Math.abs(gaugeBounds.y + gaugeBounds.height / 2 - labelBounds.y - labelBounds.height / 2) <= 1, 'label and gauge share a row');
           assert.ok(gaugeBounds.y + gaugeBounds.height <= (await visibleBounds(box)).y, 'gauge stays above the dialogue and input');
@@ -197,10 +202,10 @@ const observations = [
         await chaeyeon.click();
         assert.equal(await input.isDisabled(), true, 'talked-to character remains selectable but cannot be asked again');
 
-        const records = page.getByRole('button', { name: '기록·안내', exact: true });
+        const records = page.getByRole('button', { name: '기록', exact: true });
         await records.click();
-        const panel = page.getByRole('dialog', { name: '기록·안내', exact: true });
-        assert.deepEqual(await panel.getByRole('tab').allTextContents(), ['단서 기록', '플레이 안내·걸린 규칙']);
+        const panel = page.getByRole('dialog', { name: '기록', exact: true });
+        assert.equal(await panel.getByRole('tab').count(), 0, 'record panel has no tabs');
         assert.equal(await panel.getByText('NEW', { exact: true }).count(), 2);
         assert.equal(await panel.locator('li').filter({ hasText: '첫날의 배급 기록.' }).getByText('NEW', { exact: true }).count(), 0);
         await panel.getByRole('button', { name: /민석이 남긴 양을 설명했다/ }).click();
@@ -209,17 +214,20 @@ const observations = [
         await picture.evaluate(img => img.decode());
         assert.ok(await picture.evaluate(img => img.naturalWidth > 0));
         await panel.getByRole('button', { name: '기록으로 돌아간다', exact: true }).click();
-        await panel.getByRole('tab', { name: '플레이 안내·걸린 규칙', exact: true }).click();
-        await panel.getByRole('heading', { name: '플레이 안내', exact: true }).waitFor();
-        await panel.getByText('민석이 기록을 설명한다.', { exact: true }).waitFor();
+        await panel.getByRole('button', { name: '기록 닫기', exact: true }).click();
+        await page.getByRole('button', { name: '안내', exact: true }).click();
+        const guidePanel = page.getByRole('dialog', { name: '안내', exact: true });
+        await guidePanel.getByRole('heading', { name: '플레이 안내', exact: true }).waitFor();
+        await guidePanel.getByText('민석이 기록을 설명한다.', { exact: true }).waitFor();
         await page.keyboard.press('Escape');
-        await panel.waitFor({ state: 'hidden' });
+        await guidePanel.waitFor({ state: 'hidden' });
         await box.getByText('14 / 14', { exact: true }).waitFor();
         assert.equal(questions, 2, 'reading and records consume no questions');
         assert.ok(observationReads >= 1, 'HUD fetched observations');
 
         await nextScene.click();
-        await page.getByText('침상 사이 · 장면 2/6', { exact: true }).waitFor();
+        await page.getByTestId('day-title').getByText('침상 사이', { exact: true }).waitFor();
+        await page.getByTestId('day-title').getByText('장면 2/6', { exact: true }).waitFor();
         const paw = page.getByRole('dialog', { name: '원숭이손의 제안', exact: true });
         assert.equal(await paw.count(), 0, 'paw offer waits for the unread intro');
         await box.getByText('15 / 16', { exact: true }).waitFor();

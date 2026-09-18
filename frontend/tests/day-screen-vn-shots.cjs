@@ -76,7 +76,7 @@ const shot = (page, name) => uiTweaksOnly && !['12-entry-guide', '13-cards-names
     if (uiTweaksOnly) { log('done (2 shots)'); return; }
     await shot(page, '05-dialogue-mode'); log('dialogue mode');
     await page.getByRole('meter', { name: '남은 대화 횟수', exact: true }).waitFor();
-    await page.getByText(/ · 장면 1\/6$/).waitFor();
+    await page.getByTestId('day-title').getByText('장면 1/6', { exact: true }).waitFor();
     await shot(page, '14-gauge-under-title'); log('gauge under title');
     // 인물 선택 후 질문 (실제 NPC 모델 호출)
     const chae = page.getByRole('button', { name: /채연/ }).first();
@@ -93,15 +93,17 @@ const shot = (page, name) => uiTweaksOnly && !['12-entry-guide', '13-cards-names
     await page.waitForTimeout(300);
     await shot(page, '08-back-through-today'); log('back');
     await page.getByRole('button', { name: '모두 보기', exact: true }).click();
-    // HUD 기록·안내 패널
-    await page.getByRole('button', { name: '기록·안내', exact: true }).click();
-    await page.getByRole('dialog', { name: '기록·안내' }).waitFor();
+    // HUD 기록과 안내 패널
+    await page.getByRole('button', { name: '기록', exact: true }).click();
+    await page.getByRole('dialog', { name: '기록', exact: true }).waitFor();
     await page.waitForTimeout(500);
-    await shot(page, '09-records-panel-log'); log('records log');
-    await page.getByRole('tab', { name: '플레이 안내·걸린 규칙' }).click();
+    await shot(page, '09-record-panel'); log('record panel');
+    await page.getByRole('button', { name: '기록 닫기', exact: true }).click();
+    await page.getByRole('button', { name: '안내', exact: true }).click();
+    await page.getByRole('dialog', { name: '안내', exact: true }).waitFor();
     await page.waitForTimeout(300);
-    await shot(page, '10-records-panel-guide'); log('records guide');
-    await page.getByRole('button', { name: '기록·안내 닫기' }).click();
+    await shot(page, '10-guide-panel'); log('guide panel');
+    await page.getByRole('button', { name: '안내 닫기', exact: true }).click();
     // 다음 장면 → 2번째 장면 도입
     await page.getByRole('button', { name: '다음 장면', exact: true }).click();
     await page.getByRole('button', { name: '다음 장면', exact: true }).waitFor({ timeout: 240000 });

@@ -136,7 +136,8 @@ const NIGHT_IMAGES = { P01: '/assets/P01.png', P02: '/assets/P02.png', P03: '/as
         if (n === 1) {
           // 원숭이손 — 팝업 소원 문장, 대가 암시, 수락 즉시 소원 장면(서술·삽화), 다음 장면의 반대 사건
           await page.getByRole('button', { name: '다음 장면', exact: true }).click();
-          await page.getByText('오전 — 자유 시간 · 장면 2/6', { exact: true }).waitFor();
+          await page.getByTestId('day-title').getByText('오전 — 자유 시간', { exact: true }).waitFor();
+          await page.getByTestId('day-title').getByText('장면 2/6', { exact: true }).waitFor();
           await readAll(page);
           await page.getByText(WISH.label, { exact: true }).waitFor();
           await page.getByText('대가 없이 굴러오는 것은 없다.', { exact: true }).waitFor();
@@ -150,7 +151,8 @@ const NIGHT_IMAGES = { P01: '/assets/P01.png', P02: '/assets/P02.png', P03: '/as
           assert.equal(pawResponses, 1, 'accepting the paw sends one response');
           await readAll(page);
           await page.getByRole('button', { name: '다음 장면', exact: true }).click();
-          await page.getByText('정오 — 배급 · 장면 3/6', { exact: true }).waitFor();
+          await page.getByTestId('day-title').getByText('정오 — 배급', { exact: true }).waitFor();
+          await page.getByTestId('day-title').getByText('장면 3/6', { exact: true }).waitFor();
           await readAll(page);
           await page.getByText(WISH.counter, { exact: true }).waitFor();
           report.checks.push('paw: wish label, cost hint, immediate wish scene with Q03, counter event next scene, budget kept');

@@ -264,8 +264,9 @@ export function DayScreen({
     <div className="h-[calc(100dvh-3.5rem)] w-full overflow-hidden bg-paper text-ink">
       <div inert={mode.pawOpen ? true : undefined} aria-hidden={mode.pawOpen ? true : undefined}
         className="flex h-full min-h-0 flex-col" data-day-mode={mode.mode}>
-        <div className="shrink-0 px-4 py-1">
-          <p className="text-base">{beatTitle} · 장면 {beat}/6</p>
+        <div className="shrink-0 px-4 py-1 leading-tight" data-testid="day-title">
+          <p className="text-base">{beatTitle}</p>
+          <p className="text-sm">장면 {beat}/6</p>
           <div className="flex items-center gap-2 text-sm">
             <span>남은 대화 횟수</span>
             <div role="meter" aria-label="남은 대화 횟수" aria-valuemin={0} aria-valuemax={initialBudget} aria-valuenow={budgetLeft}
