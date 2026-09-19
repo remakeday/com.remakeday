@@ -8,7 +8,6 @@ from datetime import datetime
 
 from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import Session
 from apps.engine.adapter.outbound.repositories.scene_transaction import save_game_changes
 from apps.engine.domain.entities.guard_rules import kst_day_start
@@ -211,7 +210,7 @@ class SurveyVoteRepository:
         새로고침·더블클릭으로 같은 표가 두 번 와도 오류를 내지 않는다.
         """
         stmt = (
-            pg_insert(SurveyVoteOrm)
+            insert(SurveyVoteOrm)
             .values(
                 id=uuid.uuid4(),
                 attempt_id=attempt_id,

@@ -15,6 +15,7 @@ from sqlalchemy import (
     Text,
     UniqueConstraint,
     Uuid,
+    false,
     func,
 )
 from sqlalchemy.dialects.postgresql import JSONB
@@ -160,7 +161,9 @@ class SurveyVoteOrm(Base):
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
     attempt_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
     user_id: Mapped[uuid.UUID | None] = mapped_column(Uuid, nullable=True, index=True)
-    skipped: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    skipped: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False, server_default=false()
+    )
     fun: Mapped[int | None] = mapped_column(SmallInteger, nullable=True)
     novelty: Mapped[int | None] = mapped_column(SmallInteger, nullable=True)
     ai_agency: Mapped[int | None] = mapped_column(SmallInteger, nullable=True)

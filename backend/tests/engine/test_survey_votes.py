@@ -3,6 +3,7 @@
 import uuid
 
 import pytest
+import sqlalchemy.exc
 from sqlalchemy import text
 
 from apps.engine.adapter.outbound.repositories.game_repository import (
@@ -64,24 +65,27 @@ def test_skip_is_recorded_as_its_own_row(db_session):
 @pytest.mark.parametrize("bad", [0, 6, -1])
 def test_score_outside_one_to_five_is_rejected_by_the_database(db_session, bad):
     attempt = _attempt(db_session)
-    with pytest.raises(Exception):
+    with pytest.raises(sqlalchemy.exc.IntegrityError) as exc:
         SurveyVoteRepository(db_session).record(
             attempt.id, None, skipped=False, scores={**EMPTY, "fun": bad}
         )
+    assert "ck_survey_votes_fun" in str(exc.value)
     db_session.rollback()
 
 
 def test_skipped_row_may_not_carry_scores(db_session):
     attempt = _attempt(db_session)
-    with pytest.raises(Exception):
+    with pytest.raises(sqlalchemy.exc.IntegrityError) as exc:
         SurveyVoteRepository(db_session).record(
             attempt.id, None, skipped=True, scores={**EMPTY, "fun": 3}
         )
+    assert "ck_survey_votes_skip_consistency" in str(exc.value)
     db_session.rollback()
 
 
 def test_unskipped_row_needs_at_least_one_score(db_session):
     attempt = _attempt(db_session)
-    with pytest.raises(Exception):
+    with pytest.raises(sqlalchemy.exc.IntegrityError) as exc:
         SurveyVoteRepository(db_session).record(attempt.id, None, skipped=False, scores=EMPTY)
+    assert "ck_survey_votes_skip_consistency" in str(exc.value)
     db_session.rollback()
