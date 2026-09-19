@@ -27,6 +27,7 @@
 
 **Files:**
 - Create: `backend/alembic/versions/2026_09_19_0900-a1b2c3d4e5f6_survey_votes.py`
+- Modify: `backend/apps/engine/domain/value_objects/game_constants.py` (항목 이름 한 곳)
 - Modify: `backend/apps/engine/adapter/outbound/orms/game_state_orm.py` (import 줄, 파일 끝에 클래스 추가)
 - Modify: `backend/apps/engine/adapter/outbound/repositories/game_repository.py` (파일 끝에 클래스 추가)
 - Test: `backend/tests/engine/test_survey_votes.py`
@@ -34,6 +35,7 @@
 **Interfaces:**
 - Consumes: `Base`(`core.matrix.grid_oracle_database_manager`), `save_game_changes`(같은 리포지토리 모듈)
 - Produces:
+  - `SURVEY_SCORE_FIELDS = ("fun", "novelty", "ai_agency", "polish", "recommend")` (`game_constants`) — ORM·리포지토리·인터랙터가 모두 이것을 쓴다. 마이그레이션만 자기 사본을 갖는다(마이그레이션은 그 시점 스냅샷이라 나중 상수 변경에 흔들리면 안 된다)
   - `SurveyVoteOrm` — 테이블 `survey_votes`
   - `SurveyVoteRepository(session)` with `record(attempt_id: uuid.UUID, user_id: uuid.UUID | None, *, skipped: bool, scores: dict[str, int | None]) -> bool` — 첫 표면 True, 이미 있으면 False
 
@@ -195,13 +197,24 @@ def downgrade() -> None:
     op.drop_table("survey_votes")
 ```
 
-- [ ] **Step 4: ORM을 더한다**
+- [ ] **Step 4: 항목 이름을 도메인 상수로 둔다**
+
+`backend/apps/engine/domain/value_objects/game_constants.py` 끝에 추가한다:
+
+```python
+# 클리어 화면 플레이 평가 항목 — 화면 문구는 재미·몰입도 / 참신성 / AI 활용 체감 / 완성도 / 추천 의향.
+# 마이그레이션은 그 시점 스냅샷이라 이 상수를 쓰지 않고 자기 사본을 갖는다.
+SURVEY_SCORE_FIELDS = ("fun", "novelty", "ai_agency", "polish", "recommend")
+```
+
+- [ ] **Step 5: ORM을 더한다**
 
 `game_state_orm.py`의 import에 `CheckConstraint`와 `SmallInteger`를 넣는다(알파벳 순서 유지: `Boolean, CheckConstraint, DateTime, Float, ForeignKey, Integer, SmallInteger, String, Text, UniqueConstraint, Uuid, func`). 파일 끝에 추가:
 
+`game_constants`에서 `SURVEY_SCORE_FIELDS`를 import한다.
+
 ```python
-_SURVEY_SCORES = ("fun", "novelty", "ai_agency", "polish", "recommend")
-_SURVEY_FILLED = "num_nonnulls(" + ", ".join(_SURVEY_SCORES) + ")"
+_SURVEY_FILLED = "num_nonnulls(" + ", ".join(SURVEY_SCORE_FIELDS) + ")"
 
 
 class SurveyVoteOrm(Base):
@@ -212,7 +225,7 @@ class SurveyVoteOrm(Base):
         UniqueConstraint("attempt_id", name="uq_survey_votes_attempt"),
         *(
             CheckConstraint(f"{name} IS NULL OR ({name} BETWEEN 1 AND 5)", name=f"ck_survey_votes_{name}")
-            for name in _SURVEY_SCORES
+            for name in SURVEY_SCORE_FIELDS
         ),
         CheckConstraint(
             f"(skipped AND {_SURVEY_FILLED} = 0) OR (NOT skipped AND {_SURVEY_FILLED} > 0)",
@@ -234,14 +247,13 @@ class SurveyVoteOrm(Base):
     )
 ```
 
-- [ ] **Step 5: 리포지토리를 더한다**
+- [ ] **Step 6: 리포지토리를 더한다**
 
 `game_repository.py` 맨 위 import에 `SurveyVoteOrm`을 추가하고(`game_state_orm`에서 가져오는 기존 줄에 붙인다), `from sqlalchemy.dialects.postgresql import insert as pg_insert`를 더한 뒤 파일 끝에 추가:
 
+`game_constants`의 `SURVEY_SCORE_FIELDS`를 import해서 쓴다.
+
 ```python
-SURVEY_SCORE_FIELDS = ("fun", "novelty", "ai_agency", "polish", "recommend")
-
-
 class SurveyVoteRepository:
     def __init__(self, session: Session) -> None:
         self._s = session
@@ -274,14 +286,14 @@ class SurveyVoteRepository:
         return inserted > 0
 ```
 
-- [ ] **Step 6: 테스트가 통과하는지 확인한다**
+- [ ] **Step 7: 테스트가 통과하는지 확인한다**
 
 Run: `cd backend && .venv/bin/python -m pytest tests/engine/test_survey_votes.py -q`
 Expected: PASS (7 passed)
 
 테스트 DB가 마이그레이션이 아니라 메타데이터로 만들어지면 ORM만으로 통과한다. 그렇더라도 마이그레이션은 실서버용으로 반드시 있어야 한다.
 
-- [ ] **Step 7: 마이그레이션을 실제 DB에 적용해 본다**
+- [ ] **Step 8: 마이그레이션을 실제 DB에 적용해 본다**
 
 Run: `cd backend && .venv/bin/alembic upgrade head && .venv/bin/alembic current`
 Expected: `a1b2c3d4e5f6 (head)`
@@ -289,10 +301,10 @@ Expected: `a1b2c3d4e5f6 (head)`
 Run: `docker exec pigfarm-db psql -U pigfarm -d pigfarm -Atc "\d survey_votes"`
 Expected: 컬럼 10개, `uq_survey_votes_attempt` 유니크, `ix_survey_votes_user_id` 인덱스
 
-- [ ] **Step 8: 커밋**
+- [ ] **Step 9: 커밋**
 
 ```bash
-git add backend/alembic/versions backend/apps/engine/adapter/outbound backend/tests/engine/test_survey_votes.py
+git add backend/alembic/versions backend/apps/engine/domain backend/apps/engine/adapter/outbound backend/tests/engine/test_survey_votes.py
 git commit -m "feat(survey): survey_votes 테이블·ORM·리포지토리 — 판당 한 표, 부분 응답, 건너뛰기 기록"
 ```
 
@@ -384,6 +396,8 @@ def test_stranger_attempt_is_404(db_session, logged_in):
 Run: `cd backend && .venv/bin/python -m pytest tests/engine/test_survey_endpoint.py -q`
 Expected: FAIL — 404 (경로가 없다)
 
+테스트가 판을 만들 때 하루 3판 한도에 걸리면 `tests/engine/test_guards.py`처럼 `monkeypatch.setattr(cfg.get_settings(), "user_daily_attempts", 100)`로 풀고 쓴다. 테스트마다 트랜잭션이 되돌아가면 걸리지 않는다.
+
 - [ ] **Step 3: 인터랙터를 만든다**
 
 `backend/apps/engine/app/use_cases/survey_interactor.py`:
@@ -397,7 +411,7 @@ user_id를 그대로 표에 옮겨, 나중에 사람 판만 집계할 수 있게
 
 import uuid
 
-SCORE_FIELDS = ("fun", "novelty", "ai_agency", "polish", "recommend")
+from apps.engine.domain.value_objects.game_constants import SURVEY_SCORE_FIELDS
 
 
 class SurveyInteractor:
@@ -406,10 +420,10 @@ class SurveyInteractor:
 
     def record(self, attempt_id: uuid.UUID, *, skipped: bool, scores: dict[str, int | None]) -> dict:
         attempt = self._attempts.get(attempt_id)
-        given = {name: scores.get(name) for name in SCORE_FIELDS}
+        given = {name: scores.get(name) for name in SURVEY_SCORE_FIELDS}
         # 별점을 하나도 안 매기고 보낸 것은 건너뛴 것과 같다 — 빈 표를 만들지 않는다.
         if not any(v is not None for v in given.values()):
-            skipped, given = True, dict.fromkeys(SCORE_FIELDS)
+            skipped, given = True, dict.fromkeys(SURVEY_SCORE_FIELDS)
         recorded = self._votes.record(
             attempt_id,
             attempt.user_id if attempt else None,
