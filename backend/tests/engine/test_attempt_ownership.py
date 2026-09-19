@@ -133,6 +133,7 @@ GAME_ROUTES = [
     ("POST", "/nights/{night_id}/rule/preview", {"custom_text": "x"}),
     ("GET", "/attempts/{attempt_id}/journey", None),
     ("GET", "/attempts/{attempt_id}/harness", None),
+    ("POST", "/attempts/{attempt_id}/survey", {"skipped": False, "fun": 3}),
 ]
 _ROUTE_IDS = [f"{m} {p}" for m, p, _ in GAME_ROUTES]
 
