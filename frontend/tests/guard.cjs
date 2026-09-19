@@ -95,6 +95,7 @@ async function testRestartGuard(browser) {
     } else if (p.endsWith('/options')) {
       body = { options: [1, 2, 3].map(index => ({ index, label: `추천 규칙 ${index}`, target: '채연', action: '배급을 설명한다', effect: 'enforce', when_beat: 'any', reason: '관찰을 확인하기 위해', evidence_ids: [], expected_observation: '다음 배급 장면에서 설명을 듣는다.' })) };
     } else if (p.endsWith('/rule')) body = { ok: true, rule_label: '추천 규칙 1', conflicts: [], reason: null };
+    else if (p === '/attempts/test/survey' && route.request().method() === 'POST') body = { recorded: true };
     else if (p.endsWith('/journey')) {
       body = {
         loops: [1, 2, 3, 4, 5].map(n => ({ loop_n: n, total: 100, passed: true, new_confirmed: [], unlocked_notes: [] })),
@@ -135,6 +136,9 @@ async function testRestartGuard(browser) {
   }
   await page.getByRole('heading', { name: '다섯 번째 밤, 마지막 기록' }).waitFor();
   await page.getByRole('button', { name: '이 세계의 바깥으로', exact: true }).click();
+  const survey = page.locator('[data-survey="block"]');
+  await survey.waitFor({ state: 'visible' });
+  await survey.getByRole('button', { name: '건너뛰기', exact: true }).click();
   await page.getByRole('button', { name: '다시 시작', exact: true }).click();
   await page.getByText('오늘은 여기까지', { exact: false }).waitFor();
   // GuardScreen이 유일한 화면이어야 한다 — ClearScreen의 재시작 버튼이 뒤에 남아있으면 안 된다.

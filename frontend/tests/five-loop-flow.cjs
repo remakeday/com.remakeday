@@ -79,6 +79,7 @@ const NIGHT_IMAGES = { P01: '/assets/P01.png', P02: '/assets/P02.png', P03: '/as
           body = { total, passed: total >= 50, loop_n: loopN, world_outcome: loopN === 3 ? 'closure' : 'truck', is_final: loopN === 5, closed_by: loopN === 5 ? (total === 100 ? 'understood_all' : 'doom') : null, cells: loopN === 5 ? cells : null, cookie: null, intervention_available: loopN < 5, ending_lines: loopN === 5 ? ['우리가 대피소라고 믿었던 곳은 [결말 장소]였다.'] : null, cell_feedback: '원인은 잡혔다.', wrong_claim_count: 0, accepted_claims: ['상황과 정체에 대한 이해'], empty_cells: loopN === 1 ? ['motive'] : [], night_clue: { loop_n: loopN, ...NIGHT_CLUES[loopN] } };
         } else if (path.endsWith('/options')) body = { options: [1, 2, 3].map(index => ({ index, label: `추천 규칙 ${index}`, target: '채연', action: '배급을 설명한다', effect: 'enforce', when_beat: 'any', reason: '관찰을 확인하기 위해', evidence_ids: [], expected_observation: '다음 배급 장면에서 설명을 듣는다.' })) };
         else if (path.endsWith('/rule')) body = { ok: true, rule_label: '추천 규칙 1', conflicts: [], reason: null };
+        else if (path === '/attempts/test/survey' && route.request().method() === 'POST') body = { recorded: true };
         else if (path.endsWith('/journey')) {
           harnessCalls++;
           if (loopN < 5 || !submitted) { status = 403; body = { detail: '다섯 번째 밤을 마치면 열린다' }; }
@@ -223,6 +224,9 @@ const NIGHT_IMAGES = { P01: '/assets/P01.png', P02: '/assets/P02.png', P03: '/as
       assert.equal(await page.getByText('부작용', { exact: true }).count(), 0);
       await page.screenshot({ path: `${out}/final-${finalScore}.png`, fullPage: true });
       await page.getByRole('button', { name: '이 세계의 바깥으로', exact: true }).click();
+      const survey = page.locator('[data-survey="block"]');
+      await survey.waitFor({ state: 'visible' });
+      await survey.getByRole('button', { name: '건너뛰기', exact: true }).click();
       await page.getByText('일시적인 오류', { exact: true }).waitFor();
       failHarness = false;
       await page.getByRole('button', { name: '다시 불러오기', exact: true }).click();
