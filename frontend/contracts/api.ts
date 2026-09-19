@@ -462,6 +462,18 @@ export interface HealthRes {
   db: string;
 }
 
+export interface SurveyReq {
+  skipped: boolean;
+  fun?: number | null;
+  novelty?: number | null;
+  ai_agency?: number | null;
+  polish?: number | null;
+  recommend?: number | null;
+}
+export interface SurveyRes {
+  recorded: boolean;
+}
+
 // ── 타입드 fetch 클라이언트 ───────────────────────────
 
 export const API_BASE =
@@ -582,6 +594,10 @@ export const api = {
       "X-Inspector-Token": token,
     }),
   getHealth: () => request<HealthRes>("GET", "/health"),
+
+  // 플레이 평가
+  sendSurvey: (attemptId: string, req: SurveyReq) =>
+    request<SurveyRes>("POST", `/attempts/${attemptId}/survey`, req),
 
   // 인증 — Google OAuth 세션
   getMe: () => request<SessionUser>("GET", "/api/v1/auth/me"),

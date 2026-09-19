@@ -30,6 +30,7 @@ from apps.engine.dependencies.engine_dependency import (
     get_loop_interactor,
     get_night_interactor,
     get_session_interactor,
+    get_survey_interactor,
 )
 
 router = APIRouter(tags=["game"])
@@ -101,6 +102,20 @@ class RuleReq(BaseModel):
 
 class RulePreviewReq(BaseModel):
     custom_text: str = Field(max_length=200)
+
+
+Score = Annotated[int, Field(ge=1, le=5)]
+
+
+class SurveyReq(BaseModel):
+    """다섯 항목 1~5점. 빈 항목은 보내지 않아도 된다(부분 응답)."""
+
+    skipped: bool = False
+    fun: Score | None = None
+    novelty: Score | None = None
+    ai_agency: Score | None = None
+    polish: Score | None = None
+    recommend: Score | None = None
 
 
 @router.post("/sessions", dependencies=[Depends(ip_bucket("sessions", "ip_sessions_per_minute"))])
@@ -191,6 +206,12 @@ def journey(attempt_id: uuid.UUID, uc=Depends(get_inspector)):
 @owned.get("/attempts/{attempt_id}/harness")
 def harness(attempt_id: uuid.UUID, uc=Depends(get_inspector)):
     return _run(uc.harness_view, attempt_id)
+
+
+@owned.post("/attempts/{attempt_id}/survey")
+def survey(attempt_id: uuid.UUID, req: SurveyReq, uc=Depends(get_survey_interactor)):
+    scores = req.model_dump(exclude={"skipped"})
+    return _run(uc.record, attempt_id, skipped=req.skipped, scores=scores)
 
 
 @router.get("/attempts/{attempt_id}/inspector")

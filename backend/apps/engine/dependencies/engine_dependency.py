@@ -19,6 +19,7 @@ from apps.engine.adapter.outbound.repositories.game_repository import (
     NightRepository,
     NoteRepository,
     RuleRepository,
+    SurveyVoteRepository,
 )
 from apps.engine.adapter.outbound.oauth.google_oauth_client import GoogleOAuthClient
 from apps.engine.adapter.outbound.repositories.scene_transaction import (
@@ -43,6 +44,7 @@ from apps.engine.app.use_cases.loop_interactor import LoopInteractor
 from apps.engine.app.use_cases.manager_interactor import ManagerInteractor
 from apps.engine.app.use_cases.night_interactor import NightInteractor
 from apps.engine.app.use_cases.session_interactor import SessionInteractor
+from apps.engine.app.use_cases.survey_interactor import SurveyInteractor
 from apps.engine.dependencies.llm_factory import (
     get_alternative_rank,
     get_core_llm,
@@ -196,3 +198,10 @@ def get_health_use_case(session: Session = Depends(get_session)) -> HealthUseCas
         return True
 
     return HealthInteractor(db_ping=db_ping)
+
+
+def get_survey_interactor(session: Session = Depends(get_session)):
+    return SurveyInteractor(
+        attempts=AttemptRepository(session),
+        votes=SurveyVoteRepository(session),
+    )

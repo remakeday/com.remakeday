@@ -135,6 +135,15 @@ res: `{rules: [...], harness_summary: {...}}`
 - hidden_side_effect는 설계된 대가이며 발생 확인이 아니다. tool_side_effects는 도구 실행 기록 전체이며 원숭이손과의 인과관계를 확정하지 않는다.
 - harness_interventions는 위반·폴백이 기록된 모델 호출 수다. 전체 호출 수 또는 사용자가 건 규칙의 성공률이 아니다. 규칙 이행 성공률은 아직 미측정이므로 null이다.
 
+### POST /attempts/{attempt_id}/survey — 플레이 평가
+
+req: `{skipped: boolean, fun?: 1..5|null, novelty?, ai_agency?, polish?, recommend?}`
+res: `{recorded: boolean}`
+- 판 소유자만. 남의 판·없는 판은 404.
+- 판당 한 표. 이미 표가 있으면 `recorded: false`(오류가 아니다, 첫 표가 유효).
+- 별점을 하나도 안 보내면 건너뛴 것으로 기록한다.
+- 점수가 1~5 밖이면 422.
+
 ### GET /attempts/{attempt_id}/inspector — 헤더 `X-Inspector-Token: {INSPECTOR_TOKEN}`
 res: `{events: [...], patches: [...], paw_rules: [...], scoring: [...]}`
 - 로그인 불필요, 토큰 인증만. 토큰은 요청 헤더로만 받는다 — 쿼리스트링(`?token=`)은 받지 않는다(URL은 cloudflared·uvicorn 접근 로그와 브라우저 기록에 남는다). 비교는 상수 시간(`hmac.compare_digest`).
@@ -153,7 +162,7 @@ res: `{db}` — `db`는 `ok | error`. 공개 경로(api.remakeday.com)라 기동
 - **429** `{"detail": {"detail": "요청이 너무 잦다", "retry_after": number}}`, 헤더 `Retry-After: {retry_after}` — 속도 제한 버킷 초과(`IP_SESSIONS_PER_MINUTE`/`IP_ACTIONS_PER_MINUTE`, 기본 5/30 분당).
 - **503** `{"code": "daily_cap", "detail": "오늘 정원이 마감됐다."}` — 오늘 전역 판 생성 수가 `DAILY_ATTEMPT_CAP`(기본 200)에 도달. `POST /sessions`에서만 발생.
 - **413** `{"detail": "요청이 너무 크다"}` — 요청 본문이 262144바이트(256KiB)를 넘음. `Content-Length` 헤더만 보고 본문을 읽기 전에 거부한다(ASGI 미들웨어, `main.py`). `Content-Length`가 없는 요청은 통과시킨다.
-- **422** — 텍스트 상한 초과 시 FastAPI 기본 검증 에러(`detail`이 배열). 상한: `POST /loops/{loop_id}/utterances`·`POST /nights/{night_id}/questions`의 `text` 200자, `POST /loops/{loop_id}/night/draft`의 `free_text` 2000자, `PATCH /nights/{night_id}/claims`의 `claims` 배열 40개·각 500자, `POST /nights/{night_id}/rule`·`/rule/preview`의 `custom_text` 200자.
+- **422** — 텍스트 상한 초과 시 FastAPI 기본 검증 에러(`detail`이 배열). 상한: `POST /loops/{loop_id}/utterances`·`POST /nights/{night_id}/questions`의 `text` 200자, `POST /loops/{loop_id}/night/draft`의 `free_text` 2000자, `PATCH /nights/{night_id}/claims`의 `claims` 배열 40개·각 500자, `POST /nights/{night_id}/rule`·`/rule/preview`의 `custom_text` 200자, `POST /attempts/{attempt_id}/survey`의 점수 1~5.
 
 `attempts.user_id`: 판을 만든 사용자의 `users.id`(UUID). 세션의 `sub`(구글 sub, 개발 계정은 `dev:{id}`, `GUARD_AUTH=off`일 때는 `"dev"`)로 `users` 행을 찾아 그 `id`를 넣고, 판 주인 확인도 같은 경로(sub → `users.id` → `attempts.user_id`)로 맞춘다. 하루 판 수·전역 정원 집계의 기준. **FK 제약 없음** — 익명 구판(이 컬럼이 `null`인 기존 판) 호환을 위해 의도적으로 걸지 않았다.
 
