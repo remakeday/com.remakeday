@@ -83,7 +83,7 @@ async function reachSurvey(page) {
 (async () => {
   const browser = await chromium.launch({ executablePath: '/usr/bin/google-chrome', headless: true });
   try {
-    for (const scenario of ['ratings', 'skip', 'server-error']) {
+    for (const scenario of ['ratings', 'skip', 'server-error', 'hanging-request']) {
       const context = await browser.newContext({ viewport: { width: 1440, height: 900 }, reducedMotion: 'reduce' });
       try {
         const page = await context.newPage();
@@ -99,6 +99,8 @@ async function reachSurvey(page) {
           let body, status = 200;
           if (key === `POST ${surveyPath}`) {
             surveyRequests.push(request.postDataJSON());
+            // Leave the request intercepted without fulfilling, aborting, or continuing it.
+            if (scenario === 'hanging-request') return;
             status = scenario === 'server-error' ? 500 : 200;
             body = status === 500 ? { detail: '설문 저장 실패' } : { recorded: true };
           } else if (Object.hasOwn(fixtures, key)) {
@@ -126,12 +128,26 @@ async function reachSurvey(page) {
           assert.equal(await survey.getByRole('radio', { checked: true }).count(), 2, 'only two items are rated');
         }
 
-        // Checks 2–4: capture the POST body and actual response, then require progress.
-        const [response] = await Promise.all([
-          page.waitForResponse(res => new URL(res.url()).pathname === surveyPath && res.request().method() === 'POST'),
-          survey.getByRole('button', { name: skipped ? '건너뛰기' : '평가 보내기', exact: true }).click(),
-        ]);
-        assert.equal(response.status(), scenario === 'server-error' ? 500 : 200);
+        if (scenario === 'hanging-request') {
+          assert.equal(await page.getByText('평가 고맙다.', { exact: true }).count(), 0);
+          await Promise.all([
+            page.waitForRequest(req => new URL(req.url()).pathname === surveyPath && req.method() === 'POST'),
+            survey.getByRole('button', { name: '평가 보내기', exact: true }).click(),
+          ]);
+          assert.equal(await survey.getByRole('button', { disabled: true }).count(), 2);
+          assert.equal(await survey.getByRole('radio', { disabled: true }).count(), 25);
+          // Allow the real five-second timer to expire, with room for a loaded runner.
+          await page.getByRole('button', { name: '다시 시작', exact: true })
+            .waitFor({ state: 'visible', timeout: 15000 });
+          await page.getByText('평가 고맙다.', { exact: true }).waitFor();
+        } else {
+          // Checks 2–4: capture the POST body and actual response, then require progress.
+          const [response] = await Promise.all([
+            page.waitForResponse(res => new URL(res.url()).pathname === surveyPath && res.request().method() === 'POST'),
+            survey.getByRole('button', { name: skipped ? '건너뛰기' : '평가 보내기', exact: true }).click(),
+          ]);
+          assert.equal(response.status(), scenario === 'server-error' ? 500 : 200);
+        }
         await page.getByRole('button', { name: '다시 시작', exact: true }).waitFor({ state: 'visible' });
         await survey.waitFor({ state: 'detached' });
         await page.getByRole('heading', { name: '너의 추리는 이렇게 걸어왔다.', exact: true }).waitFor();

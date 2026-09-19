@@ -42,7 +42,12 @@ export function ClearScreen({
         {stage === "survey" && (
           <SurveyBlock attemptId={attemptId} onDone={() => setStage("retrospective")} />
         )}
-        {stage === "retrospective" && <Retrospective attemptId={attemptId} />}
+        {stage === "retrospective" && (
+          <>
+            <p className="text-center text-sm">평가 고맙다.</p>
+            <Retrospective attemptId={attemptId} />
+          </>
+        )}
         {stage === "retrospective" && (
           <button type="button" onClick={onRetry} disabled={retryBusy} aria-busy={retryBusy}
             className="border border-paper/60 px-10 py-3 text-sm hover:bg-paper hover:text-void disabled:opacity-40">

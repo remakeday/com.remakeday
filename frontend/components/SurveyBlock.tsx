@@ -24,7 +24,12 @@ export function SurveyBlock({ attemptId, onDone }: {
     if (busy) return;
     setBusy(true);
     try {
-      await api.sendSurvey(attemptId, skipped ? { skipped: true } : { skipped: false, ...scores });
+      const body = skipped ? { skipped: true } : { skipped: false, ...scores };
+      // 느린 평가는 백그라운드에서 저장하되 진행은 최대 5초만 기다린다.
+      await Promise.race([
+        api.sendSurvey(attemptId, body).catch(() => {}),
+        new Promise((resolve) => setTimeout(resolve, 5000)),
+      ]);
     } catch {
       // 평가 실패로 진행을 막지 않는다.
     } finally {
