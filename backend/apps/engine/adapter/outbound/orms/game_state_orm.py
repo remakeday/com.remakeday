@@ -5,10 +5,12 @@ from datetime import datetime
 
 from sqlalchemy import (
     Boolean,
+    CheckConstraint,
     DateTime,
     Float,
     ForeignKey,
     Integer,
+    SmallInteger,
     String,
     Text,
     UniqueConstraint,
@@ -19,6 +21,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from core.matrix.grid_oracle_database_manager import Base
+from apps.engine.domain.value_objects.game_constants import SURVEY_SCORE_FIELDS
 
 
 class AttemptOrm(Base):
@@ -133,3 +136,36 @@ class NightOrm(Base):
     questions: Mapped[list] = mapped_column(JSONB, default=list)
     options: Mapped[list | None] = mapped_column(JSONB, nullable=True)
     rule_chosen: Mapped[bool] = mapped_column(Boolean, default=False)
+
+
+_SURVEY_FILLED = "num_nonnulls(" + ", ".join(SURVEY_SCORE_FIELDS) + ")"
+
+
+class SurveyVoteOrm(Base):
+    """클리어 화면 플레이 평가 — 판당 한 표. 건너뛰기도 행으로 남겨 참가율을 잰다."""
+
+    __tablename__ = "survey_votes"
+    __table_args__ = (
+        UniqueConstraint("attempt_id", name="uq_survey_votes_attempt"),
+        *(
+            CheckConstraint(f"{name} IS NULL OR ({name} BETWEEN 1 AND 5)", name=f"ck_survey_votes_{name}")
+            for name in SURVEY_SCORE_FIELDS
+        ),
+        CheckConstraint(
+            f"(skipped AND {_SURVEY_FILLED} = 0) OR (NOT skipped AND {_SURVEY_FILLED} > 0)",
+            name="ck_survey_votes_skip_consistency",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
+    attempt_id: Mapped[uuid.UUID] = mapped_column(Uuid, nullable=False)
+    user_id: Mapped[uuid.UUID | None] = mapped_column(Uuid, nullable=True, index=True)
+    skipped: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    fun: Mapped[int | None] = mapped_column(SmallInteger, nullable=True)
+    novelty: Mapped[int | None] = mapped_column(SmallInteger, nullable=True)
+    ai_agency: Mapped[int | None] = mapped_column(SmallInteger, nullable=True)
+    polish: Mapped[int | None] = mapped_column(SmallInteger, nullable=True)
+    recommend: Mapped[int | None] = mapped_column(SmallInteger, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )

@@ -36,3 +36,7 @@ COOKIE_TIE_ORDER = ("cause", "motive", "side_effect", "identity")
 # 밤 제출문을 문장·줄 단위로 나눌 때의 칸 상한. 자유서술이 2000자 상한이라
 # 보통 길이 문장으로는 닿지 않는다 — 실제로 뭉치는 일이 없도록 두고 API 입력 상한으로만 쓴다.
 MAX_CLAIMS = 40
+
+# 클리어 화면 플레이 평가 항목 — 화면 문구는 재미·몰입도 / 참신성 / AI 활용 체감 / 완성도 / 추천 의향.
+# 마이그레이션은 그 시점 스냅샷이라 이 상수를 쓰지 않고 자기 사본을 갖는다.
+SURVEY_SCORE_FIELDS = ("fun", "novelty", "ai_agency", "polish", "recommend")

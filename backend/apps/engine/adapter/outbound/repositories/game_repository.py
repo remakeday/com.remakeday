@@ -8,9 +8,11 @@ from datetime import datetime
 
 from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.orm import Session
 from apps.engine.adapter.outbound.repositories.scene_transaction import save_game_changes
 from apps.engine.domain.entities.guard_rules import kst_day_start
+from apps.engine.domain.value_objects.game_constants import SURVEY_SCORE_FIELDS
 
 from apps.engine.adapter.outbound.orms.game_state_orm import (
     AttemptOrm,
@@ -19,6 +21,7 @@ from apps.engine.adapter.outbound.orms.game_state_orm import (
     NoteOrm,
     NpcStateOrm,
     RuleOrm,
+    SurveyVoteOrm,
 )
 
 
@@ -189,3 +192,38 @@ class NightRepository:
 
     def save(self) -> None:
         save_game_changes(self._s)
+
+
+class SurveyVoteRepository:
+    def __init__(self, session: Session) -> None:
+        self._s = session
+
+    def record(
+        self,
+        attempt_id: uuid.UUID,
+        user_id: uuid.UUID | None,
+        *,
+        skipped: bool,
+        scores: dict[str, int | None],
+    ) -> bool:
+        """첫 표만 남긴다 — 이미 표가 있으면 아무것도 바꾸지 않고 False.
+
+        새로고침·더블클릭으로 같은 표가 두 번 와도 오류를 내지 않는다.
+        """
+        stmt = (
+            pg_insert(SurveyVoteOrm)
+            .values(
+                id=uuid.uuid4(),
+                attempt_id=attempt_id,
+                user_id=user_id,
+                skipped=skipped,
+                **{name: scores.get(name) for name in SURVEY_SCORE_FIELDS},
+            )
+            .on_conflict_do_nothing(index_elements=["attempt_id"])
+            .returning(SurveyVoteOrm.id)
+        )
+        # .rowcount is unreliable here (psycopg3 + SQLAlchemy insert returns -1 for this
+        # statement shape) — RETURNING presence is the trustworthy signal for on_conflict_do_nothing.
+        inserted = self._s.execute(stmt).first() is not None
+        save_game_changes(self._s)
+        return inserted
