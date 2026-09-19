@@ -16,8 +16,11 @@ class SurveyInteractor:
     def record(self, attempt_id: uuid.UUID, *, skipped: bool, scores: dict[str, int | None]) -> dict:
         attempt = self._attempts.get(attempt_id)
         given = {name: scores.get(name) for name in SURVEY_SCORE_FIELDS}
-        # 별점을 하나도 안 매기고 보낸 것은 건너뛴 것과 같다 — 빈 표를 만들지 않는다.
-        if not any(v is not None for v in given.values()):
+        if skipped:
+            # 건너뛰기로 보낸 요청은 점수가 같이 왔어도 버린다 — skipped=True는 항상 빈 점수와 짝짓는다.
+            given = dict.fromkeys(SURVEY_SCORE_FIELDS)
+        elif not any(v is not None for v in given.values()):
+            # 별점을 하나도 안 매기고 보낸 것은 건너뛴 것과 같다 — 빈 표를 만들지 않는다.
             skipped, given = True, dict.fromkeys(SURVEY_SCORE_FIELDS)
         recorded = self._votes.record(
             attempt_id,
