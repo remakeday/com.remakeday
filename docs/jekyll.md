@@ -13,8 +13,9 @@
 - **프론트(Codex astra)** — `/play` 선택 화면·`?resume=1`·단계별 복원, 이탈 경고 문구 교체, `/mypage`(브라우저 confirm 없이 화면 안 확인 단계), 랜딩 "마이페이지" 버튼.
 - **검증** — 백엔드 pytest 1162 passed, lint-imports 4/0, tsc 0, 헤드리스 `resume-mypage` 15/15, 가짜 API 스크립트 11개 통과. `day-screen-vn-shots`는 실백엔드 대상인데 지금 `.env`가 `DEV_LOGIN=off`라 로그인에서 멈춘다(이번 변경과 무관). 최종 리뷰(opus) Ready.
 - **최종 리뷰 뒤 수정** — 진행 중인 판 조회가 5xx·네트워크 오류면 새 판을 만들던 것을, 404일 때만 새 판을 만들고 그 밖은 오류 토스트의 "재시도"로 바꿨다(사용자 결정). 헤드리스 `resume-mypage` 16/16.
+- **병합·배포** — PR #1(`feat/coherence-chain` → `main`, 커밋 19개)을 병합 커밋 `ca25cec`로 합쳤고, Vercel이 `main` 병합에 맞춰 프로덕션을 자동 배포했다(success). remakeday.com의 `/`·`/play`·`/mypage`·`/privacy`가 200, WebP 그림 200, api.remakeday.com CORS 프리플라이트가 GET·POST·DELETE를 허용한다. 백엔드(127.0.0.1:8500)는 새 코드로 다시 시작해 `/api/v1/me/attempts/active`가 404에서 401(비로그인)로 바뀐 것을 확인했다. 실계정 이어하기·탈퇴는 사람이 확인할 몫으로 남겼다.
+- **함께 올린 미커밋분** — 장면 그림 PNG→WebP 전환과 다음 장면 미리 불러오기, 랜딩 로그아웃·마이페이지 버튼, 헤드리스 6개 갱신, 처리방침·약관 운영 주체, ERD 문서를 주제별 커밋 5개로 나눠 함께 올렸다. `AGENTS.md`·`CLAUDE.md`·`scripts/` 3개·루트 스크린샷은 커밋하지 않았다.
 - **오전 소작업** — 랜딩 로그인 후 "로그아웃" 버튼(하나의 버튼에서 글자·동작만 바꿈), 개인정보 처리방침 첫머리 `김충식(이하 "개인정보 관리자")`·본문 호칭 교체, 운영 주체 상수 `LEGAL.operator`를 김충식으로(약관·푸터·처리방침 13번 반영).
-- **커밋하지 않은 변경** — 미커밋 수정이 섞여 있던 `frontend/app/page.tsx`, 헤드리스 6개, 이 일지, 오전 소작업 파일(`privacy/page.tsx`·`lib/legal.ts`·`day-screen-vn-shots.cjs`)은 작업 트리에만 있다.
 
 ## 2026-10-01 — ERD 문서 추가 (`docs/erd.md`, 코드 수정 없음)
 
