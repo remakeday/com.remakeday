@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { NightClue, WorldOutcome } from "@/contracts/api";
 import { doomImage, nightClueImage } from "@/lib/imageMap";
+import { preloadImages } from "@/lib/preloadImages";
 import { useVoice } from "@/components/VoicePlayer";
 import { VOICE_CLIPS } from "@/lib/voiceMap";
 import type { VoiceId } from "@/lib/voiceMap";
@@ -52,6 +53,13 @@ export function DoomTransition({
     const src = nightClueImage(id);
     return src ? [src] : [];
   });
+
+  useEffect(() => {
+    if (!outcome) return;
+    preloadImages([doomImage(outcome), ...images]);
+    // images는 mount 시 clue에서 고정 — 연출 중 바뀌지 않는다.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [outcome]);
 
   useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = [];
@@ -109,6 +117,8 @@ export function DoomTransition({
         <img
           src={doomImage(outcome)}
           alt=""
+          decoding="async"
+          fetchPriority="high"
           className={`pointer-events-none absolute inset-0 h-full w-full ${outcome === "closure" ? "object-contain" : "object-cover"} ${
             outcome === "quiet" ? "fade-in-slow opacity-50" : "fade-in opacity-60"
           }`}
@@ -121,6 +131,7 @@ export function DoomTransition({
           key={k}
           src={glitch.src}
           alt=""
+          decoding="async"
           data-night-band
           className="cookie-glitch pointer-events-none absolute inset-0 h-full w-full object-cover"
           style={{ clipPath: `inset(${top}% 0 ${100 - top - height}% 0)` }}

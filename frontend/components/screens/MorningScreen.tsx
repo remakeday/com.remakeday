@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect } from "react";
 import type { DamageLevel } from "@/contracts/api";
-import { damageClass, morningImage } from "@/lib/imageMap";
+import { damageClass, dayWarmImages, morningImage } from "@/lib/imageMap";
+import { preloadImages } from "@/lib/preloadImages";
 
 /** 문장 종결 뒤 줄바꿈 — 모바일에서 어절이 잘리지 않게 문장 단위로 나눈다. */
 function breakSentences(text: string): string {
@@ -32,6 +34,10 @@ export function MorningScreen({
   loopN: number;
   onContinue: () => void;
 }) {
+  useEffect(() => {
+    preloadImages(dayWarmImages(1));
+  }, []);
+
   return (
     <div className="min-h-dvh w-full overflow-hidden bg-paper">
       <button
@@ -44,6 +50,8 @@ export function MorningScreen({
         <img
           src={morningImage(damageLevel, loopN)}
           alt=""
+          decoding="async"
+          fetchPriority="high"
           className={`pointer-events-none absolute inset-0 h-full w-full object-contain opacity-30 ${damageClass(damageLevel)}`}
         />
         <div className="fade-in-slow relative z-10 flex w-full max-w-md flex-col items-center gap-8">

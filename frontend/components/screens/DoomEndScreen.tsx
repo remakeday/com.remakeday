@@ -18,6 +18,8 @@ export function DoomEndScreen({
       <img
         src={DOOM_END_IMAGE}
         alt=""
+        decoding="async"
+        fetchPriority="high"
         className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-70"
       />
       <div className="fade-in-slow relative z-10 flex flex-col items-center gap-10 text-center [text-shadow:0_1px_10px_rgba(0,0,0,0.95)]">

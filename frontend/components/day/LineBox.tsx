@@ -62,6 +62,7 @@ function ChatLine({ line, text, typing, hold }: { line: DisplayLine; text: strin
         src={portraitSrc}
         alt=""
         aria-hidden="true"
+        decoding="async"
         className="mt-0.5 h-9 w-9 shrink-0 rounded-ui border border-ink/25 object-cover object-top"
       />
       {body}

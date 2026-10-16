@@ -26,6 +26,7 @@ export function ObservationCard({
         <img
           src={src}
           alt={image?.caption ?? ""}
+          decoding="async"
           className={`${compact ? "h-20" : "max-h-56"} w-full object-contain bg-ink/5`}
         />
       )}

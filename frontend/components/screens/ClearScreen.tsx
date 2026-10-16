@@ -21,7 +21,7 @@ export function ClearScreen({
   return (
     <div className="relative min-h-dvh overflow-hidden bg-void px-6 py-12 text-paper">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={clearImage(result.total)} alt=""
+      <img src={clearImage(result.total)} alt="" decoding="async" fetchPriority="high"
         className="pointer-events-none fixed inset-0 h-full w-full object-cover opacity-30" />
       <div className="fade-in-slow relative z-10 mx-auto flex w-full max-w-2xl flex-col items-center gap-8">
         {stage === "ending" && (

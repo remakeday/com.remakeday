@@ -1,7 +1,11 @@
-import type { DamageLevel, Illustration } from "@/contracts/api";
-import { beatImage, nightClueImage, damageClass } from "@/lib/imageMap";
+"use client";
 
-/** 대사창 위의 장면 그림. 줄의 image_id에 맞춘 선택은 낮 화면이 맡는다. */
+import { useEffect } from "react";
+import type { DamageLevel, Illustration } from "@/contracts/api";
+import { beatImage, dayWarmImages, nightClueImage, damageClass } from "@/lib/imageMap";
+import { preloadImages } from "@/lib/preloadImages";
+
+/** 대사창 위의 장면 그림. 줄별 image_id에 맞춘 선택은 낮 화면이 맡는다. */
 export function SceneIntro({ beat, damageLevel, illustrations, index, lineIllustration, disabled, onSelect }: {
   beat: number;
   damageLevel: DamageLevel;
@@ -14,13 +18,31 @@ export function SceneIntro({ beat, damageLevel, illustrations, index, lineIllust
   const illustration = lineIllustration ?? illustrations[index];
   const src = illustration ? nightClueImage(illustration.image_id) : null;
 
+  useEffect(() => {
+    const nextBeat = Math.min(6, beat + 1);
+    const clueSrcs = illustrations
+      .map((item) => nightClueImage(item.image_id))
+      .filter((item): item is string => Boolean(item));
+    preloadImages([
+      ...dayWarmImages(beat),
+      beatImage(nextBeat),
+      ...clueSrcs,
+    ]);
+  }, [beat, illustrations]);
+
   return (
     <div className="flex h-full min-h-0 flex-col">
       <div className="min-h-32 flex-1 overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img key={`${beat}-${illustration?.image_id ?? index}`} src={src ?? beatImage(beat)} alt={src ? illustration.caption : ""}
+        <img
+          key={`${beat}-${illustration?.image_id ?? index}`}
+          src={src ?? beatImage(beat)}
+          alt={src ? illustration.caption : ""}
+          decoding="async"
+          fetchPriority="high"
           style={lineIllustration ? { animationIterationCount: 11 } : undefined}
-          className={`${lineIllustration ? "cookie-glitch" : "fade-in"} h-full w-full object-contain object-top ${damageClass(damageLevel)} ${damageLevel >= 3 ? "opacity-80" : ""}`} />
+          className={`${lineIllustration ? "cookie-glitch" : "fade-in"} h-full w-full object-contain object-top ${damageClass(damageLevel)} ${damageLevel >= 3 ? "opacity-80" : ""}`}
+        />
       </div>
       {src && (
         <div className="shrink-0 border-t border-ink/10 bg-paper/90 px-4 py-2 text-center backdrop-blur-sm">

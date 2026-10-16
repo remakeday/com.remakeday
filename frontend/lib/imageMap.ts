@@ -4,8 +4,7 @@
  * LLM 출력(자유 텍스트)은 절대 이미지 선택에 관여하지 않는다.
  *
  * 근거 문서: docs/REMAKE_DAY_이미지제작서_v1.md (A~M군), 쿠키12종.md (N군)
- * 실제 파일: public/assets/{ID}.png — 문서의 img_{ID}_{slug}.png 대신
- *            실제 제공된 파일명이 {ID}.png 이므로 실제 파일 기준으로 매핑한다.
+ * 실제 파일: public/assets/{ID}.webp — 표시 해상도에 맞게 리사이즈·WebP 압축본.
  * D군(손상 변형 12장)은 실제 파일이 없으므로 C군 원본 + CSS 클래스로 대체한다.
  */
 
@@ -13,7 +12,7 @@ import type { DamageLevel, Mood, WorldOutcome } from "@/contracts/api";
 
 const ASSET = "/assets";
 
-const img = (id: string): string => `${ASSET}/${id}.png`;
+const img = (id: string): string => `${ASSET}/${id}.webp`;
 
 /** 진입 화면 (9:16) */
 export const ENTRY_IMAGE = img("A01");
@@ -58,28 +57,28 @@ export function beatImage(beat: number): string {
 
 /** 시나리오가 현재 비트에 지정한 단서만 표시한다. 알 수 없는 ID는 기존 배경을 쓴다. */
 const CLUE_IMAGES: Record<string, string> = {
-  "clue-01": `${ASSET}/clues/C01-breakfast-clue-v2.png`,
-  "clue-02": `${ASSET}/clues/clue-02-chaeyeon-checkup-reaction-v1.png`,
-  "clue-03": `${ASSET}/clues/clue-03-after-checkup-v1.png`,
-  "clue-04": `${ASSET}/clues/clue-04-evening-trays-v1.png`,
-  "clue-05": `${ASSET}/clues/clue-05-chungsik-empty-bunk-v1.png`,
-  "clue-06": `${ASSET}/clues/clue-06-zone-closure-broadcast-v1.png`,
-  "clue-07": `${ASSET}/clues/clue-07-manager-ration-order-v1.png`,
-  "clue-08": `${ASSET}/clues/clue-08-minseok-tray-record-v1.png`,
-  "clue-09": `${ASSET}/clues/clue-09-minseok-broadcast-approach-v1.png`,
-  "clue-10": `${ASSET}/clues/clue-10-eunsang-rumor-path-v1.png`,
-  "clue-11": `${ASSET}/clues/clue-11-jun-band-observation-v1.png`,
-  "clue-12": `${ASSET}/clues/clue-12-chaeyeon-checkup-route-v1.png`,
+  "clue-01": `${ASSET}/clues/C01-breakfast-clue-v2.webp`,
+  "clue-02": `${ASSET}/clues/clue-02-chaeyeon-checkup-reaction-v1.webp`,
+  "clue-03": `${ASSET}/clues/clue-03-after-checkup-v1.webp`,
+  "clue-04": `${ASSET}/clues/clue-04-evening-trays-v1.webp`,
+  "clue-05": `${ASSET}/clues/clue-05-chungsik-empty-bunk-v1.webp`,
+  "clue-06": `${ASSET}/clues/clue-06-zone-closure-broadcast-v1.webp`,
+  "clue-07": `${ASSET}/clues/clue-07-manager-ration-order-v1.webp`,
+  "clue-08": `${ASSET}/clues/clue-08-minseok-tray-record-v1.webp`,
+  "clue-09": `${ASSET}/clues/clue-09-minseok-broadcast-approach-v1.webp`,
+  "clue-10": `${ASSET}/clues/clue-10-eunsang-rumor-path-v1.webp`,
+  "clue-11": `${ASSET}/clues/clue-11-jun-band-observation-v1.webp`,
+  "clue-12": `${ASSET}/clues/clue-12-chaeyeon-checkup-route-v1.webp`,
   // 원숭이손 소원 장면·반대 사건 — 스펙 §3 이미지 표, 이미지제작서 원숭이손Q군 v2.
   // Q02·Q08은 조건부 재사용 판단에서 v2로 교체(ID 유지). Q05·Q07은 새 소원에서 쓰지 않아 보관.
-  Q02: `${ASSET}/clues/Q02-evening-two-blankets-v2.png`,
-  Q03: `${ASSET}/clues/Q03-eunsang-silent-corner-v1.png`,
-  Q04: `${ASSET}/clues/Q04-minseok-reports-eunsang-v2.png`,
-  Q06: `${ASSET}/clues/Q06-notebook-closed-v1.png`,
-  Q08: `${ASSET}/clues/Q08-eunsang-number-rumor-v2.png`,
-  Q09: `${ASSET}/clues/Q09-chaeyeon-empty-tray-v1.png`,
-  Q10: `${ASSET}/clues/Q10-cough-after-lights-out-v1.png`,
-  Q11: `${ASSET}/clues/Q11-band-matches-bunk-mark-v1.png`,
+  Q02: `${ASSET}/clues/Q02-evening-two-blankets-v2.webp`,
+  Q03: `${ASSET}/clues/Q03-eunsang-silent-corner-v1.webp`,
+  Q04: `${ASSET}/clues/Q04-minseok-reports-eunsang-v2.webp`,
+  Q06: `${ASSET}/clues/Q06-notebook-closed-v1.webp`,
+  Q08: `${ASSET}/clues/Q08-eunsang-number-rumor-v2.webp`,
+  Q09: `${ASSET}/clues/Q09-chaeyeon-empty-tray-v1.webp`,
+  Q10: `${ASSET}/clues/Q10-cough-after-lights-out-v1.webp`,
+  Q11: `${ASSET}/clues/Q11-band-matches-bunk-mark-v1.webp`,
 };
 
 export function clueImage(imageId: string): string | null {
@@ -115,7 +114,7 @@ export function npcImage(code: string, _mood: Mood): string | null {
 const OUTCOME_IMAGE: Record<WorldOutcome, string> = {
   truck: img("H01"),
   quiet: img("H02"),
-  closure: `${ASSET}/clues/clue-06-zone-closure-broadcast-v1.png`,
+  closure: `${ASSET}/clues/clue-06-zone-closure-broadcast-v1.webp`,
 };
 
 export function doomImage(outcome: WorldOutcome): string {
@@ -156,4 +155,12 @@ export function cookieImage(cell: string, level: 1 | 2 | 3): string | null {
   if (base === undefined) return null;
   const n = base + level;
   return img(`N${String(n).padStart(2, "0")}`);
+}
+
+/** 낮 화면에서 바로 쓰는 핵심 자산 — 아침→낮 전환 전에 데운다. */
+export function dayWarmImages(beat: number): string[] {
+  const portraits = ["chaeyeon", "minseok", "eunsang", "jun"]
+    .map((code) => npcImage(code, "calm"))
+    .filter((src): src is string => Boolean(src));
+  return [beatImage(beat), MANAGER_IMAGE, PAW_IMAGE, ...portraits];
 }
