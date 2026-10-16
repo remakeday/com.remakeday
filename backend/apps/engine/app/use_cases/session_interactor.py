@@ -15,6 +15,10 @@ class DailyCapReached(Exception):
     pass
 
 
+class UnknownUser(Exception):
+    """세션은 유효한데 users 행이 없다(탈퇴한 계정에 남은 쿠키) — 행을 다시 만들지 않는다. 라우터가 401로 매핑한다."""
+
+
 class SessionInteractor:
     def __init__(self, *, attempts, event_log, scenario, users,
                  user_daily_attempts: int, daily_attempt_cap: int) -> None:
@@ -26,14 +30,14 @@ class SessionInteractor:
         self._daily_attempt_cap = daily_attempt_cap
 
     def _resolve_user_id(self, user: SessionUserDTO) -> UUID:
+        """users 행은 로그인할 때 만들어진다(Google 콜백·개발 계정 로그인). 여기서는 찾기만 한다.
+        예외는 GUARD_AUTH=off의 sub "dev" — 로그인 단계가 없어 첫 판에서 행을 만든다."""
         existing = self._users.get_by_sub(user.sub)
         if existing is not None:
             return existing.id
-        if user.sub == "dev":
-            profile = GoogleProfileDTO(sub="dev", email="dev@local", name="dev")
-        else:
-            profile = GoogleProfileDTO(sub=user.sub, email=user.email, name=user.name, picture=user.picture)
-        return self._users.upsert_from_google(profile).id
+        if user.sub != "dev":
+            raise UnknownUser()
+        return self._users.upsert_from_google(GoogleProfileDTO(sub="dev", email="dev@local", name="dev")).id
 
     def start(self, prior_attempt_id: UUID | None, user: SessionUserDTO, ip_hash: str) -> dict:
         user_id = self._resolve_user_id(user)

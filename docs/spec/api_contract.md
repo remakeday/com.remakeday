@@ -8,6 +8,7 @@
 req: `{prior_attempt_id?: string}` (UUID 문자열 — 형식이 아니면 422)
 res: `{attempt_id: string, attempt_n: number, entry_lines: string[3], prior_cell_results: CellScores|null}`
 - `prior_attempt_id`는 요청 사용자의 판일 때만 이어진다. 남의 판 ID는 없는 판처럼 무시한다 — 에러 없이 200, 새 판은 `attempt_n: 1`, `prior_cell_results: null` (F26).
+- 세션은 유효한데 users 행이 없으면(탈퇴한 계정의 남은 쿠키) 401 `{"detail":"로그인이 필요하다"}`. `GUARD_AUTH=off`의 sub `"dev"`는 첫 판에서 행을 만든다.
 
 ### POST /sessions/{attempt_id}/loops
 res: `{loop_id: string, loop_n: number, morning_text: string, damage_level: 0|1|2|3, budget_left: number, beat: 1, beat_title: string, narration: string, broadcast: string|null, illustrations: Illustration[], aftermath: string|null, lines: Line[]}`
@@ -238,6 +239,14 @@ res: `{db}` — `db`는 `ok | error`. 공개 경로(api.remakeday.com)라 기동
 - `POST /sessions`의 `prior_attempt_id`가 남의 판이면 없는 판처럼 무시한다(1회차, `prior_cell_results: null`).
 - `prior_attempt_id`가 UUID 형식이 아니면(빈 문자열 포함) **422**(FastAPI 기본 검증 에러)이고 판을 만들지 않는다. 형식 검사는 판 존재 여부와 무관해 아무것도 흘리지 않으므로 무시 대신 요청 오류로 돌려준다. 이어하지 않을 때는 필드를 빼거나 `null`로 보낸다.
 - `GUARD_AUTH=off`면 모든 요청이 sub `"dev"` 한 사용자로 처리되므로, 그 상태에서 만든 판만 열리고 로그인 사용자의 판은 404다.
+
+### DELETE /api/v1/auth/me — 회원탈퇴 (2026-10-16)
+
+`rd_session` 쿠키의 사용자 한 명의 데이터를 **한 트랜잭션에서** 지우고 **204** + `rd_session` 쿠키 삭제. 쿠키가 없거나 무효면 401 `{"detail":"로그인되어 있지 않습니다"}`. 쿠키는 유효한데 users 행이 이미 없으면 그대로 204.
+
+삭제 순서(FK에 CASCADE가 없다): `nights` → `npc_states` → `loops` → `notes`·`rules` → `survey_votes`(user_id 또는 판 ID) → `events`(session_id ∈ 그 사용자의 판 ID) → `events`(`type='guard'`, `payload.user_sub` = 그 사용자의 sub) → `attempts` → `users`. 중간에 실패하면 아무것도 지우지 않는다.
+
+세션 토큰은 서명형이라 탈퇴 뒤에도 TTL 동안 검증을 통과한다. 하지만 users 행은 로그인할 때만 만들어지므로, 남은 쿠키로 `POST /sessions`를 부르면 **401** `{"detail":"로그인이 필요하다"}`이고 계정이 되살아나지 않는다(`GUARD_AUTH=off`의 sub `"dev"`만 첫 판에서 행을 만든다).
 
 ### POST /api/v1/auth/dev/login (개발 계정, 2026-09-20까지)
 

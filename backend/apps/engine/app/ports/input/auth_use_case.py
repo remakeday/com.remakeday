@@ -23,3 +23,7 @@ class AuthUseCase(Protocol):
     def dev_login(self, account_id: str, password: str) -> LoginResultDTO | None:
         """개발 계정으로 로그인한다. 개발 계정이 없거나 불일치면 None."""
         ...
+
+    def withdraw(self, user: SessionUserDTO) -> None:
+        """회원탈퇴 — 세션 사용자의 모든 데이터를 지운다. 이미 없는 사용자면 아무 일도 하지 않는다."""
+        ...
