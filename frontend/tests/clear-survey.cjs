@@ -97,7 +97,8 @@ async function reachSurvey(page) {
           if (url.port !== '8500') return route.continue();
           const key = `${request.method()} ${url.pathname}`;
           let body, status = 200;
-          if (key === `POST ${surveyPath}`) {
+          if (key === 'GET /api/v1/me/attempts/active') body = { attempt: null, resume_phase: null, loop: null, night: null, today_remaining: 3, daily_limit: 3 };
+          else if (key === `POST ${surveyPath}`) {
             surveyRequests.push(request.postDataJSON());
             // Leave the request intercepted without fulfilling, aborting, or continuing it.
             if (scenario === 'hanging-request') return;

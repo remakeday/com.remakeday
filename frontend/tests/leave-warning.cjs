@@ -1,4 +1,4 @@
-// 판 진행 중 beforeunload 이탈 경고. 진입·회고에서는 없다. 이어받기는 없다.
+// 판 진행 중 beforeunload 이탈 경고. 진입·회고에서는 없다. 판은 이어하기로 다시 열 수 있다.
 const { chromium } = require('playwright');
 const assert = require('node:assert/strict');
 const { line, readAll } = require('./vn-helpers.cjs');
@@ -22,7 +22,8 @@ const intro = [line('scene', narration), line('system', '주변을 살핀다.')]
       if (url.port !== '8500') return route.continue();
       const path = url.pathname;
       let body;
-      if (path === '/sessions') body = { attempt_id: 'leave', attempt_n: 1, entry_lines: ['하루를 관찰한다.'], prior_cell_results: null };
+      if (path === '/api/v1/me/attempts/active') body = { attempt: null, resume_phase: null, loop: null, night: null, today_remaining: 3, daily_limit: 3 };
+      else if (path === '/sessions') body = { attempt_id: 'leave', attempt_n: 1, entry_lines: ['하루를 관찰한다.'], prior_cell_results: null };
       else if (path === '/sessions/leave/loops') body = {
         loop_id: 'leave-loop', loop_n: 1, morning_text: '아침이다.', damage_level: 0,
         budget_left: 6, beat: 1, beat_title: '아침 배급', narration, broadcast: null,
@@ -73,7 +74,7 @@ const intro = [line('scene', narration), line('system', '주변을 살핀다.')]
       return { set, value: event.returnValue };
     });
     assert.equal(listenersOnDay.set, true, 'day arms leave warning');
-    assert.match(String(listenersOnDay.value), /사라집니다/);
+    assert.match(String(listenersOnDay.value), /다시 들어오면 이어서 할 수 있습니다/);
 
     assert.deepEqual(errors, []);
     console.log('PASS leave-warning: entry silent, day beforeunload armed');
