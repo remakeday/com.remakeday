@@ -124,6 +124,25 @@ res: `{ok: boolean, rule_label: string|null, conflicts: string[], reason: string
 - ok=true 후 다음 회차 시작 가능 (POST /sessions/{id}/loops)
 - 같은 밤의 질문·규칙 선택이 처리 중이면 곧바로 409 `request_in_flight` (위 질문 절과 같은 잠금)
 
+## 이어하기 (2026-10-16)
+
+### GET /api/v1/me/attempts/active — 진행 중인 판
+
+로그인 필요(`require_user`, 비로그인 401). 판 ID가 경로에 없어 판 주인 확인 대신 세션 사용자의 판 중에서만 찾는다.
+진행 중인 판 = 그 사용자의 가장 최근 판이 `status='active'`일 때만 그 판. 최신 판이 `closed`·`abandoned`면 `attempt: null`이고, 그보다 오래된 active 판은 다시 잡지도 닫지도 않는다.
+
+res(키는 항상 6개):
+`{attempt: CreateSessionRes|null, resume_phase: "entry"|"day"|"night"|"score"|"god"|null, loop: StartLoopRes|null, night: ResumeNight|null, today_remaining: number, daily_limit: number}`
+
+- `resume_phase`는 최신 회차 상태로 정한다: 회차 없음·`closed` → `entry`, `day` → `day`, `night_pending`·`night_draft` → `night`, `scored` → `score`, `intervention` → `god`.
+- `loop`는 회차가 없을 때만 `null`. `day`면 현재 비트 장면(다시 실행해도 기록·세계 효과가 늘지 않는다, 이미 실행된 규칙의 설명·부작용 줄은 공개 기록에서 되살린다). 그 밖의 단계는 장면 필드가 빈 회차 정보. `ambient`·`aftermath`·`note_found`는 항상 `null`.
+- `ResumeNight` = `{night_id: string|null, claims: string[], is_question: boolean[], questions_left: number, submit: SubmitRes|null}`. `night_id`가 없으면 정리 전(밤 글쓰기), 있으면 확인 화면부터. `submit`은 제출한 밤만 — 저장된 제출 응답 + 이미 한 질문을 뺀 `suggested_questions`.
+- `today_remaining` = `max(0, USER_DAILY_ATTEMPTS - 오늘 만든 판 수)`. 포기한 판도 센다.
+
+### POST /api/v1/me/attempts/active/abandon — 진행 중인 판 포기
+
+로그인 필요. 진행 중인 판을 `abandoned`로 바꾸고 **204**(본문 없음). 진행 중인 판이 없어도 204. 포기한 판은 다시 이어할 수 없고(`POST /sessions/{id}/loops` 409), 그날 판 수에는 남는다. 새 판은 이어서 `POST /sessions`로 만든다(한도면 기존 403 `daily_attempt_limit`).
+
 ## 판 종료 후 (P5)
 
 ### GET /attempts/{attempt_id}/harness — 5회차 제출 완료·판 종료 시 점수 무관 200, 아니면 403
@@ -188,6 +207,8 @@ res: `{db}` — `db`는 `ok | error`. 공개 경로(api.remakeday.com)라 기동
 | `GET /health` | 불필요 | — | — |
 | `/api/v1/auth/*` | 라우트별(아래 개발 계정 절 등) | — | — |
 | `POST /sessions` | 필요 | — (남의 `prior_attempt_id`는 무시) | `ip_sessions_per_minute` |
+| `GET /api/v1/me/attempts/active` | 필요 | — (세션 사용자의 판만 후보) | — |
+| `POST /api/v1/me/attempts/active/abandon` | 필요 | — (세션 사용자의 판만 후보) | — |
 | `POST /sessions/{attempt_id}/loops` | 필요 | 필요 | — |
 | `POST /loops/{loop_id}/utterances` | 필요 | 필요 | `ip_actions_per_minute` |
 | `POST /loops/{loop_id}/beats/next` | 필요 | 필요 | — |

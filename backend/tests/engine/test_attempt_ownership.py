@@ -309,6 +309,9 @@ PUBLIC_ROUTES = {
     ("POST", "/api/v1/auth/dev/login"),
     ("GET", "/api/v1/auth/me"),
     ("POST", "/api/v1/auth/logout"),
+    # 로그인만 — 판 ID 없이 세션 사용자 자신의 진행 중인 판을 다룬다(이어하기, 2026-10-16). 비로그인 401은 test_resume_api.py
+    ("GET", "/api/v1/me/attempts/active"),
+    ("POST", "/api/v1/me/attempts/active/abandon"),
     # FastAPI 문서 라우트 — 개발(로컬) 설정에만 있다. 운영 설정에서 없는지는 test_public_deploy_has_no_api_docs_routes.
     ("GET", "/openapi.json"),
     ("GET", "/docs"),

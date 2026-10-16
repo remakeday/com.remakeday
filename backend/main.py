@@ -6,6 +6,7 @@ from fastapi.responses import JSONResponse
 
 from apps.engine.adapter.inbound.api.v1.auth_router import router as auth_router
 from apps.engine.adapter.inbound.api.v1.game_router import router as game_router
+from apps.engine.adapter.inbound.api.v1.me_router import router as me_router
 from apps.engine.adapter.inbound.api.v1.health_router import router as health_router
 from apps.engine.adapter.outbound.repositories.scenario_seed_repository import (
     ScenarioSeedRepository,
@@ -92,3 +93,4 @@ app.add_middleware(
 app.include_router(health_router)
 app.include_router(game_router)
 app.include_router(auth_router)
+app.include_router(me_router)
