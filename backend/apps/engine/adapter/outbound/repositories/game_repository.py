@@ -49,6 +49,16 @@ class AttemptRepository:
             select(AttemptOrm).where(AttemptOrm.id == attempt_id, AttemptOrm.user_id == user_id)
         ).first()
 
+    def latest_active(self, user_id: uuid.UUID) -> AttemptOrm | None:
+        """진행 중인 판 — 그 사용자의 가장 최근 판이 active일 때만 그 판(설계 2026-10-16 §1).
+        최신 판이 closed·abandoned면 None — 그보다 오래된 active 판은 다시 잡지도, 닫지도 않는다."""
+        latest = self._s.scalars(
+            select(AttemptOrm)
+            .where(AttemptOrm.user_id == user_id)
+            .order_by(AttemptOrm.created_at.desc())
+        ).first()
+        return latest if latest is not None and latest.status == "active" else None
+
     def count_today(self, user_id: uuid.UUID, now: datetime) -> int:
         start = kst_day_start(now)
         stmt = (
