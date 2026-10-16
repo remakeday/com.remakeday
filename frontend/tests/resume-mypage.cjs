@@ -35,7 +35,7 @@ function snapshot(phase, fields = {}) {
 }
 
 /** 페이지 하나와 가짜 API — calls에 "메서드 경로"가 순서대로 쌓인다. 끝나면 이 페이지만 닫는다. */
-async function withPage(browser, { active, me = 200, failActive = false }, run) {
+async function withPage(browser, { active, me = 200, activeStatus = 200, abandonDelay = 0 }, run) {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
   page.setDefaultTimeout(15000);
   const calls = [];
@@ -53,8 +53,11 @@ async function withPage(browser, { active, me = 200, failActive = false }, run) 
     const reply = (status, json) => (json === undefined
       ? route.fulfill({ status, body: '', headers: CORS })
       : route.fulfill({ status, json, headers: CORS }));
-    if (key === 'GET /api/v1/me/attempts/active') return failActive ? reply(404, { detail: 'Not Found' }) : reply(200, active);
-    if (key === 'POST /api/v1/me/attempts/active/abandon') return reply(204);
+    if (key === 'GET /api/v1/me/attempts/active') return reply(activeStatus, active);
+    if (key === 'POST /api/v1/me/attempts/active/abandon') {
+      if (abandonDelay) await new Promise((resolve) => setTimeout(resolve, abandonDelay));
+      return reply(204);
+    }
     if (key === 'POST /sessions') return reply(200, { ...ATTEMPT, attempt_id: 'fresh' });
     if (key === 'GET /api/v1/auth/me') {
       return me === 200 ? reply(200, { sub: 'g-1', email: 'a@x', name: 'a', picture: '' }) : reply(401, { detail: '로그인되어 있지 않습니다' });
@@ -91,8 +94,9 @@ const CHECKS = [
     assert.equal(await page.getByRole('button', { name: '다시 시작하기', exact: true }).isDisabled(), true);
     assert.equal(await page.getByRole('button', { name: '이어하기', exact: true }).isDisabled(), false);
   })],
-  ['restartOnceOnDoubleClick', (browser) => withPage(browser, { active: snapshot('day', { loop: DAY_LOOP }) }, async (page, calls) => {
+  ['restartOnceOnDoubleClick', (browser) => withPage(browser, { active: snapshot('day', { loop: DAY_LOOP }), abandonDelay: 500 }, async (page, calls) => {
     await page.goto(`${BASE}/play`);
+    // 두 번째 클릭도 abandon 응답 전에 닿도록 응답을 지연한다.
     await page.getByRole('button', { name: '다시 시작하기', exact: true }).dblclick();
     await page.getByRole('button', { name: '시작', exact: true, disabled: false }).waitFor({ state: 'visible' });
     assert.deepEqual(calls.filter((c) => c.startsWith('POST ')), ['POST /api/v1/me/attempts/active/abandon', 'POST /sessions']);
@@ -108,10 +112,25 @@ const CHECKS = [
     assert.equal(await page.getByRole('button', { name: '이어하기', exact: true }).count(), 0);
     assert.ok(!calls.includes('POST /sessions'), '회차 없는 판은 묻지 않고 그대로 쓴다');
   })],
-  ['fallsBackWhenActiveLookupFails', (browser) => withPage(browser, { active: NONE, failActive: true }, async (page, calls) => {
+  ['fallsBackWhenActiveLookupFails', (browser) => withPage(browser, { active: { detail: 'Not Found' }, activeStatus: 404 }, async (page, calls) => {
     await page.goto(`${BASE}/play`);
     await page.getByRole('button', { name: '시작', exact: true, disabled: false }).waitFor({ state: 'visible' });
     assert.ok(calls.includes('POST /sessions'), '조회 API가 없으면 예전처럼 새 판');
+  })],
+  ['fallsBackWhenActiveLookupReturns500', (browser) => withPage(browser, { active: { detail: 'Internal Server Error' }, activeStatus: 500 }, async (page, calls) => {
+    await page.goto(`${BASE}/play`);
+    await page.getByRole('button', { name: '시작', exact: true, disabled: false }).waitFor({ state: 'visible' });
+    assert.equal(calls.filter((c) => c === 'POST /sessions').length, 1, '조회가 500이면 새 판을 한 번 만든다');
+  })],
+  ['activeLookupDailyAttemptLimitShowsGuard', (browser) => withPage(browser, { active: { code: 'daily_attempt_limit', detail: '오늘은 여기까지. 내일 다시 시작할 수 있다.' }, activeStatus: 403 }, async (page, calls) => {
+    await page.goto(`${BASE}/play`);
+    await page.getByText('오늘은 여기까지', { exact: false }).waitFor();
+    assert.equal(calls.filter((c) => c === 'POST /sessions').length, 0, '조회가 하루 한도 허들이면 새 판을 만들지 않는다');
+  })],
+  ['activeLookupDailyCapShowsGuard', (browser) => withPage(browser, { active: { code: 'daily_cap', detail: '오늘 정원이 마감됐다.' }, activeStatus: 503 }, async (page, calls) => {
+    await page.goto(`${BASE}/play`);
+    await page.getByText('정원이 마감', { exact: false }).waitFor();
+    assert.equal(calls.filter((c) => c === 'POST /sessions').length, 0, '조회가 정원 마감 허들이면 새 판을 만들지 않는다');
   })],
   ['night draft resumes at the confirm screen', (browser) => withPage(browser, { active: snapshot('night', { loop: loopShell({ beat: 6 }), night: NIGHT }) }, async (page) => {
     await page.goto(`${BASE}/play?resume=1`);
