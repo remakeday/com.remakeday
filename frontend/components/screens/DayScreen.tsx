@@ -14,6 +14,8 @@ import { LineBox } from "@/components/day/LineBox";
 import { PawPopup } from "@/components/day/PawPopup";
 import { SceneIntro } from "@/components/day/SceneIntro";
 import { dayModeReducer, initialDayMode } from "@/components/day/dayMode";
+import { NIGHT_IMAGE } from "@/lib/imageMap";
+import { preloadImages } from "@/lib/preloadImages";
 
 interface PendingUtterance {
   loopId: string;
@@ -82,6 +84,10 @@ export function DayScreen({
   const dialogue = useRef<DialoguePair[]>([]);
   const npcRefreshId = useRef(0);
   const pawChoice = useRef(false);
+
+  useEffect(() => {
+    if (dayDone) preloadImages([NIGHT_IMAGE]);
+  }, [dayDone]);
 
   const appendLines = (lines: DisplayLine[]) => {
     if (lines.length === 0) return;

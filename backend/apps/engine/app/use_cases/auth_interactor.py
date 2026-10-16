@@ -58,6 +58,12 @@ class AuthInteractor:
                 return None
         return user
 
+    def withdraw(self, user: SessionUserDTO) -> None:
+        stored = self._users.get_by_sub(user.sub)
+        if stored is None:
+            return
+        self._users.delete_with_data(stored.id, user.sub)
+
     def dev_login(self, account_id: str, password: str) -> LoginResultDTO | None:
         dev = self._dev_account
         if dev is None:

@@ -67,7 +67,8 @@ async function testRestartGuard(browser) {
     if (url.port !== '8500') return route.continue();
     const p = url.pathname;
     let body, status = 200;
-    if (p === '/sessions') {
+    if (p === '/api/v1/me/attempts/active') body = { attempt: null, resume_phase: null, loop: null, night: null, today_remaining: 3, daily_limit: 3 };
+    else if (p === '/sessions') {
       sessionCalls++;
       if (sessionCalls === 1) {
         body = { attempt_id: 'test', attempt_n: 1, entry_lines: ['세계가 이상하다.'], prior_cell_results: null };
@@ -158,6 +159,12 @@ async function testRestartGuard(browser) {
       await page.route('**/*', async route => {
         const url = new URL(route.request().url());
         if (url.port !== '8500') return route.continue();
+        if (url.pathname === '/api/v1/me/attempts/active') {
+          return route.fulfill({
+            json: { attempt: null, resume_phase: null, loop: null, night: null, today_remaining: 3, daily_limit: 3 },
+            headers: { 'access-control-allow-origin': 'http://localhost:3500', 'access-control-allow-credentials': 'true' },
+          });
+        }
         if (url.pathname === '/sessions') {
           return route.fulfill({
             status: testCase.status,

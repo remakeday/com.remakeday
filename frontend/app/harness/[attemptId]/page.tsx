@@ -11,7 +11,7 @@ export default function HarnessPage({ params }: { params: Promise<{ attemptId: s
   return (
     <main className="relative min-h-dvh bg-void px-6 py-12 text-paper">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={HARNESS_IMAGE} alt="" className="pointer-events-none fixed inset-0 h-full w-full object-cover opacity-30" />
+      <img src={HARNESS_IMAGE} alt="" decoding="async" className="pointer-events-none fixed inset-0 h-full w-full object-cover opacity-30" />
       <VoicePlayer>
         <div className="relative z-10 mx-auto max-w-2xl"><Retrospective attemptId={attemptId} /></div>
       </VoicePlayer>

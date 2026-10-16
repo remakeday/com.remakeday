@@ -39,7 +39,8 @@ const { line, readAll } = require('./vn-helpers.cjs');
           if (mode === 'clue-failed' && path.endsWith('/MA08.mp3')) return route.abort('failed');
           if (url.port !== '8500') return route.continue();
           let body;
-          if (path === '/sessions') body = { attempt_id: 'voice', attempt_n: 1, entry_lines: ['아침이다.'], prior_cell_results: null };
+          if (path === '/api/v1/me/attempts/active') body = { attempt: null, resume_phase: null, loop: null, night: null, today_remaining: 3, daily_limit: 3 };
+          else if (path === '/sessions') body = { attempt_id: 'voice', attempt_n: 1, entry_lines: ['아침이다.'], prior_cell_results: null };
           else if (path.endsWith('/loops')) body = { loop_id: 'loop', loop_n: 1, morning_text: '아침이다.', damage_level: 0, budget_left: 8, beat: 6, beat_title: '소등 후', narration: '불이 꺼진다.', lines: [line('scene', '불이 꺼진다.'), line('system', '하루를 돌아본다.')], broadcast: null, aftermath: null, active_rules: [], observations: [] };
           else if (path.endsWith('/npcs')) body = { npcs: [{ code: 'chaeyeon', name: '채연', mood: 'calm', uttered: false }] };
           else if (path.endsWith('/beats/next')) body = { beat: 6, beat_title: '소등 후', narration: '불이 꺼진다.', lines: [line('scene', '불이 꺼진다.'), line('system', '하루를 돌아본다.')], broadcast: null, day_done: true, paw_offer: null, note_found: null, ambient: null, observations: [], budget_left: 8 };
@@ -89,7 +90,7 @@ const { line, readAll } = require('./vn-helpers.cjs');
             await playing('MA08');
             const band = page.locator('img[data-night-band]');
             await band.first().waitFor();
-            assert.equal(await band.first().getAttribute('src'), '/assets/P01.png');
+            assert.equal(await band.first().getAttribute('src'), '/assets/P01.webp');
             assert.equal(await band.first().evaluate(el => getComputedStyle(el).animationName), 'cookieJitter', 'bands jitter when motion is allowed');
             await caption.waitFor();
           }

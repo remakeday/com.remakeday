@@ -409,6 +409,31 @@ export interface Metric {
   method: string;
 }
 
+// ── 이어하기 (2026-10-16) ─────────────────────────────
+
+export type ResumePhase = "entry" | "day" | "night" | "score" | "god";
+
+/** 이어하기 밤 데이터 — night_id가 없으면 정리 전(밤 글쓰기), 있으면 확인 화면부터. submit은 제출한 밤만 */
+export interface ResumeNight {
+  night_id: string | null;
+  claims: string[];
+  is_question: boolean[];
+  /** 개입 화면 남은 신의 질문 — 새 밤은 3 */
+  questions_left: number;
+  submit: SubmitRes | null;
+}
+
+export interface ActiveAttemptRes {
+  attempt: CreateSessionRes | null;
+  resume_phase: ResumePhase | null;
+  /** start_loop 응답과 같은 모양. 낮이면 현재 비트 장면, 그 밖의 단계는 장면이 빈 회차 정보. 회차가 없으면 null */
+  loop: StartLoopRes | null;
+  night: ResumeNight | null;
+  /** 오늘 더 만들 수 있는 판 수 — 포기한 판도 센다 */
+  today_remaining: number;
+  daily_limit: number;
+}
+
 // ── 판 종료 후 (P5) ───────────────────────────────────
 
 export interface HarnessRes {
@@ -497,7 +522,7 @@ export class ApiError extends Error {
 }
 
 async function request<T>(
-  method: "GET" | "POST" | "PATCH",
+  method: "GET" | "POST" | "PATCH" | "DELETE",
   path: string,
   body?: unknown,
   extraHeaders: Record<string, string> = {},
@@ -542,6 +567,7 @@ async function request<T>(
     }
     throw new ApiError(res.status, detail, code, retryAfter);
   }
+  if (res.status === 204) return undefined as T; // 본문 없는 성공(포기·탈퇴)
   return (await res.json()) as T;
 }
 
@@ -599,9 +625,16 @@ export const api = {
   sendSurvey: (attemptId: string, req: SurveyReq) =>
     request<SurveyRes>("POST", `/attempts/${attemptId}/survey`, req),
 
+  // 이어하기
+  getActiveAttempt: () =>
+    request<ActiveAttemptRes>("GET", "/api/v1/me/attempts/active"),
+  abandonActiveAttempt: () =>
+    request<void>("POST", "/api/v1/me/attempts/active/abandon"),
+
   // 인증 — Google OAuth 세션
   getMe: () => request<SessionUser>("GET", "/api/v1/auth/me"),
   logout: () => request<{ ok: boolean }>("POST", "/api/v1/auth/logout"),
+  withdraw: () => request<void>("DELETE", "/api/v1/auth/me"),
 };
 
 export interface SessionUser {

@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { api } from "@/contracts/api";
 import type { Note, NoteKind, Observation, PreviousAnswer } from "@/contracts/api";
-import { NIGHT_IMAGE } from "@/lib/imageMap";
+import { GOD_IMAGE, NIGHT_IMAGE } from "@/lib/imageMap";
 import { dedupeByText } from "@/lib/dedupeByText";
+import { preloadImages } from "@/lib/preloadImages";
 import { useApiAction } from "@/lib/useApiAction";
 import { ErrorToast } from "@/components/ErrorToast";
 import { EvidenceGallery } from "@/components/EvidenceGallery";
@@ -72,6 +73,10 @@ export function NightScreen({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loopId]);
 
+  useEffect(() => {
+    preloadImages([NIGHT_IMAGE, GOD_IMAGE]);
+  }, []);
+
   // 기록 목록이 길어지면 제출 버튼이 위로 밀린다 — 300px 넘게 내려갔을 때만 맨 위로 버튼을 보인다
   useEffect(() => {
     if (!notesOpen) {
@@ -126,6 +131,8 @@ export function NightScreen({
       <img
         src={NIGHT_IMAGE}
         alt=""
+        decoding="async"
+        fetchPriority="high"
         className="pointer-events-none fixed inset-0 h-full w-full object-cover object-bottom opacity-30"
       />
       <div inert={galleryOpen ? true : undefined} aria-hidden={galleryOpen ? true : undefined} className="fade-in relative z-10 flex w-full max-w-2xl flex-col gap-6">

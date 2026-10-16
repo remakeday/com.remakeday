@@ -45,6 +45,7 @@ const deferred = () => {
       const url = new URL(route.request().url());
       if (url.port !== '8500') return route.continue();
       const path = url.pathname;
+      if (path === '/api/v1/me/attempts/active') return fulfill(route, { attempt: null, resume_phase: null, loop: null, night: null, today_remaining: 3, daily_limit: 3 });
       if (path === '/sessions') return fulfill(route, {
         attempt_id: 'followup', attempt_n: 1, entry_lines: ['하루를 살핀다.', '다시 묻는다.', '밤에 쓴다.'], prior_cell_results: null,
       });

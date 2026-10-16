@@ -26,7 +26,7 @@ from apps.engine.domain.entities.claim_rules import is_question_claim
 from apps.engine.domain.entities.question_suggestions import suggest_questions
 from apps.engine.domain.entities.rule_rules import Rule, narration_with_rule_note
 from apps.engine.domain.value_objects.event_type import EventType
-from apps.engine.domain.value_objects.game_constants import CELLS, LOOPS_PER_ATTEMPT, MAX_CLAIMS
+from apps.engine.domain.value_objects.game_constants import CELLS, LOOPS_PER_ATTEMPT, MAX_CLAIMS, QUESTIONS_PER_NIGHT
 
 
 class GameStateError(Exception):
@@ -290,6 +290,37 @@ class NightInteractor:
         else:
             lines = list(bundle.ending_lines)
         return lines + list(bundle.ending_outcomes.get(world, []))
+
+    # ── 이어하기 ──────────────────────────────────────────────
+
+    def resume_view(self, loop) -> dict:
+        """이어하기 — 밤·채점·개입 화면이 처음 받는 데이터. 쓰기·모델 호출 없음 (설계 2026-10-16 §2.2).
+        night_id가 없으면 아직 정리 전(밤 글쓰기), 있으면 확인 화면부터. 제출한 밤은 저장된 제출 응답을 쓴다."""
+        night = self._nights.for_loop(loop.id)
+        if night is None:
+            return {"night_id": None, "claims": [], "is_question": [],
+                    "questions_left": QUESTIONS_PER_NIGHT, "submit": None}
+        return {
+            "night_id": str(night.id), "claims": list(night.claims),
+            "is_question": _question_flags(night.claims),
+            "questions_left": night.questions_left,
+            "submit": self._resumed_submit(loop, night) if night.submitted else None,
+        }
+
+    def _resumed_submit(self, loop, night) -> dict:
+        stored = [e.response for e in self._events.query(loop.attempt_id, type=EventType.ANSWER_SCORED, loop_n=loop.loop_n)
+                  if e.response]
+        # 응답 저장(2026-09-18) 전에 제출한 밤 — 개입 화면이 쓰는 점수만 밤 행에서 되살린다.
+        response = stored[-1] if stored else {
+            "total": night.total or 0.0, "passed": bool(night.passed), "loop_n": loop.loop_n,
+            "world_outcome": loop.world_outcome, "is_final": False, "closed_by": None, "cells": None,
+            "cookie": None, "intervention_available": True, "ending_lines": None, "truth_reveal": None,
+            "cell_feedback": None, "wrong_claim_count": 0, "accepted_claims": [], "empty_cells": [],
+            "night_clue": None,
+        }
+        observations = public_observations(self._events, loop.attempt_id, through_loop=loop.loop_n)
+        return {**response, "suggested_questions": suggest_questions(
+            observations, loop_n=loop.loop_n, asked=list(night.questions or []))}
 
     # ── 내부 ──────────────────────────────────────────────────
 

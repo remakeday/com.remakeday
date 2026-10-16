@@ -87,6 +87,24 @@ def _raise_rumor(loops, loop, actor: str) -> None:
 
 _WORLD_EFFECTS = {"flag_actor": _flag_actor, "rumor": _raise_rumor, None: lambda loops, loop, actor: None}
 
+# 이어하기 재실행 때 execute_scene이 다시 만들지 않는 규칙 줄 — 공개 기록 키 접두 → 대사창 줄 종류.
+# 키는 scene_execution의 disclose 키(rule-{비트}-{규칙}, paw-effect-{비트}-{규칙})와 같다.
+_RECORDED_RULE_LINES = {"rule": "statement", "paw-effect": "paw_effect"}
+
+
+def _recorded_rule_lines(loop, lines, observations) -> list[LineDTO]:
+    """이미 실행된 규칙의 설명·부작용 줄은 재실행이 건너뛴다(tests/pure/test_scene_rerun_idempotency.py). 공개 기록에서 되살린다."""
+    shown = {line.observation_id for line in lines}
+    restored = []
+    for o in observations:
+        if o["observation_id"] in shown:
+            continue
+        key = o["observation_id"].removeprefix(f"{loop.id}:")
+        kind = next((k for prefix, k in _RECORDED_RULE_LINES.items() if key.startswith(f"{prefix}-{loop.beat}-")), None)
+        if kind is not None:
+            restored.append(LineDTO(kind=kind, speaker=o["actor"], text=o["text"], observation_id=o["observation_id"]))
+    return restored
+
 
 class GameStateError(Exception):
     """잘못된 상태 전이 — 라우터가 409로 매핑."""
@@ -192,7 +210,6 @@ class LoopInteractor:
             ),
         )
 
-        first = MORNING_SHIFTED if shifted else MORNING_FIRST
         beat1 = execute_scene(self._events, loop, bundle, rule_rows, on_action=self._world_effect(loop))
         observations, note_found = self._disclose_scene(loop, bundle, beat1)
         ambient = self._make_ambient(loop, bundle)
@@ -208,7 +225,7 @@ class LoopInteractor:
         return {
             "loop_id": str(loop.id),
             "loop_n": loop_n,
-            "morning_text": f"{first} {self._scenario.morning_line(damage)}".strip(),
+            "morning_text": self._morning_text(loop),
             "damage_level": damage,
             "budget_left": loop.budget_left,
             "beat": 1,
@@ -221,11 +238,7 @@ class LoopInteractor:
             "note_found": note_found,
             "ambient": ambient,
             "lines": self._scene_lines(loop, beat1, observations, ambient, note_found),
-            "active_rules": [
-                r.shown_reason
-                or f"{r.target}: {r.action} {'금지' if r.effect == 'suppress' else '강제'}"
-                for r in player_visible(rule_rows)  # 숨은 규칙은 보이지 않는다
-            ],
+            "active_rules": self._active_rule_labels(rule_rows),
         }
 
     def _run_planner(self, loop, bundle) -> None:
@@ -856,6 +869,36 @@ class LoopInteractor:
     def _world_effect(self, loop):
         return lambda action: _WORLD_EFFECTS[action.world_effect](self._loops, loop, action.actor)
 
+    # ── 이어하기 ──────────────────────────────────────────────
+
+    def resume_shell(self, loop) -> dict:
+        """이어하기 — start_loop 응답과 같은 모양의 회차 정보. 장면은 비워 둔다(낮이 아닌 단계용).
+        ambient·aftermath·note_found는 되살리지 않는다(설계 2026-10-16 §2.2)."""
+        return {
+            "loop_id": str(loop.id), "loop_n": loop.loop_n, "morning_text": self._morning_text(loop),
+            "damage_level": loop.damage_level, "budget_left": loop.budget_left, "beat": loop.beat,
+            "beat_title": "", "narration": "", "broadcast": None, "illustrations": [],
+            "aftermath": None, "observations": [], "note_found": None, "ambient": None, "lines": [],
+            "active_rules": self._active_rule_labels(self._rules.list(loop.attempt_id)),
+        }
+
+    def resume_day(self, loop) -> dict:
+        """이어하기 — 낮 현재 비트 장면을 다시 그린다. 재실행은 이미 기록된 규칙 실행·관찰을 건너뛰어
+        새 기록·세계 효과를 남기지 않는다. 건너뛴 설명·부작용 줄은 공개 기록에서 되살린다."""
+        bundle = self._scenario.bundle()
+        beat = execute_scene(self._events, loop, bundle, self._rules.list(loop.attempt_id),
+                             on_action=self._world_effect(loop))
+        observations = [o.model_dump() for o in public_observations(self._events, loop.attempt_id)
+                        if o.loop_id == str(loop.id) and o.beat == loop.beat]
+        beat = beat.model_copy(update={"lines": [*beat.lines, *_recorded_rule_lines(loop, beat.lines, observations)]})
+        return {
+            **self.resume_shell(loop),
+            "beat_title": beat.title, "narration": beat.narration, "broadcast": beat.broadcast,
+            "illustrations": [i.model_dump() for i in beat.illustrations],
+            "observations": observations,
+            "lines": self._scene_lines(loop, beat, observations, None, None),
+        }
+
     # ── 조회 ──────────────────────────────────────────────────
 
     def list_notes(self, loop_id: uuid.UUID) -> dict:
@@ -897,6 +940,16 @@ class LoopInteractor:
         return {"npcs": npcs}
 
     # ── 내부 ──────────────────────────────────────────────────
+
+    def _morning_text(self, loop) -> str:
+        first = MORNING_SHIFTED if loop.morning_shifted else MORNING_FIRST
+        return f"{first} {self._scenario.morning_line(loop.damage_level)}".strip()
+
+    @staticmethod
+    def _active_rule_labels(rule_rows) -> list[str]:
+        """오늘 세계에 걸린 규칙의 유저용 문구 — 숨은 규칙은 보이지 않는다."""
+        return [r.shown_reason or f"{r.target}: {r.action} {'금지' if r.effect == 'suppress' else '강제'}"
+                for r in player_visible(rule_rows)]
 
     def _loop_state(self, loop) -> loop_rules.LoopState:
         return loop_rules.LoopState(

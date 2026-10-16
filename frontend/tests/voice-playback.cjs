@@ -31,7 +31,8 @@ const path = require('node:path');
       if (url.port !== '8500') return route.continue();
       const path = url.pathname;
       let body;
-      if (path === '/sessions') body = { attempt_id: 'voice', attempt_n: 1, entry_lines: ['아침이다.'], prior_cell_results: null };
+      if (path === '/api/v1/me/attempts/active') body = { attempt: null, resume_phase: null, loop: null, night: null, today_remaining: 3, daily_limit: 3 };
+      else if (path === '/sessions') body = { attempt_id: 'voice', attempt_n: 1, entry_lines: ['아침이다.'], prior_cell_results: null };
       else if (path.endsWith('/loops')) body = {
         loop_id: 'voice-loop', loop_n: 1, morning_text: '아침이다.', damage_level: 0,
         budget_left: budget, beat, beat_title: '기상', narration: '채연이 배급을 남긴다.',

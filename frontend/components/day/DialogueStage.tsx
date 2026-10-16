@@ -128,6 +128,7 @@ export function DialogueStage({ npcs, selected, ready, disabled, dayDone, budget
             src={outgoing.src}
             alt=""
             aria-hidden="true"
+            decoding="async"
             className={`day-portrait-face is-out pointer-events-none absolute bottom-0 left-0 block ${PORTRAIT_H} w-auto max-w-[17.55rem] rounded-ui object-contain object-left-bottom`}
           />
         )}
@@ -136,6 +137,7 @@ export function DialogueStage({ npcs, selected, ready, disabled, dayDone, budget
           <img
             src={face.src}
             alt={`${face.name} 초상`}
+            decoding="async"
             className={`day-portrait-face block ${PORTRAIT_H} w-auto max-w-[17.55rem] rounded-ui object-contain object-left-bottom ${
               swapping ? "is-in absolute bottom-0 left-0 z-[1]" : "relative z-[1]"
             }`}

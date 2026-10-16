@@ -23,7 +23,7 @@ from apps.engine.app.ports.output.scene_transaction_port import RequestInFlight
 from apps.engine.app.use_cases.loop_interactor import DialogueUnavailable
 from apps.engine.app.use_cases.night_interactor import GameStateError as NightError
 from apps.engine.domain.value_objects.game_constants import MAX_CLAIMS
-from apps.engine.app.use_cases.session_interactor import DailyCapReached, UserDailyLimit
+from apps.engine.app.use_cases.session_interactor import DailyCapReached, UnknownUser, UserDailyLimit
 from apps.engine.dependencies.engine_dependency import (
     get_inspector,
     get_intervention_interactor,
@@ -63,6 +63,8 @@ def _run(fn, *args, **kwargs):
             status_code=503,
             content={"code": "daily_cap", "detail": "오늘 정원이 마감됐다."},
         )
+    except UnknownUser as e:  # 탈퇴한 계정에 남은 쿠키 — 로그인 화면으로 돌려보낸다
+        raise HTTPException(status_code=401, detail="로그인이 필요하다") from e
 
 
 class SessionReq(BaseModel):

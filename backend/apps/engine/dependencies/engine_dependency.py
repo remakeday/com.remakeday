@@ -43,6 +43,7 @@ from apps.engine.app.use_cases.scene_execution import EXPLAIN_ACTION, SOURCE_ACT
 from apps.engine.app.use_cases.loop_interactor import LoopInteractor
 from apps.engine.app.use_cases.manager_interactor import ManagerInteractor
 from apps.engine.app.use_cases.night_interactor import NightInteractor
+from apps.engine.app.use_cases.resume_interactor import ResumeInteractor
 from apps.engine.app.use_cases.session_interactor import SessionInteractor
 from apps.engine.app.use_cases.survey_interactor import SurveyInteractor
 from apps.engine.dependencies.llm_factory import (
@@ -204,4 +205,16 @@ def get_survey_interactor(session: Session = Depends(get_session)):
     return SurveyInteractor(
         attempts=AttemptRepository(session),
         votes=SurveyVoteRepository(session),
+    )
+
+
+def get_resume_interactor(session: Session = Depends(get_session)):
+    return ResumeInteractor(
+        attempts=AttemptRepository(session),
+        loops=LoopRepository(session),
+        users=UserRepository(session),
+        scenario=_scenario(),
+        day_view=get_loop_interactor(session),
+        night_view=get_night_interactor(session),
+        user_daily_attempts=get_settings().user_daily_attempts,
     )

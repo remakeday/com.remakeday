@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import type { CellScores } from "@/contracts/api";
 import { CellResults } from "@/components/CellResults";
 import { GameplayGuide } from "@/components/GameplayGuide";
-import { ENTRY_IMAGE, npcImage } from "@/lib/imageMap";
+import { ENTRY_IMAGE, dayWarmImages, morningImage, npcImage } from "@/lib/imageMap";
+import { preloadImages } from "@/lib/preloadImages";
 
 /**
  * 하루 준비(startLoop) 대기 중 순환하는 소개 카드 — 유저가 로딩 대신 정보를 받는다.
@@ -35,7 +36,7 @@ function IntroCards() {
     <div key={i} className="entry-line mt-6 flex flex-col items-center gap-3">
       {portrait && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={portrait} alt={card.name} className="h-28 w-21 rounded object-cover" />
+        <img src={portrait} alt={card.name} decoding="async" className="h-28 w-21 rounded object-cover" />
       )}
       <p className="text-lg leading-relaxed">
         <span className="font-semibold">{card.name}</span>
@@ -64,13 +65,27 @@ export function EntryScreen({
   onBegin: () => void;
 }) {
   const ready = lines !== null && !loading;
+
+  useEffect(() => {
+    preloadImages([
+      ENTRY_IMAGE,
+      morningImage(0, loopN),
+      morningImage(1, loopN),
+      morningImage(3, 4),
+      ...dayWarmImages(1),
+      ...INTRO_CARDS.map((card) => (card.code ? npcImage(card.code, "calm") : null)),
+    ]);
+  }, [loopN]);
+
   return (
     <div className="relative flex min-h-dvh w-full flex-col items-center justify-center overflow-hidden bg-void py-6 text-paper sm:py-8">
-      {/* A01 PNG 상·하 여백을 잘라 모바일 세로 화면을 빈 띠 없이 채운다. */}
+      {/* A01 상·하 여백을 잘라 모바일 세로 화면을 빈 띠 없이 채운다. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={ENTRY_IMAGE}
         alt=""
+        decoding="async"
+        fetchPriority="high"
         className="pointer-events-none fixed inset-0 h-full w-full scale-[1.35] object-cover object-center opacity-40"
       />
       <div className="relative z-10 flex w-full max-w-4xl flex-col items-center gap-6 px-4 text-center sm:px-8">

@@ -22,7 +22,7 @@ const WISH = {
   illustration: { image_id: 'Q03', caption: '채연이 담요를 두르고 벽 쪽에 앉아 있다.' },
   counter: '정오 배급이 나온다. 채연이 숟가락을 끝까지 든다. 쟁반이 빈다.',
 };
-const NIGHT_IMAGES = { P01: '/assets/P01.png', P02: '/assets/P02.png', P03: '/assets/P03.png', P04: '/assets/P04.png', P05: '/assets/P05.png', 'clue-05': '/assets/clues/clue-05-chungsik-empty-bunk-v1.png' };
+const NIGHT_IMAGES = { P01: '/assets/P01.webp', P02: '/assets/P02.webp', P03: '/assets/P03.webp', P04: '/assets/P04.webp', P05: '/assets/P05.webp', 'clue-05': '/assets/clues/clue-05-chungsik-empty-bunk-v1.webp' };
 
 (async () => {
   const browser = await chromium.launch({ executablePath: '/usr/bin/google-chrome', headless: true, args: ['--autoplay-policy=no-user-gesture-required'] });
@@ -50,7 +50,8 @@ const NIGHT_IMAGES = { P01: '/assets/P01.png', P02: '/assets/P02.png', P03: '/as
         if (u.port !== '8500') return route.continue();
         const path = u.pathname;
         let body, status = 200;
-        if (path === '/sessions') {
+        if (path === '/api/v1/me/attempts/active') body = { attempt: null, resume_phase: null, loop: null, night: null, today_remaining: 3, daily_limit: 3 };
+        else if (path === '/sessions') {
           retry = loopN === 5;
           body = { attempt_id: 'test', attempt_n: retry ? 2 : 1, entry_lines: ['세계가 이상하다.', '오늘이 지나면, 세계는 멸망한다.', '다섯 번의 하루 안에, 왜 멸망했는지 알아내야 한다.'], prior_cell_results: retry ? cells : null };
         } else if (path === '/sessions/test/loops') {
@@ -150,7 +151,7 @@ const NIGHT_IMAGES = { P01: '/assets/P01.png', P02: '/assets/P02.png', P03: '/as
           const panel = page.getByRole('dialog', { name: '기록', exact: true });
           await panel.waitFor();
           await panel.locator('li').filter({ hasText: WISH.narration }).getByRole('button', { name: /그림 보기/ }).click();
-          await panel.locator('img[src$="Q03-eunsang-silent-corner-v1.png"]').waitFor();
+          await panel.locator('img[src$="Q03-eunsang-silent-corner-v1.webp"]').waitFor();
           await panel.getByText(WISH.illustration.caption, { exact: true }).waitFor();
           await panel.getByRole('button', { name: '기록 닫기', exact: true }).click();
           await panel.waitFor({ state: 'hidden' });

@@ -309,6 +309,10 @@ PUBLIC_ROUTES = {
     ("POST", "/api/v1/auth/dev/login"),
     ("GET", "/api/v1/auth/me"),
     ("POST", "/api/v1/auth/logout"),
+    # 로그인만 — 판 ID 없이 세션 사용자 자신의 진행 중인 판을 다룬다(이어하기, 2026-10-16). 비로그인 401은 test_resume_api.py
+    ("GET", "/api/v1/me/attempts/active"),
+    ("POST", "/api/v1/me/attempts/active/abandon"),
+    ("DELETE", "/api/v1/auth/me"),  # 회원탈퇴 — 세션 쿠키 사용자 자신(비로그인 401은 test_withdraw.py)
     # FastAPI 문서 라우트 — 개발(로컬) 설정에만 있다. 운영 설정에서 없는지는 test_public_deploy_has_no_api_docs_routes.
     ("GET", "/openapi.json"),
     ("GET", "/docs"),
@@ -359,6 +363,7 @@ def test_foreign_prior_attempt_is_ignored_like_missing(db_session, as_user, monk
     from core.matrix import grid_keymaker_secret_manager as cfg
     monkeypatch.setattr(cfg.get_settings(), "ip_sessions_per_minute", 1000)
     ids = _seed_game(db_session, "alice")
+    UserRepository(db_session).upsert_from_google(GoogleProfileDTO(sub="bob", email="", name="bob"))  # bob도 로그인한 사용자다
     alice_attempt = AttemptRepository(db_session).get(uuid.UUID(ids["attempt_id"]))
     alice_attempt.prior_cell_results = {"cause": 90, "motive": 80, "side_effect": 70, "identity": 60}
     db_session.commit()
@@ -411,7 +416,7 @@ def _dev_client(app):
     return client
 
 
-def test_dev_account_game_continues_from_another_session(real_auth):
+def test_dev_account_game_continues_from_another_session(real_auth, db_session):
     """같은 개발 계정이면 브라우저·세션이 달라도 그 판을 이어 쓴다(주인 판정은 sub `dev:{id}` 기준)."""
     from main import app
     from apps.engine.adapter.outbound.security.session_token_signer import SessionTokenSigner
@@ -424,6 +429,7 @@ def test_dev_account_game_continues_from_another_session(real_auth):
         assert second.get(f"/loops/{loop['loop_id']}/notes").status_code == 200
         assert second.get(f"/loops/{loop['loop_id']}/npcs").status_code == 200
 
+        UserRepository(db_session).upsert_from_google(GoogleProfileDTO(sub="google-carol", email="c@x", name="c"))  # Google 콜백이 만드는 행
         google = TestClient(app)
         token = SessionTokenSigner(real_auth.session_secret).issue(
             SessionUserDTO(sub="google-carol", email="c@x", name="c"), 3600)

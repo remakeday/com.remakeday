@@ -31,7 +31,7 @@ class AttemptOrm(Base):
     id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True, default=uuid.uuid4)
     attempt_n: Mapped[int] = mapped_column(Integer, default=1)
     prior_attempt_id: Mapped[uuid.UUID | None] = mapped_column(Uuid, nullable=True)
-    status: Mapped[str] = mapped_column(String(16), default="active")  # active|closed
+    status: Mapped[str] = mapped_column(String(16), default="active")  # active|closed|abandoned
     closed_by: Mapped[str | None] = mapped_column(String(20), nullable=True)
     prior_cell_results: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
     cookies_seen: Mapped[list] = mapped_column(JSONB, default=list)

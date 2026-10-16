@@ -12,7 +12,7 @@ import time
 from dataclasses import asdict
 
 from fastapi import APIRouter, Depends, HTTPException, Request
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import JSONResponse, RedirectResponse, Response
 from pydantic import BaseModel, Field
 
 from apps.engine.adapter.inbound.api.v1.guards import client_ip
@@ -131,5 +131,17 @@ def me(
 @router.post("/logout")
 def logout() -> JSONResponse:
     response = JSONResponse({"ok": True})
+    response.delete_cookie(SESSION_COOKIE, path="/")
+    return response
+
+
+@router.delete("/me", status_code=204)
+def withdraw_me(request: Request, use_case: AuthUseCase = Depends(get_auth_use_case)) -> Response:
+    """회원탈퇴 — 세션 쿠키의 사용자 데이터를 전부 지우고 쿠키를 삭제한다. 이미 지워진 사용자도 204."""
+    user = use_case.current_user(request.cookies.get(SESSION_COOKIE))
+    if user is None:
+        raise HTTPException(status_code=401, detail="로그인되어 있지 않습니다")
+    use_case.withdraw(user)
+    response = Response(status_code=204)
     response.delete_cookie(SESSION_COOKIE, path="/")
     return response

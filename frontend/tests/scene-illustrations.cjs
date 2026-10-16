@@ -17,8 +17,8 @@ const scenes = {
   5: [{ image_id: 'clue-04', caption: '음식이 남은 쟁반 세 개.' }],
 };
 const files = {
-  1: 'C01-breakfast-clue-v2.png', 2: 'clue-05-chungsik-empty-bunk-v1.png',
-  4: 'clue-02-chaeyeon-checkup-reaction-v1.png', 5: 'clue-04-evening-trays-v1.png',
+  1: 'C01-breakfast-clue-v2.webp', 2: 'clue-05-chungsik-empty-bunk-v1.webp',
+  4: 'clue-02-chaeyeon-checkup-reaction-v1.webp', 5: 'clue-04-evening-trays-v1.webp',
 };
 
 (async () => {
@@ -40,7 +40,8 @@ const files = {
         if (url.port !== '8500') return route.continue();
         let body;
         const path = url.pathname;
-        if (path === '/sessions') body = { attempt_id: 'images', attempt_n: 1, entry_lines: ['하루', '관찰', '추리'], prior_cell_results: null };
+        if (path === '/api/v1/me/attempts/active') body = { attempt: null, resume_phase: null, loop: null, night: null, today_remaining: 3, daily_limit: 3 };
+        else if (path === '/sessions') body = { attempt_id: 'images', attempt_n: 1, entry_lines: ['하루', '관찰', '추리'], prior_cell_results: null };
         else if (path.endsWith('/loops')) body = { loop_id: 'day', loop_n: 1, morning_text: '아침이다.', damage_level: 0, budget_left: 8, aftermath: null, active_rules: [], observations: [], ...data() };
         else if (path.endsWith('/npcs')) body = { npcs: [{ code: 'chaeyeon', name: '채연', mood: 'calm', uttered: false }] };
         else if (path.endsWith('/beats/next')) {
@@ -74,17 +75,17 @@ const files = {
       for (let b = 1; b <= 6; b++) {
         await page.getByTestId('day-title').getByText(`시간 ${b}`, { exact: true }).waitFor();
         await page.getByTestId('day-title').getByText(`장면 ${b}/6`, { exact: true }).waitFor();
-        const expected = mode === 'new' && files[b] ? `/assets/clues/${files[b]}` : `/assets/C0${b}.png`;
+        const expected = mode === 'new' && files[b] ? `/assets/clues/${files[b]}` : `/assets/C0${b}.webp`;
         await imageLoaded(expected);
         if (mode === 'unknown') assert.equal(await page.getByText('등록되지 않은 그림 설명').count(), 0);
         if (mode === 'new' && b === 4) {
           const before = nextCalls;
           await page.getByRole('button', { name: '다음 그림', exact: true }).click();
-          await imageLoaded('/assets/clues/clue-03-after-checkup-v1.png');
+          await imageLoaded('/assets/clues/clue-03-after-checkup-v1.webp');
           await page.getByRole('button', { name: '이전 그림', exact: true }).click();
           await imageLoaded(expected);
           await page.getByRole('button', { name: '다음 그림', exact: true }).click();
-          await imageLoaded('/assets/clues/clue-03-after-checkup-v1.png');
+          await imageLoaded('/assets/clues/clue-03-after-checkup-v1.webp');
           assert.equal(nextCalls, before, 'browsing illustrations does not advance the game');
           await page.screenshot({ path: `${out}/checkup-${width}.png`, animations: 'disabled' });
         }
@@ -101,10 +102,10 @@ const files = {
       await page.getByRole('button', { name: '맞아, 제출한다', exact: true }).click();
       await page.getByRole('button', { name: '계속', exact: true }).click();
       if (outcome === 'closure') {
-        await imageLoaded('/assets/clues/clue-06-zone-closure-broadcast-v1.png', 'contain');
+        await imageLoaded('/assets/clues/clue-06-zone-closure-broadcast-v1.webp', 'contain');
         await page.screenshot({ path: `${out}/closure.png` });
       } else {
-        await page.locator(`img[src="/assets/${outcome === 'truck' ? 'H01' : 'H02'}.png"]`).waitFor();
+        await page.locator(`img[src="/assets/${outcome === 'truck' ? 'H01' : 'H02'}.webp"]`).waitFor();
         assert.equal(await page.locator('img[src*="clue-06"]').count(), 0);
       }
       report.checks.push(`${width}px ${mode}: day sequence, scene navigation/reset, assets loaded, ${outcome} branch`);

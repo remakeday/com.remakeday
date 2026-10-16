@@ -31,7 +31,8 @@ const { line, readAll, expectBudget } = require('./vn-helpers.cjs');
         if (url.port !== '8500') return route.continue();
         const path = url.pathname;
         let body;
-        if (path === '/sessions') body = { attempt_id: 'clarity', attempt_n: 1, entry_lines: ['눈을 뜬다.'], prior_cell_results: null };
+        if (path === '/api/v1/me/attempts/active') body = { attempt: null, resume_phase: null, loop: null, night: null, today_remaining: 3, daily_limit: 3 };
+        else if (path === '/sessions') body = { attempt_id: 'clarity', attempt_n: 1, entry_lines: ['눈을 뜬다.'], prior_cell_results: null };
         else if (path.endsWith('/loops')) {
           loopCalls++;
           body = { loop_id: 'day', loop_n: 1, morning_text: '아침이다.', damage_level: 3, budget_left: budget, beat, beat_title: '식당', narration: '민석이 식판을 내려놓는다.', lines: [line('scene', '민석이 식판을 내려놓는다.', { image_id: 'clue-01' }), line('npc', '오늘 식판은 네가 먼저 가져가.', { speaker: '민석' }), line('npc', '배 안 고파. 너 먹어.', { speaker: '채연' }), line('npc', '…이따 배고프면 말해.', { speaker: '준' })], broadcast: null, aftermath: null, active_rules: [], observations: [], illustrations: [{ image_id: 'clue-01', caption: '관리자의 방송 아래 네 사람이 배급을 기다린다.' }, { image_id: 'clue-07', caption: '관리자의 배급 안내' }], ambient: { lines: [{ code: 'minseok', name: '민석', text: '오늘 식판은 네가 먼저 가져가.' }, { code: 'chaeyeon', name: '채연', text: '배 안 고파. 너 먹어.' }, { code: 'jun', name: '준', text: '…이따 배고프면 말해.' }] } };

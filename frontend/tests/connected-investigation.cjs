@@ -62,7 +62,8 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
       if (path.endsWith('/observations')) reads.observations++;
       const requestBody = route.request().postDataJSON?.();
       let body;
-      if (path === '/sessions') body = { attempt_id: 'connected', attempt_n: 1, entry_lines: ['세계가 이상하다.', '오늘이 지나면 멸망한다.', '다섯 번 관찰한다.'], prior_cell_results: null };
+      if (path === '/api/v1/me/attempts/active') body = { attempt: null, resume_phase: null, loop: null, night: null, today_remaining: 3, daily_limit: 3 };
+      else if (path === '/sessions') body = { attempt_id: 'connected', attempt_n: 1, entry_lines: ['세계가 이상하다.', '오늘이 지나면 멸망한다.', '다섯 번 관찰한다.'], prior_cell_results: null };
       else if (path === '/sessions/connected/loops') body = {
         loop_id: 'loop-3', loop_n: 3, morning_text: '7시 12분. 눈을 뜬다.', damage_level: 0,
         budget_left: 5, beat: 6, beat_title: '침상 사이', narration: '준이 소매를 살핀다.', lines: [line('scene', '준이 소매를 살핀다.', { image_id: 'clue-11' }), line('fragment', observations[2].text, { speaker: '준', observation_id: 'obs-current' })], broadcast: null,
@@ -194,7 +195,7 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
     const daySourceOpener = dayNotebook.getByRole('button', { name: /민석이 남은 쟁반을 기록했다/ });
     await daySourceOpener.click();
     const daySourceDetail = dayNotebook.getByRole('region', { name: '아침 배급 그림' });
-    await daySourceDetail.locator('img[src$="clue-08-minseok-tray-record-v1.png"]').waitFor();
+    await daySourceDetail.locator('img[src$="clue-08-minseok-tray-record-v1.webp"]').waitFor();
     assert.equal(await daySourceDetail.getByRole('button', { name: '기록으로 돌아간다', exact: true }).evaluate(element => element === document.activeElement), true, 'source detail receives focus');
     await page.keyboard.press('Tab');
     assert.equal(await dayNotebook.evaluate((element) => element.contains(document.activeElement)), true, 'picture keeps focus inside the records panel');
@@ -267,7 +268,7 @@ const metric = (numerator, denominator, value, reviewed, method) => ({ numerator
     const gallery = page.getByRole('dialog', { name: '이미 본 근거 그림' });
     await page.getByText('1회차 · 아침 배급', { exact: true }).waitFor();
     await page.getByText('3회차 · 침상 사이', { exact: true }).waitFor();
-    for (const filename of ['clue-08-minseok-tray-record-v1.png', 'clue-11-jun-band-observation-v1.png']) {
+    for (const filename of ['clue-08-minseok-tray-record-v1.webp', 'clue-11-jun-band-observation-v1.webp']) {
       const image = gallery.locator(`img[src$="${filename}"]`).first();
       await image.waitFor({ state: 'visible' });
       // 4MB 삽화는 '보임'과 디코딩 완료 사이에 틈이 있다 — 로드 완료를 기다린 뒤 원본 크기를 검사한다.

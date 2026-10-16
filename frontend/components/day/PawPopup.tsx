@@ -31,7 +31,7 @@ export function PawPopup({ offer, busy, onRespond }: {
       }}>
       <div className="flex w-full max-w-sm flex-col items-center gap-5 text-center text-paper">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={PAW_IMAGE} alt="" className="aspect-square w-40 object-cover" />
+        <img src={PAW_IMAGE} alt="" decoding="async" className="aspect-square w-40 object-cover" />
         <p className="text-lg opacity-70">무언가가 굴러왔다.</p>
         <p className="text-base leading-relaxed">{offer.rule_label}</p>
         {offer.shown_reason && <p className="text-base leading-relaxed text-orange">{offer.shown_reason}</p>}
