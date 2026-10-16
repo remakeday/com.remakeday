@@ -21,7 +21,7 @@
 - **FK에 `ON DELETE CASCADE`가 없다.** 삭제는 자식부터: `nights` → `npc_states` → `loops` → `notes`·`rules` → `survey_votes` → `events` → `attempts` → `users`.
 - **경로 고정** — `GET /api/v1/me/attempts/active`, `POST /api/v1/me/attempts/active/abandon`(204), `DELETE /api/v1/auth/me`(204 + `rd_session` 쿠키 삭제). 기존 게임 라우트(`/sessions` 등)는 접두 없이 그대로.
 - **화면 문구 고정** — "이어하기", "다시 시작하기", "오늘 남은 판 {today_remaining}/{daily_limit} · 다시 시작하면 1회가 차감됩니다", "오늘은 더 시작할 수 없습니다", "마이페이지", "회원탈퇴", "모든 플레이 기록이 즉시 삭제되며 되돌릴 수 없습니다", "탈퇴", "취소". 브라우저 `confirm()` 금지.
-- **작업 트리가 더럽다.** `git add -A`·`git add .`·`git commit -a` 금지. 각 task의 커밋 명령에 적힌 파일만 올린다. `git add -p`는 이 환경에서 쓸 수 없다(대화형). 미커밋 수정이 이미 있는 파일 — `frontend/app/page.tsx`, `frontend/app/privacy/page.tsx`(이 계획은 건드리지 않는다), `frontend/tests/` 6개(`connected-investigation`·`day-screen-vn-shots`·`day-screen-vn`·`five-loop-flow`·`scene-illustrations`·`voice-transitions`) — 은 그 수정을 지우지 말고 보존한다. 이런 파일의 커밋 방법은 **컨트롤러 결정**이다(각 task 커밋 단계에 선택지를 적었다).
+- **커밋 정책(사용자 결정 2026-10-16).** 작업 트리가 더럽다. `git add -A`·`git add .`·`git commit -a`·`git add -p`·`git apply --cached` 금지. **이 작업이 새로 만든 파일과, 작업 시작 전 미커밋 변경이 없던 파일만 커밋한다.** 미커밋 변경이 섞인 파일은 수정만 하고 커밋하지 않는다. 각 task 시작 전에 컨트롤러가 그 task 파일들의 `git status --short <파일>`을 장부에 적어 두고, 그때 이미 `M`이던 파일은 커밋 명령에서 뺀다. 지금(2026-10-16) 알려진 해당 파일: `frontend/app/page.tsx`, `frontend/tests/` 6개(`connected-investigation`·`day-screen-vn-shots`·`day-screen-vn`·`five-loop-flow`·`scene-illustrations`·`voice-transitions`), `docs/jekyll.md`. `frontend/app/privacy/page.tsx`도 미커밋 수정이 있지만 이 계획은 건드리지 않는다. 그 수정은 지우지 말고 보존한다. 각 task 끝에 **"커밋하지 않고 남긴 파일"** 목록을 적고, 최종 보고에 모아서 올린다.
 - **배포·서버 재기동 없음.** 프로젝트는 2026-10-12 종료됐고 서비스 복구 금지다. 헤드리스용 프론트 dev 서버(3500)만 Task 9에서 잠시 띄우고 끈다.
 - `<스크래치>` = 컨트롤러 세션의 스크래치 디렉터리(시스템 프롬프트가 알려 주는 절대 경로). Codex 지시문 파일만 거기에 둔다.
 - 백엔드 명령은 전부 `cd /home/kimchungsik/projects/com.remakeday/backend && .venv/bin/python -m pytest ...` 형식. 테스트 DB 컨테이너는 `pigfarm-db`(2026-10-16 확인 시 기동 중).
@@ -34,6 +34,8 @@
 3. **조회 API가 없는 구 백엔드(404) 또는 일시 오류** — `/play`가 막히지 않고 예전처럼 새 판을 만든다. 허들(401·403·503·429)만 GuardScreen. → Task 8 `fallsBackWhenActiveLookupFails`
 4. **응답 저장(2026-09-18) 전에 제출한 밤에서 멈춘 판** — 저장된 제출 응답이 없어도 개입 화면이 빈 화면이 되지 않는다. → Task 2 `test_submitted_night_without_stored_response_still_resumes`
 5. **탈퇴하는 사용자와 같은 events 테이블을 쓰는 다른 사용자** — 다른 사용자의 guard 이벤트(user_sub)·평가·판 이벤트는 한 줄도 줄지 않는다. 중간에 실패하면 아무것도 지워지지 않는다. → Task 4 `test_delete_with_data_removes_every_row_of_one_user_only`·`test_delete_with_data_is_all_or_nothing`·`test_withdraw_deletes_only_that_users_rows`
+
+추가로 사용자 결정(2026-10-16)으로 묶은 두 경우: **최신 판을 포기·완료한 뒤 오래된 active 판이 남아 있음** → `attempt: null`(Task 2 `test_latest_active_is_the_newest_attempt_only_while_it_is_active`, Task 3 `test_abandoning_latest_does_not_resurface_older_active`). **탈퇴 뒤 남은 세션 쿠키로 새 판 요청** → 401이고 users 행이 다시 생기지 않음(Task 4 `test_withdrawn_session_cookie_cannot_recreate_user`).
 
 ---
 
@@ -145,6 +147,8 @@ git add backend/tests/pure/test_scene_rerun_idempotency.py
 git commit -m "test(resume): 같은 비트 장면 재실행이 기록·세계 효과를 더하지 않는다는 이어하기 전제"
 ```
 
+커밋하지 않고 남긴 파일: 없음(새 파일만).
+
 ---
 
 ### Task 2: 이어하기 화면 데이터 조립기 — 낮 장면·회차 껍데기·밤 데이터 (B)
@@ -159,7 +163,7 @@ git commit -m "test(resume): 같은 비트 장면 재실행이 기록·세계 �
 **Interfaces:**
 - Consumes: Task 1의 전제(재실행은 쓰기 없음, statement·paw_effect 줄만 빠짐)
 - Produces:
-  - `AttemptRepository.latest_active(user_id: uuid.UUID) -> AttemptOrm | None` — 그 사용자의 `status='active'` 판 중 `created_at`이 가장 늦은 것
+  - `AttemptRepository.latest_active(user_id: uuid.UUID) -> AttemptOrm | None` — 그 사용자의 판 중 `created_at`이 가장 늦은 판이 `status='active'`일 때만 그 판, 아니면 `None`. 최신 판이 닫혔거나(closed) 포기됐으면(abandoned) 그보다 오래된 active 판은 다시 잡지 않는다(사용자 결정 2026-10-16)
   - `LoopInteractor.resume_shell(loop: LoopOrm) -> dict` — `start_loop` 응답과 **같은 16개 키**(`loop_id, loop_n, morning_text, damage_level, budget_left, beat, beat_title, narration, broadcast, illustrations, aftermath, observations, note_found, ambient, lines, active_rules`). 장면 필드는 비어 있다(`beat_title=""`, `narration=""`, `broadcast=None`, `illustrations=[]`, `observations=[]`, `lines=[]`), `aftermath`·`note_found`·`ambient`는 `None`
   - `LoopInteractor.resume_day(loop: LoopOrm) -> dict` — 같은 키, 현재 비트 장면을 채운다. 새 기록을 남기지 않는다
   - `NightInteractor.resume_view(loop: LoopOrm) -> dict` — 아래 표의 5개 키. 쓰기·모델 호출 없음
@@ -227,20 +231,21 @@ def _night_ready(db_session):
 # ── 진행 중인 판 ──────────────────────────────────────────────
 
 
-def test_latest_active_picks_newest_active_attempt_of_that_user(db_session):
+def test_latest_active_is_the_newest_attempt_only_while_it_is_active(db_session):
+    """진행 중인 판 = 가장 최근 판이 active일 때만. 최신 판이 끝나거나 포기되면 오래된 active 판을 다시 잡지 않는다."""
     users, attempts = UserRepository(db_session), AttemptRepository(db_session)
     alice = users.upsert_from_google(GoogleProfileDTO(sub="alice", email="", name="a"))
     bob = users.upsert_from_google(GoogleProfileDTO(sub="bob", email="", name="b"))
-    older = attempts.create(None, user_id=alice.id)
+    attempts.create(None, user_id=alice.id)  # 이 기능 전에 닫히지 않고 남은 오래된 active 판
     newer = attempts.create(None, user_id=alice.id)
-    closed = attempts.create(None, user_id=alice.id)
-    closed.status = "closed"
-    abandoned = attempts.create(None, user_id=alice.id)
-    abandoned.status = "abandoned"
-    attempts.save()
-    attempts.create(None, user_id=bob.id)
+    attempts.create(None, user_id=bob.id)  # 남의 판이 더 최근이어도 alice의 답은 그대로
     assert attempts.latest_active(alice.id).id == newer.id
-    assert older.id != newer.id
+
+    for status in ("closed", "abandoned"):
+        newest = attempts.create(None, user_id=alice.id)
+        newest.status = status
+        attempts.save()
+        assert attempts.latest_active(alice.id) is None, f"최신 판이 {status}인데 오래된 active 판이 다시 잡혔다"
     assert attempts.latest_active(uuid.uuid4()) is None
 
 
@@ -343,12 +348,14 @@ Expected: FAIL — `AttributeError: 'AttemptRepository' object has no attribute 
 
 ```python
     def latest_active(self, user_id: uuid.UUID) -> AttemptOrm | None:
-        """진행 중인 판 — 그 사용자의 가장 최근 active 판 하나. 오래된 active 판은 건드리지 않는다(설계 2026-10-16 §1)."""
-        return self._s.scalars(
+        """진행 중인 판 — 그 사용자의 가장 최근 판이 active일 때만 그 판(설계 2026-10-16 §1).
+        최신 판이 closed·abandoned면 None — 그보다 오래된 active 판은 다시 잡지도, 닫지도 않는다."""
+        latest = self._s.scalars(
             select(AttemptOrm)
-            .where(AttemptOrm.user_id == user_id, AttemptOrm.status == "active")
+            .where(AttemptOrm.user_id == user_id)
             .order_by(AttemptOrm.created_at.desc())
         ).first()
+        return latest if latest is not None and latest.status == "active" else None
 ```
 
 - [ ] **Step 4: LoopInteractor에 이어하기 조립기를 더한다**
@@ -514,6 +521,8 @@ cd /home/kimchungsik/projects/com.remakeday
 git add backend/apps/engine/adapter/outbound/orms/game_state_orm.py backend/apps/engine/adapter/outbound/repositories/game_repository.py backend/apps/engine/app/use_cases/loop_interactor.py backend/apps/engine/app/use_cases/night_interactor.py backend/tests/engine/test_resume_views.py
 git commit -m "feat(resume): 이어하기 화면 데이터 — 낮 현재 비트 다시 그리기(규칙 줄 복원)·회차 껍데기·밤 단계 데이터"
 ```
+
+커밋하지 않고 남긴 파일: 없음(백엔드 파일은 2026-10-16 기준 미커밋 변경이 없다 — 시작 전 `git status --short`로 다시 확인).
 
 ---
 
@@ -699,15 +708,20 @@ def test_other_users_attempt_is_never_active(db_session, logged_in):
     assert db_session.scalars(select(AttemptOrm.status)).all() == ["active"]  # 남의 판은 포기되지 않는다
 
 
-def test_latest_active_attempt_wins_and_older_ones_are_left_alone(db_session, logged_in):
+def test_abandoning_latest_does_not_resurface_older_active(db_session, logged_in):
+    """사용자 결정 2026-10-16 — 진행 중인 판은 최신 판이 active일 때만. 최신 판을 포기하면 오래된 active 판이 있어도 attempt=null."""
     from main import app
     with TestClient(app) as client:
         old = _play_until(client, "none")["attempt_id"]
         new = _play_until(client, "none")["attempt_id"]
         assert client.get(ACTIVE).json()["attempt"]["attempt_id"] == new
         assert client.post(ABANDON).status_code == 204
-        # 스펙 §1 판단 1을 글자대로 — "가장 최근 active 판". 오래된 active 판은 닫지 않으므로 다음 차례가 된다.
-        assert client.get(ACTIVE).json()["attempt"]["attempt_id"] == old
+        body = client.get(ACTIVE).json()
+        assert (body["attempt"], body["resume_phase"]) == (None, None)
+        assert client.post(ABANDON).status_code == 204  # 두 번째 포기는 아무것도 하지 않는다 — 오래된 판을 포기하지 않는다
+    db_session.expire_all()
+    assert db_session.get(AttemptOrm, uuid.UUID(old)).status == "active"  # 오래된 판은 건드리지 않는다
+    assert db_session.get(AttemptOrm, uuid.UUID(new)).status == "abandoned"
 
 
 @pytest.mark.parametrize("method,path", [("GET", ACTIVE), ("POST", ABANDON)])
@@ -733,7 +747,7 @@ Expected: FAIL — 경로가 없어 404 (`assert 404 == 200` 등)
 ```python
 """이어하기 — 로그인 사용자의 진행 중인 판을 찾고, 그 판을 다시 여는 화면 데이터를 고른다 (설계 2026-10-16 §2.1~2.3).
 
-진행 중인 판 = 그 사용자의 가장 최근 status='active' 판. 단계는 최신 회차 상태가 정한다.
+진행 중인 판 = 그 사용자의 가장 최근 판이 status='active'일 때만 그 판. 단계는 최신 회차 상태가 정한다.
 낮 장면은 LoopInteractor, 밤·채점·개입 데이터는 NightInteractor가 만든다 — 여기서는 단계에 맞는 조립기를 고르기만 한다.
 쓰기는 abandon 하나뿐이다.
 """
@@ -898,7 +912,7 @@ Expected: PASS(신규 15건 + 기존), `Contracts: 4 kept, 0 broken`
 ### GET /api/v1/me/attempts/active — 진행 중인 판
 
 로그인 필요(`require_user`, 비로그인 401). 판 ID가 경로에 없어 판 주인 확인 대신 세션 사용자의 판 중에서만 찾는다.
-진행 중인 판 = 그 사용자의 가장 최근 `status='active'` 판(오래된 active 판은 건드리지 않는다).
+진행 중인 판 = 그 사용자의 가장 최근 판이 `status='active'`일 때만 그 판. 최신 판이 `closed`·`abandoned`면 `attempt: null`이고, 그보다 오래된 active 판은 다시 잡지도 닫지도 않는다.
 
 res(키는 항상 6개):
 `{attempt: CreateSessionRes|null, resume_phase: "entry"|"day"|"night"|"score"|"god"|null, loop: StartLoopRes|null, night: ResumeNight|null, today_remaining: number, daily_limit: number}`
@@ -928,11 +942,16 @@ git add backend/apps/engine/app/use_cases/resume_interactor.py backend/apps/engi
 git commit -m "feat(resume): 진행 중인 판 조회·단계 매핑·포기 API (/api/v1/me/attempts/active)"
 ```
 
+커밋하지 않고 남긴 파일: 없음(시작 전 `git status --short`로 `docs/spec/api_contract.md`·`backend/` 파일이 깨끗한지 다시 확인한다. 그새 `M`이 됐으면 그 파일은 빼고 여기에 적는다).
+
 ---
 
 ### Task 4: 회원탈퇴 API — 한 트랜잭션 삭제 (A)
 
 **Files:**
+- Modify: `backend/apps/engine/app/use_cases/session_interactor.py` (`UnknownUser`, `_resolve_user_id` — users 행이 없으면 다시 만들지 않는다)
+- Modify: `backend/apps/engine/adapter/inbound/api/v1/game_router.py` (`_run`이 `UnknownUser`를 401로)
+- Modify: `backend/tests/engine/conftest.py` (`logged_in`이 users 행을 만든다)
 - Modify: `backend/apps/engine/adapter/outbound/repositories/user_repository.py` (`delete_with_data`)
 - Modify: `backend/apps/engine/app/ports/output/user_repository_port.py` (`get_by_sub`·`delete_with_data`)
 - Modify: `backend/apps/engine/app/ports/input/auth_use_case.py` (`withdraw`)
@@ -948,7 +967,10 @@ git commit -m "feat(resume): 진행 중인 판 조회·단계 매핑·포기 API
   - `UserRepository.delete_with_data(user_id: uuid.UUID, sub: str) -> None` — 한 번의 commit, 실패하면 rollback 후 예외를 다시 던진다
   - `AuthInteractor.withdraw(user: SessionUserDTO) -> None` — users 행이 없으면 아무 일도 하지 않는다
   - `DELETE /api/v1/auth/me` → 204 + `rd_session` 쿠키 삭제, 비로그인 401
+  - `UnknownUser(Exception)`(`session_interactor`) — 세션은 유효한데 users 행이 없을 때. `POST /sessions`가 401 `{"detail": "로그인이 필요하다"}`로 돌려준다(프론트는 기존 GuardScreen "login")
   - Task 7이 쓰는 경로·상태 코드는 위와 같다
+
+**탈퇴 뒤 남은 쿠키(사용자 결정 2026-10-16).** 세션 토큰은 서명형이라 탈퇴 뒤에도 TTL 동안 검증을 통과한다. 지금 `SessionInteractor._resolve_user_id`는 users 행이 없으면 upsert하므로, 남은 쿠키로 `POST /sessions`를 부르면 계정이 되살아난다. 이 task에서 그 upsert를 없앤다. 근거 확인: Google 로그인 콜백(`AuthInteractor.complete_login`, `auth_interactor.py:42`)과 개발 계정 로그인(`dev_login`, 같은 파일 70행)은 로그인할 때 users 행을 만든다. 그래서 정상 로그인 사용자는 `/sessions` 전에 이미 행이 있다. 예외는 `GUARD_AUTH=off`의 sub `"dev"` 하나다. 이 사용자에게는 로그인 단계가 없으므로 지금처럼 첫 판에서 행을 만든다. 이 변경으로 깨지는 기존 테스트는 users 행 없이 `POST /sessions`를 부르던 테스트다. `logged_in` 픽스처(`test_e2e_flow`·`test_guards`·`test_survey_endpoint`와 Task 3의 `test_resume_api`가 씀), `test_attempt_ownership`의 `test_foreign_prior_attempt_is_ignored_like_missing`(bob)·`test_dev_account_game_continues_from_another_session`(google-carol), 이 task의 `_client`가 여기에 해당한다. 아래 단계에서 함께 고친다.
 
 - [ ] **Step 1: 실패하는 테스트를 쓴다**
 
@@ -1080,10 +1102,16 @@ def cookie_auth(db_session, monkeypatch):
     guards._BUCKETS.clear()
 
 
-def _client(app, sub: str) -> TestClient:
+def _token(sub: str) -> str:
+    return SessionTokenSigner(SECRET).issue(SessionUserDTO(sub=sub, email=f"{sub}@x", name=sub), 3600)
+
+
+def _client(app, sub: str, db_session=None) -> TestClient:
+    """세션 쿠키를 든 클라이언트. db_session을 주면 Google 로그인 콜백처럼 users 행을 먼저 만든다."""
+    if db_session is not None:
+        UserRepository(db_session).upsert_from_google(GoogleProfileDTO(sub=sub, email=f"{sub}@x", name=sub))
     client = TestClient(app)
-    token = SessionTokenSigner(SECRET).issue(SessionUserDTO(sub=sub, email=f"{sub}@x", name=sub), 3600)
-    client.cookies.set("rd_session", token)
+    client.cookies.set("rd_session", _token(sub))
     return client
 
 
@@ -1110,7 +1138,7 @@ def _ids(db_session, sub: str):
 def test_withdraw_deletes_only_that_users_rows(cookie_auth, db_session, monkeypatch):
     from main import app
     with TestClient(app):  # lifespan(시드) 1회
-        alice, bob = _client(app, "google-alice"), _client(app, "google-bob")
+        alice, bob = _client(app, "google-alice", db_session), _client(app, "google-bob", db_session)
         _play_one_night(alice)
         _play_one_night(bob)
         monkeypatch.setattr(cookie_auth, "user_daily_attempts", 1)
@@ -1142,12 +1170,57 @@ def test_withdraw_requires_login(cookie_auth):
     from main import app
     with TestClient(app) as client:
         assert client.delete("/api/v1/auth/me").status_code == 401
+
+
+def test_withdrawn_session_cookie_cannot_recreate_user(cookie_auth, db_session):
+    """사용자 결정 2026-10-16 — 탈퇴 뒤 남은(아직 서명이 유효한) 쿠키로 새 판을 요청해도 401이고 users 행이 다시 생기지 않는다."""
+    from main import app
+    with TestClient(app):
+        alice = _client(app, "google-alice", db_session)
+        assert alice.post("/sessions", json={}).status_code == 200
+        assert alice.delete("/api/v1/auth/me").status_code == 204
+        leftover = TestClient(app)  # 브라우저가 쿠키를 지우지 않았거나 누가 복사해 둔 경우
+        leftover.cookies.set("rd_session", _token("google-alice"))
+        res = leftover.post("/sessions", json={})
+        active = leftover.get("/api/v1/me/attempts/active")
+    assert res.status_code == 401 and res.json() == {"detail": "로그인이 필요하다"}
+    assert active.status_code == 200 and active.json()["attempt"] is None  # 조회는 읽기만 — 행을 만들지 않는다
+    db_session.expire_all()
+    assert db_session.scalar(select(func.count()).select_from(UserOrm).where(UserOrm.google_sub == "google-alice")) == 0
+    assert db_session.scalar(select(func.count()).select_from(AttemptOrm)) == 0
+
+
+def test_session_start_without_users_row_is_rejected_without_upsert():
+    """유스케이스 단위 — users 행이 없으면 UnknownUser, upsert하지 않는다(판 수 조회 전에 멈춘다)."""
+    from types import SimpleNamespace
+
+    from apps.engine.app.use_cases.session_interactor import SessionInteractor, UnknownUser
+
+    class Users:
+        def __init__(self):
+            self.upserts = []
+
+        def get_by_sub(self, sub):
+            return None
+
+        def upsert_from_google(self, profile):
+            self.upserts.append(profile.sub)
+            return SimpleNamespace(id=uuid.uuid4())
+
+    users = Users()
+    uc = SessionInteractor(attempts=None, event_log=None, scenario=None, users=users,
+                           user_daily_attempts=3, daily_attempt_cap=200)
+    with pytest.raises(UnknownUser):
+        uc.start(None, SessionUserDTO(sub="google-gone", email="", name=""), "iphash")
+    assert users.upserts == []
 ```
+
+`GUARD_AUTH=off`의 sub `"dev"`가 지금처럼 첫 판에서 행을 만드는지는 기존 `test_attempt_ownership.py::test_guard_auth_off_uses_dev_identity_for_ownership`이 확인한다. 이 task의 회귀 실행에 넣는다.
 
 - [ ] **Step 2: 실패를 확인한다**
 
 Run: `cd /home/kimchungsik/projects/com.remakeday/backend && .venv/bin/python -m pytest tests/engine/test_withdraw.py -q`
-Expected: FAIL — `AttributeError: 'UserRepository' object has no attribute 'delete_with_data'`, HTTP 테스트는 405(`DELETE /api/v1/auth/me` 없음)
+Expected: FAIL — `AttributeError: 'UserRepository' object has no attribute 'delete_with_data'`, HTTP 테스트는 405(`DELETE /api/v1/auth/me` 없음), `test_session_start_without_users_row_is_rejected_without_upsert`는 `ImportError: cannot import name 'UnknownUser'`
 
 - [ ] **Step 3: 삭제 저장소를 만든다**
 
@@ -1286,12 +1359,78 @@ def withdraw_me(request: Request, use_case: AuthUseCase = Depends(get_auth_use_c
     ("DELETE", "/api/v1/auth/me"),  # 회원탈퇴 — 세션 쿠키 사용자 자신(비로그인 401은 test_withdraw.py)
 ```
 
-- [ ] **Step 6: 테스트를 돌린다**
+- [ ] **Step 6: 남은 쿠키로 users 행이 되살아나지 않게 한다**
 
-Run: `cd /home/kimchungsik/projects/com.remakeday/backend && .venv/bin/python -m pytest tests/engine/test_withdraw.py tests/engine/test_attempt_ownership.py tests/engine/test_dev_login.py tests/engine/test_guards.py -q && .venv/bin/lint-imports`
-Expected: PASS(신규 5건 + 기존), `Contracts: 4 kept, 0 broken`
+`session_interactor.py` — `DailyCapReached` 클래스 아래에 추가한다:
 
-- [ ] **Step 7: 계약 문서를 맞춘다**
+```python
+class UnknownUser(Exception):
+    """세션은 유효한데 users 행이 없다(탈퇴한 계정에 남은 쿠키) — 행을 다시 만들지 않는다. 라우터가 401로 매핑한다."""
+```
+
+`_resolve_user_id`를 바꾼다:
+
+```python
+    def _resolve_user_id(self, user: SessionUserDTO) -> UUID:
+        """users 행은 로그인할 때 만들어진다(Google 콜백·개발 계정 로그인). 여기서는 찾기만 한다.
+        예외는 GUARD_AUTH=off의 sub "dev" — 로그인 단계가 없어 첫 판에서 행을 만든다."""
+        existing = self._users.get_by_sub(user.sub)
+        if existing is not None:
+            return existing.id
+        if user.sub != "dev":
+            raise UnknownUser()
+        return self._users.upsert_from_google(GoogleProfileDTO(sub="dev", email="dev@local", name="dev")).id
+```
+
+`game_router.py` — import 줄을 바꾼다:
+
+```python
+from apps.engine.app.use_cases.session_interactor import DailyCapReached, UnknownUser, UserDailyLimit
+```
+
+`_run`의 `except DailyCapReached:` 갈래 아래에 추가한다:
+
+```python
+    except UnknownUser as e:  # 탈퇴한 계정에 남은 쿠키 — 로그인 화면으로 돌려보낸다
+        raise HTTPException(status_code=401, detail="로그인이 필요하다") from e
+```
+
+users 행 없이 `POST /sessions`를 부르던 테스트를 고친다. 제품 코드를 되돌려 맞추지 않는다.
+
+`backend/tests/engine/conftest.py`의 `logged_in` 전체를 바꾼다(Google 로그인 콜백이 하는 일을 대신한다):
+
+```python
+@pytest.fixture
+def logged_in(request, db_session):
+    """`guards.require_user`를 로그인된 사용자로 오버라이드 — 로그인 때처럼 users 행도 만든다. 실패해도 finally에서 정리."""
+    from main import app
+    from apps.engine.adapter.inbound.api.v1 import guards
+    from apps.engine.adapter.outbound.repositories.user_repository import UserRepository
+    from apps.engine.app.dtos.auth_dto import GoogleProfileDTO, SessionUserDTO
+
+    sub = getattr(request, "param", "tester")
+    UserRepository(db_session).upsert_from_google(GoogleProfileDTO(sub=sub, email="t@x", name="t"))
+    app.dependency_overrides[guards.require_user] = lambda: SessionUserDTO(sub=sub, email="t@x", name="t")
+    guards._BUCKETS.clear()
+    try:
+        yield
+    finally:
+        app.dependency_overrides.pop(guards.require_user, None)
+        guards._BUCKETS.clear()
+```
+
+`backend/tests/engine/test_attempt_ownership.py` 두 곳:
+- `test_foreign_prior_attempt_is_ignored_like_missing` — `ids = _seed_game(db_session, "alice")` 바로 아래에 `UserRepository(db_session).upsert_from_google(GoogleProfileDTO(sub="bob", email="", name="bob"))  # bob도 로그인한 사용자다`를 넣는다.
+- `test_dev_account_game_continues_from_another_session` — 시그니처를 `(real_auth, db_session)`으로 바꾸고, `google = TestClient(app)` 바로 위에 `UserRepository(db_session).upsert_from_google(GoogleProfileDTO(sub="google-carol", email="c@x", name="c"))  # Google 콜백이 만드는 행`을 넣는다.
+
+- [ ] **Step 7: 테스트를 돌린다**
+
+Run: `cd /home/kimchungsik/projects/com.remakeday/backend && .venv/bin/python -m pytest tests/engine/test_withdraw.py tests/engine/test_attempt_ownership.py tests/engine/test_dev_login.py tests/engine/test_guards.py tests/engine/test_e2e_flow.py tests/engine/test_survey_endpoint.py tests/engine/test_resume_api.py tests/pure/test_session_interactor_toctou.py -q && .venv/bin/lint-imports`
+Expected: PASS(신규 7건 + 기존 — `test_guard_auth_off_uses_dev_identity_for_ownership` 포함), `Contracts: 4 kept, 0 broken`
+
+위 목록 밖에서 `POST /sessions`가 401로 실패하는 테스트가 나오면, 그 테스트가 users 행 자동 생성에 기대고 있었는지 확인한다. 그렇다면 그 테스트에서 로그인 때처럼 행을 먼저 만들고, 고친 파일을 이 task의 커밋 목록에 더한다.
+
+- [ ] **Step 8: 계약 문서를 맞춘다**
 
 `docs/spec/api_contract.md`의 `### POST /api/v1/auth/dev/login` 절 바로 위에 추가한다:
 
@@ -1301,19 +1440,29 @@ Expected: PASS(신규 5건 + 기존), `Contracts: 4 kept, 0 broken`
 `rd_session` 쿠키의 사용자 한 명의 데이터를 **한 트랜잭션에서** 지우고 **204** + `rd_session` 쿠키 삭제. 쿠키가 없거나 무효면 401 `{"detail":"로그인되어 있지 않습니다"}`. 쿠키는 유효한데 users 행이 이미 없으면 그대로 204.
 
 삭제 순서(FK에 CASCADE가 없다): `nights` → `npc_states` → `loops` → `notes`·`rules` → `survey_votes`(user_id 또는 판 ID) → `events`(session_id ∈ 그 사용자의 판 ID) → `events`(`type='guard'`, `payload.user_sub` = 그 사용자의 sub) → `attempts` → `users`. 중간에 실패하면 아무것도 지우지 않는다.
+
+세션 토큰은 서명형이라 탈퇴 뒤에도 TTL 동안 검증을 통과한다. 하지만 users 행은 로그인할 때만 만들어지므로, 남은 쿠키로 `POST /sessions`를 부르면 **401** `{"detail":"로그인이 필요하다"}`이고 계정이 되살아나지 않는다(`GUARD_AUTH=off`의 sub `"dev"`만 첫 판에서 행을 만든다).
 ```
 
-- [ ] **Step 8: 커밋**
+`### POST /sessions` 절 끝에 한 줄을 더한다:
+
+```markdown
+- 세션은 유효한데 users 행이 없으면(탈퇴한 계정의 남은 쿠키) 401 `{"detail":"로그인이 필요하다"}`. `GUARD_AUTH=off`의 sub `"dev"`는 첫 판에서 행을 만든다.
+```
+
+- [ ] **Step 9: 커밋**
 
 ```bash
 cd /home/kimchungsik/projects/com.remakeday
-git add backend/apps/engine/adapter/outbound/repositories/user_repository.py backend/apps/engine/app/ports/output/user_repository_port.py backend/apps/engine/app/ports/input/auth_use_case.py backend/apps/engine/app/use_cases/auth_interactor.py backend/apps/engine/adapter/inbound/api/v1/auth_router.py backend/tests/engine/test_withdraw.py backend/tests/engine/test_attempt_ownership.py docs/spec/api_contract.md
-git commit -m "feat(auth): 회원탈퇴 DELETE /api/v1/auth/me — 자식 테이블부터 한 트랜잭션 삭제, 세션 쿠키 삭제"
+git add backend/apps/engine/app/use_cases/session_interactor.py backend/apps/engine/adapter/inbound/api/v1/game_router.py backend/tests/engine/conftest.py backend/apps/engine/adapter/outbound/repositories/user_repository.py backend/apps/engine/app/ports/output/user_repository_port.py backend/apps/engine/app/ports/input/auth_use_case.py backend/apps/engine/app/use_cases/auth_interactor.py backend/apps/engine/adapter/inbound/api/v1/auth_router.py backend/tests/engine/test_withdraw.py backend/tests/engine/test_attempt_ownership.py docs/spec/api_contract.md
+git commit -m "feat(auth): 회원탈퇴 DELETE /api/v1/auth/me — 한 트랜잭션 삭제·쿠키 삭제, 남은 쿠키로 계정이 되살아나지 않게"
 ```
 
-- [ ] **Step 9: A등급 task 검토**
+커밋하지 않고 남긴 파일: 없음(시작 전 `git status --short`로 위 파일이 모두 깨끗한지 확인한다. `M`이던 파일이 있으면 커밋에서 빼고 여기에 적는다).
 
-sonnet 검토자에게 Task 4 diff를 맡긴다. 초점: 삭제 순서와 서브쿼리가 FK 위반 없이 한 트랜잭션인지, 다른 사용자 행을 건드릴 수 있는 조건(guard 이벤트 `user_sub` 비교, `user_id IS NULL` 구판)이 있는지, 비로그인·무효 쿠키·users 행 없음 세 경로, 테스트가 실제로 "모든 테이블"을 덮는지(`all(alice_before.values())`).
+- [ ] **Step 10: A등급 task 검토**
+
+sonnet 검토자에게 Task 4 diff를 맡긴다. 초점: 삭제 순서와 서브쿼리가 FK 위반 없이 한 트랜잭션인지, 다른 사용자 행을 건드릴 수 있는 조건(guard 이벤트 `user_sub` 비교, `user_id IS NULL` 구판)이 있는지, 비로그인·무효 쿠키·users 행 없음 세 경로, 테스트가 실제로 "모든 테이블"을 덮는지(`all(alice_before.values())`), `_resolve_user_id` 변경으로 로그인 직후 사용자가 401을 받는 경로가 있는지(Google 콜백·개발 계정 로그인이 행을 만든 뒤에만 `/sessions`가 불리는지), `GUARD_AUTH=off`의 `"dev"`가 그대로 동작하는지.
 
 ---
 
@@ -1409,6 +1558,8 @@ git add frontend/contracts/api.ts
 git commit -m "feat(contract): 이어하기·회원탈퇴 타입과 클라이언트, 204 응답 처리 (Codex astra)"
 ```
 
+커밋하지 않고 남긴 파일: 없음(`frontend/contracts/api.ts`는 2026-10-16 기준 깨끗하다. 시작 전 다시 확인한다).
+
 ---
 
 ### Task 6: `/play` 진입 — 진행 중인 판 묻기·선택 화면·단계별 복원 (B)
@@ -1417,7 +1568,8 @@ git commit -m "feat(contract): 이어하기·회원탈퇴 타입과 클라이언
 - Create: `frontend/components/screens/ResumeChoiceScreen.tsx`
 - Modify: `frontend/app/play/page.tsx`
 - Modify: `frontend/components/screens/GodScreen.tsx` (선택 prop `initialRemaining`)
-- Test: Task 8에서 헤드리스로
+- Modify: `frontend/lib/useLeaveWarning.ts` (이탈 경고 문구를 이어하기에 맞게)
+- Test: Task 8에서 헤드리스로(이탈 경고 문구 단언은 `tests/leave-warning.cjs`, Task 8에서 고친다)
 
 **Interfaces:**
 - Consumes: Task 5의 `api.getActiveAttempt`·`api.abandonActiveAttempt`, 타입 `ActiveAttemptRes`·`ResumePhase`
@@ -1427,8 +1579,11 @@ git commit -m "feat(contract): 이어하기·회원탈퇴 타입과 클라이언
   - 복원 단계: `entry`→진입, `day`→낮(아침 화면 건너뜀), `night`→`night_id` 없으면 밤 글쓰기·있으면 확인 화면, `score`→점수, `god`→신의 개입
   - `GodScreen`의 `initialRemaining?: number`(기본 3)
   - Task 8이 쓰는 버튼 이름: "이어하기", "다시 시작하기"
+  - 이탈 경고 `returnValue`: `"지금 나가도 다시 들어오면 이어서 할 수 있습니다. 쓰던 글과 오늘 대화 말풍선은 남지 않습니다."`
 
-`frontend/app/play/page.tsx`·`GodScreen.tsx`는 2026-10-16 기준 미커밋 수정이 없다. `EntryScreen.tsx`·`DayScreen.tsx` 등은 미커밋 수정이 있으므로 이 task는 건드리지 않는다.
+**이탈 경고는 남긴다(사용자 결정 3 검토, 2026-10-16).** 이어하기가 생겨 판 자체는 사라지지 않는다. 그래도 나가면 잃는 것이 있다. 밤 글쓰기 칸에 쓰던 글은 `night/draft`를 보내기 전까지 서버에 없다. 오늘 대화 말풍선과 열려 있던 원숭이손 제안 팝업도 회차 단위 이어하기로는 되살아나지 않는다(스펙 §5). 그래서 경고는 그대로 켜 두고, 판이 사라진다는 틀린 말만 고친다. 최신 브라우저는 `returnValue` 문구를 화면에 보이지 않고 기본 확인창만 띄운다. 문구는 그 기본 확인창을 띄우는 신호이자 코드상의 기록이다.
+
+`frontend/app/play/page.tsx`·`GodScreen.tsx`·`lib/useLeaveWarning.ts`는 2026-10-16 기준 미커밋 수정이 없다. `EntryScreen.tsx`·`DayScreen.tsx` 등은 미커밋 수정이 있으므로 이 task는 건드리지 않는다.
 
 - [ ] **Step 1: Codex astra 지시문을 스크래치에 쓴다**
 
@@ -1436,7 +1591,7 @@ git commit -m "feat(contract): 이어하기·회원탈퇴 타입과 클라이언
 
 ````markdown
 작업 디렉터리: /home/kimchungsik/projects/com.remakeday/frontend.
-수정 파일: app/play/page.tsx, components/screens/GodScreen.tsx. 새 파일: components/screens/ResumeChoiceScreen.tsx.
+수정 파일: app/play/page.tsx, components/screens/GodScreen.tsx, lib/useLeaveWarning.ts. 새 파일: components/screens/ResumeChoiceScreen.tsx.
 브라우저·dev 서버를 띄우지 않는다. open·xdg-open 금지. 다른 파일(특히 미커밋 수정이 있는 EntryScreen.tsx·DayScreen.tsx)은 건드리지 않는다.
 `?resume=1`은 useSearchParams가 아니라 효과 안에서 `window.location.search`로 읽는다(Suspense 경계가 필요 없게).
 
@@ -1696,25 +1851,46 @@ const RESUME_SCREEN: Record<ResumePhase, (res: ActiveAttemptRes) => Phase> = {
 ```
 
 그 밖의 줄(startLoop·retry의 state 초기화, 다른 화면 블록)은 바꾸지 않는다.
+
+## 4. lib/useLeaveWarning.ts
+
+파일 위 주석 `/** 판 진행 중 새로고침·탭 닫기·사이트 이탈 시 브라우저 확인창. 이어받기는 없다. */`를 아래로 바꾼다:
+
+```ts
+/**
+ * 판 진행 중 새로고침·탭 닫기·사이트 이탈 시 브라우저 확인창.
+ * 판은 이어하기로 다시 열 수 있지만, 보내지 않은 밤 글·오늘 대화 말풍선·열린 팝업은 되살아나지 않아 경고는 남긴다.
+ */
+```
+
+`event.returnValue = "나가면 이 판은 사라집니다";`를 아래로 바꾼다:
+
+```ts
+      event.returnValue = "지금 나가도 다시 들어오면 이어서 할 수 있습니다. 쓰던 글과 오늘 대화 말풍선은 남지 않습니다.";
+```
+
+그 밖의 줄은 바꾸지 않는다.
 ````
 
 - [ ] **Step 2: Codex를 실행한다**
 
 Run: `cd /home/kimchungsik/projects/com.remakeday/frontend && codex exec -m gpt-6-astra -s workspace-write "$(cat <스크래치>/F2.prompt.md)"`
-Expected: 세 파일만 바뀐다
+Expected: 네 파일만 바뀐다
 
 - [ ] **Step 3: 컨트롤러가 확인한다**
 
-Run: `cd /home/kimchungsik/projects/com.remakeday && git status --short frontend/app/play frontend/components/screens/GodScreen.tsx frontend/components/screens/ResumeChoiceScreen.tsx && cd frontend && npx tsc --noEmit`
-Expected: `M app/play/page.tsx`, `M GodScreen.tsx`, `?? ResumeChoiceScreen.tsx`, 타입 오류 없음. diff에서 `runCreateSession` 이름이 남지 않았는지, `retry`의 state 초기화가 그대로인지 본다.
+Run: `cd /home/kimchungsik/projects/com.remakeday && git status --short frontend/app/play frontend/components/screens/GodScreen.tsx frontend/components/screens/ResumeChoiceScreen.tsx frontend/lib/useLeaveWarning.ts && cd frontend && npx tsc --noEmit`
+Expected: `M app/play/page.tsx`, `M GodScreen.tsx`, `M lib/useLeaveWarning.ts`, `?? ResumeChoiceScreen.tsx`, 타입 오류 없음. diff에서 `runCreateSession` 이름이 남지 않았는지, `retry`의 state 초기화가 그대로인지 본다.
 
 - [ ] **Step 4: 커밋**
 
 ```bash
 cd /home/kimchungsik/projects/com.remakeday
-git add frontend/app/play/page.tsx frontend/components/screens/GodScreen.tsx frontend/components/screens/ResumeChoiceScreen.tsx
-git commit -m "feat(ui): /play 진입 때 진행 중인 판 이어하기·다시 시작하기, 단계별 복원 (Codex astra)"
+git add frontend/app/play/page.tsx frontend/components/screens/GodScreen.tsx frontend/components/screens/ResumeChoiceScreen.tsx frontend/lib/useLeaveWarning.ts
+git commit -m "feat(ui): /play 진입 때 진행 중인 판 이어하기·다시 시작하기, 단계별 복원, 이탈 경고 문구 (Codex astra)"
 ```
+
+커밋하지 않고 남긴 파일: 없음(시작 전 네 파일이 깨끗했는지 장부로 확인한다. 그새 `M`이던 파일은 빼고 여기에 적는다).
 
 ---
 
@@ -1894,9 +2070,9 @@ Expected: `app/mypage/page.tsx` 생성, `app/page.tsx` 두 군데 수정
 Run: `cd /home/kimchungsik/projects/com.remakeday && git diff frontend/app/page.tsx && cd frontend && npx tsc --noEmit`
 Expected: 타입 오류 없음. `git diff`에 기존 미커밋 수정(로그인↔로그아웃 버튼, `preloadImages`, `decoding`·`fetchPriority`)이 그대로 남아 있고, 그 위에 마이페이지 링크와 className 한 줄만 더해졌다.
 
-- [ ] **Step 4: 커밋 — 컨트롤러 결정**
+- [ ] **Step 4: 커밋 — 새 파일만**
 
-새 파일은 바로 커밋한다:
+새 파일만 커밋한다:
 
 ```bash
 cd /home/kimchungsik/projects/com.remakeday
@@ -1904,9 +2080,9 @@ git add frontend/app/mypage/page.tsx
 git commit -m "feat(ui): 마이페이지 — 이어하기와 회원탈퇴 확인 단계 (Codex astra)"
 ```
 
-`frontend/app/page.tsx`는 **과제 hunk만 따로 커밋할 수 없다.** 마이페이지 링크가 쓰는 `loggedIn` state와 버튼 자체가 미커밋 수정에만 있고, 그 수정은 추적되지 않는 `frontend/lib/preloadImages.ts`를 import한다(`page.tsx`만 올리면 커밋된 트리가 빌드되지 않는다). 컨트롤러가 둘 중 하나를 정하고 장부에 적는다.
-- (a) 사용자 확인을 받아 `frontend/app/page.tsx` + `frontend/lib/preloadImages.ts`를 함께 커밋한다(기존 진행 중 작업까지 들어간다는 점을 커밋 메시지에 적는다).
-- (b) `page.tsx`는 작업 트리에만 두고 커밋하지 않는다. 최종 보고에 "랜딩 마이페이지 버튼은 미커밋"이라고 적는다.
+`frontend/app/page.tsx`는 커밋 정책(Global Constraints)대로 **수정만 하고 커밋하지 않는다.** 미커밋 수정이 이미 섞인 파일이기 때문이다. 게다가 마이페이지 링크가 쓰는 `loggedIn` state와 버튼은 그 미커밋 수정에만 있고, 그 수정은 추적되지 않는 `frontend/lib/preloadImages.ts`를 import한다.
+
+커밋하지 않고 남긴 파일: `frontend/app/page.tsx`(랜딩 마이페이지 링크 + className 한 줄. 기존 미커밋 수정 위에 얹혔다).
 
 - [ ] **Step 5: A등급 task 검토**
 
@@ -1962,6 +2138,12 @@ dev-login.cjs는 건드리지 않는다.
 guard.cjs의 testRestartGuard처럼 `if (p === '/sessions') {...} else if ...` 사슬인 곳은 맨 앞에
 `if (p === '/api/v1/me/attempts/active') body = { attempt: null, resume_phase: null, loop: null, night: null, today_remaining: 3, daily_limit: 3 };`
 를 두고 기존 `if`를 `else if`로 잇는다. 한 파일에 page.route가 여러 개면 /play를 여는 처리기마다 넣는다. 그 밖의 줄은 바꾸지 않는다.
+
+## 1-1. tests/leave-warning.cjs — 이탈 경고 문구 단언
+
+Task 6이 경고 문구를 "지금 나가도 다시 들어오면 이어서 할 수 있습니다. 쓰던 글과 오늘 대화 말풍선은 남지 않습니다."로 바꿨다. 이 파일은 옛 문구를 단언한다. 두 군데를 고친다.
+- 1행 주석 `// 판 진행 중 beforeunload 이탈 경고. 진입·회고에서는 없다. 이어받기는 없다.` → `// 판 진행 중 beforeunload 이탈 경고. 진입·회고에서는 없다. 판은 이어하기로 다시 열 수 있다.`
+- `assert.match(String(listenersOnDay.value), /사라집니다/);` → `assert.match(String(listenersOnDay.value), /다시 들어오면 이어서 할 수 있습니다/);`
 
 ## 2. 새 파일 tests/resume-mypage.cjs
 
@@ -2145,7 +2327,7 @@ const CHECKS = [
 - [ ] **Step 2: Codex를 실행한다**
 
 Run: `cd /home/kimchungsik/projects/com.remakeday/frontend && codex exec -m gpt-6-astra -s workspace-write "$(cat <스크래치>/F4.prompt.md)"`
-Expected: 새 파일 1개, 기존 스크립트 12개에 갈래 하나씩
+Expected: 새 파일 1개, 기존 스크립트 12개에 갈래 하나씩, `leave-warning.cjs` 단언 한 줄과 주석 한 줄
 
 - [ ] **Step 3: 컨트롤러가 diff를 확인한다**
 
@@ -2154,9 +2336,9 @@ Expected: 12개 파일 수정, 조회 갈래가 처리기 수만큼(12 이상). 
 
 - [ ] **Step 4: 헤드리스 실행은 Task 9에서 컨트롤러가 한다**
 
-- [ ] **Step 5: 커밋 — 일부 컨트롤러 결정**
+- [ ] **Step 5: 커밋 — 새 파일과 깨끗했던 파일만**
 
-새 스크립트와 미커밋 수정이 없던 6개는 바로 올린다:
+새 스크립트와, 이 task 전에 미커밋 수정이 없던 6개만 올린다:
 
 ```bash
 cd /home/kimchungsik/projects/com.remakeday
@@ -2164,9 +2346,9 @@ git add frontend/tests/resume-mypage.cjs frontend/tests/guard.cjs frontend/tests
 git commit -m "test(headless): 이어하기 선택 화면·단계 복원·마이페이지 탈퇴 확인, 기존 가짜 API에 진행 중인 판 없음 응답"
 ```
 
-미커밋 수정이 있던 6개(`connected-investigation`·`day-screen-vn-shots`·`day-screen-vn`·`five-loop-flow`·`scene-illustrations`·`voice-transitions`)는 컨트롤러가 정한다.
-- (a) 파일마다 HEAD 본(`git show HEAD:frontend/tests/<파일>`)에 같은 갈래만 넣은 사본을 스크래치에 만들고, `diff -u`로 HEAD 대비 패치를 떠서 `git apply --cached <패치>`로 그 갈래만 인덱스에 올린 뒤 커밋한다. `git diff --cached`로 갈래 한 줄 묶음만 올라갔는지 확인한다.
-- (b) 맥락이 미커밋 수정과 겹쳐 (a)가 적용되지 않는 파일은 작업 트리에만 두고 장부에 남긴다.
+미커밋 수정이 있던 6개는 커밋 정책대로 수정만 하고 커밋하지 않는다. 부분 스테이징(`git add -p`·`git apply --cached`)도 하지 않는다.
+
+커밋하지 않고 남긴 파일: `frontend/tests/connected-investigation.cjs`, `frontend/tests/day-screen-vn-shots.cjs`, `frontend/tests/day-screen-vn.cjs`, `frontend/tests/five-loop-flow.cjs`, `frontend/tests/scene-illustrations.cjs`, `frontend/tests/voice-transitions.cjs`(각각 조회 응답 갈래 하나. 기존 미커밋 수정 위에 얹혔다). 이 갈래들이 커밋되지 않았으므로, 커밋된 트리만으로는 이 6개 스크립트가 새 `/play`에서 실패한다는 점을 최종 보고에 적는다.
 
 ---
 
@@ -2178,7 +2360,7 @@ git commit -m "test(headless): 이어하기 선택 화면·단계 복원·마이
 - [ ] **Step 1: 백엔드 전체와 계층 계약**
 
 Run: `cd /home/kimchungsik/projects/com.remakeday/backend && .venv/bin/python -m pytest -q && .venv/bin/lint-imports`
-Expected: 실패 0(신규 101건 포함 — Task 1의 75건, Task 2의 6건, Task 3의 15건, Task 4의 5건), `Contracts: 4 kept, 0 broken`
+Expected: 실패 0(신규 103건 포함 — Task 1의 75건, Task 2의 6건, Task 3의 15건, Task 4의 7건), `Contracts: 4 kept, 0 broken`
 
 - [ ] **Step 2: 타입 검사**
 
@@ -2214,9 +2396,9 @@ opus 검토자에게 Task 1~8 전체 diff를 맡긴다. 초점:
 
 Critical이면 수정 1회 + 범위 재검토. 결과를 장부에 적는다.
 
-- [ ] **Step 7: 기록 — 컨트롤러 결정**
+- [ ] **Step 7: 기록**
 
-`docs/jekyll.md`에는 미커밋 수정이 이미 있다. 오늘(2026-10-16) 항목을 맨 위에 더하되, 커밋은 (a) 사용자 확인 뒤 파일 전체 또는 (b) 미커밋으로 두기 중에서 정한다. 이 계획 파일 끝에 "결과" 절(통과 수치, 미커밋으로 남긴 파일, 리뷰 결과)을 더해 커밋한다:
+`docs/jekyll.md`에는 미커밋 수정이 이미 있다. 오늘(2026-10-16) 항목을 맨 위에 더하되 **커밋하지 않는다**(커밋 정책). 이 계획 파일 끝에 "결과" 절을 더해 커밋한다. 결과 절에는 통과 수치, 리뷰 결과, 그리고 Task 1~9에서 모은 "커밋하지 않고 남긴 파일" 전체 목록(`frontend/app/page.tsx`, 헤드리스 6개, `docs/jekyll.md`)을 적는다:
 
 ```bash
 cd /home/kimchungsik/projects/com.remakeday
@@ -2234,6 +2416,8 @@ git commit -m "docs: 이어하기·마이페이지·회원탈퇴 검증 결과"
 - **`scored` 상태는 지금 엔진이 쓰지 않는다.** 제출하면 곧바로 `intervention`(1~4회차) 또는 판 종료(5회차)다. 그래서 점수 화면에서 나가도 다시 들어오면 신의 개입부터 열린다(점수·결말 전환은 건너뜀). 5회차 제출 뒤에는 판이 닫혀 이어할 것이 없다.
 - **`night_draft`는 확인 화면부터 연다.** 스펙 표는 둘 다 "밤 답안 작성"이지만, 정리를 이미 시작한 밤에 밤 글쓰기를 다시 보내면 409라 확인 화면이 같은 단계의 다음 칸이다.
 - **"/5" 대신 `daily_limit`.** 하루 한도는 설정값(`USER_DAILY_ATTEMPTS`, 코드 기본 3)이다. 응답에 `daily_limit`을 더해 화면이 `{남은}/{한도}`를 쓴다.
-- **"가장 최근 active 판"은 글자대로.** 최신 판을 포기하거나 끝내면 그보다 오래된 active 판(이 기능 전에 닫히지 않은 판)이 다음 진행 중인 판으로 잡힌다. 오래된 판 일괄 정리는 범위 밖이다.
-- **남는 위험(범위 밖, 보고 대상).** ① 다른 탭에 열려 있던 포기한 판은 회차 시작만 막히고 그 회차의 발화·비트·밤은 계속 받는다(그 경로들은 판 상태를 보지 않는다). ② 세션 토큰은 서명형이라 탈퇴 뒤에도 TTL(14일) 동안 유효하고, 그 쿠키로 `POST /sessions`를 부르면 users 행이 다시 생긴다(브라우저 쿠키는 지운다). ③ 모델 호출 중 별도 연결로 쓰는 하네스 감사 이벤트는 탈퇴 직후에 들어와 남을 수 있다. ④ `useLeaveWarning`의 "나가면 이 판은 사라집니다"는 이제 사실과 다르다(브라우저가 문구를 무시해 화면엔 안 보인다, 고치지 않았다).
+- **진행 중인 판은 "최신 판이 active일 때만"(사용자 결정 2026-10-16).** 최신 판을 포기하거나 끝내면 오래된 active 판(이 기능 전에 닫히지 않은 판)이 남아 있어도 `attempt: null`이다. 오래된 판은 DB에 active로 남지만 화면에는 다시 나오지 않는다. 일괄 정리는 범위 밖이다.
+- **남는 위험(범위 밖, 보고 대상).** ① 다른 탭에 열려 있던 포기한 판은 회차 시작만 막히고 그 회차의 발화·비트·밤은 계속 받는다(그 경로들은 판 상태를 보지 않는다). ② 모델 호출 중 별도 연결로 쓰는 하네스 감사 이벤트는 탈퇴 직후에 들어와 남을 수 있다.
+- **사용자 결정으로 해소한 것.** 탈퇴 뒤 남은 세션 쿠키로 users 행이 되살아나던 경로는 Task 4가 막는다(`_resolve_user_id`가 행을 만들지 않고 401). 남은 쿠키는 TTL 동안 서명 검증을 통과하지만, 판 생성은 401, 진행 중인 판 조회는 `attempt: null`이다. 이탈 경고 문구는 Task 6이 고치고 경고 자체는 남긴다(근거는 Task 6).
+- **커밋되지 않는 변경.** 커밋 정책 때문에 `frontend/app/page.tsx`(랜딩 마이페이지 링크)와 헤드리스 6개의 조회 응답 갈래, `docs/jekyll.md` 기록은 작업 트리에만 남는다. 커밋된 트리만 보면 랜딩에 마이페이지 링크가 없고, 그 6개 스크립트는 새 `/play`에서 실패한다.
 - **되돌리기.** DB 스키마 변경이 없다. 백엔드 커밋을 되돌리면 새 경로가 사라지고, 프론트는 조회 실패(404) 때 예전처럼 새 판을 만든다.
