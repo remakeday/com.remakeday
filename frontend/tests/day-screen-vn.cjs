@@ -53,7 +53,8 @@ const observations = [
           if (url.port !== '8500') return route.continue();
           const path = url.pathname;
           let body;
-          if (path === '/sessions') body = { attempt_id: 'vn', attempt_n: 1, entry_lines: ['하루를 관찰한다.'], prior_cell_results: null };
+          if (path === '/api/v1/me/attempts/active') body = { attempt: null, resume_phase: null, loop: null, night: null, today_remaining: 3, daily_limit: 3 };
+          else if (path === '/sessions') body = { attempt_id: 'vn', attempt_n: 1, entry_lines: ['하루를 관찰한다.'], prior_cell_results: null };
           else if (path === '/sessions/vn/loops') body = {
             loop_id: 'vn-loop', loop_n: 3, morning_text: '세 번째 아침이다.', damage_level: 0,
             budget_left: budget, beat, beat_title: '아침 배급', narration, broadcast: '배급을 시작합니다.',
@@ -230,7 +231,7 @@ const observations = [
         assert.equal(await panel.locator('li').count(), observations.length, 'filter off restores all records');
         await newOnly.check();
         await panel.getByRole('button', { name: /민석이 남긴 양을 설명했다/ }).click();
-        const picture = panel.locator('img[src$="C01-breakfast-clue-v2.png"]');
+        const picture = panel.locator('img[src$="C01-breakfast-clue-v2.webp"]');
         await picture.waitFor();
         await picture.evaluate(img => img.decode());
         assert.ok(await picture.evaluate(img => img.naturalWidth > 0));
