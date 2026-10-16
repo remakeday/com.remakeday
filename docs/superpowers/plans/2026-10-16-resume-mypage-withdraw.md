@@ -2421,3 +2421,11 @@ git commit -m "docs: 이어하기·마이페이지·회원탈퇴 검증 결과"
 - **사용자 결정으로 해소한 것.** 탈퇴 뒤 남은 세션 쿠키로 users 행이 되살아나던 경로는 Task 4가 막는다(`_resolve_user_id`가 행을 만들지 않고 401). 남은 쿠키는 TTL 동안 서명 검증을 통과하지만, 판 생성은 401, 진행 중인 판 조회는 `attempt: null`이다. 이탈 경고 문구는 Task 6이 고치고 경고 자체는 남긴다(근거는 Task 6).
 - **커밋되지 않는 변경.** 커밋 정책 때문에 `frontend/app/page.tsx`(랜딩 마이페이지 링크)와 헤드리스 6개의 조회 응답 갈래, `docs/jekyll.md` 기록은 작업 트리에만 남는다. 커밋된 트리만 보면 랜딩에 마이페이지 링크가 없고, 그 6개 스크립트는 새 `/play`에서 실패한다.
 - **되돌리기.** DB 스키마 변경이 없다. 백엔드 커밋을 되돌리면 새 경로가 사라지고, 프론트는 조회 실패(404) 때 예전처럼 새 판을 만든다.
+
+## 결과 (2026-10-16)
+
+- 커밋: `f3c9e9d` (T1) · `1313fec` (T2) · `d35e987` (T3) · `92f3bb8` (T4) · `5700a84` (T5) · `82de87c` (T6) · `712e3df` (T7) · `5708679`·`8e3f3af` (T8, 검토 수정 1회)
+- 검증: 백엔드 pytest 1162 passed, lint-imports 4 kept 0 broken, `npx tsc --noEmit` 0, 헤드리스 `resume-mypage` 15/15 PASS, 가짜 API 스크립트 11개 exit 0. `day-screen-vn-shots`는 실백엔드 대상이라 `DEV_LOGIN=off` 환경에서 로그인 단계 실패(이번 변경과 무관).
+- 리뷰: task 검토 T2·T3·T4(A)·T6·T7(A)·T8 모두 spec ✅·Approved(T8은 Important 1건을 수정 1회로 해소). 최종 리뷰(opus) Ready, Critical 0.
+- 사용자 판단으로 남긴 것: 진행 중인 판 조회가 5xx·네트워크 오류면 새 판을 만든다(Review Focus 3). 원래 판을 잃고 판 수 1회가 줄어든다. 404만 새 판으로 좁히는 수정이 가능하다.
+- 커밋하지 않고 남긴 파일(커밋 정책): `frontend/app/page.tsx`(랜딩 마이페이지 링크), `frontend/tests/{connected-investigation,day-screen-vn-shots,day-screen-vn,five-loop-flow,scene-illustrations,voice-transitions}.cjs`(조회 응답 갈래), `docs/jekyll.md`.
