@@ -31,7 +31,7 @@
 
 1. **낮 3비트에서 설명 규칙이 이미 실행된 뒤 새로고침** — 재실행은 기록을 더하지 않지만 그 규칙의 설명·부작용 줄을 다시 만들지 않는다. 이어하기 화면에도 그 줄이 그대로 보여야 한다. → Task 2 `test_resume_day_keeps_rule_explanation_lines`
 2. **"다시 시작하기"를 두 번 빠르게 누름** — 포기는 한 번만, 새 판도 하나만 생겨야 한다(두 번째 포기가 방금 만든 새 판을 포기하면 안 된다). → Task 8 `restartOnceOnDoubleClick`
-3. **조회 API가 없는 구 백엔드(404) 또는 일시 오류** — `/play`가 막히지 않고 예전처럼 새 판을 만든다. 허들(401·403·503·429)만 GuardScreen. → Task 8 `fallsBackWhenActiveLookupFails`
+3. **조회 API가 없는 구 백엔드(404) 또는 일시 오류** — 404면 예전처럼 새 판을 만든다. 5xx·네트워크 오류면 새 판을 만들지 않고 오류 토스트의 "재시도"로 조회를 다시 한다(사용자 결정 2026-10-16, 최종 리뷰 뒤 변경). 허들(401·403·503·429)만 GuardScreen. → Task 8 `fallsBackWhenActiveLookupFails`·`activeLookup500ShowsRetry`·`activeLookupNetworkErrorShowsRetry`
 4. **응답 저장(2026-09-18) 전에 제출한 밤에서 멈춘 판** — 저장된 제출 응답이 없어도 개입 화면이 빈 화면이 되지 않는다. → Task 2 `test_submitted_night_without_stored_response_still_resumes`
 5. **탈퇴하는 사용자와 같은 events 테이블을 쓰는 다른 사용자** — 다른 사용자의 guard 이벤트(user_sub)·평가·판 이벤트는 한 줄도 줄지 않는다. 중간에 실패하면 아무것도 지워지지 않는다. → Task 4 `test_delete_with_data_removes_every_row_of_one_user_only`·`test_delete_with_data_is_all_or_nothing`·`test_withdraw_deletes_only_that_users_rows`
 
@@ -2427,5 +2427,5 @@ git commit -m "docs: 이어하기·마이페이지·회원탈퇴 검증 결과"
 - 커밋: `f3c9e9d` (T1) · `1313fec` (T2) · `d35e987` (T3) · `92f3bb8` (T4) · `5700a84` (T5) · `82de87c` (T6) · `712e3df` (T7) · `5708679`·`8e3f3af` (T8, 검토 수정 1회)
 - 검증: 백엔드 pytest 1162 passed, lint-imports 4 kept 0 broken, `npx tsc --noEmit` 0, 헤드리스 `resume-mypage` 15/15 PASS, 가짜 API 스크립트 11개 exit 0. `day-screen-vn-shots`는 실백엔드 대상이라 `DEV_LOGIN=off` 환경에서 로그인 단계 실패(이번 변경과 무관).
 - 리뷰: task 검토 T2·T3·T4(A)·T6·T7(A)·T8 모두 spec ✅·Approved(T8은 Important 1건을 수정 1회로 해소). 최종 리뷰(opus) Ready, Critical 0.
-- 사용자 판단으로 남긴 것: 진행 중인 판 조회가 5xx·네트워크 오류면 새 판을 만든다(Review Focus 3). 원래 판을 잃고 판 수 1회가 줄어든다. 404만 새 판으로 좁히는 수정이 가능하다.
+- 최종 리뷰 Important(조회 5xx·네트워크 오류면 새 판)는 사용자 결정으로 고쳤다: 404만 새 판, 그 밖의 실패는 오류 토스트와 재시도.
 - 커밋하지 않고 남긴 파일(커밋 정책): `frontend/app/page.tsx`(랜딩 마이페이지 링크), `frontend/tests/{connected-investigation,day-screen-vn-shots,day-screen-vn,five-loop-flow,scene-illustrations,voice-transitions}.cjs`(조회 응답 갈래), `docs/jekyll.md`.

@@ -117,10 +117,28 @@ const CHECKS = [
     await page.getByRole('button', { name: '시작', exact: true, disabled: false }).waitFor({ state: 'visible' });
     assert.ok(calls.includes('POST /sessions'), '조회 API가 없으면 예전처럼 새 판');
   })],
-  ['fallsBackWhenActiveLookupReturns500', (browser) => withPage(browser, { active: { detail: 'Internal Server Error' }, activeStatus: 500 }, async (page, calls) => {
+  ['activeLookup500ShowsRetry', (browser) => withPage(browser, { active: NONE }, async (page, calls) => {
+    await page.route('**/api/v1/me/attempts/active', (route) => {
+      calls.push('GET /api/v1/me/attempts/active');
+      return route.fulfill({ status: 500, json: { detail: 'Internal Server Error' }, headers: CORS });
+    }, { times: 1 });
     await page.goto(`${BASE}/play`);
+    const retry = page.getByRole('button', { name: '재시도', exact: true });
+    await retry.waitFor({ state: 'visible' });
+    assert.equal(calls.filter((c) => c === 'POST /sessions').length, 0, '조회가 500이면 새 판을 만들지 않는다');
+    await retry.click();
     await page.getByRole('button', { name: '시작', exact: true, disabled: false }).waitFor({ state: 'visible' });
-    assert.equal(calls.filter((c) => c === 'POST /sessions').length, 1, '조회가 500이면 새 판을 한 번 만든다');
+    assert.equal(calls.filter((c) => c === 'GET /api/v1/me/attempts/active').length, 2, '재시도는 진행 중인 판을 다시 조회한다');
+    assert.equal(calls.filter((c) => c === 'POST /sessions').length, 1, '재조회 결과 판이 없으면 새 판을 한 번 만든다');
+  })],
+  ['activeLookupNetworkErrorShowsRetry', (browser) => withPage(browser, { active: NONE }, async (page, calls) => {
+    await page.route('**/api/v1/me/attempts/active', (route) => {
+      calls.push('GET /api/v1/me/attempts/active');
+      return route.abort();
+    }, { times: 1 });
+    await page.goto(`${BASE}/play`);
+    await page.getByRole('button', { name: '재시도', exact: true }).waitFor({ state: 'visible' });
+    assert.equal(calls.filter((c) => c === 'POST /sessions').length, 0, '조회가 네트워크 오류이면 새 판을 만들지 않는다');
   })],
   ['activeLookupDailyAttemptLimitShowsGuard', (browser) => withPage(browser, { active: { code: 'daily_attempt_limit', detail: '오늘은 여기까지. 내일 다시 시작할 수 있다.' }, activeStatus: 403 }, async (page, calls) => {
     await page.goto(`${BASE}/play`);

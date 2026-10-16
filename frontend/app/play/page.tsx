@@ -68,7 +68,7 @@ const RESUME_SCREEN: Record<ResumePhase, (res: ActiveAttemptRes) => Phase> = {
 
 /**
  * API 호출 하나를 감싸 401/403/503/429 허들을 GuardScreen으로 돌린다 (판 생성·이어하기 조회 공용).
- * onOtherFailure가 있으면 허들이 아닌 실패(404·네트워크·5xx)에 토스트 대신 그것을 부른다.
+ * onOtherFailure에 허들이 아닌 실패를 넘기고, true를 반환한 경우에만 토스트를 억제한다.
  */
 function runGuarded<T>(
   run: (
@@ -79,7 +79,7 @@ function runGuarded<T>(
   call: () => Promise<T>,
   onOk: (value: T) => void,
   setGuard: (guard: { kind: GuardKind; retryAfter?: number }) => void,
-  onOtherFailure?: () => void,
+  onOtherFailure?: (error: ApiError | null) => boolean,
 ) {
   let captured: ApiError | null = null;
   return run(
@@ -92,9 +92,7 @@ function runGuarded<T>(
     () => {
       const kind = captured ? guardKindFor(captured) : null;
       if (!kind) {
-        if (!onOtherFailure) return false;
-        onOtherFailure();
-        return true;
+        return onOtherFailure?.(captured) ?? false;
       }
       setGuard({ kind, retryAfter: captured?.retryAfter });
       return true; // 실패 배너 억제 — GuardScreen이 대신 보인다
@@ -244,7 +242,7 @@ export default function PlayPage() {
   };
 
   // 진입 — 진행 중인 판이 있으면 이어하기/다시 시작하기를 고르고, 없으면 새 판을 만든다 (설계 2026-10-16 §3.1).
-  // 조회 API가 없거나(구 백엔드) 허들 아닌 이유로 실패하면 예전처럼 새 판을 만든다 — 허들만 GuardScreen.
+  // 조회가 404(구 백엔드)이면 새 판을 만들고, 그 밖의 실패는 토스트에서 조회를 재시도한다 — 허들은 GuardScreen.
   const booted = useRef(false);
   useEffect(() => {
     if (booted.current) return;
@@ -263,7 +261,11 @@ export default function PlayPage() {
         else setResumeChoice(res);
       },
       setGuard,
-      createFresh,
+      (error) => {
+        if (error?.status !== 404) return false;
+        createFresh();
+        return true;
+      },
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
