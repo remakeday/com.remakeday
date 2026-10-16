@@ -12,7 +12,7 @@ export default function PrivacyPage() {
     <LegalDoc title="개인정보 처리방침">
       <LegalSection title="1. 총칙">
         <p>
-          {LEGAL.operator}(이하 &quot;운영팀&quot;)은 {LEGAL.serviceName}(이하
+          {LEGAL.operator}(이하 &quot;개인정보 관리자&quot;)은 {LEGAL.serviceName}(이하
           &quot;서비스&quot;)를 운영하면서 「개인정보 보호법」 등 관련 법령에
           따라 이용자의 개인정보를 보호하고, 이와 관련한 고충을 신속·원활하게
           처리할 수 있도록 다음과 같이 개인정보 처리방침을 수립·공개합니다.
@@ -24,7 +24,7 @@ export default function PrivacyPage() {
       </LegalSection>
 
       <LegalSection title="2. 개인정보의 처리 목적">
-        <p>운영팀은 다음 목적을 위해 개인정보를 처리합니다. 목적이 변경되는 경우 사전 고지 후 동의를 받습니다.</p>
+        <p>개인정보 관리자는 다음 목적을 위해 개인정보를 처리합니다. 목적이 변경되는 경우 사전 고지 후 동의를 받습니다.</p>
         <ul className="list-disc space-y-2 pl-5">
           <li>Google OAuth를 통한 회원 식별·인증 및 로그인 상태 유지</li>
           <li>게임 세션·진행 기록·점수·회고 등 플레이 데이터의 저장과 복원</li>
@@ -38,8 +38,8 @@ export default function PrivacyPage() {
         <p className="font-semibold">가. Google 계정 로그인(OAuth) 시</p>
         <p>
           서비스는 Google OAuth 2.0 인증 코드 흐름을 사용합니다. 이용자가
-          Google 로그인에 동의하면, 운영팀 서버의 콜백 엔드포인트로 인증
-          결과가 전달되고, 운영팀은 Google이 동의한 범위에서 신원 정보를
+          Google 로그인에 동의하면, 개인정보 관리자가 운영하는 서버의 콜백 엔드포인트로 인증
+          결과가 전달되고, 개인정보 관리자는 Google이 동의한 범위에서 신원 정보를
           확인한 뒤 서비스 계정을 생성·연동합니다.
         </p>
         <p>
@@ -58,7 +58,7 @@ export default function PrivacyPage() {
           <li>프로필 이미지 URL(제공되는 경우)</li>
         </ul>
         <p>
-          운영팀은 Google 계정 비밀번호를 수집·저장하지 않습니다. 로그인
+          개인정보 관리자는 Google 계정 비밀번호를 수집·저장하지 않습니다. 로그인
           화면과 비밀번호 입력은 Google이 처리하며, Google이 처리하는 정보에
           대해서는{" "}
           <a
@@ -90,7 +90,7 @@ export default function PrivacyPage() {
 
       <LegalSection title="4. 개인정보의 처리 및 보유 기간">
         <p>
-          운영팀은 법령에 따른 보유·이용 기간 또는 수집 시 동의받은 기간 내에서
+          개인정보 관리자는 법령에 따른 보유·이용 기간 또는 수집 시 동의받은 기간 내에서
           개인정보를 처리·보유합니다. 원칙적으로 회원 탈퇴 또는 목적 달성 시
           지체 없이 파기합니다. 다만 다음의 경우에는 해당 기간 동안 보관할 수
           있습니다.
@@ -108,7 +108,7 @@ export default function PrivacyPage() {
 
       <LegalSection title="5. 개인정보의 제3자 제공">
         <p>
-          운영팀은 이용자의 개인정보를 본 방침 제2조의 목적 범위에서만
+          개인정보 관리자는 이용자의 개인정보를 본 방침 제2조의 목적 범위에서만
           처리하며, 이용자 동의 없이 제3자에게 제공하지 않습니다. 다만 다음의
           경우는 예외입니다.
         </p>
@@ -141,7 +141,7 @@ export default function PrivacyPage() {
           <li>
             <span className="font-semibold">대규모 언어모델(LLM) 제공자</span> —
             게임 NPC·내레이션 등 응답 생성. 이용자가 입력한 질문·서술 텍스트가
-            모델 호출에 포함될 수 있습니다. 운영팀은 이를 계정·세션과 연결해
+            모델 호출에 포함될 수 있습니다. 개인정보 관리자는 이를 계정·세션과 연결해
             게임을 진행하는 데 사용하며, 광고 목적 판매에는 사용하지 않습니다.
           </li>
         </ul>
@@ -149,7 +149,7 @@ export default function PrivacyPage() {
 
       <LegalSection title="6의2. Google 사용자 데이터의 이용 제한">
         <p>
-          운영팀은 Google API로부터 받은 사용자 데이터(OAuth로 확인한 계정
+          개인정보 관리자는 Google API로부터 받은 사용자 데이터(OAuth로 확인한 계정
           식별·이메일·프로필 정보)를 Google API Services User Data Policy의
           Limited Use 요건에 따라, 서비스의 이용자 대면 기능(로그인, 계정 유지,
           플레이 기록 연결) 제공 및 보안·개선 목적에만 사용합니다. 해당 데이터를
@@ -162,7 +162,7 @@ export default function PrivacyPage() {
         <p>
           Google OAuth 및 일부 클라우드·AI 서비스는 해외에 서버를 둔 사업자가
           처리할 수 있습니다. 이 경우 이전되는 정보, 이전 국가, 시기·방법,
-          보유·이용 기간 등은 해당 사업자의 정책과 계약에 따르며, 운영팀은
+          보유·이용 기간 등은 해당 사업자의 정책과 계약에 따르며, 개인정보 관리자는
           관련 법령이 요구하는 보호조치를 이행합니다. 이용자는 국외 이전에
           동의하지 않을 권리가 있으나, 동의 거부 시 Google 로그인 기반 서비스
           이용이 제한될 수 있습니다.
@@ -177,7 +177,7 @@ export default function PrivacyPage() {
           <li>Google 계정 연동 해제(Google 계정 설정에서 앱 액세스 권한 관리)</li>
         </ul>
         <p>
-          권리 행사는 {LEGAL.contactEmail} 로 요청하실 수 있으며, 운영팀은
+          권리 행사는 {LEGAL.contactEmail} 로 요청하실 수 있으며, 개인정보 관리자는
           지체 없이 조치합니다. 법령상 의무 보존 정보가 있는 경우 해당 범위에서
           삭제가 제한될 수 있습니다.
         </p>
