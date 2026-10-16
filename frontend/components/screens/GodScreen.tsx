@@ -99,6 +99,7 @@ export function GodScreen({
   total,
   hypothesis,
   initialSuggestedQuestions,
+  initialRemaining = 3,
   onAdvice,
   onRuleApplied,
 }: {
@@ -107,6 +108,8 @@ export function GodScreen({
   total: number;
   hypothesis: string;
   initialSuggestedQuestions: string[];
+  /** 이어하기 — 이 밤에 남은 질문 수. 새 밤은 3 */
+  initialRemaining?: number;
   onAdvice: (text: string) => void;
   onRuleApplied: (label: string | null) => void;
 }) {
@@ -117,7 +120,7 @@ export function GodScreen({
   }, [firstVisit, playVoice, stopVoice]);
   const [stage, setStage] = useState<"questions" | "rule">("questions");
   const [qas, setQas] = useState<QA[]>([]);
-  const [remaining, setRemaining] = useState(3);
+  const [remaining, setRemaining] = useState(initialRemaining);
   const [question, setQuestion] = useState("");
   const [suggestedQuestions, setSuggestedQuestions] = useState(initialSuggestedQuestions ?? []);
   const [options, setOptions] = useState<GodOption[] | null>(null);

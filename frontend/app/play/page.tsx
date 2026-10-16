@@ -3,8 +3,10 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { api, ApiError } from "@/contracts/api";
 import type {
+  ActiveAttemptRes,
   CreateSessionRes,
   Observation,
+  ResumePhase,
   StartLoopRes,
   SubmitRes,
 } from "@/contracts/api";
@@ -13,6 +15,7 @@ import { audioEnabled, setAudioEnabled } from "@/lib/audioSettings";
 import { ToggleSwitch } from "@/components/ToggleSwitch";
 import { ErrorToast } from "@/components/ErrorToast";
 import { EntryScreen } from "@/components/screens/EntryScreen";
+import { ResumeChoiceScreen } from "@/components/screens/ResumeChoiceScreen";
 import { GuardScreen, type GuardKind } from "@/components/screens/GuardScreen";
 import { MorningScreen } from "@/components/screens/MorningScreen";
 import { DayScreen, type DialoguePair } from "@/components/screens/DayScreen";
@@ -54,16 +57,29 @@ function guardKindFor(error: ApiError): GuardKind | null {
   return null;
 }
 
-/** createSession 호출 하나를 감싸 401/403/503/429 허들을 GuardScreen으로 돌린다 (진입·재시작 공용). */
-function runCreateSession(
+/** 이어하기 단계 → 여는 화면. night는 정리를 이미 시작했으면(night_id) 확인 화면부터 — 밤 글쓰기를 다시 보내면 409다. */
+const RESUME_SCREEN: Record<ResumePhase, (res: ActiveAttemptRes) => Phase> = {
+  entry: () => "entry",
+  day: () => "day",
+  night: (res) => (res.night?.night_id ? "confirm" : "night"),
+  score: () => "score",
+  god: () => "god",
+};
+
+/**
+ * API 호출 하나를 감싸 401/403/503/429 허들을 GuardScreen으로 돌린다 (판 생성·이어하기 조회 공용).
+ * onOtherFailure가 있으면 허들이 아닌 실패(404·네트워크·5xx)에 토스트 대신 그것을 부른다.
+ */
+function runGuarded<T>(
   run: (
-    fn: () => Promise<CreateSessionRes>,
-    onOk: (value: CreateSessionRes) => void,
+    fn: () => Promise<T>,
+    onOk: (value: T) => void,
     onFail?: (status: number) => boolean,
   ) => Promise<boolean>,
-  call: () => Promise<CreateSessionRes>,
-  onOk: (value: CreateSessionRes) => void,
+  call: () => Promise<T>,
+  onOk: (value: T) => void,
   setGuard: (guard: { kind: GuardKind; retryAfter?: number }) => void,
+  onOtherFailure?: () => void,
 ) {
   let captured: ApiError | null = null;
   return run(
@@ -75,7 +91,11 @@ function runCreateSession(
     onOk,
     () => {
       const kind = captured ? guardKindFor(captured) : null;
-      if (!kind) return false;
+      if (!kind) {
+        if (!onOtherFailure) return false;
+        onOtherFailure();
+        return true;
+      }
       setGuard({ kind, retryAfter: captured?.retryAfter });
       return true; // 실패 배너 억제 — GuardScreen이 대신 보인다
     },
@@ -90,10 +110,14 @@ export default function PlayPage() {
     nightId: string;
     claims: string[];
     isQuestion: boolean[];
+    /** 이어하기로 연 개입 단계 — 이미 쓴 신의 질문을 뺀 남은 횟수 */
+    questionsLeft?: number;
   } | null>(null);
   const [dayLog, setDayLog] = useState<DialoguePair[]>([]);
   const [submitResult, setSubmitResult] = useState<SubmitRes | null>(null);
   const [guard, setGuard] = useState<{ kind: GuardKind; retryAfter?: number } | null>(null);
+  const [resumeChoice, setResumeChoice] = useState<ActiveAttemptRes | null>(null);
+  const restarting = useRef(false);
   const [observations, setObservations] = useState<Observation[]>([]);
   const [advice, setAdvice] = useState<RecordAdvice[]>([]);
   const [activeRules, setActiveRules] = useState<string[]>([]);
@@ -110,7 +134,7 @@ export default function PlayPage() {
   const loopAction = useApiAction();
   const retryAction = useApiAction();
 
-  // 진입·회고(clear)를 제외한 진행 중 — 새로고침·탭 닫기 확인. 이어받기는 없다.
+  // 진입·회고(clear)를 제외한 진행 중 — 새로고침·탭 닫기 확인. 다시 들어오면 이어하기로 그 회차부터 연다.
   useLeaveWarning(phase !== "entry" && phase !== "clear");
 
   const mergeObservations = useCallback((incoming: Observation[]) => {
@@ -199,14 +223,67 @@ export default function PlayPage() {
     else audio.pause();
   };
 
-  // 진입 시 세션 생성 — entry_lines는 이 응답에서 온다
+  // 이어하기 — 응답의 판·회차·밤으로 state를 채우고 그 단계 화면으로 간다. 대화 말풍선은 되살리지 않는다(dayLog 빈 배열).
+  const hydrate = (res: ActiveAttemptRes) => {
+    if (!res.attempt || !res.resume_phase) return;
+    observationsRequest.current += 1;
+    setAttempt(res.attempt);
+    setLoop(res.loop ?? null);
+    setActiveRules(res.loop?.active_rules ?? []);
+    setDayLog([]);
+    const resumed = res.night;
+    setNight(resumed?.night_id ? {
+      nightId: resumed.night_id,
+      claims: resumed.claims,
+      isQuestion: resumed.is_question,
+      questionsLeft: resumed.questions_left,
+    } : null);
+    setSubmitResult(resumed?.submit ?? null);
+    setResumeChoice(null);
+    setPhase(RESUME_SCREEN[res.resume_phase](res));
+  };
+
+  // 진입 — 진행 중인 판이 있으면 이어하기/다시 시작하기를 고르고, 없으면 새 판을 만든다 (설계 2026-10-16 §3.1).
+  // 조회 API가 없거나(구 백엔드) 허들 아닌 이유로 실패하면 예전처럼 새 판을 만든다 — 허들만 GuardScreen.
   const booted = useRef(false);
   useEffect(() => {
     if (booted.current) return;
     booted.current = true;
-    void runCreateSession(sessionAction.run, () => api.createSession({}), setAttempt, setGuard);
+    const autoResume = new URLSearchParams(window.location.search).get("resume") === "1";
+    const createFresh = () => {
+      void runGuarded(sessionAction.run, () => api.createSession({}), setAttempt, setGuard);
+    };
+    void runGuarded(
+      sessionAction.run,
+      () => api.getActiveAttempt(),
+      (res) => {
+        if (!res.attempt) createFresh();
+        else if (res.resume_phase === "entry" && !res.loop) setAttempt(res.attempt); // 회차 없는 판은 묻지 않고 그대로
+        else if (autoResume) hydrate(res);
+        else setResumeChoice(res);
+      },
+      setGuard,
+      createFresh,
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // 다시 시작하기 — 진행 중인 판을 포기하고 1회차 새 판(prior 없음). 두 번 눌러도 포기는 한 번만.
+  const restart = () => {
+    if (restarting.current) return;
+    restarting.current = true;
+    void sessionAction.run(
+      () => api.abandonActiveAttempt(),
+      () => {
+        setResumeChoice(null);
+        void runGuarded(sessionAction.run, () => api.createSession({}), setAttempt, setGuard);
+      },
+      () => {
+        restarting.current = false; // 포기 요청이 실패하면 다시 누를 수 있다 — 토스트는 그대로 뜬다
+        return false;
+      },
+    );
+  };
 
   const startLoop = () => {
     if (!attempt || loopAction.busy) return;
@@ -238,7 +315,7 @@ export default function PlayPage() {
 
   const retry = () => {
     if (!attempt || retryAction.busy) return;
-    void runCreateSession(
+    void runGuarded(
       retryAction.run,
       () => api.createSession({ prior_attempt_id: attempt.attempt_id }),
       (res) => {
@@ -283,7 +360,17 @@ export default function PlayPage() {
       <div className={guard ? undefined : "pt-14 [&_.min-h-dvh]:min-h-[calc(100dvh-3.5rem)]"}>
       {guard && <GuardScreen kind={guard.kind} retryAfter={guard.retryAfter} />}
 
-      {phase === "entry" && !guard && (
+      {phase === "entry" && resumeChoice && !guard && (
+        <ResumeChoiceScreen
+          todayRemaining={resumeChoice.today_remaining}
+          dailyLimit={resumeChoice.daily_limit}
+          busy={sessionAction.busy}
+          onResume={() => hydrate(resumeChoice)}
+          onRestart={restart}
+        />
+      )}
+
+      {phase === "entry" && !resumeChoice && !guard && (
         <EntryScreen
           lines={attempt?.entry_lines ?? null}
           priorCells={attempt?.prior_cell_results ?? null}
@@ -371,6 +458,7 @@ export default function PlayPage() {
           total={submitResult.total}
           hypothesis={night.claims[0] ?? ""}
           initialSuggestedQuestions={submitResult.suggested_questions}
+          initialRemaining={night.questionsLeft}
           onAdvice={(text) => {
             if (!loop) return;
             setAdvice((previous) => previous.some((item) => item.loop_n === loop.loop_n && item.text === text)
