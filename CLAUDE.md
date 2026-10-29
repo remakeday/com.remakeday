@@ -83,6 +83,8 @@ For multi-step tasks, state a brief plan:
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
 
+For simple changes (copy text, styling, a single constant), run only the one relevant check (e.g. `tsc` or the single affected test) and skip the full headless test suite and repeated runs.
+
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.

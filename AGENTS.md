@@ -91,6 +91,8 @@ For multi-step tasks, state a brief plan when it helps the user follow the work:
 
 Run checks in proportion to the change. Do not add tests that merely duplicate a trivial implementation, but add or update meaningful tests when they are needed to demonstrate correctness or prevent regression.
 
+For simple changes (copy text, styling, a single constant), run only the one relevant check (e.g. `tsc` or the single affected test) and skip the full headless test suite and repeated runs.
+
 These guidelines are working when diffs contain fewer unrelated changes, implementations stay simple, and material ambiguity is resolved before it causes rework.
 
 ## 5. GoF Design Patterns

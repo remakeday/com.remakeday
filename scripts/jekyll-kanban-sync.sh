@@ -1,5 +1,5 @@
 #!/bin/bash
-# 매일 23:00 실행 — REMAKE DAY(com.remakeday) 개발 근거로 지킬 허브(beyondbob.remakeday.com) 칸반 카드 상태를 갱신.
+# 매일 23:00 실행 — REMAKE DAY(com.remakeday) 개발 근거로 지킬 허브(remakeday.foodopenlab.com) 칸반 카드 상태를 갱신.
 #
 # 등록: crontab "0 23 * * * /home/kimchungsik/projects/com.remakeday/scripts/jekyll-kanban-sync.sh"
 # 시간 분리 — 23:00 remakeday 칸반 / 23:45 remakeday 데브로그(jekyll-devlog.sh) / 23:50 masterless / 23:55 beyondfacade
@@ -11,7 +11,7 @@
 #
 # 두 폴더의 역할:
 #   com.remakeday                         ← 근거. docs/jekyll.md · docs/HANDOFF.md · git log · 파일 구성
-#   beyondbob.remakeday.com/_data/kanban  ← 대상. 완료(done)가 아닌 카드만 판정한다
+#   remakeday.foodopenlab.com/_data/kanban  ← 대상. 완료(done)가 아닌 카드만 판정한다
 #
 # 안전장치:
 #   - 상태는 앞으로만 움직인다 (todo → doing → review → done). 사람이 올려둔 상태를 내리지 않는다.
@@ -22,7 +22,7 @@
 
 set -u
 PROJECT=/home/kimchungsik/projects/com.remakeday
-BLOG=/home/kimchungsik/projects/beyondbob.remakeday.com
+BLOG=/home/kimchungsik/projects/remakeday.foodopenlab.com
 KANBAN="$BLOG/_data/kanban"
 LOG=/home/kimchungsik/.claude/jekyll-kanban-remakeday-cron.log
 export PATH="/home/kimchungsik/.local/bin:$PATH"

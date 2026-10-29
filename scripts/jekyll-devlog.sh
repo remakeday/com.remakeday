@@ -1,6 +1,6 @@
 #!/bin/bash
 # 매일 23:45 실행 — REMAKE DAY(com.remakeday) 당일 개발 이력을 docs/jekyll.md에 기록하고
-# beyondbob.remakeday.com(지킬 허브)의 _posts/ 로 당일 섹션을 공개용으로 재작성해 복사.
+# remakeday.foodopenlab.com(지킬 허브)의 _posts/ 로 당일 섹션을 공개용으로 재작성해 복사.
 #
 # 등록: crontab "45 23 * * * /home/kimchungsik/projects/com.remakeday/scripts/jekyll-devlog.sh"
 # 시간 분리 — 23:45 remakeday / 23:50 masterless / 23:55 beyondfacade / 23:59 lifetutorial(일시중지)
@@ -12,18 +12,18 @@
 #                                                      허브 포스트만 docs/jekyll.md 원본 기준으로 재생성
 #
 # com.remakeday 의 git 커밋/푸시는 하지 않는다(docs/jekyll.md 는 사용자가 커밋).
-# 허브 포스트는 새로 쓴 파일만 beyondbob 저장소에 커밋·푸시한다(scripts/beyondbob-publish.sh).
+# 허브 포스트는 새로 쓴 파일만 remakeday.foodopenlab.com 저장소에 커밋·푸시한다(scripts/beyondbob-publish.sh).
 #
 # 저장소 역할 분리:
 #   com.remakeday/docs/jekyll.md                          ← 개발 작업만. 개발 일지의 원본(비공개 정보 포함 가능)
-#   beyondbob.remakeday.com/_posts/YYYY-MM-DD-dev-log.md  ← 당일 섹션을 공개용으로 재작성한 사본(front matter 부착)
+#   remakeday.foodopenlab.com/_posts/YYYY-MM-DD-dev-log.md  ← 당일 섹션을 공개용으로 재작성한 사본(front matter 부착)
 #   이 스크립트가 원본을 갱신한 뒤, 당일 섹션을 claude -p로 공개 버전으로 다시 써서 지킬 포스트로 저장한다.
 #   재작성 결과가 금칙어 게이트를 통과하지 못하면 포스트를 쓰지/덮어쓰지 않고 로그에만 남긴다.
 #   지킬 저장소에서 이 포스트를 직접 고치지 않는다 — 다음 실행 때 덮어쓰인다.
 
 set -u
 PROJECT=/home/kimchungsik/projects/com.remakeday
-BLOG=/home/kimchungsik/projects/beyondbob.remakeday.com
+BLOG=/home/kimchungsik/projects/remakeday.foodopenlab.com
 LOG=/home/kimchungsik/.claude/jekyll-devlog-remakeday-cron.log
 export PATH="/home/kimchungsik/.local/bin:$PATH"
 

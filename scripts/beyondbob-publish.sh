@@ -1,5 +1,5 @@
 #!/bin/bash
-# 지킬 허브(beyondbob.remakeday.com)에 자동화가 만든 파일만 커밋하고 푸시한다.
+# 지킬 허브(remakeday.foodopenlab.com)에 자동화가 만든 파일만 커밋하고 푸시한다.
 # jekyll-devlog.sh(포스트)와 jekyll-kanban-sync.sh(칸반 status)가 공용으로 쓴다.
 #
 # 사용법: beyondbob-publish.sh "커밋 메시지" 경로 [경로...]   (경로는 허브 저장소 기준 상대 경로)
@@ -11,7 +11,7 @@
 #   - 결과는 호출한 스크립트의 로그로 표준출력에 남긴다.
 
 set -u
-BLOG=/home/kimchungsik/projects/beyondbob.remakeday.com
+BLOG=/home/kimchungsik/projects/remakeday.foodopenlab.com
 MSG="$1"; shift
 
 cd "$BLOG" || { echo "PUBLISH SKIP — $BLOG 없음"; exit 0; }
